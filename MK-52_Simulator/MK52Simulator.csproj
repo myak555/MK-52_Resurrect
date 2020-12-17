@@ -1,0 +1,166 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{2F71C446-C8E5-4B26-99E7-83E9BEE08BCA}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>MK52Simulator</RootNamespace>
+    <AssemblyName>MK52Simulator</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Functions\RPN_Function_XtoM.cs" />
+    <Compile Include="RPN_Memory.cs" />
+    <Compile Include="Functions\RPN_Function_MtoX.cs" />
+    <Compile Include="RPN_XEntry.cs" />
+    <Compile Include="DigitButton_Exponent.cs" />
+    <Compile Include="DigitButton_0_to_9.cs" />
+    <Compile Include="FunctionButton_A.cs" />
+    <Compile Include="Functions\RPN_Function_Swap.cs" />
+    <Compile Include="Functions\RPN_Function_SQRT.cs" />
+    <Compile Include="Functions\RPN_Function_1x.cs" />
+    <Compile Include="Functions\RPN_Function_x2.cs" />
+    <Compile Include="Functions\RPN_Function_Plus.cs" />
+    <Compile Include="Functions\RPN_Function_Mult.cs" />
+    <Compile Include="Functions\RPN_Function_Divide.cs" />
+    <Compile Include="Functions\RPN_Function_Minus.cs" />
+    <Compile Include="Functions\RPN_Function_XpY.cs" />
+    <Compile Include="Functions\RPN_Function_XOR.cs" />
+    <Compile Include="Functions\RPN_Function_LOG.cs" />
+    <Compile Include="Functions\RPN_Function_LN.cs" />
+    <Compile Include="Functions\RPN_Function_LG.cs" />
+    <Compile Include="Functions\RPN_Function_e.cs" />
+    <Compile Include="Functions\RPN_Function_EXP.cs" />
+    <Compile Include="Functions\RPN_Function_10x.cs" />
+    <Compile Include="Functions\RPN_Function_ToRAD.cs" />
+    <Compile Include="Functions\RPN_Function_FromRAD.cs" />
+    <Compile Include="Functions\RPN_Function_ToIN.cs" />
+    <Compile Include="Functions\RPN_Function_FromIN.cs" />
+    <Compile Include="Functions\RPN_Function_FromDM.cs" />
+    <Compile Include="Functions\RPN_Function_FromDMS.cs" />
+    <Compile Include="Functions\RPN_Function_ToDM.cs" />
+    <Compile Include="Functions\RPN_Function_ToDMS.cs" />
+    <Compile Include="Functions\RPN_Function_SIGN.cs" />
+    <Compile Include="Functions\RPN_Function_SEED.cs" />
+    <Compile Include="Functions\RPN_Function_RAND.cs" />
+    <Compile Include="Functions\RPN_Function_Enter.cs" />
+    <Compile Include="Functions\RPN_Function_Prev.cs" />
+    <Compile Include="Functions\RPN_Function_ABS.cs" />
+    <Compile Include="Functions\RPN_Function_MAX.cs" />
+    <Compile Include="Functions\RPN_Function_FRAC.cs" />
+    <Compile Include="Functions\RPN_Function_NOP.cs" />
+    <Compile Include="Functions\RPN_Function_NOT.cs" />
+    <Compile Include="Functions\RPN_Function_INT.cs" />
+    <Compile Include="Functions\RPN_Function_arcCOS.cs" />
+    <Compile Include="Functions\RPN_Function_arcTG.cs" />
+    <Compile Include="Functions\RPN_Function_arcSIN.cs" />
+    <Compile Include="Functions\RPN_Function_TG.cs" />
+    <Compile Include="Functions\RPN_Function_COS.cs" />
+    <Compile Include="Functions\RPN_Function_Neg.cs" />
+    <Compile Include="RPN_Value.cs" />
+    <Compile Include="DigitButton_Negative.cs" />
+    <Compile Include="Functions\RPN_Function_AND.cs" />
+    <Compile Include="DigitButton_Decimal.cs" />
+    <Compile Include="Functions\RPN_Function_OR.cs" />
+    <Compile Include="Functions\RPN_Function_Rotate.cs" />
+    <Compile Include="Functions\RPN_Function_SIN.cs" />
+    <Compile Include="Functions\RPN_Function.cs" />
+    <Compile Include="Functions\RPN_Function_pi.cs" />
+    <Compile Include="FunctionButton_M.cs" />
+    <Compile Include="FunctionButton_Cx.cs" />
+    <Compile Include="RPN_Calculator.cs" />
+    <Compile Include="Button.cs" />
+    <Compile Include="Form1.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form1.Designer.cs">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="KeyboardControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="KeyboardControl.Designer.cs">
+      <DependentUpon>KeyboardControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Form1.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="KeyboardControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>KeyboardControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ScreenControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>ScreenControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <Compile Include="ScreenControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ScreenControl.Designer.cs">
+      <DependentUpon>ScreenControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FunctionButton_F.cs" />
+    <Compile Include="FunctionButton_K.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Documents\Annoyances_Fixed.txt" />
+    <Content Include="Documents\Additional_Functions.txt" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

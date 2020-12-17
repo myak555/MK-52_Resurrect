@@ -1,0 +1,8 @@
+* LOG X base Y is on [K][LG]
+* e constant on [K][e^X]
+* Radian to degrees on [A][<-DM]
+* Degrees to radian on [A][DM->]
+* Inch to mm on [A][<-DMS]
+* mm to inch on [A][DMS->]
+* RAND takes truly random seed
+* SEED function on [A][RAND]

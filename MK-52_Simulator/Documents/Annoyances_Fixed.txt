@@ -1,0 +1,7 @@
+* Instant on - calculator remembers the prior state and does not reset itself upon power-up
+* Cx button cleared the entire input to zero. Now in Edit mode it works as a backspace
+* Decimal did not start the data entry. Now it works as an entry button, making "0." input
+* Exponent. Now it works as an entry button, making "1.0E+000" input if X=0
+* Number range is from about -1E-302 to +1E+302
+* Nubers between 0.1 and 1 are not "exponetized"
+* Whole numbers are preserved whole until the operation necessary converts them into real
