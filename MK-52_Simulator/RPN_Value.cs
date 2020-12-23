@@ -129,6 +129,18 @@ namespace MK52Simulator
         }
 
         /// <summary>
+        /// Returns true if the value is exactly zero
+        /// </summary>
+        public bool isEmpty
+        {
+            get
+            {
+                if (!_varTypeInt) return false;
+                return _valueInt == 0;
+            }
+        }
+
+        /// <summary>
         /// Sets value to zero
         /// </summary>
         public void Clear()
@@ -150,12 +162,12 @@ namespace MK52Simulator
         /// <summary>
         /// Sets value from a string
         /// </summary>
-        private void FromString( string val)
+        public void FromString( string val)
         {
             val = val.Trim();
             try
             {
-                if (!val.Contains("."))
+                if (!val.Contains(".") && !val.Contains("E"))
                 {
                     _varTypeInt = true;
                     _valueInt = Convert.ToInt64(val);
@@ -184,37 +196,42 @@ namespace MK52Simulator
         }
 
         /// <summary>
-        /// Math functions
+        /// Math functions: addition
         /// </summary>
-        /// <param name="a"></param>
-        /// <param name="b"></param>
-        /// <returns></returns>
-        public static RPN_Value Add(RPN_Value a, RPN_Value b)
+        /// <param name="v">Value to process</param>
+        public void Add(RPN_Value v)
         {
-            if (a._varTypeInt && b._varTypeInt)
-                return new RPN_Value(a.asInt + b.asInt);
-            return new RPN_Value(a.asReal + b.asReal);
+            this.asReal = this.asReal + v.asReal;
         }
 
-        public static RPN_Value Subtract(RPN_Value a, RPN_Value b)
+        /// <summary>
+        /// Math functions: subtraction
+        /// </summary>
+        /// <param name="v">Value to process</param>
+        public void Subtract(RPN_Value v)
         {
-            if (a._varTypeInt && b._varTypeInt)
-                return new RPN_Value(a.asInt - b.asInt);
-            return new RPN_Value(a.asReal - b.asReal);
+            this.asReal = this.asReal - v.asReal;
         }
 
-        public static RPN_Value Multiply(RPN_Value a, RPN_Value b)
+        /// <summary>
+        /// Math functions: Multiplication
+        /// </summary>
+        /// <param name="v">Value to process</param>
+        public void Multiply(RPN_Value v)
         {
-            if (a._varTypeInt && b._varTypeInt)
-                return new RPN_Value(a.asInt * b.asInt);
-            return new RPN_Value(a.asReal * b.asReal);
+            this.asReal = this.asReal * v.asReal;
         }
 
-        public static RPN_Value Divide(RPN_Value a, RPN_Value b)
+        /// <summary>
+        /// Math functions: Division
+        /// </summary>
+        /// <param name="v">Value to process</param>
+        public void Divide(RPN_Value v)
         {
-            if (a._varTypeInt && b._varTypeInt && a._valueInt % b._valueInt == 0)
-                return new RPN_Value(a.asInt / b.asInt);
-            return new RPN_Value(a.asReal / b.asReal);
+            if (this._varTypeInt && v._varTypeInt && this._valueInt % v._valueInt == 0)
+                this._valueInt = this.asInt / v.asInt;
+            else
+                this.asReal = this.asReal / v.asReal;
         }
 
         /// <summary>

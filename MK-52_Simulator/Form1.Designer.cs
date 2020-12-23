@@ -37,6 +37,7 @@ namespace MK52Simulator
             // 
             // screenControl1
             // 
+            this.screenControl1.BackColor = System.Drawing.Color.Black;
             this.screenControl1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.screenControl1.Location = new System.Drawing.Point(35, 15);
             this.screenControl1.Name = "screenControl1";
@@ -68,6 +69,7 @@ namespace MK52Simulator
             this.Name = "Form1";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.Text = "MK-52";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.ResumeLayout(false);
 
         }

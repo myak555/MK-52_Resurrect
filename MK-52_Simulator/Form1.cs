@@ -11,29 +11,29 @@ namespace MK52Simulator
     public partial class Form1 : Form
     {
         public RPN_Calculator myRPN = new RPN_Calculator();
+        public RPN_Display myDisplay = null;
+
+        private RPN_Button dummyRunButton = new RPN_Button();
 
         public Form1()
         {
             InitializeComponent();
-            drawScreen();
+            myDisplay = new RPN_Display(myRPN, screenControl1);
+            myDisplay.Redraw();
             timer1.Enabled = true;
         }
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            if (!keyboardControl1.Available()) return;
-            Button sb = keyboardControl1.GetButton();
-            sb.processPress(myRPN);
-            drawScreen();
+            RPN_Button rpb = keyboardControl1.Available()?
+                keyboardControl1.GetButton(): dummyRunButton;
+            myRPN.ProcessButton(rpb);
+            myDisplay.Redraw();
         }
 
-        private void drawScreen()
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            myRPN.setScreenValues();
-            for (int i = 0; i < myRPN.screenValues.Length; i++)
-            {
-                screenControl1.PlaceText(myRPN.screenValues[i], i, 0);
-            }
+            myRPN.Shutdown();
         }
     }
 }

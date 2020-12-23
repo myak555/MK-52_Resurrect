@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.IO;
 using MK52Simulator.Functions;
+using MK52Simulator.Receivers;
+using MK52Simulator.Displays;
 
 namespace MK52Simulator
 {
@@ -10,117 +13,90 @@ namespace MK52Simulator
     //
     public class RPN_Calculator
     {
-        public const int ScreenWidth = 25;
-        public const int StatusWidth = 32;
-
-        // modifier mode
-        public string[] fModeLabels = { "      ", "[   ] ", "[ F ] ", "[ K ] ", "[ A ] ", "[MOD] ", "[M<-] ", "[M->] " };
-        public const int fMode_Off = 0;
-        public const int fMode_Normal = 1;
-        public const int fMode_F = 2;
-        public const int fMode_K = 3;
-        public const int fMode_A = 4;
-        public const int fMode_M = 5;
-        public const int fMode_XM = 6;
-        public const int fMode_MX = 7;
-        public int fMode = fMode_Normal;
+        // calculator memory
+        public RPN_Stack Stack = null;
+        public RPN_Registers Registers = null;
+        public RPN_Program Program = null;
+        public RPN_Memory Memory = null;
 
         // degrees/radian/gradian mode
-        public string[] dModeLabels = { "[DEG] ", "[RAD] ", "[GRD] " };
         public const int dMode_Degrees = 0;
         public const int dMode_Radian = 1;
         public const int dMode_Gradian = 2;
         public int dMode = dMode_Degrees;
-        
-        // screen labels
-        public string X_Label = " X:";
-        public string Y_Label = " Y:";
-        public string Z_Label = " Z:";
-        public string T_Label = " T:";
 
-        // calculator memory
-        public RPN_Memory Memory = null;        
-        public RPN_XEntry XEntry = null;
-        public string[] screenValues = new string[9];
+        // calc/text mode
+        public const int aMode_CODE = 0;
+        public const int aMode_TEXT = 1;
+        public const int aMode_ADDR = 2;
+        public int aMode = aMode_CODE;
 
         // random number remembered
         public Random myRNG = new Random();
 
-        // functions
-        public Dictionary<string, RPN_Function> Functions = new Dictionary<string, RPN_Function>();
+        // functions and receivers
+        public Dictionary<string, RPN_Function> Functions =
+            new Dictionary<string, RPN_Function>();
+        public Dictionary<string, RPN_InputReceiver> Receivers =
+            new Dictionary<string, RPN_InputReceiver>();
+        public RPN_InputReceiver CurrentReceiver = null;
 
-        #region General Functions
+        private string _stateFile = "";
+
         public RPN_Calculator()
         {
+            Stack = new RPN_Stack(this);
+            Registers = new RPN_Registers(this);
+            Program = new RPN_Program(this);
             Memory = new RPN_Memory(this);
-            XEntry = new RPN_XEntry(this);
             addFunctions();
-            ClearLabels();
+            addReceivers();
+            _stateFile = AppDomain.CurrentDomain.BaseDirectory + "_RPN_State_New.txt";
+            loadState();
         }
 
-        public void setScreenValues()
+        public void SwapDegreeMode()
         {
-            if (fMode == RPN_XEntry.Mode_Off)
-            {
-                for (int i = 0; i < screenValues.Length; i++) screenValues[i] = "";
-                return;
-            }
-            screenValues[0] = dModeLabels[dMode];
-            screenValues[0] += fModeLabels[fMode];
-            screenValues[0] = screenValues[0].PadLeft(StatusWidth);
-            screenValues[1] = T_Label;
-            screenValues[2] = presentValue(Memory.StackValues[3]);
-            screenValues[3] = Z_Label;
-            screenValues[4] = presentValue(Memory.StackValues[2]);
-            screenValues[5] = Y_Label;
-            screenValues[6] = presentValue(Memory.StackValues[1]);
-            screenValues[7] = X_Label;
-            screenValues[8] = (XEntry.Mode == RPN_XEntry.Mode_Off) ?
-                presentValue(Memory.StackValues[0]) : XEntry.ToString();
-        }
-        #endregion
-
-        public void ClearLabels()
-        {
-            X_Label = " X:";
-            Y_Label = " Y:";
-            Z_Label = " Z:";
-            T_Label = " T:";
+            dMode++;
+            if (dMode > dMode_Gradian) dMode = dMode_Degrees;
         }
 
-        public void setTrigWarning(double v)
+        public void SwapInputMode()
         {
-            if (Math.Abs(v) < 1.0e12) return; 
-            X_Label = "Warn: Trig Accuracy";
+            aMode++;
+            if (aMode > aMode_ADDR) aMode = aMode_CODE;
         }
 
-        public double setImaginaryWarning(double v)
-        {
-            if (v > 0.0) return v;
-            X_Label = "Warn: Imaginary";
-            return -v;
-        }
+        //public void SetMemoryFromStack(string RegisterName)
+        //{
+        //    if (RegisterName.StartsWith("L"))
+        //        Registers.SetLoopRegister( RegisterName, Convert.ToInt32(StackValues[0].asInt));
+        //    else
+        //        Registers.SetPrimaryRegister( RegisterName, StackValues[0]);
+        //}
 
-        public bool setInvTrigError(double v)
-        {
-            if (Math.Abs(v) <= 1.0) return false;
-            X_Label = "Err: Inverse Trig";
-            return true;
-        }
+        //public void SetStackFromMemory(string RegisterName)
+        //{
+        //    StorePreviousValue();
+        //    PushStack(1);
+        //    if (RegisterName.StartsWith("L"))
+        //        StackValues[0].asInt = Registers.GetLoopRegister(RegisterName);
+        //    else
+        //        StackValues[0].FromRPNValue( Registers.GetPrimaryRegister(RegisterName));
+        //}
 
-        public void setArgumentError()
+        /// <summary>
+        /// Sets receiver
+        /// </summary>
+        /// <param name="name">Receiver moniker</param>
+        /// <returns>true if receiver is not available</returns>
+        public bool setReceiver(string name)
         {
-            X_Label = "Err: Argument";
-        }
-
-        public void setInfinityError()
-        {
-            X_Label = "Err: Infinity";
-        }
-
-        public void setDegError()
-        {
-            X_Label = "Err: Deg Format";
+            if (!Receivers.ContainsKey(name)) return true;
+            RPN_InputReceiver ir = Receivers[name];
+            ir.onSet();
+            CurrentReceiver = ir;
+            return false;
         }
 
         public void executeFunction(string name)
@@ -128,11 +104,125 @@ namespace MK52Simulator
             if (!Functions.ContainsKey(name)) return;
             RPN_Function f = Functions[name];
             f.execute();
-            if (f.Keyword != "Enter") 
-                XEntry.pushOnEntryRequired = true; // reset new edit behavoir
         }
 
-        #region Implemented Math Functions
+        public void executeCodeStep()
+        {
+            string code = Program.GetCurrentLine().Trim();
+            foreach (RPN_Function func in Functions.Values)
+            {
+                if (!func.executeProgram(code)) continue;
+                return;
+            }
+        }
+
+        #region Load and Save
+        public void loadState()
+        {
+            if( !File.Exists( _stateFile))
+            {
+                Stack.X_Label = "File not found";
+                return;
+            }
+            FileStream fs = null;
+            StreamReader sr = null;
+            try
+            {
+                fs = File.Open( _stateFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                sr = new StreamReader(fs);
+                while (!sr.EndOfStream)
+                {
+                    string s = sr.ReadLine().Trim();
+                    if (s.Length <= 0) continue;
+                    if (s.StartsWith("#")) continue;
+                    if (StatusLoadHelper(s)) continue;
+                    if (IntLoadHelper(s, "dMode", ref dMode)) continue;
+                    if (IntLoadHelper(s, "aMode", ref aMode)) continue;
+                    if (Stack.LoadLine(s)) continue;
+                    if (Registers.LoadLine(s)) continue;
+                    if (Memory.LoadLine(s)) continue;
+                    if (Program.LoadLine(s)) continue;
+                }
+            }
+            catch
+            {
+                Stack.X_Label = "Error: file load";
+            }
+            finally
+            {
+                if(sr != null) sr.Close();
+                if(fs != null) fs.Close();
+            }
+        }
+
+        public void saveState()
+        {
+            Stack.CompleteEntry();
+            FileStream fs = null;
+            StreamWriter sw = null;
+            try
+            {
+                fs = File.Open(_stateFile, FileMode.Create, FileAccess.Write, FileShare.Read);
+                sw = new StreamWriter(fs);
+
+                sw.Write("#\n");
+                sw.Write("# MK-52 state file " + DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss\n"));
+                sw.Write("#\n");
+
+                string stat = CurrentReceiver.Moniker;
+                if (stat == "OFF") stat = "AUTO"; // Upon the switch-off, always start in auto mode
+                sw.Write("Status = " + stat.Substring(0, 4) + "\n");
+                if (dMode > 0) sw.Write("dMode = " + dMode.ToString() + "\n");
+                if (aMode > 0) sw.Write("aMode = " + aMode.ToString() + "\n");
+
+                Stack.Save(sw);
+                Registers.Save(sw);
+                Program.Save(sw);
+                Memory.Save(sw);
+            }
+            catch
+            {
+                Stack.X_Label = "Error: file save";
+            }
+            finally
+            {
+                if (sw != null) sw.Close();
+                if (fs != null) fs.Close();
+            }
+        }
+
+        private bool StatusLoadHelper(string s)
+        {
+            string varName = "Status = ";
+            if (!s.StartsWith(varName)) return false;
+            string name = s.Substring(varName.Length).Trim();
+            if (name == "OFF") name = "AUTO_N"; // cold restart
+            setReceiver(name + "_N");
+            return true;
+        }
+
+        private bool IntLoadHelper(string s, string varName, ref int inp)
+        {
+            varName += " = ";
+            if (!s.StartsWith(varName)) return false;
+            inp = Convert.ToInt32(s.Substring(varName.Length));
+            return true;
+        }
+        #endregion
+
+        public void Shutdown()
+        {
+            saveState();
+            setReceiver("OFF");
+        }
+
+        public void ProcessButton(RPN_Button rpb)
+        {
+            if (rpb.Moniker == "Dummy" && CurrentReceiver.Moniker != "AUTO_R") return; 
+            CurrentReceiver.onButton( rpb);
+        }
+
+        #region Implemented Functions
         //
         // Function adding helper
         // 
@@ -142,6 +232,10 @@ namespace MK52Simulator
         }
         private void addFunctions()
         {
+            addFunction(new RPN_Function_Empty(this)); // Empty function must be the first
+            addFunction(new RPN_Function_Comment(this)); // Comment function must be the second
+            addFunction(new RPN_Function_Number(this)); // Number function must be the third
+
             addFunction(new RPN_Function_10x(this));
             addFunction(new RPN_Function_1x(this));
             addFunction(new RPN_Function_ABS(this));
@@ -160,6 +254,10 @@ namespace MK52Simulator
             addFunction(new RPN_Function_FromIN(this));
             addFunction(new RPN_Function_FromRAD(this));
             addFunction(new RPN_Function_INT(this));
+            addFunction(new RPN_Function_LblT(this));
+            addFunction(new RPN_Function_LblX(this));
+            addFunction(new RPN_Function_LblY(this));
+            addFunction(new RPN_Function_LblZ(this));
             addFunction(new RPN_Function_LG(this));
             addFunction(new RPN_Function_LN(this));
             addFunction(new RPN_Function_LOG(this));
@@ -180,6 +278,7 @@ namespace MK52Simulator
             addFunction(new RPN_Function_SIGN(this));
             addFunction(new RPN_Function_SIN(this));
             addFunction(new RPN_Function_SQRT(this));
+            addFunction(new RPN_Function_SUB(this));
             addFunction(new RPN_Function_Swap(this));
             addFunction(new RPN_Function_TG(this));
             addFunction(new RPN_Function_ToDM(this));
@@ -193,15 +292,42 @@ namespace MK52Simulator
         }
         #endregion
 
-        #region Private Functions
+        #region Implemented Receivers
         //
-        // Padding value - will be moved to display function
-        //
-        private string presentValue(RPN_Value v)
+        // Receiver adding helper
+        // 
+        private RPN_InputReceiver addReceiver(RPN_InputReceiver r)
         {
-            return v.ToString().PadLeft(ScreenWidth);
+            Receivers.Add(r.Moniker, r);
+            return r;
         }
+        private void addReceivers()
+        {
+            RPN_Screen ScreenOFF = new Screen_OFF(this);
+            RPN_Screen ScreenAUTO = new Screen_AUTO(this);
+            RPN_Screen ScreenPROG = new Screen_PROG(this);
+            RPN_Screen ScreenLIST = new Screen_LIST(this);
 
+            CurrentReceiver = addReceiver(new InputReceiver_AUTO_N(this, ScreenAUTO));
+            addReceiver(new InputReceiver_AUTO_F(this, ScreenAUTO));
+            addReceiver(new InputReceiver_AUTO_K(this, ScreenAUTO));
+            addReceiver(new InputReceiver_AUTO_A(this, ScreenAUTO));
+            addReceiver(new InputReceiver_AUTO_MX(this, ScreenAUTO));
+            addReceiver(new InputReceiver_AUTO_XM(this, ScreenAUTO));
+            addReceiver(new InputReceiver_RUN(this, ScreenAUTO)); // Running in AUTO mode
+
+            addReceiver(new InputReceiver_PROG_N(this, ScreenPROG));
+            addReceiver(new InputReceiver_PROG_F(this, ScreenPROG));
+            addReceiver(new InputReceiver_PROG_K(this, ScreenPROG));
+            addReceiver(new InputReceiver_PROG_A(this, ScreenPROG));
+
+            addReceiver(new InputReceiver_LIST_N(this, ScreenLIST));
+            addReceiver(new InputReceiver_LIST_F(this, ScreenLIST));
+            addReceiver(new InputReceiver_LIST_K(this, ScreenLIST));
+            addReceiver(new InputReceiver_LIST_A(this, ScreenLIST));
+
+            addReceiver(new InputReceiver_OFF(this, ScreenOFF));
+        }
         #endregion
     }
 }

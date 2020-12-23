@@ -1,136 +1,161 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.IO;
 
 namespace MK52Simulator
 {
     //
-    // Implements the state engine
+    // Implements program storage (as prototype)
+    // The actual code on C++ will be without Dictionary
     //
     public class RPN_Memory
     {
-        public const int StackSize = 4;
-        public const int MemorySize = 16;
         public const int ExtendedMemorySize = 1000;
-        public const int LoopSize = 4;
-        private const string BaseRegisterNames = "0123456789ABCDEF";
-        private const string LoopRegisterNames = "0123";
-
-        public List<RPN_Value> StackValues = new List<RPN_Value>();
-        public RPN_Value PreviousValue = new RPN_Value();
-
-        public List<RPN_Value> MemoryRegisters = new List<RPN_Value>();
-        public int[] LoopRegisters = new int[LoopSize];
-        public string RegisterName = "";
+        public const int SetAddressOnly = 0;
+        public const int MemoryToStack = 1;
+        public const int StackToMemory = 2;
+        private int _addressMode = SetAddressOnly;
 
         private RPN_Calculator _parent = null;
+        private Dictionary<int, RPN_Value> ExtendedMemory = new Dictionary<int, RPN_Value>();
+
+        public RPN_Counter Counter = new RPN_Counter("MC", ExtendedMemorySize);
 
         public RPN_Memory( RPN_Calculator parent)
         {
             _parent = parent;
-            for (int i = 0; i < StackSize; i++)
-                StackValues.Add(new RPN_Value());
-            for (int i = 0; i < MemorySize; i++)
-                MemoryRegisters.Add(new RPN_Value());
-            for (int i = 0; i < LoopSize; i++)
-                LoopRegisters[i] = 0;
         }
 
-        public void ClearStack()
+        public bool isAddressEntry
         {
-            foreach (RPN_Value v in StackValues) v.Clear();
-        }
-
-        public void ClearName()
-        {
-            RegisterName = "";
-        }
-
-        public void AddEntry(string key)
-        {
-            RegisterName += key.Trim();
-            switch (_parent.fMode)
+            get
             {
-                case RPN_Calculator.fMode_MX:
-                    if (BaseMtoX()) return;
-                    if (LoopMtoX()) return;
-                    ClearName();
+                return Counter.isActive;
+            }
+        }
+
+        public void ActivateEntry( int mode)
+        {
+            _addressMode = mode;
+            Counter.ActivateEntry();
+        }
+
+        public void AddDigitToAddress(string text)
+        {
+            if (!Counter.AddDigitToAddress(text, false)) return;
+            switch (_addressMode)
+            {
+                case MemoryToStack:
+                    if (Counter.isNewAddress)
+                    {
+                        Counter.resetAddress();
+                        ToStack( Counter.V);
+                        return;
+                    }
+                    Counter.Decrement();
+                    ToStack(Counter.V);
                     return;
-                case RPN_Calculator.fMode_XM:
-                    if (BaseXtoM()) return;
-                    if (LoopXtoM()) return;
-                    ClearName();
+                case StackToMemory:
+                    if (Counter.isNewAddress)
+                    {
+                        Counter.resetAddress();
+                        FromStack(Counter.V);
+                        return;
+                    }
+                    FromStack(Counter.V);
+                    Counter.Increment();
                     return;
                 default:
+                    Counter.Set(Counter.entryResult);
                     return;
             }
         }
 
-        public bool ValidateMemoryName()
+        public RPN_Value GetCurrentLine()
         {
-            if (BaseRegisterNames.IndexOf(RegisterName) >= 0) return true;
-            if (!RegisterName.StartsWith("L")) return false;
-            int i = BaseRegisterNames.IndexOf(RegisterName[1]);
-            return 0 <= i && i <= 3;
+            return GetLine( Counter.V);
         }
 
-        public bool BaseMtoX()
+        public RPN_Value GetLine(int address)
         {
-            int i = BaseRegisterNames.IndexOf(RegisterName);
-            if (i < 0) return false;
-            if (_parent.XEntry.pushOnEntryRequired) _parent.Memory.PushStack(1);
-            _parent.XEntry.pushOnEntryRequired = true;
-            _parent.Memory.StackValues[0].FromRPNValue( this.MemoryRegisters[i]);
-            _parent.fMode = RPN_Calculator.fMode_Normal;
+            if (!ExtendedMemory.ContainsKey(address)) return new RPN_Value(); // empty object
+            return ExtendedMemory[address];
+        }
+
+        public void SetLine(int address, RPN_Value v)
+        {
+            if (v.isEmpty)
+            {
+                if (ExtendedMemory.ContainsKey(address))
+                    ExtendedMemory.Remove(address);
+                return;
+            }
+            if (!ExtendedMemory.ContainsKey(address))
+            {
+                ExtendedMemory.Add(address, v);
+                return;
+            }
+            ExtendedMemory[address].FromRPNValue( v);
+        }
+
+        public void FromStack( int address)
+        {
+            RPN_Value dest = GetLine(address);
+            dest.FromRPNValue(_parent.Stack.X);
+            SetLine(address, dest);
+        }
+
+        public void ToStack(int address)
+        {
+            RPN_Value src = GetLine(address);
+            RPN_Value dest = _parent.Stack.X;
+            _parent.Stack.StorePreviousValue();
+            _parent.Stack.Push(1);
+            dest.FromRPNValue(src);
+        }
+        
+        public bool LoadLine(string s)
+        {
+            if (!s.StartsWith("M")) return false;
+            if (MCLoadHelper(s)) return true;
+            int number = Convert.ToInt32(s.Substring(1, 3));
+            SetLine( number, new RPN_Value( s.Substring(5).Trim()));
             return true;
         }
 
-        public bool LoopMtoX()
+        public bool Load(StreamReader sr)
         {
-            if (!RegisterName.StartsWith("L")) return false;
-            int i = LoopRegisterNames.IndexOf(RegisterName[1]);
-            if (i < 0) return false;
-            if (_parent.XEntry.pushOnEntryRequired) _parent.Memory.PushStack(1);
-            _parent.XEntry.pushOnEntryRequired = true;
-            _parent.Memory.StackValues[0].asInt = this.LoopRegisters[i];
-            _parent.fMode = RPN_Calculator.fMode_Normal;
-             return true;
-         }
-
-         public bool BaseXtoM()
-         {
-             int i = BaseRegisterNames.IndexOf(RegisterName);
-             if (i < 0) return false;
-             this.MemoryRegisters[i].FromRPNValue(_parent.Memory.StackValues[0]);
-             _parent.fMode = RPN_Calculator.fMode_Normal;
-             return true;
-         }
-
-         public bool LoopXtoM()
-         {
-             if (!RegisterName.StartsWith("L")) return false;
-             int i = LoopRegisterNames.IndexOf(RegisterName[1]);
-             if (i < 0) return false;
-             this.LoopRegisters[i] = (int)(_parent.Memory.StackValues[0].asInt & 0xFFFFFFFF);
-             _parent.fMode = RPN_Calculator.fMode_Normal;
-             return true;
-         }
-
-        public void StorePreviousValue()
-        {
-            PreviousValue.FromRPNValue(StackValues[0]);
+            ExtendedMemory.Clear();
+            while( !sr.EndOfStream)
+            {
+                string s = sr.ReadLine().Trim();
+                if( s.Length == 0 || s.StartsWith("#")) continue;
+                LoadLine(s);
+            }
+            return true;
         }
 
-        public void PopStack(int start)
+        public void Save(StreamWriter sw)
         {
-            for (int i = start; i < StackSize; i++)
-                StackValues[i - 1].FromRPNValue(StackValues[i]);
+            sw.Write("#\n");
+            sw.Write("# Extended Memory:\n");
+            sw.Write("#\n");
+            sw.Write("MC = " + Counter.V.ToString() + "\n");
+            for (int k = 0; k < Counter.MaxValue; k++)
+            {
+                if (!ExtendedMemory.ContainsKey(k)) continue;
+                RPN_Value v = ExtendedMemory[k];
+                if (v.isEmpty) continue;
+                sw.Write(k.ToString("M000: ") + v.ToString() + "\n");
+            }
         }
 
-        public void PushStack(int start)
+        private bool MCLoadHelper(string s)
         {
-            for (int i = StackSize - 1; i >= start; i--)
-                StackValues[i].FromRPNValue(StackValues[i - 1]);
+            if (!s.StartsWith("MC = ")) return false;
+            Counter.Set(Convert.ToInt32(s.Substring(5).Trim()));
+            return true;
         }
     }
 }

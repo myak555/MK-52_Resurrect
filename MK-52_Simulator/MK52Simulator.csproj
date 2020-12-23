@@ -36,13 +36,46 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Functions\RPN_Function_XtoM.cs" />
+    <Compile Include="RPN_Stack.cs" />
+    <Compile Include="RPN_Registers.cs" />
     <Compile Include="RPN_Memory.cs" />
+    <Compile Include="Functions\RPN_Function_Empty.cs" />
+    <Compile Include="RPN_Program.cs" />
+    <Compile Include="Functions\RPN_Function_Comment.cs" />
+    <Compile Include="Functions\RPN_Function_Number.cs" />
+    <Compile Include="Functions\RPN_Function_LblX.cs" />
+    <Compile Include="Functions\RPN_Function_LblZ.cs" />
+    <Compile Include="Functions\RPN_Function_LblT.cs" />
+    <Compile Include="Functions\RPN_Function_LblY.cs" />
+    <Compile Include="Receivers\InputReceiver_AUTO_XM.cs" />
+    <Compile Include="RPN_Button.cs" />
+    <Compile Include="RPN_Counter.cs" />
+    <Compile Include="Displays\Screen_OFF.cs" />
+    <Compile Include="Receivers\InputReceiver_AUTO_MX.cs" />
+    <Compile Include="Receivers\InputReceiver_RUN.cs" />
+    <Compile Include="Receivers\InputReceiver_LIST_K.cs" />
+    <Compile Include="Receivers\InputReceiver_LIST_F.cs" />
+    <Compile Include="Receivers\InputReceiver_LIST_A.cs" />
+    <Compile Include="Receivers\InputReceiver_PROG_K.cs" />
+    <Compile Include="Receivers\InputReceiver_PROG_F.cs" />
+    <Compile Include="Receivers\InputReceiver_PROG_A.cs" />
+    <Compile Include="Receivers\InputReceiver_AUTO_A.cs" />
+    <Compile Include="Receivers\InputReceiver_AUTO_K.cs" />
+    <Compile Include="Receivers\InputReceiver_AUTO_F.cs" />
+    <Compile Include="Receivers\InputReceiver_LIST_N.cs" />
+    <Compile Include="Receivers\InputReceiver_PROG_N.cs" />
+    <Compile Include="Receivers\InputReceiver_OFF.cs" />
+    <Compile Include="Receivers\InputReceiver_AUTO_N.cs" />
+    <Compile Include="Receivers\RPN_InputReceiver.cs" />
+    <Compile Include="Displays\RPN_Screen.cs" />
+    <Compile Include="Displays\Screen_LIST.cs" />
+    <Compile Include="RPN_Display.cs" />
+    <Compile Include="Displays\Screen_AUTO.cs" />
+    <Compile Include="Displays\Screen_PROG.cs" />
+    <Compile Include="Functions\RPN_Function_SUB.cs" />
+    <Compile Include="Functions\RPN_Function_XtoM.cs" />
     <Compile Include="Functions\RPN_Function_MtoX.cs" />
-    <Compile Include="RPN_XEntry.cs" />
-    <Compile Include="DigitButton_Exponent.cs" />
-    <Compile Include="DigitButton_0_to_9.cs" />
-    <Compile Include="FunctionButton_A.cs" />
+    <Compile Include="RPN_Number_Entry.cs" />
     <Compile Include="Functions\RPN_Function_Swap.cs" />
     <Compile Include="Functions\RPN_Function_SQRT.cs" />
     <Compile Include="Functions\RPN_Function_1x.cs" />
@@ -85,18 +118,13 @@
     <Compile Include="Functions\RPN_Function_COS.cs" />
     <Compile Include="Functions\RPN_Function_Neg.cs" />
     <Compile Include="RPN_Value.cs" />
-    <Compile Include="DigitButton_Negative.cs" />
     <Compile Include="Functions\RPN_Function_AND.cs" />
-    <Compile Include="DigitButton_Decimal.cs" />
     <Compile Include="Functions\RPN_Function_OR.cs" />
     <Compile Include="Functions\RPN_Function_Rotate.cs" />
     <Compile Include="Functions\RPN_Function_SIN.cs" />
     <Compile Include="Functions\RPN_Function.cs" />
     <Compile Include="Functions\RPN_Function_pi.cs" />
-    <Compile Include="FunctionButton_M.cs" />
-    <Compile Include="FunctionButton_Cx.cs" />
     <Compile Include="RPN_Calculator.cs" />
-    <Compile Include="Button.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -148,8 +176,6 @@
     <Compile Include="ScreenControl.Designer.cs">
       <DependentUpon>ScreenControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="FunctionButton_F.cs" />
-    <Compile Include="FunctionButton_K.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Documents\Annoyances_Fixed.txt" />
