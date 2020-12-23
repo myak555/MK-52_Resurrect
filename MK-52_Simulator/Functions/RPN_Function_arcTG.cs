@@ -16,14 +16,14 @@ namespace MK52Simulator.Functions
 
         public override void execute()
         {
-            RPN_Value operand1 = _parent.XEntry.LoadEditValue();
+            RPN_Value operand1 = _parent.Stack.X;
             double result = operand1.asReal;
             result = Math.Atan(result);
             if( double.IsNaN(result)){
-                _parent.setArgumentError();
+                _parent.Stack.setArgumentError();
                 return;
             }
-            _parent.Memory.StorePreviousValue();
+            _parent.Stack.StorePreviousValue();
             setAngleByMode( result);
         }
     }

@@ -16,21 +16,41 @@ namespace MK52Simulator.Functions
 
         public override void execute()
         {
-            RPN_Value operand1 = _parent.XEntry.LoadEditValue();
+            RPN_Value operand1 = _parent.Stack.X;
             double result = operand1.asReal;
             if (result > 302.0)
             {
-                _parent.setInfinityError();
+                _parent.Stack.setInfinityError();
                 return;
             }
+            if (ComputeWholePower(operand1)) return;
             result = Math.Pow(10.0, result);
             if (double.IsNaN(result))
             {
-                _parent.setArgumentError();
+                _parent.Stack.setArgumentError();
                 return;
             }
-            _parent.Memory.StorePreviousValue();
-            _parent.Memory.StackValues[0].asReal = result;
+            _parent.Stack.Replace(result);
+        }
+
+        private bool ComputeWholePower(RPN_Value o)
+        {
+            if (!o.isInt) return false;
+            int pwr = Convert.ToInt32( o.asInt);
+            if( pwr > 18) return false;
+            double result = 1.0;
+            while (pwr > 0)
+            {
+                result *= 10.0;
+                pwr--;
+            }
+            while (pwr < 0)
+            {
+                result /= 10.0;
+                pwr++;
+            }
+            _parent.Stack.Replace(result);
+            return true;
         }
     }
 }

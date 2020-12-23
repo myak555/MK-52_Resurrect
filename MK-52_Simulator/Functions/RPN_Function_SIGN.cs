@@ -16,12 +16,12 @@ namespace MK52Simulator.Functions
 
         public override void execute()
         {
-            RPN_Value operand1 = _parent.XEntry.LoadEditValue();
+            RPN_Value operand1 = _parent.Stack.X;
             int s = 0;
             if(operand1.asReal > 0.0) s = 1; 
             if(operand1.asReal < 0.0) s = -1; 
-            _parent.Memory.StorePreviousValue();
-            _parent.Memory.StackValues[0].asInt = s;
+            _parent.Stack.StorePreviousValue();
+            _parent.Stack.X.asInt = s;
         }
     }
 }

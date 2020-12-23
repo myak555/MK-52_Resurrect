@@ -16,18 +16,17 @@ namespace MK52Simulator.Functions
 
         public override void execute()
         {
-            RPN_Value operand1 = _parent.XEntry.LoadEditValue();
+            RPN_Value operand1 = _parent.Stack.X;
             if (processAsInt(operand1)) return;
             double result = getRadiansByMode(operand1);
-            _parent.setTrigWarning(result);
+            _parent.Stack.setTrigWarning(result);
             result = Math.Cos(result);
             if (double.IsNaN(result))
             {
-                _parent.setArgumentError();
+                _parent.Stack.setArgumentError();
                 return;
             }
-            _parent.Memory.StorePreviousValue();
-            _parent.Memory.StackValues[0].asReal = result;
+            _parent.Stack.Replace(result);
         }
 
         private bool processAsInt(RPN_Value o)
@@ -35,8 +34,8 @@ namespace MK52Simulator.Functions
             int[] quadValues = { 1, 0, -1, 0 };
             int quad = getTrigQuadrant( o);
             if (quad < 0) return false;
-            _parent.Memory.StorePreviousValue();
-            _parent.Memory.StackValues[0].asInt = quadValues[quad];
+            _parent.Stack.StorePreviousValue();
+            _parent.Stack.X.asInt = quadValues[quad];
             return true;
         }
     }

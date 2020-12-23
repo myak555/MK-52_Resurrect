@@ -16,30 +16,30 @@ namespace MK52Simulator.Functions
 
         public override void execute()
         {
-            RPN_Value operand1 = _parent.XEntry.LoadEditValue();
-            RPN_Value operand2 = _parent.Memory.StackValues[1];
+            RPN_Value operand1 = _parent.Stack.X;
+            RPN_Value operand2 = _parent.Stack.Y;
             double result1 = operand1.asReal;
             if (result1 <= 0.0)
             {
-                _parent.setInfinityError();
+                _parent.Stack.setInfinityError();
                 return;
             }
             double result2 = operand2.asReal;
             if (result2 <= 0.0)
             {
-                _parent.setArgumentError();
+                _parent.Stack.setArgumentError();
                 return;
             }
             result1 = Math.Log(result1);
             result2 = Math.Log(result2);
             if (double.IsNaN(result1) || double.IsNaN(result1) || result2 == 0.0)
             {
-                _parent.setArgumentError();
+                _parent.Stack.setArgumentError();
                 return;
             }
             //_parent.Memory.popStack(2); For X^Y the original MK52 leaves Y in stack
-            _parent.Memory.StorePreviousValue();
-            _parent.Memory.StackValues[0].asReal = result1/result2;
+            _parent.Stack.StorePreviousValue();
+            _parent.Stack.X.asReal = result1/result2;
         }
     }
 }

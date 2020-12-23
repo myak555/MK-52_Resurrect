@@ -16,7 +16,7 @@ namespace MK52Simulator.Functions
 
         public override void execute()
         {
-            RPN_Value operand1 = _parent.XEntry.LoadEditValue();
+            RPN_Value operand1 = _parent.Stack.X;
             double tmp = operand1.asReal;
             bool negative = false;
             if (tmp < 0)
@@ -26,12 +26,11 @@ namespace MK52Simulator.Functions
             }
             double degrees = Math.Floor(tmp);
             tmp -= degrees;
-            tmp *= 60.0;
             double minutes = tmp * 60.0;
             tmp = degrees + minutes / 100.0;
             if (negative) tmp = -tmp;         
-            _parent.Memory.StorePreviousValue();
-            _parent.Memory.StackValues[0].asReal = tmp;
+            _parent.Stack.StorePreviousValue();
+            _parent.Stack.X.asReal = tmp;
         }
     }
 }

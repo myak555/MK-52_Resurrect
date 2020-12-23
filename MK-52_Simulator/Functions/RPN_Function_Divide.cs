@@ -16,16 +16,7 @@ namespace MK52Simulator.Functions
 
         public override void execute()
         {
-            RPN_Value operand1 = _parent.XEntry.LoadEditValue();
-            if( operand1.asReal == 0.0)
-            {
-                _parent.setInfinityError();
-                return;
-            }
-            RPN_Value result = RPN_Value.Divide(_parent.Memory.StackValues[1], operand1); 
-            _parent.Memory.PopStack(2);
-            _parent.Memory.StorePreviousValue();
-            _parent.Memory.StackValues[0].FromRPNValue(result);
+            _parent.Stack.Divide();
         }
     }
 }

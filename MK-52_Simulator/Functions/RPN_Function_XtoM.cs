@@ -14,11 +14,13 @@ namespace MK52Simulator.Functions
             Description = "Puts value into memory";
         }
 
-        public override void execute()
+        public override bool executeProgram(string code)
         {
-            _parent.XEntry.LoadEditValue();
-            _parent.Memory.ClearName();
-            _parent.fMode = RPN_Calculator.fMode_XM;
+            if (!code.StartsWith(Keyword)) return false;
+            code = code.Substring(Keyword.Length).Trim();
+            _parent.Stack.SetMemoryFromStack(code);
+            _parent.Program.Counter.Increment();
+            return true;
         }
     }
 }

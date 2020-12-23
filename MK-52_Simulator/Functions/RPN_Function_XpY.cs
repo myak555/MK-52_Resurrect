@@ -16,18 +16,19 @@ namespace MK52Simulator.Functions
 
         public override void execute()
         {
-            RPN_Value operand1 = _parent.XEntry.LoadEditValue();
-            RPN_Value operand2 = _parent.Memory.StackValues[1];
+            RPN_Value operand1 = _parent.Stack.X;
+            RPN_Value operand2 = _parent.Stack.Y;
             if (operand1.asReal == 0.0 && operand2.asReal < 0.0)
             {
-                _parent.setInfinityError();
+                _parent.Stack.setInfinityError();
                 return;
             }
             if (operand1.asReal < 0.0 && !operand2.isInt)
             {
-                _parent.setArgumentError();
+                _parent.Stack.setArgumentError();
                 return;
             }
+            if (ComputeWholePower(operand1, operand2)) return;
             double result = operand1.asReal;
             if (result <= 0.0 && operand2.isInt)
             {
@@ -38,12 +39,32 @@ namespace MK52Simulator.Functions
                 result = Math.Pow(result, operand2.asReal);
             if (double.IsNaN(result))
             {
-                _parent.setArgumentError();
+                _parent.Stack.setArgumentError();
                 return;
             }
             //_parent.Memory.popStack(2); // The original MK52 leaves value in stack
-            _parent.Memory.StorePreviousValue();
-            _parent.Memory.StackValues[0].asReal = result;
+            _parent.Stack.StorePreviousValue();
+            _parent.Stack.X.asReal = result;
+        }
+
+        private bool ComputeWholePower(RPN_Value o1, RPN_Value o2)
+        {
+            if (!o2.isInt) return false;
+            int pwr = Convert.ToInt32(o2.asInt);
+            if (pwr > 30) return false;
+            double result = 1.0;
+            while (pwr > 0)
+            {
+                result *= o1.asReal;
+                pwr--;
+            }
+            while (pwr < 0)
+            {
+                result /= o1.asReal;
+                pwr++;
+            }
+            _parent.Stack.Replace(result);
+            return true;
         }
     }
 }

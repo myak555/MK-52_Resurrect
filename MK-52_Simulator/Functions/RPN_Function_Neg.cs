@@ -16,8 +16,8 @@ namespace MK52Simulator.Functions
 
         public override void execute()
         {
-            _parent.Memory.StorePreviousValue();
-            _parent.Memory.StackValues[0].Negate();
+            _parent.Stack.StorePreviousValue();
+            _parent.Stack.X.Negate();
         }
     }
 }

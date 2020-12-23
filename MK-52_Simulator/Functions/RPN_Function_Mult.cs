@@ -16,10 +16,7 @@ namespace MK52Simulator.Functions
 
         public override void execute()
         {
-            RPN_Value result = RPN_Value.Multiply( _parent.Memory.StackValues[1], _parent.XEntry.LoadEditValue()); 
-            _parent.Memory.PopStack(2);
-            _parent.Memory.StorePreviousValue();
-            _parent.Memory.StackValues[0].FromRPNValue( result);
+            _parent.Stack.Multiply();
         }
     }
 }

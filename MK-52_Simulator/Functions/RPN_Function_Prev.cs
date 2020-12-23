@@ -16,11 +16,7 @@ namespace MK52Simulator.Functions
 
         public override void execute()
         {
-            _parent.XEntry.LoadEditValue();
-            RPN_Value operand1 = new RPN_Value( _parent.Memory.PreviousValue);
-            _parent.Memory.StorePreviousValue();
-            _parent.Memory.PushStack(1);
-            _parent.Memory.StackValues[0].FromRPNValue(operand1);
+            _parent.Stack.RecoverPreviousValue();
         }
     }
 }

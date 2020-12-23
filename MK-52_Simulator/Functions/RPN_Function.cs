@@ -20,6 +20,14 @@ namespace MK52Simulator.Functions
         {
         }
 
+        public virtual bool executeProgram( string code)
+        {
+            if (!code.StartsWith(Keyword)) return false;
+            execute();
+            _parent.Program.Counter.Increment();
+            return true;
+        }
+
         protected static int getTrigQuadrant(RPN_Value v)
         {
             switch (_parent.dMode)
@@ -61,7 +69,7 @@ namespace MK52Simulator.Functions
 
         protected static void setAngleByMode( double result)
         {
-            RPN_Value v = _parent.Memory.StackValues[0];
+            RPN_Value v = _parent.Stack.X;
             switch (_parent.dMode)
             {
                 case RPN_Calculator.dMode_Radian:

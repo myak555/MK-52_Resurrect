@@ -16,11 +16,8 @@ namespace MK52Simulator.Functions
 
         public override void execute()
         {
-            RPN_Value operand1 = _parent.XEntry.LoadEditValue();
-            double result = operand1.asReal;
-            result = Math.Truncate(result);
-            _parent.Memory.StorePreviousValue();
-            _parent.Memory.StackValues[0].asReal = result;
+            double result = _parent.Stack.X.asReal;
+            _parent.Stack.Replace(Math.Truncate(result));
         }
     }
 }

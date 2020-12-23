@@ -15,12 +15,8 @@ namespace MK52Simulator.Functions
 
         public override void execute()
         {
-            _parent.Memory.StorePreviousValue();
-            _parent.XEntry.LoadEditValue();
-
-            // This button has special condition on exit - stack is pushed once
-            _parent.Memory.PushStack(1);
-            _parent.XEntry.pushOnEntryRequired = false;
+            _parent.Stack.StorePreviousValue();
+            _parent.Stack.Push();
         }
     }
 }

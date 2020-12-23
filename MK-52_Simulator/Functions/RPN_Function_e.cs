@@ -16,10 +16,7 @@ namespace MK52Simulator.Functions
 
         public override void execute()
         {
-            _parent.XEntry.LoadEditValue();
-            _parent.Memory.StorePreviousValue();
-            _parent.Memory.PushStack(1);
-            _parent.Memory.StackValues[0].asReal = Math.E;
+            _parent.Stack.Push(Math.E);
         }
     }
 }

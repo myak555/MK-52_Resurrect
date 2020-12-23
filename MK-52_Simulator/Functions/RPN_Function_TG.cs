@@ -16,18 +16,17 @@ namespace MK52Simulator.Functions
 
         public override void execute()
         {
-            RPN_Value operand1 = _parent.XEntry.LoadEditValue();
+            RPN_Value operand1 = _parent.Stack.X;
             if (processAsInt(operand1)) return;
             double result = getRadiansByMode(operand1);
-            _parent.setTrigWarning(result);
+            _parent.Stack.setTrigWarning(result);
             result = Math.Tan(result);
             if (double.IsNaN(result))
             {
-                _parent.setArgumentError();
+                _parent.Stack.setArgumentError();
                 return;
             }
-            _parent.Memory.StorePreviousValue();
-            setAngleByMode( result);
+            _parent.Stack.Replace( result);
         }
 
         private bool processAsInt(RPN_Value o)
@@ -37,11 +36,11 @@ namespace MK52Simulator.Functions
             if (oct < 0) return false;
             if (oct == 2)
             {
-                _parent.setInfinityError();
+                _parent.Stack.setInfinityError();
                 return true;
             }
-            _parent.Memory.StorePreviousValue();
-            _parent.Memory.StackValues[0].asInt = octValues[oct];
+            _parent.Stack.StorePreviousValue();
+            _parent.Stack.X.asInt = octValues[oct];
             return true;
         }
     }
