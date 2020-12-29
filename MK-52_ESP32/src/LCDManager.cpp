@@ -1,0 +1,249 @@
+//////////////////////////////////////////////////////////
+//
+//  MK-52 RESURRECT
+//  Copyright (c) 2020 Mike Yakimov.  All rights reserved.
+//  See main file for the license
+//
+//////////////////////////////////////////////////////////
+
+#include "LCDManager.hpp"
+
+#include "../hardware/Splash_Screen.h"
+#include "../hardware/SevenSegment.h"
+#include "../hardware/Nixedsys_1251.h"
+#include "../hardware/Status_Template.h"
+
+//#define __DEBUG
+
+static TFT_eSPI tft = TFT_eSPI();  // Invoke library, pins defined in User_Setup.h
+static const uint16_t _statusLocations[] = { 15, 77, 167, 231, 279};
+static const uint8_t _statusLengths[] = { 1, 4, 4, 3, 3};
+static const uint8_t _statusOffsets[] = { 0, 2, 7, 12, 16};
+static const char _calcCharacters[] = "0123456789ABCDEF-+.:";
+static const int16_t _calcRegisterLocations[] = {210,155,100,45};
+static const int16_t _calcLabelLocations[] = {188,133,78,23};
+
+//
+// Inits LCD display
+//
+unsigned long LCDManager::init() {
+
+  // Set timer and attach to the led
+  pinMode( LCD_LED_PIN, OUTPUT);
+  ledcSetup(LCD_LEDC_CHANNEL_0, LCD_LEDC_BASE_FREQ, LCD_LEDC_TIMER_13_BIT);
+  ledcAttachPin(LCD_LED_PIN, LCD_LEDC_CHANNEL_0);
+  _ledcAnalogWrite(LCD_LEDC_CHANNEL_0, 0); // Screen PWM off initially
+
+  //perform init sequence and show splash
+  tft.init();
+  tft.setRotation(3);
+  tft.fillScreen( bgcolor);
+  tft.drawBitmap( 95, 85, Simple_Icon_128x60px, 128, 60, fgcolor, bgcolor);
+  _dimLED( 0, ledBrightness, 60); // lit slowly
+
+  long t = millis();
+
+  // The first row is split:
+  // 2 bytes for smode
+  // 5 bytes each for pc and mc
+  // 3 bytes each for dmode and fmode
+  _buffer = (char *)malloc( SCREEN_COLS *  SCREEN_ROWS);
+  memset( _buffer, 0, SCREEN_COLS *  SCREEN_ROWS );
+  char *ptr = _buffer;
+  for( uint8_t i=0; i<SCREEN_ROWS; i++){
+    _lines[i] = ptr;
+    ptr += SCREEN_COLS;
+  }
+
+  // return  keepAwake();
+  return millis(); 
+}
+
+//
+// Other inits are hidden behind the splash screen
+//
+void LCDManager::waitForEndSplash( unsigned long start, bool cls) {
+  while( millis()-start < SCR_SPLASH) delay(50);
+  //memset( _buffer, _SP_, SCR_SIZE);
+  //memset( lineInversed, false, SCR_ROWS);
+  //_ledPWM = (int64_t *)_vars->findDataPtr( _LCD_lcdPWM);
+  //if( _ledPWM) ledBrightness = (byte)( *_ledPWM & 0xFF);
+  if( cls) clearScreen(true);
+  //keepAwake();
+}
+
+void LCDManager::outputStatus( char *smode, char *pc, char *mc, char *dmode, char *fmode){
+  tft.drawBitmap( 0, 0, StatusTemplate_326x20px, 320, 20, bgcolor, fgcolor);
+  memset( _buffer, 0, SCREEN_COLS);
+  _redrawStatusPosition( smode, 0);
+  outputCharString( 51, 0, "PC", bgcolor, fgcolor);
+  _redrawStatusPosition( pc, 1);
+  outputCharString( 141, 0, "MC", bgcolor, fgcolor);
+  _redrawStatusPosition( mc, 2);
+  _redrawStatusPosition( dmode, 3);
+  _redrawStatusPosition( fmode, 4);
+}
+
+void LCDManager::updateStatus( char *smode, char *pc, char *mc, char *dmode, char *fmode){
+  _redrawStatusPosition( smode, 0);
+  _redrawStatusPosition( pc, 1);
+  _redrawStatusPosition( mc, 2);
+  _redrawStatusPosition( dmode, 3);
+  _redrawStatusPosition( fmode, 4);
+}
+
+void LCDManager::_redrawStatusPosition( char *message, uint8_t pos){
+  char *ptr = _buffer + _statusOffsets[pos];
+  if( strcmp(message, ptr) == 0) return; // strings identical
+  uint8_t l = _statusLengths[pos];
+  strncpy( ptr, message, l);
+  ptr[l] = 0; // safety zero
+  outputCharString( _statusLocations[pos], 0, ptr, bgcolor, fgcolor);
+}
+
+void LCDManager::outputCalcRegister( uint8_t row, char *text){
+  if( row > 3) return;
+  char *line = _lines[ (row<<1) + 1];
+  memset( line, 0, SCREEN_COLS);
+  _redrawCalcRegister( row, line, text);
+}
+
+void LCDManager::updateCalcRegister( uint8_t row, char *text){
+  if( row > 3) return;
+  _redrawCalcRegister( row, _lines[ (row<<1) + 1], text);
+}
+
+void LCDManager::_redrawCalcRegister( uint8_t row, char *line, char* text){
+  if( strcmp(line, text) == 0) return; // strings identical
+  strncpy( line, text, 19);
+  line[19] = 0; // safety zero
+  int l = strlen(line);
+  int16_t x = 12;
+  int16_t y = _calcRegisterLocations[row];
+  for( uint8_t i=0; i<19; i++, x+=16){
+    if( i<l) outputDigit( x, y, line[i], fgcolor, bgcolor);
+    else outputDigit( x, y, '+', bgcolor, bgcolor);
+  }
+}
+
+void LCDManager::outputCalcLabel( uint8_t row, char *text){
+  if( row > 3) return;
+  char *line = _lines[ (row<<1) + 2];
+  memset( line, 0, SCREEN_COLS);
+  _redrawCalcLabel( row, line, text);
+}
+
+void LCDManager::updateCalcLabel( uint8_t row, char *text){
+  if( row > 3) return;
+  _redrawCalcLabel( row, _lines[ (row<<1) + 2], text);
+}
+
+void LCDManager::_redrawCalcLabel( uint8_t row, char *line, char* text){
+  if( strcmp(line, text) == 0) return; // strings identical
+  strncpy( line, text, SCREEN_COLS);
+  line[SCREEN_COLS] = 0; // safety zero
+  int l = strlen(line);
+  int16_t x = 4;
+  int16_t y = _calcLabelLocations[row];
+  for( uint8_t i=0; i<SCREEN_COLS; i++, x+=11){
+    if( i<l) outputChar( x, y, line[i], fgcolor, bgcolor);
+    else outputChar( x, y, ' ', bgcolor, bgcolor);
+  }
+}
+
+void LCDManager::outputTerminalLine( uint8_t row, char *text){
+  if( row > 10) return;
+  char *line = _lines[ row+1];
+  memset( line, 0, SCREEN_COLS);
+  _redrawTerminalLine( row, line, text);
+}
+
+void LCDManager::updateTerminalLine( uint8_t row, char *text){
+  if( row > 10) return;
+  _redrawTerminalLine( row, _lines[ row+1], text);
+}
+
+void LCDManager::_redrawTerminalLine( uint8_t row, char *line, char* text){
+  if( strcmp(line, text) == 0) return; // strings identical
+  strncpy( line, text, SCREEN_COLS);
+  line[SCREEN_COLS] = 0; // safety zero
+  int l = strlen(line);
+  int16_t x = 1;
+  int16_t y = (row+1) * 20;
+  for( uint8_t i=0; i<SCREEN_COLS; i++, x+=11){
+    if( i<l) outputChar( x, y, line[i], fgcolor, bgcolor);
+    else outputChar( x, y, ' ', bgcolor, bgcolor);
+  }
+}
+
+void LCDManager::clearScreen( bool dim){
+  if( dim) _dimLED( ledBrightness, 0, 5); // dim before cleaning
+  tft.fillScreen( bgcolor);
+  if( dim) _dimLED( 0, ledBrightness, 5);
+}
+
+void LCDManager::outputDigitString( int16_t x, int16_t y, char *src, uint16_t fg, uint16_t bg){
+  int8_t len = strlen( src);
+  for( int i=0; i<len; i++){
+    outputDigit( x, y, *src++, fg, bg);
+    x+=16;
+  }
+}
+
+void LCDManager::outputDigit( int16_t x, int16_t y, char d, uint16_t fg, uint16_t bg){
+  char *ptr = strchr( _calcCharacters, d);
+  if( ptr == NULL){
+    tft.drawBitmap( x, y, Seven_segment_16x27px, 16, 30, bg, bg);
+    return;     
+  }
+  const uint8_t *bmp = Seven_segment_16x27px + 54 * (int16_t)( ptr-_calcCharacters);
+  tft.drawBitmap( x, y, bmp, 16, 1, bg, bg);
+  tft.drawBitmap( x, y+1, bmp, 16, 27, fg, bg);
+  tft.drawBitmap( x, y+28, bmp, 16, 2, bg, bg);
+}
+
+void LCDManager::outputCharString( int16_t x, int16_t y, char *src, uint16_t fg, uint16_t bg){
+  int8_t len = strlen( src);
+  for( int i=0; i<len; i++){
+    uint16_t b = (uint16_t)(*src++);  
+    outputChar( x, y, b, fg, bg);
+    x+=11;
+  }
+}
+
+void LCDManager::outputChar( int16_t x, int16_t y, uint8_t c, uint16_t fg, uint16_t bg){
+  uint16_t shift = (uint16_t)c;
+  const uint8_t *bmp = Nixedsys_12x20 + (shift<<5);
+  tft.drawBitmap( x, y, bmp, 11, 3, bg, bg);
+  tft.drawBitmap( x, y+3, bmp, 11, 16, fg, bg);
+  tft.drawBitmap( x, y+19, bmp, 11, 1, bg, bg);
+}
+
+//
+// Lights or dims LED slowly in steps of 16/256 to the preset level.
+// The larger the step in ms, the slower the dim.
+//
+void LCDManager::_dimLED( byte start_duty, byte stop_duty, byte step){
+  int16_t duty = start_duty;
+  while( true){
+    if( duty == stop_duty) return;
+    if(duty < stop_duty){
+      duty += 16;
+      if( duty > stop_duty) duty = stop_duty; 
+    }
+    else{
+      duty -= 16;
+      if( duty < stop_duty) duty = stop_duty;       
+    }
+    _ledcAnalogWrite( LCD_LEDC_CHANNEL_0, (byte)duty);
+    if( duty != stop_duty) delay(step);      
+    }
+}
+
+//
+// Normalizes LED PWM to 256 levels.
+//
+void LCDManager::_ledcAnalogWrite(uint8_t channel, uint8_t value) {
+  uint32_t duty = (LCD_LEDC_MAX_DUTY * value) >> 8;
+  ledcWrite(channel, duty);
+}
