@@ -36,12 +36,18 @@ namespace MK52Simulator.Displays
             sb.Append(_parent.Memory.Counter.ToString());
             sb.Append( "] ");
             sb.Append(dModeLabels[_parent.dMode]);
+            sb.Append("[");
+            if( _parent.Memory.isAddressEntry || _parent.Registers.isAddressEntry)
+                sb.Append("MEM");
+            else
+                sb.Append(_parent.CurrentReceiver.DisplayName);
+            sb.Append("] ");
             screenValues[0] = sb.ToString();
             base.makeStatus(screenValues);
         }
         private void makeBody(string[] screenValues)
         {
-            _parent.Stack.ToStrings( screenValues);
+            _parent.CalcStack.ToStrings( screenValues);
             screenValues[1] = " " + screenValues[1];
             screenValues[2] = screenValues[2].PadLeft(RPN_Display.ScreenWidth);
             screenValues[3] = " " + screenValues[3];

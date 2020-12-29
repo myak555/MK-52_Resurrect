@@ -1,0 +1,80 @@
+#
+# MK-52 implemented functions 24-Dec-2020 13:25:31
+#
+Empty               	Ignores an empty line
+Comment             	Ignores the program line
+Number              	Sends a number into stack X
+10^X                	Computes power of 10
+1/X                 	Computes inverse of X
+|X|                 	Computes modulus X
+AND                 	Computes logical AND between X and Y (as integers)
+arcCOS              	Computes arccosine
+arcSIN              	Computes arcsine
+arcTG               	Computes arctangent
+COS                 	Computes cosine
+Cx                  	Erases X register
+DEG                 	Set trig mode to Degrees
+/                   	Divide Y by X
+e                   	Puts E in stack
+Enter               	Enters value into the stack
+EXP                 	Computes exponent
+{X}                 	Computes fractional part
+<-DM                	Converts DD.MMmmm into DD.dddd
+<-DMS               	Converts DD.MMSSss into DD.dddd
+IN->                	Converts mm into inches
+<-RAD               	Converts radian into degrees
+GOTO                	Jumps to program line unconditonally
+GOSUB               	Calls a subroutine at given address
+GRAD                	Set trig mode to Grads
+IFNOT X<0 GOTO      	Jumps to program line with conditon
+IFNOT X<Y GOTO      	Jumps to program line with conditon
+IFNOT X==0 GOTO     	Jumps to program line with conditon
+IFNOT X==Y GOTO     	Jumps to program line with conditon
+IFNOT X>=0 GOTO     	Jumps to program line with conditon
+IFNOT X>=Y GOTO     	Jumps to program line with conditon
+IFNOT X!=0 GOTO     	Jumps to program line with conditon
+IFNOT X!=Y GOTO     	Jumps to program line with conditon
+[X]                 	Computes whole part
+KM->X               	Indirect value from memory via a register
+KX->M               	Puts value into memory by an address in register
+LT>                 	Puts value into T Label
+LX>                 	Puts value into X Label
+LY>                 	Puts value into Y Label
+LZ>                 	Puts value into Z Label
+LG                  	Computes logarithm base 10
+LN                  	Computes natural logarithm
+LOG                 	Computes logarithm X base Y (leaves Y in stack)
+WHILE L0>0 GOTO     	Loops to program line by decrementing register
+WHILE L1>0 GOTO     	Loops to program line by decrementing register
+WHILE L2>0 GOTO     	Loops to program line by decrementing register
+WHILE L3>0 GOTO     	Loops to program line by decrementing register
+MAX                 	Leaves maximum between X and Y
+-                   	Subtract X from Y
+M->X                	Gets value from memory
+*                   	Multiply X and Y
+/-/                 	Negates value
+NOP                 	Does nothing
+NOT                 	Computes logical AND between X and Y (as integers)
+OR                  	Computes logical OR between X and Y (as integers)
+pi                  	Puts PI in stack
++                   	Add X and Y
+Bx                  	Recovers the previous value
+RAD                 	Set trig mode to Radians
+RAND                	Computes pseudo-random value
+RETURN              	Returns from a subroutine
+Rotate              	Rotates stack (X to T)
+SEED                	Sets seed for the pseudo-random generator
+SIGN                	Computes sign (-1 for negative, 1 for positive)
+SIN                 	Computes sine
+SQRT                	Computes square root of X
+STOP                	Stops a program
+Swap                	Swaps X and Y
+TG                  	Computes tangent
+DM->                	Converts DD.dddd into DD.MMmmm
+DMS->               	Converts DD.dddd into DD.MMSS
+<-IN                	Converts inches into mm
+RAD->               	Converts degrees into radian
+X^2                 	Computes X squared
+XOR                 	Computes logical XOR between X and Y (as integers)
+X^Y                 	Computes X power Y (leaves Y in stack)
+X->M                	Puts value into memory

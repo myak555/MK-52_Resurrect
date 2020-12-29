@@ -29,7 +29,9 @@ namespace MK52Simulator.Displays
         {
             StringBuilder sb = new StringBuilder("[");
             sb.Append( _parent.Program.Counter.ToString());
-            sb.Append("] ");
+            sb.Append("] [");
+            sb.Append(_parent.CurrentReceiver.DisplayName);
+            sb.Append("]");
             screenValues[0] = sb.ToString();
             base.makeStatus(screenValues);
         }
@@ -46,7 +48,7 @@ namespace MK52Simulator.Displays
                 sb.Append((i == 0) ? "> " : "  ");
                 //sb.Append((j == 8 && _parent.X_Entry.Mode != RPN_Number_Entry.Mode_Off) ?
                 //    _parent.X_Entry.ToString() :
-                //    _parent.Memory.GetLine(dl).ToString().PadLeft(RPN_Display.ScreenWidth-5));
+                sb.Append(_parent.Memory.GetLine(dl).ToString().PadLeft(RPN_Display.ScreenWidth - 5));
                 screenValues[j] = sb.ToString();
             }
         }
