@@ -13,7 +13,7 @@ namespace MK52Simulator.Receivers
     {
         public string Moniker = "";
         public RPN_Screen Display = null;
-        public string DisplayName = "     ";
+        public string DisplayName = "   ";
 
         protected RPN_Calculator _parent;
         protected string _partial = "";
@@ -24,9 +24,9 @@ namespace MK52Simulator.Receivers
             Display = display;
         }
 
-        public virtual bool onButton(RPN_Button button)
+        public virtual void onButton(RPN_Button button)
         {
-            return false;
+            return;
         }
 
         public virtual void onSet()

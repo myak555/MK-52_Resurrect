@@ -7,7 +7,7 @@ using MK52Simulator.Displays;
 namespace MK52Simulator.Receivers
 {
     //
-    // Implements a generic empty receiver
+    // Implements a generic empty receiver for OFF mode - switching on only by Cx button
     //
     public class InputReceiver_OFF: RPN_InputReceiver
     {
@@ -19,11 +19,11 @@ namespace MK52Simulator.Receivers
             Moniker = "OFF";
         }
 
-        public override bool onButton(RPN_Button button)
+        public override void onButton(RPN_Button button)
         {
-            if (button.Moniker != "Cx") return false;
+            if (button.Moniker != "Cx") return;
             _parent.setReceiver(_previousReceiver);
-            return true;
+            return;
         }
 
         public override void onSet()

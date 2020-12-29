@@ -7,7 +7,7 @@ using MK52Simulator.Displays;
 namespace MK52Simulator.Receivers
 {
     //
-    // Implements a generic empty receiver
+    // Implements a receiver for F-modified buttons
     //
     public class InputReceiver_AUTO_F: RPN_InputReceiver
     {
@@ -15,23 +15,23 @@ namespace MK52Simulator.Receivers
             base( parent, display)
         {
             Moniker = "AUTO_F";
-            DisplayName = "  F  ";
+            DisplayName = " F ";
         }
 
-        public override bool onButton(RPN_Button button)
+        public override void onButton(RPN_Button button)
         {
             switch (button.Moniker)
             {
                 // Column 0
                 case "Func K":
                     _parent.setReceiver("AUTO_K");
-                    return true;
+                    return;
                 case "Func A":
                     _parent.setReceiver("AUTO_A");
-                    return true;
+                    return;
                 case "Mode":
                     _parent.SwapDegreeMode();
-                    return true;
+                    return;
 
                 // Column 1
                 // Does nothing
@@ -43,90 +43,90 @@ namespace MK52Simulator.Receivers
                 case "7":
                     _parent.executeFunction("SIN");
                     _parent.setReceiver("AUTO_N");
-                    return true;
+                    return;
                 case "4":
                     _parent.executeFunction("arcSIN");
                     _parent.setReceiver("AUTO_N");
-                    return true;
+                    return;
                 case "1":
                     _parent.executeFunction("EXP");
                     _parent.setReceiver("AUTO_N");
-                    return true;
+                    return;
                 case "0":
                     _parent.executeFunction("10^X");
                     _parent.setReceiver("AUTO_N");
-                    return true;
+                    return;
 
                 // Column 4
                 case "8":
                     _parent.executeFunction("COS");
                     _parent.setReceiver("AUTO_N");
-                    return true;
+                    return;
                 case "5":
                     _parent.executeFunction("arcCOS");
                     _parent.setReceiver("AUTO_N");
-                    return true;
+                    return;
                 case "2":
                     _parent.executeFunction("LG");
                     _parent.setReceiver("AUTO_N");
-                    return true;
+                    return;
                 case ".":
                     _parent.executeFunction("Rotate");
                     _parent.setReceiver("AUTO_N");
-                    return true;
+                    return;
 
                 // Column 5
                 case "9":
                     _parent.executeFunction("TG");
                     _parent.setReceiver("AUTO_N");
-                    return true;
+                    return;
                 case "6":
                     _parent.executeFunction("arcTG");
                     _parent.setReceiver("AUTO_N");
-                    return true;
+                    return;
                 case "3":
                     _parent.executeFunction("LN");
                     _parent.setReceiver("AUTO_N");
-                    return true;
+                    return;
                 case "/-/":
                     _parent.setReceiver("AUTO_N");
-                    return true;
+                    return;
 
                 // Column 6
                 case "-":
                     _parent.executeFunction("SQRT");
                     _parent.setReceiver("AUTO_N");
-                    return true;
+                    return;
                 case "+":
                     _parent.executeFunction("pi");
                     _parent.setReceiver("AUTO_N");
-                    return true;
+                    return;
                 case "Swap":
                     _parent.executeFunction("X^Y");
                     _parent.setReceiver("AUTO_N");
-                    return true;
+                    return;
                 case "EE":
                     _parent.setReceiver("PROG_N");
-                    return true;
+                    return;
 
                 // Column 7
                 case "/":
                     _parent.executeFunction("1/X");
                     _parent.setReceiver("AUTO_N");
-                    return true;
+                    return;
                 case "*":
                     _parent.executeFunction("X^2");
                     _parent.setReceiver("AUTO_N");
-                    return true;
+                    return;
                 case "Enter":
                     _parent.executeFunction("Bx");
                     _parent.setReceiver("AUTO_N");
-                    return true;
+                    return;
                 case "Cx":
                     _parent.setReceiver("AUTO_N");
-                    return true;
+                    return;
                 default:
-                    return false;
+                    return;
             }                
         }
     }

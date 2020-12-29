@@ -7,7 +7,7 @@ using MK52Simulator.Displays;
 namespace MK52Simulator.Receivers
 {
     //
-    // Implements a generic empty receiver
+    // Implements a receiver for F-modified list
     //
     public class InputReceiver_LIST_F: RPN_InputReceiver
     {
@@ -16,30 +16,30 @@ namespace MK52Simulator.Receivers
             base( parent, display)
         {
             Moniker = "LIST_F";
-            DisplayName = "  F  ";
+            DisplayName = " F ";
         }
 
-        public override bool onButton(RPN_Button button)
+        public override void onButton(RPN_Button button)
         {
             switch (button.Moniker)
             {
                 case "Func K":
                     _parent.setReceiver("LIST_K");
-                    return true;
+                    return;
                 case "Func A":
                     _parent.setReceiver("LIST_A");
-                    return true;
+                    return;
                 case "/-/":
                     _parent.setReceiver("AUTO_N");
-                    return true;
+                    return;
                 case "EE":
                     _parent.setReceiver("PORG_N");
-                    return true;
+                    return;
                 case "Cx":
                     _parent.setReceiver("LIST_N");
-                    return true;
+                    return;
                 default:
-                    return false;
+                    return;
             }                
         }
     }

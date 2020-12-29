@@ -7,7 +7,7 @@ using MK52Simulator.Displays;
 namespace MK52Simulator.Receivers
 {
     //
-    // Implements a generic empty receiver
+    // Implements a receiver for A-modified buttons
     //
     public class InputReceiver_AUTO_A: RPN_InputReceiver
     {
@@ -15,50 +15,50 @@ namespace MK52Simulator.Receivers
             base( parent, display)
         {
             Moniker = "AUTO_A";
-            DisplayName = "  A  ";
+            DisplayName = " A ";
         }
 
-        public override bool onButton(RPN_Button button)
+        public override void onButton(RPN_Button button)
         {
             if (_parent.Memory.isAddressEntry)
             {
                 _parent.Memory.AddDigitToAddress(button.Moniker);
-                return true;
+                return;
             }
             switch (button.Moniker)
             {
                 // Column 0
                 case "Func F":
                     _parent.setReceiver("AUTO_F");
-                    return true;
+                    return;
                 case "Func K":
                     _parent.setReceiver("AUTO_K");
-                    return true;
+                    return;
                 case "Mode":
                     _parent.SwapDegreeMode();
-                    return true;
+                    return;
 
                 // Column 1
                 case "->":
                     _parent.Memory.Counter.Increment();
-                    return true;
+                    return;
                 case "<-":
                     _parent.Memory.Counter.Decrement();
-                    return true;
+                    return;
                 case "B/O":
                     _parent.Memory.Counter.Set(0);
-                    return true;
+                    return;
 
                 // Column 2
                 case "M->X":
                     _parent.Memory.ActivateEntry( RPN_Memory.MemoryToStack);
-                    return true;
+                    return;
                 case "X->M":
                     _parent.Memory.ActivateEntry(RPN_Memory.StackToMemory);
-                    return true;
+                    return;
                 case "GOTO":
                     _parent.Memory.Counter.ActivateEntry();
-                    return true;
+                    return;
 
                 // Column 3
                 // Does nothing
@@ -70,34 +70,37 @@ namespace MK52Simulator.Receivers
                 case "6":
                     _parent.executeFunction("<-RAD");
                     _parent.setReceiver("AUTO_N");
-                    return true;
+                    return;
                 case "3":
                     _parent.executeFunction("<-IN");
                     _parent.setReceiver("AUTO_N");
-                    return true;
+                    return;
 
                 // Column 6
                 case "+":
                     _parent.executeFunction("RAD->");
                     _parent.setReceiver("AUTO_N");
-                    return true;
+                    return;
                 case "Swap":
                     _parent.executeFunction("IN->");
                     _parent.setReceiver("AUTO_N");
-                    return true;
+                    return;
+                case "EE":
+                    _parent.setReceiver("LIST_N");
+                    return;
 
                 // Column 7
                 case "Enter":
                     _parent.executeFunction("SEED");
                     _parent.setReceiver("AUTO_N");
-                    return true;
+                    return;
                 case "Cx":
-                    _parent.Stack.CompleteEntry();
+                    _parent.CalcStack.CompleteEntry();
                     _parent.setReceiver("AUTO_N");
                     _parent.Shutdown();
-                    return true;
+                    return;
                 default:
-                    return false;
+                    return;
             }                
         }
     }

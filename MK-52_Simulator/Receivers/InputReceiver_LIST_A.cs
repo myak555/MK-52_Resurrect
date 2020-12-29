@@ -16,42 +16,42 @@ namespace MK52Simulator.Receivers
             base( parent, display)
         {
             Moniker = "LIST_A";
-            DisplayName = "  A  ";
+            DisplayName = " A ";
         }
 
-        public override bool onButton(RPN_Button button)
+        public override void onButton(RPN_Button button)
         {
             switch (button.Moniker)
             {
                 // Column 0
                 case "Func F":
                     _parent.setReceiver("LIST_F");
-                    return true;
+                    return;
                 case "Func K":
                     _parent.setReceiver("LIST_K");
-                    return true;
+                    return;
 
                 // Column 1
                 case "->":
                     _parent.Program.Counter.Increment();
-                    return true;
+                    return;
                 case "<-":
                     _parent.Program.Counter.Decrement();
-                    return true;
+                    return;
                 case "B/O":
                     _parent.Program.Counter.Set(0);
-                    return true;
+                    return;
 
                 case "EE":
                     _parent.setReceiver("LIST_N");
-                    return true;
+                    return;
 
                 case "Cx":
                     _parent.setReceiver("LIST_N");
                     _parent.Shutdown();
-                    return true;
+                    return;
                 default:
-                    return false;
+                    return;
             }                
         }
     }

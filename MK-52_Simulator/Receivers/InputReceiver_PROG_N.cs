@@ -17,35 +17,35 @@ namespace MK52Simulator.Receivers
             Moniker = "PROG_N";
         }
 
-        public override bool onButton(RPN_Button button)
+        public override void onButton(RPN_Button button)
         {
             switch (button.Moniker)
             {
                 // Column 0
                 case "Func F":
                     _parent.setReceiver("PROG_F");
-                    return true;
+                    return;
                 case "Func K":
                     _parent.setReceiver("PROG_K");
-                    return true;
+                    return;
                 case "Func A":
                     _parent.setReceiver("PROG_A");
-                    return true;
+                    return;
 
                 // Column 1
                 case "->":
                     _parent.Program.Counter.Increment();
-                    return true;
+                    return;
                 case "<-":
                     _parent.Program.Counter.Decrement();
-                    return true;
+                    return;
                 case "B/O":
-                    return true;
+                    return;
                 case "S/P":
-                    return true;
+                    return;
 
                 default:
-                    return false;
+                    return;
             }                
         }
     }
