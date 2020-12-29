@@ -1,0 +1,28 @@
+P000: # ITERATION EXAMPLE
+P001: # A.E.Shelest, "Programmable Calculators in Physics", p. 25.
+P002: 37
+P003: X->M 0
+P004: 53
+P005: X->M 1
+P006: 201
+P007: X->M 2
+P008: 0
+P009: X->M A
+P010: STOP
+P100: M->X A
+P101: 1
+P102: +
+P103: X->M A
+P104: M->X 2
+P105: M->X 0
+P106: M->X A
+P107: *
+P108: -
+P109: M->X 1
+P110: /
+P111: X->M B
+P112: {X}
+P113: IFNOT X==0 GOTO 100
+P114: M->X B
+P115: M->X A
+P116: STOP
