@@ -220,7 +220,7 @@ namespace MK52Simulator
             RPN_Value operand1 = X;
             if (operand1.asReal == 0.0)
             {
-                _parent.Stack.setInfinityError();
+                _parent.CalcStack.setInfinityError();
                 return;
             }
             RPN_Value operand2 = new RPN_Value(Y);
@@ -310,24 +310,6 @@ namespace MK52Simulator
             if (Z_Label != _standardLabels[2]) return true;
             if (T_Label != _standardLabels[3]) return true;
             return false;
-        }
-
-        public void SetMemoryFromStack(string RegisterName)
-        {
-            if (RegisterName.StartsWith("L"))
-                _parent.Registers.SetLoopRegister(RegisterName, Convert.ToInt32(StackValues[0].asInt));
-            else
-                _parent.Registers.SetPrimaryRegister(RegisterName, StackValues[0]);
-        }
-
-        public void SetStackFromMemory(string RegisterName)
-        {
-            StorePreviousValue();
-            Push(1);
-            if (RegisterName.StartsWith("L"))
-                StackValues[0].asInt = _parent.Registers.GetLoopRegister(RegisterName);
-            else
-                StackValues[0].FromRPNValue(_parent.Registers.GetPrimaryRegister(RegisterName));
         }
 
         public void ToStrings( string[] inp){

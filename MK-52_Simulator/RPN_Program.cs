@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
+using MK52Simulator.Functions;
 
 namespace MK52Simulator
 {
@@ -23,6 +24,12 @@ namespace MK52Simulator
             _parent = parent;
         }
 
+        public void Clear()
+        {
+            ProgramMemory.Clear();
+            Counter.Set(0);
+        }
+
         public bool isAddressEntry
         {
             get
@@ -41,9 +48,39 @@ namespace MK52Simulator
             Counter.AddDigitToAddress(text, true);
         }
 
+        public bool isAtStop
+        {
+            get
+            {
+                return GetCurrentLine().Trim().StartsWith("STOP");
+            }
+        }
+        
         public string GetCurrentLine()
         {
             return GetLine( Counter.V);
+        }
+
+        public void ExecuteCurrentLine()
+        {
+            string line = GetCurrentLine().Trim();
+            if (_parent.Functions["Empty"].executeCODE(line)) return;
+            if (_parent.Functions["Comment"].executeCODE(line)) return;
+            if (_parent.Functions["STOP"].executeCODE(line)) return;
+            if (_parent.Functions.ContainsKey(line))
+            {
+                RPN_Function f = _parent.Functions[line];
+                f.execute(line);
+                Counter.Increment();
+                return;
+            }
+            foreach (string k in _parent.Functions.Keys)
+            {
+                if( _parent.Functions[k].executeCODE( line))
+                    return;
+            }
+            _parent.CalcStack.X_Label = "Not Found: " + line;
+            Counter.Increment();
         }
 
         public string GetLine( int number)

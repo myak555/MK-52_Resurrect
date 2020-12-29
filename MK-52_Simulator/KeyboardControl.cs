@@ -42,12 +42,12 @@ namespace MK52Simulator
             m_Buttons.Add(new RPN_Button(295,  30, "8", "D", "8")); // "8", "COS", "{X}"
             m_Buttons.Add(new RPN_Button(295,  97, "5", "K", "5")); // "5", "arcCOS", "SIGN";
             m_Buttons.Add(new RPN_Button(295, 160, "2", "R", "2")); // "2", "LG", "LOG"
-            m_Buttons.Add(new RPN_Button(295, 223, ".", "Y")); // ".", "Rotate", "AND"
+            m_Buttons.Add(new RPN_Button(295, 223, ".", "Y", "A")); // ".", "Rotate", "AND"
 
             m_Buttons.Add(new RPN_Button(360,  30, "9", "E", "9")); // "9", "TG", "MAX"
             m_Buttons.Add(new RPN_Button(360,  97, "6", "L", "6")); // "6", "arcTG", "<-DM", "<-RAD"
             m_Buttons.Add(new RPN_Button(360, 160, "3", "S", "3"));// "3", "LN", "<-DMS", "<-IN"
-            m_Buttons.Add(new RPN_Button(360, 223, "/-/")); // "/-/", "юбр", "OR"
+            m_Buttons.Add(new RPN_Button(360, 223, "/-/", "Z", "B")); // "/-/", "юбр", "OR"
 
             m_Buttons.Add(new RPN_Button(420,  30, "-", "F")); // "SQRT"
             m_Buttons.Add(new RPN_Button(420,  97, "+", "M")); // "pi", "DM->", "RAD->"

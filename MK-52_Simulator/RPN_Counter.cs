@@ -75,6 +75,21 @@ namespace MK52Simulator
             _clip();
         }
 
+        public void Set(string s)
+        {
+            try
+            {
+                _value = Convert.ToInt32(s);
+            }
+            catch
+            {
+            }
+            finally
+            {
+                _clip();
+            }
+        }
+
         public void SetEditAddress()
         {
             EditAddress = _value.ToString();

@@ -102,16 +102,16 @@ namespace MK52Simulator
         public void FromStack( int address)
         {
             RPN_Value dest = GetLine(address);
-            dest.FromRPNValue(_parent.Stack.X);
+            dest.FromRPNValue(_parent.CalcStack.X);
             SetLine(address, dest);
         }
 
         public void ToStack(int address)
         {
             RPN_Value src = GetLine(address);
-            RPN_Value dest = _parent.Stack.X;
-            _parent.Stack.StorePreviousValue();
-            _parent.Stack.Push(1);
+            RPN_Value dest = _parent.CalcStack.X;
+            _parent.CalcStack.StorePreviousValue();
+            _parent.CalcStack.Push(1);
             dest.FromRPNValue(src);
         }
         

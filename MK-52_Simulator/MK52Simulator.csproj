@@ -36,10 +36,32 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Functions\RPN_Function_GRAD.cs" />
+    <Compile Include="Functions\RPN_Function_RAD.cs" />
+    <Compile Include="Functions\RPN_Function_DEG.cs" />
+    <Compile Include="Functions\RPN_Function_RETURN.cs" />
+    <Compile Include="Functions\RPN_Function_GOSUB.cs" />
+    <Compile Include="Functions\RPN_Function_LOOP1.cs" />
+    <Compile Include="Functions\RPN_Function_LOOP2.cs" />
+    <Compile Include="Functions\RPN_Function_LOOP3.cs" />
+    <Compile Include="Functions\RPN_Function_Cx.cs" />
+    <Compile Include="Functions\RPN_Function_LOOP0.cs" />
+    <Compile Include="Functions\RPN_Function_IF1.cs" />
+    <Compile Include="Functions\RPN_Function_IF1a.cs" />
+    <Compile Include="Functions\RPN_Function_IF3.cs" />
+    <Compile Include="Functions\RPN_Function_IF3a.cs" />
+    <Compile Include="Functions\RPN_Function_IF0a.cs" />
+    <Compile Include="Functions\RPN_Function_IF0.cs" />
+    <Compile Include="Functions\RPN_Function_IF2a.cs" />
+    <Compile Include="Functions\RPN_Function_IF2.cs" />
+    <Compile Include="Functions\RPN_Function_Empty.cs" />
+    <Compile Include="Functions\RPN_Function_KXtoM.cs" />
+    <Compile Include="Functions\RPN_Function_KMtoX.cs" />
+    <Compile Include="Functions\RPN_Function_GOTO.cs" />
+    <Compile Include="Functions\RPN_Function_STOP.cs" />
     <Compile Include="RPN_Stack.cs" />
     <Compile Include="RPN_Registers.cs" />
     <Compile Include="RPN_Memory.cs" />
-    <Compile Include="Functions\RPN_Function_Empty.cs" />
     <Compile Include="RPN_Program.cs" />
     <Compile Include="Functions\RPN_Function_Comment.cs" />
     <Compile Include="Functions\RPN_Function_Number.cs" />
@@ -47,11 +69,9 @@
     <Compile Include="Functions\RPN_Function_LblZ.cs" />
     <Compile Include="Functions\RPN_Function_LblT.cs" />
     <Compile Include="Functions\RPN_Function_LblY.cs" />
-    <Compile Include="Receivers\InputReceiver_AUTO_XM.cs" />
     <Compile Include="RPN_Button.cs" />
     <Compile Include="RPN_Counter.cs" />
     <Compile Include="Displays\Screen_OFF.cs" />
-    <Compile Include="Receivers\InputReceiver_AUTO_MX.cs" />
     <Compile Include="Receivers\InputReceiver_RUN.cs" />
     <Compile Include="Receivers\InputReceiver_LIST_K.cs" />
     <Compile Include="Receivers\InputReceiver_LIST_F.cs" />
@@ -72,7 +92,6 @@
     <Compile Include="RPN_Display.cs" />
     <Compile Include="Displays\Screen_AUTO.cs" />
     <Compile Include="Displays\Screen_PROG.cs" />
-    <Compile Include="Functions\RPN_Function_SUB.cs" />
     <Compile Include="Functions\RPN_Function_XtoM.cs" />
     <Compile Include="Functions\RPN_Function_MtoX.cs" />
     <Compile Include="RPN_Number_Entry.cs" />

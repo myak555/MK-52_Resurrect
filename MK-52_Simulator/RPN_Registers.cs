@@ -13,12 +13,22 @@ namespace MK52Simulator
         public const int MemorySize = 16;
         public const int LoopSize = 4;
 
+        public const int None = 0;
+        public const int RegisterToStack = 1;
+        public const int StackToRegister = 2;
+        public const int ExtendedToStack = 3;
+        public const int StackToExtended = 4;
+        private int _addressMode = None;
+
         private const string BaseRegisterNames = "0123456789ABCDEF";
         private const string LoopRegisterNames = "L0L1L2L3";
 
         private RPN_Calculator _parent = null;
         private List<RPN_Value> PrimaryRegisters = new List<RPN_Value>();
         private int[] LoopRegisters = new int[LoopSize];
+
+        private string EditName = "";
+        private bool _isActive = false;
 
         #region Constructors
         public RPN_Registers( RPN_Calculator parent)
@@ -30,6 +40,45 @@ namespace MK52Simulator
                 LoopRegisters[i] = 0;
         }
         #endregion
+
+        public bool isAddressEntry
+        {
+            get
+            {
+                return _isActive;
+            }
+        }
+
+        public void ActivateEntry(int mode)
+        {
+            _addressMode = mode;
+            _isActive = true;
+        }
+
+        public void AddDigitToAddress(string text)
+        {
+            EditName += text;
+            switch (_addressMode)
+            {
+                case RegisterToStack:
+                    FromRegisterToStack(EditName);
+                    break;
+                case StackToRegister:
+                    FromStackToRegister(EditName);
+                    break;
+                case StackToExtended:
+                    FromStackToMemory(EditName);
+                    break;
+                case ExtendedToStack:
+                    FromMemoryToStack(EditName);
+                    break;
+                default:
+                    break;
+            }
+            EditName = "";
+            _isActive = false;
+            _addressMode = None;
+        }
 
         #region Primary Registers
         public RPN_Value GetPrimaryRegister( string name)
@@ -64,10 +113,24 @@ namespace MK52Simulator
             if (index < 0) return;
             PrimaryRegisters[index].FromRPNValue( _parent.Memory.GetLine(address));
         }
+        public int AutoincrementPrimaryRegister(string name)
+        {
+            int address = -1;
+            int index = BaseRegisterNames.IndexOf(name);
+            if (index < 0) return address;
+            address = Convert.ToInt32(PrimaryRegisters[index].asInt & 0xFFFF);
+            if (index >= 7)
+                return address;
+            if (index <= 3) address--;
+            if (index <= 6) address++;
+            if (address < 0) return address;
+            PrimaryRegisters[index].asInt = address;
+            return address;
+        }
         #endregion
 
         #region Loop Registers
-        public int GetLoopRegister(string name)
+        public int GetLoopRegister( string name)
         {
             int index = LoopRegisterNames.IndexOf(name);
             if (index < 0) return LoopRegisters[0];
@@ -76,7 +139,7 @@ namespace MK52Simulator
 
         public void SetLoopRegister(string name, RPN_Value v)
         {
-            SetLoopRegister(name, Convert.ToInt32(v.asInt));
+            SetLoopRegister(name, Convert.ToInt32(v.asInt & 0xFFFFFF));
         }
 
         public void SetLoopRegister(string name, string v)
@@ -89,6 +152,58 @@ namespace MK52Simulator
             int index = LoopRegisterNames.IndexOf(name);
             if (index < 0) return;
             LoopRegisters[index>>1] = v;
+        }
+
+        //
+        // Note the original MK52 stops decrement at 1, but returs zero
+        //
+        public int DecrementLoopRegister(int index)
+        {
+            int v = LoopRegisters[index] - 1;
+            if (v <= 0) return v;
+            LoopRegisters[index] = v;
+            return LoopRegisters[index];
+        }
+        #endregion
+
+        #region General Registers (both cycles and primary)
+        public void FromStackToRegister(string name)
+        {
+            if (name.StartsWith("L"))
+                SetLoopRegister(name, _parent.CalcStack.X);
+            else
+                SetPrimaryRegister(name, _parent.CalcStack.X);
+        }
+        public void FromStackToMemory(string name)
+        {
+            int address = (name.StartsWith("L"))?
+                GetLoopRegister(name):
+                AutoincrementPrimaryRegister(name);
+            if (address < 0) return;
+            if (address >= _parent.Memory.Counter.MaxValue) return;
+            _parent.Memory.FromStack( address);
+            _parent.Memory.Counter.Set(address);
+        }
+        public void FromRegisterToStack(string name)
+        {
+            _parent.CalcStack.StorePreviousValue();
+            _parent.CalcStack.Push();
+            if (name.StartsWith("L"))
+                _parent.CalcStack.X.asInt = GetLoopRegister(name);
+            else
+                _parent.CalcStack.X.FromRPNValue( GetPrimaryRegister(name));
+        }
+        public void FromMemoryToStack(string name)
+        {
+            int address = (name.StartsWith("L")) ?
+                GetLoopRegister(name) :
+                AutoincrementPrimaryRegister(name);
+            if (address < 0) return;
+            if (address >= _parent.Memory.Counter.MaxValue) return;
+            _parent.CalcStack.StorePreviousValue();
+            _parent.CalcStack.Push();
+            _parent.Memory.ToStack(address);
+            _parent.Memory.Counter.Set(address);
         }
         #endregion
 
