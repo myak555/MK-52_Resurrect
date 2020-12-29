@@ -14,9 +14,9 @@ namespace MK52Simulator.Functions
             Description = "Recovers the previous value";
         }
 
-        public override void execute()
+        public override void execute(string code)
         {
-            _parent.Stack.RecoverPreviousValue();
+            _parent.CalcStack.RecoverPreviousValue();
         }
     }
 }

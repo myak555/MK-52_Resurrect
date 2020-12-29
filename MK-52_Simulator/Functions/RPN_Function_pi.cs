@@ -14,9 +14,9 @@ namespace MK52Simulator.Functions
             Description = "Puts PI in stack";
         }
 
-        public override void execute()
+        public override void execute(string code)
         {
-            _parent.Stack.Push(Math.PI);
+            _parent.CalcStack.Push(Math.PI);
         }
     }
 }

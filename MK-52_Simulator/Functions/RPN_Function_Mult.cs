@@ -14,9 +14,9 @@ namespace MK52Simulator.Functions
             Description = "Multiply X and Y";
         }
 
-        public override void execute()
+        public override void execute(string code)
         {
-            _parent.Stack.Multiply();
+            _parent.CalcStack.Multiply();
         }
     }
 }

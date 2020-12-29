@@ -14,10 +14,10 @@ namespace MK52Simulator.Functions
             Description = "Rotates stack (X to T)";
         }
 
-        public override void execute()
+        public override void execute(string code)
         {
-            RPN_Value operand1 = new RPN_Value( _parent.Stack.X);
-            _parent.Stack.Rotate();
+            RPN_Value operand1 = new RPN_Value( _parent.CalcStack.X);
+            _parent.CalcStack.Rotate();
         }
     }
 }

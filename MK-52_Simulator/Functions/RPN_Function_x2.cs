@@ -14,9 +14,11 @@ namespace MK52Simulator.Functions
             Description = "Computes X squared";
         }
 
-        public override void execute()
+        public override void execute(string code)
         {
-            _parent.Stack.Multiply();
+            _parent.CalcStack.CompleteEntry();
+            _parent.CalcStack.StorePreviousValue();
+            _parent.CalcStack.X.Multiply(_parent.CalcStack.X);
         }
     }
 }

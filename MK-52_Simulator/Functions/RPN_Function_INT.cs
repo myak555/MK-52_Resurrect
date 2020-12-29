@@ -14,10 +14,10 @@ namespace MK52Simulator.Functions
             Description = "Computes whole part";
         }
 
-        public override void execute()
+        public override void execute(string code)
         {
-            double result = _parent.Stack.X.asReal;
-            _parent.Stack.Replace(Math.Truncate(result));
+            double result = _parent.CalcStack.X.asReal;
+            _parent.CalcStack.Replace(Math.Truncate(result));
         }
     }
 }

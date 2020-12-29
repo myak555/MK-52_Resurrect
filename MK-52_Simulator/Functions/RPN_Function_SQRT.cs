@@ -14,16 +14,16 @@ namespace MK52Simulator.Functions
             Description = "Computes square root of X";
         }
 
-        public override void execute()
+        public override void execute(string code)
         {
-            double result = _parent.Stack.setImaginaryWarning(_parent.Stack.X.asReal);
+            double result = _parent.CalcStack.setImaginaryWarning(_parent.CalcStack.X.asReal);
             result = Math.Sqrt(result);
             if (double.IsNaN(result))
             {
-                _parent.Stack.setArgumentError();
+                _parent.CalcStack.setArgumentError();
                 return;
             }
-            _parent.Stack.Replace( result);
+            _parent.CalcStack.Replace( result);
         }
     }
 }

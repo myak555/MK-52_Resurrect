@@ -14,23 +14,23 @@ namespace MK52Simulator.Functions
             Description = "Computes power of 10";
         }
 
-        public override void execute()
+        public override void execute(string code)
         {
-            RPN_Value operand1 = _parent.Stack.X;
+            RPN_Value operand1 = _parent.CalcStack.X;
             double result = operand1.asReal;
             if (result > 302.0)
             {
-                _parent.Stack.setInfinityError();
+                _parent.CalcStack.setInfinityError();
                 return;
             }
             if (ComputeWholePower(operand1)) return;
             result = Math.Pow(10.0, result);
             if (double.IsNaN(result))
             {
-                _parent.Stack.setArgumentError();
+                _parent.CalcStack.setArgumentError();
                 return;
             }
-            _parent.Stack.Replace(result);
+            _parent.CalcStack.Replace(result);
         }
 
         private bool ComputeWholePower(RPN_Value o)
@@ -49,7 +49,7 @@ namespace MK52Simulator.Functions
                 result /= 10.0;
                 pwr++;
             }
-            _parent.Stack.Replace(result);
+            _parent.CalcStack.Replace(result);
             return true;
         }
     }

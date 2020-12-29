@@ -14,19 +14,19 @@ namespace MK52Simulator.Functions
             Description = "Computes cosine";
         }
 
-        public override void execute()
+        public override void execute(string code)
         {
-            RPN_Value operand1 = _parent.Stack.X;
+            RPN_Value operand1 = _parent.CalcStack.X;
             if (processAsInt(operand1)) return;
             double result = getRadiansByMode(operand1);
-            _parent.Stack.setTrigWarning(result);
+            _parent.CalcStack.setTrigWarning(result);
             result = Math.Cos(result);
             if (double.IsNaN(result))
             {
-                _parent.Stack.setArgumentError();
+                _parent.CalcStack.setArgumentError();
                 return;
             }
-            _parent.Stack.Replace(result);
+            _parent.CalcStack.Replace(result);
         }
 
         private bool processAsInt(RPN_Value o)
@@ -34,8 +34,8 @@ namespace MK52Simulator.Functions
             int[] quadValues = { 1, 0, -1, 0 };
             int quad = getTrigQuadrant( o);
             if (quad < 0) return false;
-            _parent.Stack.StorePreviousValue();
-            _parent.Stack.X.asInt = quadValues[quad];
+            _parent.CalcStack.StorePreviousValue();
+            _parent.CalcStack.X.asInt = quadValues[quad];
             return true;
         }
     }

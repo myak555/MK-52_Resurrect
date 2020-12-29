@@ -14,19 +14,19 @@ namespace MK52Simulator.Functions
             Description = "Computes tangent";
         }
 
-        public override void execute()
+        public override void execute(string code)
         {
-            RPN_Value operand1 = _parent.Stack.X;
+            RPN_Value operand1 = _parent.CalcStack.X;
             if (processAsInt(operand1)) return;
             double result = getRadiansByMode(operand1);
-            _parent.Stack.setTrigWarning(result);
+            _parent.CalcStack.setTrigWarning(result);
             result = Math.Tan(result);
             if (double.IsNaN(result))
             {
-                _parent.Stack.setArgumentError();
+                _parent.CalcStack.setArgumentError();
                 return;
             }
-            _parent.Stack.Replace( result);
+            _parent.CalcStack.Replace( result);
         }
 
         private bool processAsInt(RPN_Value o)
@@ -36,11 +36,11 @@ namespace MK52Simulator.Functions
             if (oct < 0) return false;
             if (oct == 2)
             {
-                _parent.Stack.setInfinityError();
+                _parent.CalcStack.setInfinityError();
                 return true;
             }
-            _parent.Stack.StorePreviousValue();
-            _parent.Stack.X.asInt = octValues[oct];
+            _parent.CalcStack.StorePreviousValue();
+            _parent.CalcStack.X.asInt = octValues[oct];
             return true;
         }
     }

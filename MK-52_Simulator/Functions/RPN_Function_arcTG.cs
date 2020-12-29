@@ -14,16 +14,16 @@ namespace MK52Simulator.Functions
             Description = "Computes arctangent";
         }
 
-        public override void execute()
+        public override void execute(string code)
         {
-            RPN_Value operand1 = _parent.Stack.X;
+            RPN_Value operand1 = _parent.CalcStack.X;
             double result = operand1.asReal;
             result = Math.Atan(result);
             if( double.IsNaN(result)){
-                _parent.Stack.setArgumentError();
+                _parent.CalcStack.setArgumentError();
                 return;
             }
-            _parent.Stack.StorePreviousValue();
+            _parent.CalcStack.StorePreviousValue();
             setAngleByMode( result);
         }
     }

@@ -14,10 +14,10 @@ namespace MK52Simulator.Functions
             Description = "Converts mm into inches";
         }
 
-        public override void execute()
+        public override void execute(string code)
         {
-            double result = _parent.Stack.X.asReal;
-            _parent.Stack.Replace(result/25.4);
+            double result = _parent.CalcStack.X.asReal;
+            _parent.CalcStack.Replace(result/25.4);
         }
     }
 }

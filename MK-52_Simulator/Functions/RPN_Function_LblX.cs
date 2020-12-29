@@ -14,13 +14,9 @@ namespace MK52Simulator.Functions
             Description = "Puts value into X Label";
         }
 
-        public override bool executeProgram(string code)
+        public override void execute(string code)
         {
-            if (!code.StartsWith(Keyword)) return false;
-            code = code.Substring(Keyword.Length).Trim();
-            _parent.Stack.X_Label = code;
-            _parent.Program.Counter.Increment();
-            return true;
+            _parent.CalcStack.X_Label = code.Substring(Keyword.Length).Trim();
         }
     }
 }

@@ -14,18 +14,18 @@ namespace MK52Simulator.Functions
             Description = "Computes X power Y (leaves Y in stack)";
         }
 
-        public override void execute()
+        public override void execute(string code)
         {
-            RPN_Value operand1 = _parent.Stack.X;
-            RPN_Value operand2 = _parent.Stack.Y;
+            RPN_Value operand1 = _parent.CalcStack.X;
+            RPN_Value operand2 = _parent.CalcStack.Y;
             if (operand1.asReal == 0.0 && operand2.asReal < 0.0)
             {
-                _parent.Stack.setInfinityError();
+                _parent.CalcStack.setInfinityError();
                 return;
             }
             if (operand1.asReal < 0.0 && !operand2.isInt)
             {
-                _parent.Stack.setArgumentError();
+                _parent.CalcStack.setArgumentError();
                 return;
             }
             if (ComputeWholePower(operand1, operand2)) return;
@@ -39,12 +39,12 @@ namespace MK52Simulator.Functions
                 result = Math.Pow(result, operand2.asReal);
             if (double.IsNaN(result))
             {
-                _parent.Stack.setArgumentError();
+                _parent.CalcStack.setArgumentError();
                 return;
             }
             //_parent.Memory.popStack(2); // The original MK52 leaves value in stack
-            _parent.Stack.StorePreviousValue();
-            _parent.Stack.X.asReal = result;
+            _parent.CalcStack.StorePreviousValue();
+            _parent.CalcStack.X.asReal = result;
         }
 
         private bool ComputeWholePower(RPN_Value o1, RPN_Value o2)
@@ -63,7 +63,7 @@ namespace MK52Simulator.Functions
                 result /= o1.asReal;
                 pwr++;
             }
-            _parent.Stack.Replace(result);
+            _parent.CalcStack.Replace(result);
             return true;
         }
     }

@@ -14,11 +14,11 @@ namespace MK52Simulator.Functions
             Description = "Computes fractional part";
         }
 
-        public override void execute()
+        public override void execute(string code)
         {
-            double result = _parent.Stack.X.asReal;
+            double result = _parent.CalcStack.X.asReal;
             result -= Math.Truncate(result);
-            _parent.Stack.Replace(result);
+            _parent.CalcStack.Replace(result);
         }
     }
 }

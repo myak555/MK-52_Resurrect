@@ -14,9 +14,9 @@ namespace MK52Simulator.Functions
             Description = "Subtract X from Y";
         }
 
-        public override void execute()
+        public override void execute(string code)
         {
-            _parent.Stack.Minus();
+            _parent.CalcStack.Minus();
         }
     }
 }

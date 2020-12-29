@@ -14,13 +14,13 @@ namespace MK52Simulator.Functions
             Description = "Leaves maximum between X and Y";
         }
 
-        public override void execute()
+        public override void execute(string code)
         {
-            RPN_Value operand1 = _parent.Stack.X;
-            RPN_Value operand2 = _parent.Stack.Y;
+            RPN_Value operand1 = _parent.CalcStack.X;
+            RPN_Value operand2 = _parent.CalcStack.Y;
             bool result = operand1.asReal > operand2.asReal;
-            _parent.Stack.StorePreviousValue();
-            _parent.Stack.Pop(result? 2: 1);
+            _parent.CalcStack.StorePreviousValue();
+            _parent.CalcStack.Pop(result? 2: 1);
         }
     }
 }

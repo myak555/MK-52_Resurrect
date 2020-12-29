@@ -14,7 +14,7 @@ namespace MK52Simulator.Functions
             Description = "Does nothing";
         }
 
-        public override void execute()
+        public override void execute(string code)
         {
         }
     }

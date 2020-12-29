@@ -17,7 +17,7 @@ namespace MK52Simulator.Functions
             Description = "Ignores the program line";
         }
 
-        public override bool executeProgram(string code)
+        public override bool executeCODE(string code)
         {
             code = code.Trim();
             if (!code.StartsWith("#")) return false;

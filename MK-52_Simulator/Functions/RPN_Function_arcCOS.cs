@@ -14,16 +14,16 @@ namespace MK52Simulator.Functions
             Description = "Computes arccosine";
         }
 
-        public override void execute()
+        public override void execute(string code)
         {
-            double result = _parent.Stack.X.asReal;
-            if (_parent.Stack.setInvTrigError(result)) return;
+            double result = _parent.CalcStack.X.asReal;
+            if (_parent.CalcStack.setInvTrigError(result)) return;
             result = Math.Acos(result);
             if( double.IsNaN(result)){
-                _parent.Stack.setArgumentError();
+                _parent.CalcStack.setArgumentError();
                 return;
             }
-            _parent.Stack.StorePreviousValue();
+            _parent.CalcStack.StorePreviousValue();
             setAngleByMode( result);
         }
     }

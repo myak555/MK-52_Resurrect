@@ -13,10 +13,10 @@ namespace MK52Simulator.Functions
             Description = "Enters value into the stack";
         }
 
-        public override void execute()
+        public override void execute(string code)
         {
-            _parent.Stack.StorePreviousValue();
-            _parent.Stack.Push();
+            _parent.CalcStack.StorePreviousValue();
+            _parent.CalcStack.Push();
         }
     }
 }

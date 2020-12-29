@@ -16,14 +16,15 @@ namespace MK52Simulator.Functions
             _parent = parent;
         }
 
-        public virtual void execute()
+        public virtual void execute(string code)
         {
+            return;
         }
-
-        public virtual bool executeProgram( string code)
+        
+        public virtual bool executeCODE( string code)
         {
             if (!code.StartsWith(Keyword)) return false;
-            execute();
+            execute(code);
             _parent.Program.Counter.Increment();
             return true;
         }
@@ -69,7 +70,7 @@ namespace MK52Simulator.Functions
 
         protected static void setAngleByMode( double result)
         {
-            RPN_Value v = _parent.Stack.X;
+            RPN_Value v = _parent.CalcStack.X;
             switch (_parent.dMode)
             {
                 case RPN_Calculator.dMode_Radian:

@@ -14,10 +14,10 @@ namespace MK52Simulator.Functions
             Description = "Computes logical AND between X and Y (as integers)";
         }
 
-        public override void execute()
+        public override void execute(string code)
         {
-            RPN_Value operand1 = _parent.Stack.X;
-            _parent.Stack.X.asInt = ~operand1.asInt;
+            RPN_Value operand1 = _parent.CalcStack.X;
+            _parent.CalcStack.X.asInt = ~operand1.asInt;
         }
     }
 }

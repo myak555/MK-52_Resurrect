@@ -14,22 +14,22 @@ namespace MK52Simulator.Functions
             Description = "Computes exponent";
         }
 
-        public override void execute()
+        public override void execute(string code)
         {
-            RPN_Value operand1 = _parent.Stack.X;
+            RPN_Value operand1 = _parent.CalcStack.X;
             double result = operand1.asReal;
             if (result > 695.0)
             {
-                _parent.Stack.setInfinityError();
+                _parent.CalcStack.setInfinityError();
                 return;
             }
             result = Math.Exp( result);
             if (double.IsNaN(result))
             {
-                _parent.Stack.setArgumentError();
+                _parent.CalcStack.setArgumentError();
                 return;
             }
-            _parent.Stack.Replace(result);
+            _parent.CalcStack.Replace(result);
         }
     }
 }

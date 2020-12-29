@@ -14,10 +14,10 @@ namespace MK52Simulator.Functions
             Description = "Negates value";
         }
 
-        public override void execute()
+        public override void execute(string code)
         {
-            _parent.Stack.StorePreviousValue();
-            _parent.Stack.X.Negate();
+            _parent.CalcStack.StorePreviousValue();
+            _parent.CalcStack.X.Negate();
         }
     }
 }

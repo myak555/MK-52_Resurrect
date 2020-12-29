@@ -14,10 +14,10 @@ namespace MK52Simulator.Functions
             Description = "Computes modulus X";
         }
 
-        public override void execute()
+        public override void execute(string code)
         {
-            RPN_Value result = _parent.Stack.X;
-            _parent.Stack.StorePreviousValue();
+            RPN_Value result = _parent.CalcStack.X;
+            _parent.CalcStack.StorePreviousValue();
             if( result.asReal < 0.0) result.Negate();
         }
     }

@@ -14,14 +14,14 @@ namespace MK52Simulator.Functions
             Description = "Computes sign (-1 for negative, 1 for positive)";
         }
 
-        public override void execute()
+        public override void execute(string code)
         {
-            RPN_Value operand1 = _parent.Stack.X;
+            RPN_Value operand1 = _parent.CalcStack.X;
             int s = 0;
             if(operand1.asReal > 0.0) s = 1; 
             if(operand1.asReal < 0.0) s = -1; 
-            _parent.Stack.StorePreviousValue();
-            _parent.Stack.X.asInt = s;
+            _parent.CalcStack.StorePreviousValue();
+            _parent.CalcStack.X.asInt = s;
         }
     }
 }

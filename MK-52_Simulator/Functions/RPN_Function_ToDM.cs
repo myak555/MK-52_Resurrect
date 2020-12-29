@@ -14,9 +14,9 @@ namespace MK52Simulator.Functions
             Description = "Converts DD.dddd into DD.MMmmm";
         }
 
-        public override void execute()
+        public override void execute(string code)
         {
-            RPN_Value operand1 = _parent.Stack.X;
+            RPN_Value operand1 = _parent.CalcStack.X;
             double tmp = operand1.asReal;
             bool negative = false;
             if (tmp < 0)
@@ -29,8 +29,8 @@ namespace MK52Simulator.Functions
             double minutes = tmp * 60.0;
             tmp = degrees + minutes / 100.0;
             if (negative) tmp = -tmp;         
-            _parent.Stack.StorePreviousValue();
-            _parent.Stack.X.asReal = tmp;
+            _parent.CalcStack.StorePreviousValue();
+            _parent.CalcStack.X.asReal = tmp;
         }
     }
 }

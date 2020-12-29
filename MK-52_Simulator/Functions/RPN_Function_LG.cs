@@ -14,21 +14,21 @@ namespace MK52Simulator.Functions
             Description = "Computes logarithm base 10";
         }
 
-        public override void execute()
+        public override void execute(string code)
         {
-            double result = _parent.Stack.X.asReal;
+            double result = _parent.CalcStack.X.asReal;
             if (result <= 0.0)
             {
-                _parent.Stack.setInfinityError();
+                _parent.CalcStack.setInfinityError();
                 return;
             }
             result = Math.Log10(result);
             if (double.IsNaN(result))
             {
-                _parent.Stack.setArgumentError();
+                _parent.CalcStack.setArgumentError();
                 return;
             }
-            _parent.Stack.Replace(result / 25.4);
+            _parent.CalcStack.Replace(result / 25.4);
         }
     }
 }

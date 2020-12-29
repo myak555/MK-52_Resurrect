@@ -14,9 +14,9 @@ namespace MK52Simulator.Functions
             Description = "Add X and Y";
         }
 
-        public override void execute()
+        public override void execute(string code)
         {
-            _parent.Stack.Plus();
+            _parent.CalcStack.Plus();
         }
     }
 }

@@ -14,14 +14,14 @@ namespace MK52Simulator.Functions
             Description = "Computes logical XOR between X and Y (as integers)";
         }
 
-        public override void execute()
+        public override void execute(string code)
         {
-            RPN_Value operand1 = _parent.Stack.X;
-            RPN_Value operand2 = _parent.Stack.Y;
+            RPN_Value operand1 = _parent.CalcStack.X;
+            RPN_Value operand2 = _parent.CalcStack.Y;
             Int64 result = operand1.asInt ^ operand2.asInt;
-            _parent.Stack.Pop(2);
-            _parent.Stack.StorePreviousValue();
-            _parent.Stack.X.asInt = result;
+            _parent.CalcStack.Pop(2);
+            _parent.CalcStack.StorePreviousValue();
+            _parent.CalcStack.X.asInt = result;
         }
     }
 }

@@ -19,9 +19,9 @@ namespace MK52Simulator.Functions
             Description = "Sends a number into stack X";
         }
 
-        public override bool executeProgram(string code)
+        public override bool executeCODE(string code)
         {
-            code = code.Trim();
+            if (code == "-") return false;
             for (int i = 0; i < code.Length; i++)
             {
                 if( allowedChars.IndexOf( code[i]) >= 0) continue;
@@ -29,10 +29,8 @@ namespace MK52Simulator.Functions
             }
             try
             {
-                double tmp = Convert.ToDouble(code);
-                _parent.Stack.StorePreviousValue();
-                _parent.Stack.Push(1);
-                _parent.Stack.X.asReal = tmp;
+                double result = Convert.ToDouble(code);
+                _parent.CalcStack.Push(result);
                 _parent.Program.Counter.Increment();
                 return true;
             }

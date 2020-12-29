@@ -14,12 +14,12 @@ namespace MK52Simulator.Functions
             Description = "Sets seed for the pseudo-random generator";
         }
 
-        public override void execute()
+        public override void execute(string code)
         {
-            RPN_Value operand1 = _parent.Stack.X;
+            RPN_Value operand1 = _parent.CalcStack.X;
             _parent.myRNG = new Random( (int)(operand1.asInt | 0xFFFFFFFF));
-            _parent.Stack.StorePreviousValue();
-            _parent.Stack.Pop(1);
+            _parent.CalcStack.StorePreviousValue();
+            _parent.CalcStack.Pop(1);
         }
     }
 }

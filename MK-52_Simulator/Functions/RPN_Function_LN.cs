@@ -14,23 +14,23 @@ namespace MK52Simulator.Functions
             Description = "Computes natural logarithm";
         }
 
-        public override void execute()
+        public override void execute(string code)
         {
-            RPN_Value operand1 = _parent.Stack.X;
+            RPN_Value operand1 = _parent.CalcStack.X;
             double result = operand1.asReal;
             if (result <= 0.0)
             {
-                _parent.Stack.setInfinityError();
+                _parent.CalcStack.setInfinityError();
                 return;
             }
             result = Math.Log(result);
             if (double.IsNaN(result))
             {
-                _parent.Stack.setArgumentError();
+                _parent.CalcStack.setArgumentError();
                 return;
             }
-            _parent.Stack.StorePreviousValue();
-            _parent.Stack.X.asReal = result;
+            _parent.CalcStack.StorePreviousValue();
+            _parent.CalcStack.X.asReal = result;
         }
     }
 }
