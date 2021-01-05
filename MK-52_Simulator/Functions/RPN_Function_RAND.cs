@@ -16,10 +16,7 @@ namespace MK52Simulator.Functions
 
         public override void execute(string code)
         {
-            RPN_Value operand1 = _parent.CalcStack.X;
-            _parent.CalcStack.StorePreviousValue();
-            _parent.CalcStack.Push(1);
-            _parent.CalcStack.X.asReal = _parent.myRNG.NextDouble();
+            _parent.CalcStack.Push(_parent.myRNG.NextDouble());
         }
     }
 }

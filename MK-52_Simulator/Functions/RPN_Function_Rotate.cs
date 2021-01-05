@@ -16,7 +16,6 @@ namespace MK52Simulator.Functions
 
         public override void execute(string code)
         {
-            RPN_Value operand1 = new RPN_Value( _parent.CalcStack.X);
             _parent.CalcStack.Rotate();
         }
     }

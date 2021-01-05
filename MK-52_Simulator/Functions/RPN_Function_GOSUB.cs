@@ -12,6 +12,7 @@ namespace MK52Simulator.Functions
         {
             Keyword = "GOSUB ";
             Description = "Calls a subroutine at given address";
+            containsAddress = true;
         }
 
         public override bool executeCODE(string code)

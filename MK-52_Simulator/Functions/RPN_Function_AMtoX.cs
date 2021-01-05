@@ -5,20 +5,20 @@ using MK52Simulator;
 
 namespace MK52Simulator.Functions
 {
-    public class RPN_Function_KMtoX : RPN_Function
+    public class RPN_Function_AMtoX : RPN_Function
     {
-        public RPN_Function_KMtoX( RPN_Calculator parent):
+        public RPN_Function_AMtoX( RPN_Calculator parent):
             base(parent)
         {
-            Keyword = "KM->X";
-            Description = "Indirect value from memory via a register";
-            containsRegister = true;
+            Keyword = "AM->X ";
+            Description = "Puts value from extended memory into register X";
+            containsAddress = true;
         }
 
         public override void execute(string code)
         {
             code = code.Substring(Keyword.Length).Trim();
-            _parent.Registers.FromMemoryToStack( code);
+            _parent.Memory.ToStack( Convert.ToInt32(code));
         }
     }
 }

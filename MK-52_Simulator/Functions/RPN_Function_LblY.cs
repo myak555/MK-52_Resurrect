@@ -16,7 +16,8 @@ namespace MK52Simulator.Functions
 
         public override void execute(string code)
         {
-            _parent.CalcStack.Y_Label = code.Substring(Keyword.Length).Trim();
+            string tmp = code.Substring(Keyword.Length).Trim();
+            _parent.CalcStack.Y_Label = (tmp.Length == 0) ? "Y:" : tmp;
         }
     }
 }

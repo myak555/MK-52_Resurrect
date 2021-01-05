@@ -29,8 +29,7 @@ namespace MK52Simulator.Functions
                 _parent.CalcStack.setArgumentError();
                 return;
             }
-            _parent.CalcStack.StorePreviousValue();
-            _parent.CalcStack.X.asReal = result;
+            _parent.CalcStack.Replace(result);
         }
     }
 }

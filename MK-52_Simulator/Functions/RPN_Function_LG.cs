@@ -28,7 +28,7 @@ namespace MK52Simulator.Functions
                 _parent.CalcStack.setArgumentError();
                 return;
             }
-            _parent.CalcStack.Replace(result / 25.4);
+            _parent.CalcStack.Replace(result);
         }
     }
 }

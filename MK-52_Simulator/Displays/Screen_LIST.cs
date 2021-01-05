@@ -31,7 +31,7 @@ namespace MK52Simulator.Displays
             sb.Append( _parent.Program.Counter.ToString());
             sb.Append("] [");
             sb.Append(_parent.CurrentReceiver.DisplayName);
-            sb.Append("]");
+            sb.Append("] ");
             screenValues[0] = sb.ToString();
             base.makeStatus(screenValues);
         }

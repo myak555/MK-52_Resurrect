@@ -12,6 +12,7 @@ namespace MK52Simulator.Functions
         {
             Keyword = "M->X";
             Description = "Gets value from memory";
+            containsRegister = true;
         }
 
         public override void execute(string code)

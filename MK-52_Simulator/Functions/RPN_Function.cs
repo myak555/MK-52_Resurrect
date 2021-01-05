@@ -9,6 +9,8 @@ namespace MK52Simulator.Functions
     {
         public string Keyword = "";
         public string Description = "Unknown empty function";
+        public bool containsAddress = false;
+        public bool containsRegister = false;
         protected static RPN_Calculator _parent = null;
 
         public RPN_Function( RPN_Calculator parent)

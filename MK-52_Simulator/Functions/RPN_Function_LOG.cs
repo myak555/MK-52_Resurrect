@@ -38,8 +38,7 @@ namespace MK52Simulator.Functions
                 return;
             }
             //_parent.Memory.popStack(2); For X^Y the original MK52 leaves Y in stack
-            _parent.CalcStack.StorePreviousValue();
-            _parent.CalcStack.X.asReal = result1/result2;
+            _parent.CalcStack.Replace(result1 / result2);
         }
     }
 }
