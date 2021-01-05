@@ -27,13 +27,54 @@ namespace MK52Simulator
             _parent = parent;
         }
 
-        public bool isAddressEntry
+        public void Clear()
         {
-            get
-            {
-                return Counter.isActive;
-            }
+            ExtendedMemory.Clear();
+            Counter.Set(0);
         }
+
+        public void ToStrings(string[] inp)
+        {
+        //    for (int i = -7, j = 1; j <= 8; i++, j++)
+        //    {
+        //        int dl = Counter.V + i;
+        //        inp[j] = "";
+        //        if (dl < 0) continue;
+        //        if (dl >= ProgramSize) continue;
+        //        StringBuilder sb = new StringBuilder();
+        //        sb.Append(dl.ToString("000"));
+        //        sb.Append((i == 0) ? "> " : "  ");
+        //        if (j < 8)
+        //        {
+        //            sb.Append(GetLine(dl));
+        //            inp[j] = sb.ToString();
+        //            continue;
+        //        }
+        //        if (Number.isActive)
+        //        {
+        //            sb.Append(Number.ToString());
+        //            inp[j] = sb.ToString();
+        //            continue;
+        //        }
+        //        if (Counter.isActive)
+        //        {
+        //            sb.Append(GetLine(dl));
+        //            sb.Append(Counter.ActiveEntry);
+        //            inp[j] = sb.ToString();
+        //            continue;
+        //        }
+        //        sb.Append(GetLine(dl));
+        //        inp[j] = sb.ToString();
+        //    }
+        }
+
+        //public bool isAddressEntry
+        //{
+        //    get
+        //    {
+        //        return Counter.isActive;
+        //    }
+        //}
 
         public void ActivateEntry( int mode)
         {
@@ -41,9 +82,9 @@ namespace MK52Simulator
             Counter.ActivateEntry();
         }
 
-        public void AddDigitToAddress(string text)
+        public void onButton(RPN_Button button)
         {
-            if (!Counter.AddDigitToAddress(text, false)) return;
+            if (!Counter.onButton( button, false)) return;
             switch (_addressMode)
             {
                 case MemoryToStack:

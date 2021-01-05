@@ -15,14 +15,14 @@ namespace MK52Simulator.Receivers
             base( parent, display)
         {
             Moniker = "AUTO_K";
-            DisplayName = " K ";
+            _displayName = " K ";
         }
 
         public override void onButton(RPN_Button button)
         {
-            if (_parent.Registers.isAddressEntry)
+            if (_parent.Registers.isActive)
             {
-                _parent.Registers.AddDigitToAddress(button.Register);
+                _parent.Registers.onButton(button);
                 return;
             }
             switch (button.Moniker)

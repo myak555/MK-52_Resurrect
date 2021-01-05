@@ -1,15 +1,19 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using MK52Simulator.Receivers;
 
 namespace MK52Simulator
 {
     public class RPN_Counter
     {
-        private const string AddressSymbols = "0123456789";
         private int _value = 0;
-        private string EditAddress = "";
-        private bool _isActive = false;
+        private InputReceiver_Address _ira = new InputReceiver_Address(null); 
+
+        //private const string AddressSymbols = "0123456789";
+        //private string EditAddress = "";
+        //private bool _isActive = false;
+        private bool _isNewAddress = false;
 
         public string Name = "PC";
         public int MaxValue = 1000;
@@ -23,17 +27,8 @@ namespace MK52Simulator
 
         public override string ToString()
         {
-            if (_isActive) return Name + "=" + EditAddress.PadLeft(3);
-            return Name + "=" +_value.ToString("000");
-        }
-
-        /// <summary>
-        /// Clears the entry, resets the mode;
-        /// </summary>
-        public void Clear()
-        {
-            EditAddress = "";
-            _isActive = false;
+            string tmp = (_ira.isActive)? _ira.ToString() : _value.ToString("000");
+            return Name + "=" + tmp;
         }
 
         public int V
@@ -48,13 +43,22 @@ namespace MK52Simulator
         {
             get
             {
-                return _isActive;
+                return _ira.isActive;
             }
         }
 
         public void ActivateEntry()
         {
-            _isActive = true;
+            _ira.Activate();
+            _isNewAddress = false;
+        }
+
+        public string ActiveEntry
+        {
+            get
+            {
+                return _ira.Entry;
+            }
         }
 
         public void Decrement()
@@ -92,14 +96,14 @@ namespace MK52Simulator
 
         public void SetEditAddress()
         {
-            EditAddress = _value.ToString();
+            _ira.Entry = _value.ToString();
         }
 
         public bool isNewAddress
         {
             get
             {
-                return entryResult != _value;
+                return _isNewAddress;
             }
         }
 
@@ -111,37 +115,27 @@ namespace MK52Simulator
         /// <summary>
         /// Adds an entry to the address
         /// </summary>
-        /// <param name="text"></param>
         /// <returns>true if entry is completed</returns>
-        public bool AddDigitToAddress(string text, bool setCounter)
+        public bool onButton(RPN_Button button, bool setCounter)
         {
-            if (text == "Enter")
+            if (button.Moniker == "Enter")
             {
-                _setPoiterToAddress( setCounter);
+                _setPoiterToAddress(setCounter);
                 return true;
             }
-            for (int i = 0; i < text.Length; i++)
-            {
-                char c = text[i];
-                if (AddressSymbols.IndexOf(c) < 0) continue;
-                EditAddress += c;
-            }
-            if (EditAddress.Length < 3) return false;
+            _ira.onButton(button);
+            _isNewAddress = true;
+            if (!_ira.isComplete) return false;
             _setPoiterToAddress(setCounter);
             return true;
         }
 
         private void _setPoiterToAddress( bool set)
         {
-            entryResult = _value;
-            if (EditAddress.Length > 0)
-            {
-                entryResult = Convert.ToInt32(EditAddress);
-                if (entryResult < 0) entryResult = MaxValue - 1;
-                if (entryResult >= MaxValue) entryResult = 0;
-                if (set) Set(entryResult);
-            }
-            Clear();
+            entryResult = _ira.getV( _value);
+            if (entryResult < 0) entryResult = MaxValue - 1;
+            if (entryResult >= MaxValue) entryResult = 0;
+            if (set) Set(entryResult);
         }
 
         private void _clip()

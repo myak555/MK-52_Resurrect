@@ -103,6 +103,7 @@ namespace MK52Simulator
             {
                 fs = File.Open( _stateFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
                 sr = new StreamReader(fs);
+                CallStack.Clear();
                 while (!sr.EndOfStream)
                 {
                     string s = sr.ReadLine().Trim();
@@ -115,6 +116,7 @@ namespace MK52Simulator
                     if (Registers.LoadLine(s)) continue;
                     if (Memory.LoadLine(s)) continue;
                     if (Program.LoadLine(s)) continue;
+                    if (CallStackLoadHelper(s)) continue;
                 }
             }
             catch
@@ -152,6 +154,15 @@ namespace MK52Simulator
                 Registers.Save(sw);
                 Program.Save(sw);
                 Memory.Save(sw);
+                if (CallStack.Count > 0)
+                {
+                    sw.Write("#\n");
+                    sw.Write("# Call stack:");
+                    sw.Write("#\n");
+                    int[] cs = CallStack.ToArray();
+                    for (int i = 0; i < cs.Length; i++)
+                        sw.Write(cs[i].ToString("CS000\n"));
+                }
             }
             catch
             {
@@ -243,6 +254,13 @@ namespace MK52Simulator
             inp = Convert.ToInt32(s.Substring(varName.Length));
             return true;
         }
+
+        private bool CallStackLoadHelper(string s)
+        {
+            if (!s.StartsWith("CS")) return false;
+            CallStack.Push( Convert.ToInt32(s.Substring(2)));
+            return true;
+        }
         #endregion
 
         public void Shutdown()
@@ -275,9 +293,11 @@ namespace MK52Simulator
             addFunction(new RPN_Function_1x(this));
             addFunction(new RPN_Function_ABS(this));
             addFunction(new RPN_Function_AND(this));
+            addFunction(new RPN_Function_AMtoX(this));
             addFunction(new RPN_Function_arcCOS(this));
             addFunction(new RPN_Function_arcSIN(this));
             addFunction(new RPN_Function_arcTG(this));
+            addFunction(new RPN_Function_AXtoM(this));
             addFunction(new RPN_Function_COS(this));
             addFunction(new RPN_Function_Cx(this));
             addFunction(new RPN_Function_DEG(this));

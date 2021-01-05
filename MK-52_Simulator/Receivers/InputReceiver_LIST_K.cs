@@ -16,7 +16,7 @@ namespace MK52Simulator.Receivers
             base( parent, display)
         {
             Moniker = "LIST_K";
-            DisplayName = " K ";
+            _displayName = " K ";
         }
 
         public override void onButton(RPN_Button button)

@@ -52,6 +52,8 @@ namespace MK52Simulator
 
         private void saveProgramToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if( CurrentFile.Length <= 2)
+                saveProgramAsToolStripMenuItem_Click(sender, e);
             timer1.Enabled = false;
             if (myRPN.CurrentReceiver.Moniker == "AUTO_R")
                 myRPN.setReceiver("AUTO_N");

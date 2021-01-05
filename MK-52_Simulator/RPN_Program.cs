@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using MK52Simulator.Functions;
+using MK52Simulator.Receivers;
 
 namespace MK52Simulator
 {
@@ -18,10 +19,14 @@ namespace MK52Simulator
         private Dictionary<int, string> ProgramMemory = new Dictionary<int, string>();
 
         public RPN_Counter Counter = new RPN_Counter( "PC", ProgramSize);
+        public InputReceiver_String Text = null;
+        public InputReceiver_Value Number = null;
 
         public RPN_Program( RPN_Calculator parent)
         {
             _parent = parent;
+            Text = new InputReceiver_String(parent);
+            Number = new InputReceiver_Value( parent);
         }
 
         public void Clear()
@@ -30,22 +35,39 @@ namespace MK52Simulator
             Counter.Set(0);
         }
 
-        public bool isAddressEntry
+        public void ToStrings(string[] inp)
         {
-            get
+            for (int i = -7, j = 1; j <= 8; i++, j++)
             {
-                return Counter.isActive;
+                int dl = Counter.V + i;
+                inp[j] = "";
+                if (dl < 0) continue;
+                if (dl >= ProgramSize) continue;
+                StringBuilder sb = new StringBuilder();
+                sb.Append(dl.ToString("000"));
+                sb.Append((i == 0) ? "> " : "  ");
+                if (j < 8)
+                {
+                    sb.Append(GetLine(dl));
+                    inp[j] = sb.ToString();
+                    continue;
+                }
+                if (Number.isActive)
+                {
+                    sb.Append(Number.ToString());
+                    inp[j] = sb.ToString();
+                    continue;
+                }
+                if (Counter.isActive)
+                {
+                    sb.Append(GetLine(dl));
+                    sb.Append(Counter.ActiveEntry);
+                    inp[j] = sb.ToString();
+                    continue;
+                }
+                sb.Append(GetLine(dl));
+                inp[j] = sb.ToString();
             }
-        }
-        
-        public void ActivateEntry()
-        {
-            Counter.ActivateEntry();
-        }
-
-        public void AddDigitToAddress(string text)
-        {
-            Counter.AddDigitToAddress(text, true);
         }
 
         public bool isAtStop
@@ -59,6 +81,24 @@ namespace MK52Simulator
         public string GetCurrentLine()
         {
             return GetLine( Counter.V);
+        }
+
+        public void SetCurrentLine( string line)
+        {
+            SetLine(Counter.V, line);
+        }
+
+        public void AppendCurrentLine(string line)
+        {
+            string tmp = GetCurrentLine();
+            SetCurrentLine( tmp + line);
+        }
+
+        public void AppendCounterString()
+        {
+            string tmp = GetCurrentLine();
+            if( tmp.Length <= 0) return;
+            SetCurrentLine(tmp + Counter.entryResult.ToString("000"));
         }
 
         public void ExecuteCurrentLine()
@@ -94,6 +134,24 @@ namespace MK52Simulator
             if (line.Length == 0)
             {
                 if( ProgramMemory.ContainsKey(number))
+                    ProgramMemory.Remove(number);
+                return;
+            }
+            if (!ProgramMemory.ContainsKey(number))
+            {
+                ProgramMemory.Add(number, line);
+                return;
+            }
+            ProgramMemory[number] = line;
+        }
+
+        public void InsertLine(int number, string line)
+        {
+            //for( i
+
+            if (line.Length == 0)
+            {
+                if (ProgramMemory.ContainsKey(number))
                     ProgramMemory.Remove(number);
                 return;
             }

@@ -16,11 +16,22 @@ namespace MK52Simulator.Receivers
             base( parent, display)
         {
             Moniker = "PROG_K";
-            DisplayName = " K ";
+            _displayName = " K ";
         }
 
         public override void onButton(RPN_Button button)
         {
+            if (_parent.Program.Counter.isActive)
+            {
+
+                if (_parent.Program.Counter.onButton(button, false))
+                {
+                    _parent.Program.AppendCounterString();
+                    _parent.Program.Counter.Increment();
+                    _parent.setReceiver("PROG_N");
+                }
+                return;
+            }
             switch (button.Moniker)
             {
                 // Column 0
@@ -37,16 +48,42 @@ namespace MK52Simulator.Receivers
 
                 // Column 1
                 case "->":
-                    _parent.Memory.Counter.Increment();
-                    _parent.setReceiver("PROG_N");
+                    _parent.Program.SetCurrentLine("IFNOT X<Y GOTO ");
+                    _parent.Program.Counter.ActivateEntry();
                     return;
                 case "<-":
-                    _parent.Memory.Counter.Decrement();
-                    _parent.setReceiver("PROG_N");
+                    _parent.Program.SetCurrentLine("IFNOT X==Y GOTO ");
+                    _parent.Program.Counter.ActivateEntry();
                     return;
                 case "B/O":
-                    _parent.Program.Counter.Set(0);
-                    _parent.setReceiver("PROG_N");
+                    _parent.Program.SetCurrentLine("IFNOT X>=Y GOTO ");
+                    _parent.Program.Counter.ActivateEntry();
+                    return;
+                case "S/P":
+                    _parent.Program.SetCurrentLine("IFNOT X!=Y GOTO ");
+                    _parent.Program.Counter.ActivateEntry();
+                    return;
+
+                // Column 2
+                case "M->X":
+                    _parent.Program.SetCurrentLine("LT> ");
+                    //_parent.Program.Counter.ActivateEntry();
+                    _parent.Program.Counter.Increment();
+                    return;
+                case "X->M":
+                    _parent.Program.SetCurrentLine("LZ> ");
+                    //_parent.Program.Counter.ActivateEntry();
+                    _parent.Program.Counter.Increment();
+                    return;
+                case "GOTO":
+                    _parent.Program.SetCurrentLine("LY> ");
+                    //_parent.Program.Counter.ActivateEntry();
+                    _parent.Program.Counter.Increment();
+                    return;
+                case "GOSUB":
+                    _parent.Program.SetCurrentLine("LX> ");
+                    //_parent.Program.Counter.ActivateEntry();
+                    _parent.Program.Counter.Increment();
                     return;
 
                 default:

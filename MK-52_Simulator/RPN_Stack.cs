@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using MK52Simulator.Functions;
+using MK52Simulator.Receivers;
 
 namespace MK52Simulator
 {
@@ -24,14 +25,23 @@ namespace MK52Simulator
         public string Z_Label = "";
         public string T_Label = "";
 
-        private RPN_Number_Entry _numberEntry = new RPN_Number_Entry();
+        private InputReceiver_Value _numberEntry = null;
 
         public RPN_Stack(RPN_Calculator parent)
         {
             _parent = parent;
+            _numberEntry = new InputReceiver_Value(parent);
             for (int i = 0; i < StackSize; i++)
                 StackValues.Add(new RPN_Value());
             ClearLabels();
+        }
+
+        public bool isActive
+        {
+            get
+            {
+                return _numberEntry.isActive;
+            }
         }
 
         public void ClearStack()
@@ -145,7 +155,8 @@ namespace MK52Simulator
 
         public void Rotate()
         {
-            RPN_Value tmp = new RPN_Value(StackValues[0]);
+            CompleteEntry();
+            RPN_Value tmp = new RPN_Value(X);
             StorePreviousValue();
             Pop(1);
             StackValues[StackValues.Count-1].FromRPNValue(tmp);
@@ -153,6 +164,7 @@ namespace MK52Simulator
 
         public void Swap()
         {
+            CompleteEntry();
             RPN_Value tmp = new RPN_Value(X);
             StorePreviousValue();
             X.FromRPNValue(Y);
@@ -235,9 +247,9 @@ namespace MK52Simulator
             Pop(1);
         }
 
-        public void onButton(string key)
+        public void onButton(RPN_Button button)
         {
-            switch (key)
+            switch (button.Moniker)
             {
                 case "0":
                 case "1":
@@ -251,10 +263,10 @@ namespace MK52Simulator
                 case "9":
                 case ".":
                     if (!_numberEntry.isActive) Push(1);
-                    _numberEntry.AddEntry(key);
+                    _numberEntry.onButton(button);
                     return;
                 case "/-/":
-                    if (_numberEntry.isActive) _numberEntry.AddEntry(key);
+                    if (_numberEntry.isActive) _numberEntry.onButton(button);
                     else StackValues[0].Negate();
                     return;
                 case "+":
@@ -276,7 +288,7 @@ namespace MK52Simulator
                     if (!_numberEntry.isActive)
                         _numberEntry.FromValue(StackValues[0]);
                     else
-                        _numberEntry.AddEntry(key);
+                        _numberEntry.onButton(button);
                     return;
                 case "Enter":
                     Enter();
@@ -287,7 +299,7 @@ namespace MK52Simulator
                         ClearLabels();
                         return;
                     }
-                    if (_numberEntry.isActive) _numberEntry.AddEntry(key);
+                    if (_numberEntry.isActive) _numberEntry.onButton(button);
                     else StackValues[0].Clear();
                     return;
                 default:
@@ -338,7 +350,7 @@ namespace MK52Simulator
 
         public double setImaginaryWarning(double v)
         {
-            if (v > 0.0) return v;
+            if (v >= 0.0) return v;
             X_Label = "Warning: Imaginary";
             return -v;
         }

@@ -19,14 +19,14 @@ namespace MK52Simulator.Receivers
 
         public override void onButton(RPN_Button button)
         {
-            if (_parent.Program.isAddressEntry)
+            if (_parent.Program.Counter.isActive)
             {
-                _parent.Program.AddDigitToAddress(button.Moniker);
+                _parent.Program.Counter.onButton(button, true);
                 return;
             }
-            if (_parent.Registers.isAddressEntry)
+            if (_parent.Registers.isActive)
             {
-                _parent.Registers.AddDigitToAddress(button.Register);
+                _parent.Registers.onButton(button);
                 return;
             }
             switch (button.Moniker)
@@ -84,9 +84,20 @@ namespace MK52Simulator.Receivers
                         _parent.CalcStack.X_Label = "STOP reached";
                     return;
                 default:
-                    _parent.CalcStack.onButton(button.Moniker);
+                    _parent.CalcStack.onButton(button);
                     return;
             }                
+        }
+
+        public override string DisplayName
+        {
+            get
+            {
+                if (_parent.CalcStack.isActive) return "NUM";
+                if (_parent.Program.Counter.isActive) return "PC?";
+                if (_parent.Registers.isActive) return "RG?";
+                return _displayName;
+            }
         }
     }
 }

@@ -18,16 +18,16 @@ namespace MK52Simulator
         public const int StackToRegister = 2;
         public const int ExtendedToStack = 3;
         public const int StackToExtended = 4;
-        private int _addressMode = None;
 
         private const string BaseRegisterNames = "0123456789ABCDEF";
         private const string LoopRegisterNames = "L0L1L2L3";
+        private int _addressMode = None;
 
         private RPN_Calculator _parent = null;
         private List<RPN_Value> PrimaryRegisters = new List<RPN_Value>();
         private int[] LoopRegisters = new int[LoopSize];
 
-        private string EditName = "";
+        public string entryResult = "";
         private bool _isActive = false;
 
         #region Constructors
@@ -41,7 +41,7 @@ namespace MK52Simulator
         }
         #endregion
 
-        public bool isAddressEntry
+        public bool isActive
         {
             get
             {
@@ -51,33 +51,42 @@ namespace MK52Simulator
 
         public void ActivateEntry(int mode)
         {
+            entryResult = "";
             _addressMode = mode;
             _isActive = true;
         }
 
-        public void AddDigitToAddress(string text)
+        public bool onButton(RPN_Button button)
         {
-            EditName += text;
+            entryResult += button.Register;
+            if (entryResult.Length <= 0) return false;
             switch (_addressMode)
             {
                 case RegisterToStack:
-                    FromRegisterToStack(EditName);
+                    FromRegisterToStack(entryResult);
                     break;
                 case StackToRegister:
-                    FromStackToRegister(EditName);
+                    FromStackToRegister(entryResult);
                     break;
                 case StackToExtended:
-                    FromStackToMemory(EditName);
+                    FromStackToMemory(entryResult);
                     break;
                 case ExtendedToStack:
-                    FromMemoryToStack(EditName);
+                    FromMemoryToStack(entryResult);
                     break;
                 default:
                     break;
             }
-            EditName = "";
             _isActive = false;
             _addressMode = None;
+            return true;
+        }
+
+        public void AppendRegisterString()
+        {
+            string tmp = _parent.Program.GetCurrentLine();
+            if (tmp.Length <= 0) return;
+            _parent.Program.SetCurrentLine(tmp + entryResult);
         }
 
         #region Primary Registers

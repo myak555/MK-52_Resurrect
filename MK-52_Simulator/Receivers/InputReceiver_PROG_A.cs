@@ -16,7 +16,7 @@ namespace MK52Simulator.Receivers
             base( parent, display)
         {
             Moniker = "PROG_A";
-            DisplayName = " A ";
+            _displayName = " A ";
         }
 
         public override void onButton(RPN_Button button)
@@ -39,7 +39,7 @@ namespace MK52Simulator.Receivers
                     _parent.Memory.Counter.Decrement();
                     return;
                 case "B/O":
-                    _parent.Memory.Counter.Set(0);
+                    _parent.Program.Counter.Set(0);
                     _parent.setReceiver("PROG_N");
                     return;
 

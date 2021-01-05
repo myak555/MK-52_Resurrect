@@ -36,6 +36,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Receivers\InputReceiver_Address.cs" />
+    <Compile Include="Receivers\InputReceiver_String.cs" />
+    <Compile Include="Functions\RPN_Function_AXtoM.cs" />
+    <Compile Include="Functions\RPN_Function_AMtoX.cs" />
     <Compile Include="Functions\RPN_Function_GRAD.cs" />
     <Compile Include="Functions\RPN_Function_RAD.cs" />
     <Compile Include="Functions\RPN_Function_DEG.cs" />
@@ -94,7 +98,7 @@
     <Compile Include="Displays\Screen_PROG.cs" />
     <Compile Include="Functions\RPN_Function_XtoM.cs" />
     <Compile Include="Functions\RPN_Function_MtoX.cs" />
-    <Compile Include="RPN_Number_Entry.cs" />
+    <Compile Include="Receivers\InputReceiver_Value.cs" />
     <Compile Include="Functions\RPN_Function_Swap.cs" />
     <Compile Include="Functions\RPN_Function_SQRT.cs" />
     <Compile Include="Functions\RPN_Function_1x.cs" />

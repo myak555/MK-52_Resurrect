@@ -1,0 +1,47 @@
+#
+# Test:
+# N= 10, Measurements= 2.5, 7.5, 3, 7, 4, 5, 6, 5, 4.5, 5.5
+# Computes mean= 5 and Stdev= 1.517...
+#
+PC = 0
+P000: # EXPERIMENT PROCESSING
+P001: # A.E.Shelest, "Programmable Calculators in Physics", p. 50.
+P003: LX> N Measurements?
+P004: STOP
+P005: X->M 1
+P006: X->M L0
+P007: Cx
+P008: X->M 3
+P009: X->M 4
+P010: M->X 1
+P011: LX> Measurement:
+P012: STOP
+P013: X->M 2
+P014: M->X 3
+P015: +
+P016: X->M 3
+P017: M->X 2
+P018: X^2
+P019: M->X 4
+P020: +
+P021: X->M 4
+P022: M->X 2
+P023: WHILE L0>0 GOTO 011
+P024: M->X 3
+P025: M->X 1
+P026: /
+P027: X->M 5
+P028: M->X 4
+P029: M->X 1
+P030: /
+P031: M->X 5
+P032: X^2
+P033: -
+P034: SQRT
+P035: X->M 6
+P036: M->X 5
+P037: LY> Standard deviation:
+P038: LX> Mean:
+P039: STOP
+P040: LY>
+P041: GOTO 003
