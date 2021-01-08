@@ -22,7 +22,8 @@
 #define KBD_CLK                25
 #define KBD_RST                26
 #define KBD_SENSE              27
-#define KBD_PULSE              10
+#define KBD_Cx                 35
+#define KBD_PULSE              1
 
 class KBDManager{
   public:

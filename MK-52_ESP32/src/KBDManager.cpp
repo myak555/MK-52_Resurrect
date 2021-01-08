@@ -12,6 +12,7 @@ void KBDManager::init(){
   pinMode(KBD_RST, OUTPUT);
   pinMode(KBD_CLK, OUTPUT);
   pinMode(KBD_SENSE, INPUT);
+  pinMode(KBD_Cx, INPUT);
   digitalWrite( KBD_CLK, LOW);
   _pulseRST();
 }
@@ -27,6 +28,7 @@ uint8_t KBDManager::scan(){
     }
     _pulseCLK();
   }
+  if( digitalRead( KBD_Cx) == HIGH) ret = 32; // read the Cx - power button, set apart
   if( ret == lastScan) return 0; // the same button held down
   lastScan = ret; 
   return lastScan;

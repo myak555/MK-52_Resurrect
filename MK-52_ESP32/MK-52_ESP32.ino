@@ -34,14 +34,14 @@
 //
 // This implementation is for ESP32 Dev Module version 1
 //
-// Pin assignment:
+// Pin assignment (LOLIN 32):
 //
-// 00 - LOLIN program inject - pushbutton to ground
+// 00 - Available
 // *01 - TX0
-// *02 - SD chip select (1)
+// *02 - TFT DC
 // *03 - RX0
 // *04 - TFT RST
-// *05 - VSPI CSO - TFT DC
+// *05 - SD chip select (CS)
 //
 // *06 - NA (Dev module not exposing)
 // *07 - NA (Dev module not exposing)
@@ -50,35 +50,34 @@
 // *10 - NA (Dev module not exposing)
 // *11 - NA (Dev module not exposing)
 //
-// 12 - HSPI MISO LCD Data (R/W)
-// 13 - HSPI MOSI LCD Reset (RESET)
-// 14 - HSPI CLK LCD Clock (E)
+// 12 - Available (HSPI MISO)
+// 13 - Available (HSPI MOSI)
+// 14 - Available (HSPI CLK)
 // *15 - VSPI TFT Select (CS)
-// 16 - Not used [RX2 (serial to Pro Micro 8) Note Pro Micro 14, 15, 16 are SPI/burn]
-// 17 - Not used [TX2 (serial to Pro Micro 9)]
-// *18 - VSPI CLK - TFT SCK
-// *19 - VSPI MISO - TFT SDO/MISO and SD pin 3
+// 16 - Reserved [RX2 (serial to Pro Micro 8) Note Pro Micro 14, 15, 16 are SPI/burn]
+// 17 - Reserved [TX2 (serial to Pro Micro 9)]
+// *18 - VSPI CLK - TFT SCK and SD SCK
+// *19 - VSPI MISO - TFT SDO/MISO and SD MISO
 //
 // *20 - NA (Dev module not exposing)
 //
-// *21 - LCD LED PWM
-// 22 - Not used
-// *23 - VSPI MOSI - TFT SDI/MOSI and SD pin 2 (MOSI)
+// *21 - TFT LED PWM
+// 22 - Available
+// *23 - VSPI MOSI - TFT SDI/MOSI and SD MOSI
 //
 // *24 - NA (Dev module not exposing)
-//
 // *25 - KBD CLK
 // *26 - KBD RST
 // *27 - KBD SENSOR
-
-// *28 - NA (Dev module not exposing)
-// *29 - NA (Dev module not exposing)
-// *30 - NA (Dev module not exposing)
-// *31 - NA (Dev module not exposing)
-
-// 32 - Not connected
-// 33 - Not connected
-// *34 - POWER Hold
+//
+// 28 - NA (Dev module not exposing)
+// 29 - NA (Dev module not exposing)
+// 30 - NA (Dev module not exposing)
+// 31 - NA (Dev module not exposing)
+//
+// 32 - Available
+// *33 - POWER Hold
+// 34 - Available (input-only)
 // *35 - POWER sense (also Cx button)
 //
 ////////////////////////////////////////////////////////
@@ -86,11 +85,15 @@
 //#define __DEBUG
 
 #define SERIAL_HARD_BAUD_RATE 115200
+
+#include <math.h>
 #include "./src/LCDManager.hpp"
 #include "./src/KBDManager.hpp"
+#include "./src/SDManager.hpp"
 
 static LCDManager MyLCD;
 static KBDManager MyKBD;
+static SDManager MySD;
 
 unsigned long targetTime = 0; // Used for testing draw times
 static char buff[30];
@@ -101,17 +104,20 @@ void setup(void) {
   Serial.println("MK-52 Resurrect!"); 
   long splashReady = MyLCD.init();
   MyKBD.init();
+  MySD.init();
+  Serial.print("SD card ");
+  if( MySD.SDMounted) Serial.println("mounted");
+  else Serial.println("not found");
   MyLCD.waitForEndSplash( splashReady, true);
-  //targetTime = millis();
-  //CalculatorScreen( 3.12345678910E-012);
-  //ReportTime( "Calculator", 500);
+  targetTime = millis();
+  FontTest();
+  ReportTime( "Fill Screen", 10000);
+  targetTime = millis();
+  CalculatorScreen( 3.12345678910E-012);
+  ReportTime( "Calculator", 100);
 }
 
-void loop(void) {  
-  //targetTime = millis();
-  //FontTest();
-  //ReportTime( "Fill Screen", 10000);
-
+void loop(void) {
   // targetTime = millis();
   // CalculatorScreen( 3.12345678910E-012);
   // ReportTime( "Calculator", 10000);
@@ -136,40 +142,27 @@ void loop(void) {
   // DataUpdate( 3.12345678910E-012);
   // ReportTime( "100 scrolls", 10000);
 
+  uint8_t b = MyKBD.scan();
+  if( b){
+    Serial.print("Key: ");
+    Serial.println( b);    
+    CalculatorPrintX( b);
+    if( b == 32) MyLCD.shutdown();
+  }
+
   if(Serial.available()){
-    byte c = Serial.read();
-    if( c == 'a')
-    {
-      MyKBD._pulseRST();
-      CalculatorPrintX( (double)c);
-      Serial.println("Reset");
-      return;
-    }
-    if( c == 'b')
-    {
-      MyKBD._pulseCLK();
-      CalculatorPrintX( (double)c);
-      Serial.println("Pulse");
-      return;
-    }
-    if( c == 'c')
+    b = Serial.read();
+    if( b == 'e')
     {
       MyKBD.LEDOn = !MyKBD.LEDOn;
-      CalculatorPrintX( (double)c);
       Serial.println("LED flop");
       return;
     }
-    if( c == 'd')
+    if( b == 's')
     {
-      targetTime = millis();
-      uint8_t b = MyKBD.scan();
-      targetTime = millis() - targetTime;
-      CalculatorPrintX( (double)b);
-      Serial.print("Scan: ");
-      Serial.print(b);
-      Serial.print(" in ");
-      Serial.print( targetTime);
-      Serial.println( " ms");
+      Serial.println("Shutdown!");
+      delay( 500);
+      MyLCD.shutdown();
       return;
     }
     return;
@@ -186,37 +179,35 @@ void loop(void) {
 
 void CalculatorScreen( double fakeData){
   MyLCD.dimScreen();
-  snprintf(buff, 29, "%18.11E", fakeData);
   MyLCD.clearScreen( false);
-  MyLCD.outputStatus( "C", "1234", "5678", "DEG", "   ");
-  MyLCD.outputCalcRegister( 0, buff);
-  MyLCD.outputCalcLabel( 0, "X: long, long, long label");
-  MyLCD.outputCalcRegister( 1, buff);
-  MyLCD.outputCalcLabel( 1, "Y: long, long, long label");
-  MyLCD.outputCalcRegister( 2, buff);
-  MyLCD.outputCalcLabel( 2, "Z: long, long, long label");
-  MyLCD.outputCalcRegister( 3, buff);
-  MyLCD.outputCalcLabel( 3, "T: long, long, long label");
+  MyLCD.outputStatus( "1234", "5678", "DEG", "AAA");
+  MyLCD.outputCalcRegister( 0, fakeData);
+  MyLCD.outputCalcLabel( 0, "X: should be a number");
+  MyLCD.outputCalcRegister( 1, NAN);
+  MyLCD.outputCalcLabel( 1, "Y: should be an Error");
+  MyLCD.outputCalcRegister( 2, +1.0/0.0);
+  MyLCD.outputCalcLabel( 2, "Z: should be +Inf");
+  MyLCD.outputCalcRegister( 3, -1.0/0.0);
+  MyLCD.outputCalcLabel( 3, "T: should be -Inf");
   MyLCD.undimScreen();
 }
 
 void CalculatorUpdateX( double fakeData){
   for( int i=0; i<100; i++){
-    snprintf(buff, 29, "%18.11E", fakeData);
+    snprintf(buff, 29, "%19.11E", fakeData);
     MyLCD.updateCalcRegister( 0, buff);
     fakeData *= 2.0;
   }
 }
 
-void CalculatorPrintX( double Data){
-  snprintf(buff, 29, "%18.11E", Data);
-  MyLCD.updateCalcRegister( 0, buff);
+void CalculatorPrintX( int Data){
+  MyLCD.updateCalcRegister( 0, (int64_t)Data);
 }
 
 void ProgramScreen(char *fakeData){
   MyLCD.dimScreen();
   MyLCD.clearScreen( false);
-  MyLCD.outputStatus( "P", "0000", "9999", "RAD", "NUM");
+  MyLCD.outputStatus( "0000", "9999", "RAD", "NUM");
   for( int i=10; i>=0; i--){
     if(i<10)
       snprintf(buff, 30, "%04d  %s", i, fakeData);
@@ -242,7 +233,7 @@ void ProgramUpdate(char *fakeData){
 void DataScreen( double fakeData){
   MyLCD.dimScreen();
   MyLCD.clearScreen( false);
-  MyLCD.outputStatus( "D", "1234", "5678", "GRD", " F ");
+  MyLCD.outputStatus( "1234", "5678", "GRD", " F ");
   for( int i=10; i>=0; i--){
     if(i<10)
       snprintf(buff, 30, "%04d  %18.11E", i, fakeData);
@@ -265,13 +256,13 @@ void DataUpdate( double fakeData){
   }
 }
 
-// void FontTest(){
-//   for( int i=0; i<256; i++){
-//     int x = (i%30)*11;
-//     int y = (i/30)*20;
-//     MyLCD.outputChar( x, y, (uint8_t)i);
-//   }
-// }
+void FontTest(){
+  for( int i=0; i<256; i++){
+    int x = (i%30)*11;
+    int y = (i/30)*20;
+    MyLCD.outputChar( x, y, (uint8_t)i);
+  }
+}
 
 void ReportTime( char *name, int wait){
   long dt = millis() - targetTime;
