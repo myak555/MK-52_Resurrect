@@ -58,7 +58,7 @@
 
 // Screen dimensions in symbols
 // Columns 320 / 11 = 29
-// Rows 240 / 20 = 12 (but the top one is saken by the status bar)
+// Rows 240 / 20 = 12 (but the top one is taken by the status bar)
 #define SCREEN_COLS 30 
 #define SCREEN_ROWS 12 
 

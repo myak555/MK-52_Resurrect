@@ -7,13 +7,11 @@
 //////////////////////////////////////////////////////////
 
 #include <SD.h>
-//#include <SPI.h> (included with Arduino.h)
 #include "SDManager.hpp"
 
 //#define __DEBUG
 
-// const char SD_Error_NotInserted[] PROGMEM = "Err: No card";
-// const char SD_Error_NotMounted[] PROGMEM = "Err: Unmounted";
+const char SD_Error_NotMounted[] PROGMEM = "Error: Not mounted";
 // const char SD_Error_FileNameTooLong[] PROGMEM = "Err: Long name";
 // const char SD_Error_FileNotFound[] PROGMEM = "Err: Not found";
 // const char SD_Error_WriteFailed[] PROGMEM = "Err: SD fail";
@@ -35,10 +33,12 @@
 //   SD_Message3,
 //   SD_Message4
 //   };
-// const char SD_root[] PROGMEM = "/";
-// const char ConstantFileFormat[] PROGMEM = "%05d CONST ";
-// const char SD_DefaultExt1[] PROGMEM = ".bas";
-// const char SD_DefaultExt2[] PROGMEM = ".BAS";
+const char SD_root[] PROGMEM = "/";
+const char SD_uproot[] PROGMEM = "../";
+const char SettingsFile[] PROGMEM = "/MK52_Settings.dat";
+const char StatusFile[] PROGMEM = "/MK52_Status.dat";
+const char SD_DefaultExt[] PROGMEM = ".mk52";
+const char SD_DirMarker[] PROGMEM = " [DIR]";
 
 // //
 // // Timer to check the SD status
@@ -87,12 +87,12 @@
 // Init and status update
 //
 unsigned long SDManager::init(){
-//   SDPrevMounted = SDMounted;
-//   SDCheckRequested = false;
-  //pinMode( SD_CSO, OUTPUT);
-  //digitalWrite( SD_CSO, HIGH); // SD card chips select - for some reason, manual!
-  SDMounted = SD.begin();
-  return millis(); 
+    SDMounted = SD.begin();
+    _current_Dir = (char *)malloc( CURRENT_DIR_LEN+CURRENT_FILE_LEN);
+    _current_File = _current_Dir + CURRENT_DIR_LEN;
+    memset( _current_Dir, 0, CURRENT_DIR_LEN+CURRENT_FILE_LEN);
+    _resetRoot();
+    return millis(); 
 }
 
 // //
@@ -113,55 +113,59 @@ unsigned long SDManager::init(){
 //   _mbox->setLabel(SD_Message());
 // }
 
-// uint8_t SDManager::cardType(){
-//   if(!SDInserted) return SD_CARD_OUT;
-//   if(!SDMounted) return SD_CARD_NOT_MOUNTED;
-//   return SD.cardType();
-// }
+void SDManager::_resetRoot(){
+    #ifdef __DEBUG
+    Serial.println("Reset to root");
+    #endif
+    strncpy_P( _current_Dir, SD_root, CURRENT_DIR_LEN);
+}
 
-// void SDManager::checkRootExists(){
-//   if(!SDInserted) return;
-//   if(!SDMounted) return;
-//   File root = SD.open(_vars->currentDir);
-//   if(!root){
-//     #ifdef __DEBUG
-//     Serial.println("Failed to open directory, reset to root");
-//     #endif
-//     strncat2( _vars->currentDir, SD_root, CURRENT_DIR_LEN);
-//     return;
-//   }
-//   if(!root.isDirectory()){
-//     #ifdef __DEBUG
-//     Serial.println("Not a directory, reset to root");
-//     #endif
-//     strncat2( _vars->currentDir, SD_root, CURRENT_DIR_LEN);
-//   }
-//   root.close();
-// }
+void SDManager::checkRootExists(){
+    if(!SDMounted) return;
+    File root = SD.open( _current_Dir);
+    if(!root){
+        _resetRoot();
+        return;
+    }
+    if(!root.isDirectory()) _resetRoot();
+    root.close();
+}
 
-// File SDManager::_getCurrentDir(){
-//   checkRootExists();
-//   return SD.open(_vars->currentDir);
-// }
+File SDManager::_getCurrentDir(){
+    checkRootExists();
+    return SD.open( _current_Dir);
+}
 
-// void SDManager::sleepOn(){
-//   if( !SDMounted) return;
-//   SD.end();
-//   SDMounted = false;
-// }
+bool SDManager::checkEntityExists( const char *name){
+    if( !SDMounted ) return false;
+    return SD.exists( name);
+}
 
-// void SDManager::sleepOff(){
-//   SDInserted = false;
-//   SDMounted = false;
-//   _detectSDCard();
-// }
-
-// bool SDManager::checkEntityExists( const char *name){
-//   if( !SDInserted ) return false;
-//   if( !SDMounted ) return false;
-//   // if( _cardCheckMantra()) return false; // no need to write any errors
-//   return SD.exists( name);
-// }
+//
+// Lists directory
+//
+void SDManager::startFolderListing( char **Lines, uint8_t nLines, uint8_t lineLen, char *name){
+    for( uint8_t i=0; i<nLines; i++) *(Lines[i]) = 0;
+    listingPosition = -1;
+    if( !SDMounted ){
+        strcpy_P( Lines[0], SD_Error_NotMounted);
+        return;
+    }
+    if( name == NULL) name = _current_Dir;
+    File root = SD.open( name);
+    if(!root) return;
+    uint8_t writePosition = 0;
+    if( strcmp_P( name, SD_root) != 0)
+        strcpy_P( Lines[writePosition++], SD_uproot);
+    listingPosition = 0;
+    size_t nameLen = 0;
+    char *namePtr = NULL;
+    File file = root.openNextFile();
+    while(writePosition < nLines && file){
+        _formEntityName( file, Lines[writePosition++], lineLen);
+        file = root.openNextFile();
+    }
+}
 
 // bool SDManager::deleteEntity( const char *name){
 //   if( _cardCheckMantra()) return true;
@@ -250,36 +254,6 @@ unsigned long SDManager::init(){
 //   #endif
 //   file.close();
 //   return true;
-// }
-
-// //
-// // Lists directory
-// //
-// void SDManager::listFolder( char *name){
-//   if( _cardCheckMantra()) return;
-//   if( name == NULL) name = _vars->currentDir;
-
-//   // TODO: change to IOM
-//   Serial.print("Listing directory: ");
-//   Serial.println( name);
-//   File root = SD.open( name);
-//   if(!root) return;
-//   File file = root.openNextFile();
-//   while(file){
-//     if(file.isDirectory()){
-//       Serial.print("  ");
-//       Serial.print( _stripFolders( file.name()));
-//       Serial.println("  [DIR]");
-//     }
-//     else {
-//       Serial.print("  ");
-//       Serial.print( _stripFolders( file.name()));
-//       Serial.print(" ");
-//       Serial.print(file.size());
-//       Serial.println("b");
-//     }
-//   file = root.openNextFile();
-//   } // while
 // }
 
 // void SDManager::createFolder( char * name){
@@ -645,9 +619,9 @@ unsigned long SDManager::init(){
 //   return true;
 // }
 
-// //
-// // Short mantras for file handling
-// //
+//
+// Short mantras for file handling
+//
 // bool SDManager::_cardCheckMantra(){
 //   LastError = SD_Error_NotInserted;
 //   if(!SDInserted) return true;
@@ -656,17 +630,54 @@ unsigned long SDManager::init(){
 //   LastError = NULL;
 //   return false;
 // }
-// char *SDManager::_stripFolders( const char *name){
-//   int16_t lastHash = strlen( name) - 1;
-//   while( lastHash>0 && name[lastHash] != '/') lastHash--;
-//   return (char *)name+lastHash+1; 
-// }
+
+char *SDManager::_stripFolders( const char *name){
+  int16_t lastHash = strlen( (char*) name) - 1;
+  while( lastHash>0 && name[lastHash] != '/') lastHash--;
+  return (char *)name+lastHash+1; 
+}
+
+void SDManager::_formEntityName( File f, char *str, uint8_t lineLen){
+    const char *name = f.name();
+    uint8_t lLen = lineLen - 6;
+    char *namePtr = _stripFolders( name);
+    uint8_t nameLen = strlen( namePtr);
+    if( nameLen > lLen) nameLen = lLen;
+    for( uint8_t i=0; i<nameLen; i++) *str++ = *namePtr++;
+    for( uint8_t i=nameLen; i<lLen; i++) *str++ = ' ';
+    if( f.isDirectory())
+        strcpy_P( str, SD_DirMarker);
+    else
+        _appendFileSize( f, str);
+}
+
+void SDManager::_appendFileSize( File f, char *str){
+    size_t size = f.size();
+    if( size < 8192){
+        sprintf_P( str, PSTR(" %04db"), (int)size);
+        return;
+    }
+    size >>= 10;
+    if( size < 8192){
+        sprintf_P( str, PSTR(" %04dk"), (int)size);
+        return;
+    }
+    size >>= 10;
+    if( size < 8192){
+        sprintf_P( str, PSTR(" %04dM"), (int)size);
+        return;
+    }
+    size >>= 10;
+    sprintf_P( str, PSTR(" %04dG"), (int)size);
+}
+
 
 // bool SDManager::_nameLengthCheckMantra( size_t len){
 //   if( len <= CURRENT_FILE_LEN) return false;
 //   LastError = SD_Error_FileNameTooLong;
 //   return true;
 // }
+
 // bool SDManager::_lookForFileMantra1( char *tmpName){
 //   #ifdef __DEBUG
 //   Serial.print( "Looking for file: ");

@@ -26,23 +26,16 @@
 #define SD_CLOCK           18
 #define SD_MISO            19
 #define SD_MOSI            23
-
-#define SD_CARD_NOT_MOUNTED  254
+#define CURRENT_DIR_LEN    256
+#define CURRENT_FILE_LEN   256
 
 class SDManager{
   public:
     volatile bool SDMounted = false;
     volatile uint64_t cardSize = 0;
-    const char *LastError = NULL;
+    int16_t listingPosition = -1;
 
     unsigned long init();
-    //unsigned long tick();
-//     uint8_t cardType();
-//     inline unsigned long keepAwake(){
-//       return _iom->keepAwake();
-//     };
-//     void sleepOn();
-//     void sleepOff();
 
 //     size_t loadBinary( const char *name, byte *buff, size_t minSize, size_t maxSize);
 //     bool saveBinary( const char *name, byte *buff, size_t Size);
@@ -57,9 +50,9 @@ class SDManager{
 //       return false;
 //     }
 
-//     void checkRootExists();
-//     bool checkEntityExists( const char *name);
-//     void listFolder( char *name=NULL);
+    void checkRootExists();
+    bool checkEntityExists( const char *name);
+    void startFolderListing( char **Lines, uint8_t nLines, uint8_t lineLen, char *name=NULL);
 //     bool deleteEntity( const char *name);
 //     void createFolder( char *name);
 
@@ -79,8 +72,13 @@ class SDManager{
 //     bool writeSettingNumber( const char *title, double value);
 //     bool writeSettingString( const char *title, byte *value);
 
-//   private:
-//     byte *_io_buffer;
+  private:
+    char *_current_Dir = NULL;
+    char *_current_File = NULL;
+    void _resetRoot();
+    File _getCurrentDir();
+
+//    byte *_io_buffer;
 //     IOManager *_iom;
 //     Keywords *_kwds;
 //     Variables *_vars;
@@ -90,13 +88,15 @@ class SDManager{
 //     File _currentFile;
 
 //     void _checkSDPin();
-//     File _getCurrentDir();
 //     bool _detectSDCard();
 
 //     bool _locateBASICFile( const char *name);
 //     bool _locateExistingFile( const char *name);
 //     bool _cardCheckMantra();
-//     char *_stripFolders( const char *name);
+    char *_stripFolders( const char *name);
+    void _formEntityName( File f, char *str, uint8_t lineLen);
+    void _appendFileSize( File f, char *str);
+
 //     bool _nameLengthCheckMantra( size_t len);
 //     bool _lookForFileMantra1( char *tmpName);
 //     bool _lookForFileMantra2( char *tmpName);
