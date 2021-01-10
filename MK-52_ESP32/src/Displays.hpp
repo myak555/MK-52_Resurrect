@@ -44,7 +44,7 @@ namespace MK52_Interpreter{
         void tick();
       protected:
         char buff[30];
-        char *_fakeData = "IF DURA";
+        char *_fakeData = "Some program line here";
     };
 
     class DATA_Display: public Display{

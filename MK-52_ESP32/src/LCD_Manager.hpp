@@ -17,7 +17,6 @@
 // 21 - LCD LED PWM
 // 23 - VSPI MOSI - TFT SDI/MOSI
 // 23 - VSPI MOSI - TFT SDI/MOSI
-// 34 - POWER HOLD
 
 #ifndef LCD_MANAGER_HPP
 #define LCD_MANAGER_HPP
@@ -40,7 +39,6 @@
 // use first channel of 16 channels (started from zero)
 // use 13 bit precision for LEDC timer
 // use 5000 Hz as a LEDC base frequency
-#define SYSTEM_POWER_HOLD      33
 #define LCD_LED_PIN            21
 #define LCD_LEDC_CHANNEL_0     0
 #define LCD_LEDC_TIMER_13_BIT  13
@@ -91,7 +89,6 @@ namespace MK52_Hardware{
         void outputCharString( int16_t x, int16_t y, char *src, uint16_t fg=TFT_GREEN, uint16_t bg=TFT_BLACK);
         void outputChar( int16_t x, int16_t y, uint8_t c, uint16_t fg=TFT_GREEN, uint16_t bg=TFT_BLACK);
 
-        inline void shutdown(){ digitalWrite( SYSTEM_POWER_HOLD, LOW); };
       private:
         char _text[30]; // temporary output buffer
         char *_buffer = NULL;

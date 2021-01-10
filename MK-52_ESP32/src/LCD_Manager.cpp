@@ -40,10 +40,6 @@ using namespace MK52_Hardware;
 //
 unsigned long LCD_Manager::init() {
 
-    // Hold power
-    pinMode( SYSTEM_POWER_HOLD, OUTPUT);
-    digitalWrite( SYSTEM_POWER_HOLD, HIGH);
-
     // Set timer and attach to the led
     pinMode( LCD_LED_PIN, OUTPUT);
     ledcSetup(LCD_LEDC_CHANNEL_0, LCD_LEDC_BASE_FREQ, LCD_LEDC_TIMER_13_BIT);
