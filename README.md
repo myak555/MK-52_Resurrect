@@ -3,7 +3,7 @@ Planting an ESP-32 brain into a long-dead Soviet MK-52 programmable calculator
 
 ![Simulator in C#](https://github.com/myak555/MK-52_Resurrect/blob/main/Images/Simulator_Running.png)
 
-![Actual hardware](https://github.com/myak555/MK-52_Resurrect/blob/main/Images/Assembled.jpg)
+![Actual hardware](https://github.com/myak555/MK-52_Resurrect/blob/main/Images/Assembled.JPG)
 
 This page is in early stage of development.
 
