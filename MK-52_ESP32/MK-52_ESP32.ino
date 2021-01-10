@@ -86,21 +86,24 @@
 
 #define SERIAL_HARD_BAUD_RATE 115200
 
-#include <math.h>
+//#include <math.h>
 
-//#include "./src/LCDManager.hpp"
-//#include "./src/KBDManager.hpp"
-#include "./src/SDManager.hpp"
-#include "./src/NumberReceiver.hpp"
+#include "./src/MK52_Host.hpp"
+//#include "./src/SD_Manager.hpp"
+//#include "./src/Input_Receivers.hpp"
+//#include "./src/Displays.hpp"
 
-static LCDManager MyLCD;
-static KBDManager MyKBD;
-static SDManager MySD;
-static NumberReceiver MyNR;
+static MK52_Hardware::LCD_Manager MyLCD;
+static MK52_Hardware::KBD_Manager MyKBD;
+static MK52_Hardware::SD_Manager MySD;
+static MK52_Interpreter::Number_Receiver MyNR;
+static MK52_Interpreter::AUTO_Display MyAUTO;
+static MK52_Interpreter::PROG_Display MyPROG;
+static MK52_Interpreter::FILE_Display MyFILE;
+static MK52_Interpreter::DATA_Display MyDATA;
 
 static void *MyComponents[N_COMPONENTS];
 
-unsigned long targetTime = 0; // Used for testing draw times
 static char buff[30];
 
 void setup(void) {
@@ -115,61 +118,38 @@ void setup(void) {
     MyComponents[ COMPONENT_SD_MANAGER] = &MySD;
     MyComponents[ COMPONENT_NUMBER_RECEIVER] = &MyNR;
     MyNR.init( MyComponents);
+    MyAUTO.init( MyComponents);
+    MyPROG.init( MyComponents);
+    MyDATA.init( MyComponents);
+    MyFILE.init( MyComponents);
 
     Serial.print("SD card ");
     if( MySD.SDMounted) Serial.println("mounted");
     else Serial.println("not found");
     MyLCD.waitForEndSplash( splashReady, true);
-    //targetTime = millis();
-    //FontTest();
-    //ReportTime( "Fill Screen", 10000);
-    targetTime = millis();
-    FileScreen();
-    ReportTime( "Listing", 10000);
-    targetTime = millis();
-    CalculatorScreen( 3.12345678910E-012);
-    ReportTime( "Calculator", 100);
+    
+    FontTest();
+    MyPROG.activate();
+    MyFILE.activate();
+    MyDATA.activate();
+    MyAUTO.activate();
 }
 
 void loop(void) {
-    // targetTime = millis();
-    // CalculatorScreen( 3.12345678910E-012);
-    // ReportTime( "Calculator", 10000);
-
-    // targetTime = millis();
-    // CalculatorUpdateX( 3.12345678910E-012);
-    // ReportTime( "100 updates of X", 10000);
-
-    // targetTime = millis();
-    // ProgramScreen("GOTO 12345678901234567890");
-    // ReportTime( "Program", 20000);
-
-    // targetTime = millis();
-    // ProgramUpdate( "WHILE L0 LOOP");
-    // ReportTime( "100 scrolls", 10000);
-
-    // targetTime = millis();
-    // DataScreen(12345678901e-123);
-    // ReportTime( "Data", 10000);
-
-    // targetTime = millis();
-    // DataUpdate( 3.12345678910E-012);
-    // ReportTime( "100 scrolls", 10000);
-
     if( MyNR.isActive()){
         MyNR.tick();
-        MyLCD.updateCalcRegister( 0, MyNR.toString());
-        delay(30);
+        MyAUTO.tick();
+        delay(KBD_IDLE_DELAY);
         return;
     }
 
     uint8_t b = MyKBD.scan();
     if( b){
-      Serial.print("Activating on key: ");
-      Serial.println( b);
-      MyNR.activate( b);    
-      if( b == 32) MyLCD.shutdown();
-        delay(30);
+        Serial.print("Activating on key: ");
+        Serial.println( b);
+        MyNR.activate( b);    
+        if( b == 32) MyLCD.shutdown();
+        delay(KBD_IDLE_DELAY);
         return;
     }
 
@@ -190,65 +170,7 @@ void loop(void) {
       }
       return;
     }
-    delay(30);
-}
-
-void CalculatorScreen( double fakeData){
-    MyLCD.dimScreen();
-    MyLCD.clearScreen( false);
-    MyLCD.outputStatus( "1234", "5678", "DEG", "AAA");
-    MyLCD.outputCalcRegister( 0, fakeData);
-    MyLCD.outputCalcLabel( 0, "X: should be a number");
-    MyLCD.outputCalcRegister( 1, NAN);
-    MyLCD.outputCalcLabel( 1, "Y: should be an Error");
-    MyLCD.outputCalcRegister( 2, +1.0/0.0);
-    MyLCD.outputCalcLabel( 2, "Z: should be +Inf");
-    MyLCD.outputCalcRegister( 3, -1.0/0.0);
-    MyLCD.outputCalcLabel( 3, "T: should be -Inf");
-    MyLCD.undimScreen();
-}
-
-void CalculatorUpdateX( double fakeData){
-    for( int i=0; i<100; i++){
-      snprintf(buff, 29, "%19.11E", fakeData);
-      MyLCD.updateCalcRegister( 0, buff);
-      fakeData *= 2.0;
-    }
-}
-
-void CalculatorPrintX( int Data){
-    MyLCD.updateCalcRegister( 0, (int64_t)Data);
-}
-
-void ProgramScreen(char *fakeData){
-    MyLCD.dimScreen();
-    MyLCD.clearScreen( false);
-    MyLCD.outputStatus( "0000", "9999", "RAD", "NUM");
-    for( int i=10; i>=0; i--){
-      if(i<10)
-        snprintf(buff, 30, "%04d  %s", i, fakeData);
-      else
-        snprintf(buff, 30, "%04d: %s", i, fakeData);
-      MyLCD.outputTerminalLine( i, buff);
-    }
-    MyLCD.undimScreen();
-}
-
-void FileScreen(){
-    MyLCD.dimScreen();
-    MyLCD.clearScreen( false);
-
-    char *strs[10];
-    char *tmp = (char *)malloc( 300);
-    for( int i=0; i<10; i++, tmp+=30) strs[i] = tmp;
-    MySD.startFolderListing( strs, 10, 29);
-
-    MyLCD.outputStatus( "0000", "9999", "RAD", "NUM");
-    for( int i=0; i<10; i++)
-      MyLCD.outputTerminalLine( i, strs[i]);
-
-    MyLCD.undimScreen();
-    free(strs[0]);
+    delay(KBD_IDLE_DELAY);
 }
 
 void ProgramUpdate(char *fakeData){
@@ -261,20 +183,6 @@ void ProgramUpdate(char *fakeData){
         MyLCD.outputTerminalLine( i, buff);
       }
     }
-}
-
-void DataScreen( double fakeData){
-    MyLCD.dimScreen();
-    MyLCD.clearScreen( false);
-    MyLCD.outputStatus( "1234", "5678", "GRD", " F ");
-    for( int i=10; i>=0; i--){
-      if(i<10)
-        snprintf(buff, 30, "%04d  %18.11E", i, fakeData);
-      else
-        snprintf(buff, 30, "%04d: %18.11E", i, fakeData);
-      MyLCD.outputTerminalLine( i, buff);
-    }
-    MyLCD.undimScreen();
 }
 
 void DataUpdate( double fakeData){
@@ -295,13 +203,5 @@ void FontTest(){
       int y = (i/30)*20;
       MyLCD.outputChar( x, y, (uint8_t)i);
     }
-}
-
-void ReportTime( char *name, int wait){
-    long dt = millis() - targetTime;
-    Serial.print( name);
-    Serial.print( " = ");
-    Serial.print( dt);
-    Serial.println(" ms");
-    delay(wait);
+    delay( DEBUG_SHOW_DELAY);
 }
