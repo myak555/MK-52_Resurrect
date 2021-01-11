@@ -73,28 +73,28 @@ unsigned long LCD_Manager::init() {
 //
 void LCD_Manager::waitForEndSplash( unsigned long start, bool cls) {
     while( millis()-start < SCR_SPLASH) delay(50);
-    //memset( _buffer, _SP_, SCR_SIZE);
-    //memset( lineInversed, false, SCR_ROWS);
-    //_ledPWM = (int64_t *)_vars->findDataPtr( _LCD_lcdPWM);
-    //if( _ledPWM) ledBrightness = (byte)( *_ledPWM & 0xFF);
-    if( cls) clearScreen(true);
-    //keepAwake();
+    if( !cls) return;
+    clearScreen( true);
 }
 
-void LCD_Manager::outputStatus( char *pc, char *mc, char *dmode, char *fmode){
+void LCD_Manager::outputStatus( uint32_t pc, uint32_t mc, char *dmode, char *fmode){
     tft.drawBitmap( 0, 0, StatusTemplate_320x20px, 320, 20, bgcolor, fgcolor);
     memset( _buffer, 0, SCREEN_COLS);
     outputCharString( 51, 0, "PC", bgcolor, fgcolor);
-    _redrawStatusPosition( pc, 0);
+    sprintf( _text, "%04d", pc % 10000);
+    _redrawStatusPosition( _text, 0);
     outputCharString( 141, 0, "MC", bgcolor, fgcolor);
-    _redrawStatusPosition( mc, 1);
+    sprintf( _text, "%04d", mc % 10000);
+    _redrawStatusPosition( _text, 1);
     _redrawStatusPosition( dmode, 2);
     _redrawStatusPosition( fmode, 3);
 }
 
-void LCD_Manager::updateStatus( char *pc, char *mc, char *dmode, char *fmode){
-    _redrawStatusPosition( pc, 0);
-    _redrawStatusPosition( mc, 1);
+void LCD_Manager::updateStatus( uint32_t pc, uint32_t mc, char *dmode, char *fmode){
+    sprintf( _text, "%04d", pc % 10000);
+    _redrawStatusPosition( _text, 0);
+    sprintf( _text, "%04d", mc % 10000);
+    _redrawStatusPosition( _text, 1);
     _redrawStatusPosition( dmode, 2);
     _redrawStatusPosition( fmode, 3);
 }
@@ -102,9 +102,12 @@ void LCD_Manager::updateStatus( char *pc, char *mc, char *dmode, char *fmode){
 void LCD_Manager::_redrawStatusPosition( char *message, uint8_t pos){
     char *ptr = _buffer + _statusOffsets[pos];
     if( strcmp(message, ptr) == 0) return; // strings identical
-    uint8_t l = _statusLengths[pos];
-    strncpy( ptr, message, l);
-    ptr[l] = 0; // safety zero
+    uint8_t ln = _statusLengths[pos];
+    strncpy( ptr, message, ln);
+    ptr[ln] = 0; // safety zero
+    #ifdef __DEBUG
+    Serial.println("redraw status");
+    #endif
     outputCharString( _statusLocations[pos], 0, ptr, bgcolor, fgcolor);
 }
 
@@ -142,8 +145,8 @@ void LCD_Manager::updateCalcRegister( uint8_t row, int64_t value){
 
 void LCD_Manager::_redrawCalcRegister( uint8_t row, char *line, char* text){
     if( strcmp(line, text) == 0) return; // strings identical
-    strncpy( line, text, 19);
-    line[19] = 0; // safety zero
+    strncpy( line, text, CALC_COLS-1);
+    line[CALC_COLS-1] = 0; // safety zero
     uint8_t j = strlen(line);
     uint8_t j2 = 19-j;
     int16_t x = 12;
@@ -183,8 +186,11 @@ void LCD_Manager::_redrawCalcLabel( uint8_t row, char *line, char* text){
 void LCD_Manager::outputTerminalLine( uint8_t row, char *text){
     if( row > 10) return;
     char *line = _lines[ row+1];
-    memset( line, 0, SCREEN_COLS);
-    _redrawTerminalLine( row, line, text);
+    if( strlen(text)==0) eraseTerminalLine( row);
+    else{
+        line[0] = 0;    
+        _redrawTerminalLine( row, line, text);
+    }
 }
 
 void LCD_Manager::updateTerminalLine( uint8_t row, char *text){
@@ -192,15 +198,33 @@ void LCD_Manager::updateTerminalLine( uint8_t row, char *text){
     _redrawTerminalLine( row, _lines[ row+1], text);
 }
 
+void LCD_Manager::eraseTerminalLine( uint8_t row){
+    if( row > 10) return;
+    char *line = _lines[row+1];
+    if( line[0] == 0) return;
+    #ifdef __DEBUG
+    Serial.print("Erase row ");
+    Serial.println( row);
+    #endif
+    int16_t y = (row+1) * 20;
+    tft.drawBitmap( 0, y, Nixedsys_12x20, 320, 20, bgcolor, bgcolor);
+    *line=0;    
+}
+
 void LCD_Manager::_redrawTerminalLine( uint8_t row, char *line, char* text){
+    if( line[0] == 0 && text[0] ==0) return;
     if( strcmp(line, text) == 0) return; // strings identical
-    strncpy( line, text, SCREEN_COLS);
-    line[SCREEN_COLS] = 0; // safety zero
-    int l = strlen(line);
+    #ifdef __DEBUG
+    Serial.print("Update row ");
+    Serial.println( row);
+    #endif
+    strncpy( line, text, SCREEN_COLS-1);
+    line[SCREEN_COLS-1] = 0; // safety zero
+    int ln = strlen(line);
     int16_t x = 1;
     int16_t y = (row+1) * 20;
     for( uint8_t i=0; i<SCREEN_COLS; i++, x+=11){
-        if( i<l) outputChar( x, y, line[i], fgcolor, bgcolor);
+        if( i<ln) outputChar( x, y, line[i], fgcolor, bgcolor);
         else outputChar( x, y, ' ', bgcolor, bgcolor);
     }
 }

@@ -70,8 +70,8 @@ namespace MK52_Hardware{
         inline void undimScreen(){_dimLED( 0, ledBrightness, 5);};
         void clearScreen( bool dim=false);
 
-        void outputStatus( char *pc, char *mc, char *dmode, char *fmode);
-        void updateStatus( char *pc, char *mc, char *dmode, char *fmode);
+        void outputStatus( uint32_t pc, uint32_t mc, char *dmode, char *fmode);
+        void updateStatus( uint32_t pc, uint32_t mc, char *dmode, char *fmode);
 
         void outputCalcRegister( uint8_t row, char *text);
         void outputCalcRegister( uint8_t row, double value);
@@ -83,14 +83,17 @@ namespace MK52_Hardware{
         void updateCalcLabel( uint8_t row, char *text);
         void outputTerminalLine( uint8_t row, char *text);
         void updateTerminalLine( uint8_t row, char *text);
+        void eraseTerminalLine( uint8_t row);
 
         void outputDigitString( int16_t x, int16_t y, char *src, uint16_t fg=TFT_GREEN, uint16_t bg=TFT_BLACK);
         void outputDigit( int16_t x, int16_t y, char d, uint16_t fg=TFT_GREEN, uint16_t bg=TFT_BLACK);
         void outputCharString( int16_t x, int16_t y, char *src, uint16_t fg=TFT_GREEN, uint16_t bg=TFT_BLACK);
         void outputChar( int16_t x, int16_t y, uint8_t c, uint16_t fg=TFT_GREEN, uint16_t bg=TFT_BLACK);
 
+        inline char *getOutputBuffer(){return _text;};
+
       private:
-        char _text[30]; // temporary output buffer
+        char _text[SCREEN_COLS]; // temporary output buffer
         char *_buffer = NULL;
         char *_lines[SCREEN_ROWS];
         int64_t *_ledPWM = NULL;

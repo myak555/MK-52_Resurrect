@@ -15,10 +15,12 @@ using namespace MK52_Interpreter;
 //
 unsigned long Display::init( void *components[]) {
     _lcd = (MK52_Hardware::LCD_Manager *)components[COMPONENT_LCD_MANAGER];
+    _pmem = (Program_Memory*)components[COMPONENT_PROGRAM_MEMORY];
     return millis(); 
 }
 
-void Display::activate(){
+int Display::activate(){
+    return NO_PARENT_RETURN;
 }
 
 void Display::tick(){

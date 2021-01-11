@@ -15,11 +15,6 @@
 #ifndef MK52_HOST_HPP
 #define MK52_HOST_HPP
 
-#include "Common.h"
-#include "KBD_Manager.hpp"
-#include "LCD_Manager.hpp"
-#include "SD_Manager.hpp"
-#include "Input_Receivers.hpp"
 #include "Displays.hpp"
 
 namespace MK52_Interpreter{
@@ -39,13 +34,13 @@ namespace MK52_Interpreter{
 
         inline Display *getDisplay( int id){
           return (Display *)_components[id];};
-        inline void setDisplay(int id){
-          current_Display = getDisplay( id);};
+        void setDisplay(int id);
 
         inline Input_Receiver *getReceiver( int id){
           return (Input_Receiver *)_components[id];};
-        inline void setReceiver(int id){
-          current_Receiver = getReceiver( id);};
+        void setReceiver(int id);
+
+        int tick();
 
         inline void shutdown(){ digitalWrite( SYSTEM_POWER_HOLD, LOW); };
 

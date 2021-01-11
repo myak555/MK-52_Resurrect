@@ -91,40 +91,23 @@ static char buff[30];
 
 void setup(void) {
     MyHost.init();
-    FontTest();
-    MyHost.getDisplay( COMPONENT_PROG_DISPLAY)->activate();
-    MyHost.getDisplay( COMPONENT_FILE_DISPLAY)->activate();
-    MyHost.getDisplay( COMPONENT_DATA_DISPLAY)->activate();
-    MyHost.getDisplay( COMPONENT_AUTO_DISPLAY)->activate();
-    MyHost.setDisplay( COMPONENT_AUTO_DISPLAY);
-    MyHost.setReceiver( COMPONENT_NUMBER_RECEIVER);
+    //FontTest();
+    //MyHost.getDisplay( COMPONENT_FILE_DISPLAY)->activate();
+    //MyHost.getDisplay( COMPONENT_DATA_DISPLAY)->activate();
+    //MyHost.getDisplay( COMPONENT_AUTO_DISPLAY)->activate();
+    //MyHost.getDisplay( COMPONENT_PROG_DISPLAY)->activate();
+    //MyHost.setDisplay( COMPONENT_PROG_DISPLAY);
+    //MyHost.setReceiver( COMPONENT_PROG_N_RECEIVER);
 }
 
 void loop(void) {
-    if( MyHost.current_Receiver->isActive()){
-        MyHost.current_Receiver->tick();
-        MyHost.current_Display->tick();
-        delay(KBD_IDLE_DELAY);
-        return;
-    }
-
-    MK52_Hardware::KBD_Manager *myKBD = MyHost.getKBD();
-
-    uint8_t b = myKBD->scan();
-    if( b){
-        Serial.print("Activating on key: ");
-        Serial.println( b);
-        MyHost.current_Receiver->activate( b);    
-        if( b == 32) MyHost.shutdown();
-        delay(KBD_IDLE_DELAY);
-        return;
-    }
+    MyHost.tick();
 
     if(Serial.available()){
-        b = Serial.read();
+        byte b = Serial.read();
         if( b == 'e')
         {
-            myKBD->LEDOn = !myKBD->LEDOn;
+            MyHost.getKBD()->LEDOn = !MyHost.getKBD()->LEDOn;
             Serial.println("LED flop");
             return;
         }
@@ -139,30 +122,6 @@ void loop(void) {
     }
     delay(KBD_IDLE_DELAY);
 }
-
-// void ProgramUpdate(char *fakeData){
-//     for( int j=1; j<=100; j++){
-//       for( int i=10; i>=0; i--){
-//         if(i<10)
-//           snprintf(buff, 30, "%04d  %s", i+j, fakeData);
-//         else
-//           snprintf(buff, 30, "%04d: %s", i, fakeData);
-//         _m_Hardware_LCD.outputTerminalLine( i, buff);
-//       }
-//     }
-// }
-
-// void DataUpdate( double fakeData){
-//     for( int j=1; j<=100; j++){
-//       for( int i=10; i>=0; i--){
-//         if(i<10)
-//           snprintf(buff, 30, "%04d  %18.11E", i, fakeData);
-//         else
-//           snprintf(buff, 30, "%04d: %18.11E", i, fakeData);
-//         _m_Hardware_LCD.outputTerminalLine( i, buff);
-//       }
-//     }
-// }
 
 void FontTest(){
     MK52_Hardware::LCD_Manager *myLCD = MyHost.getLCD();

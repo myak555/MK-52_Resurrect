@@ -12,6 +12,7 @@
 #include "Common.h"
 #include "LCD_Manager.hpp"
 #include "SD_Manager.hpp"
+#include "Program_Memory.hpp"
 #include "Input_Receivers.hpp"
 
 namespace MK52_Interpreter{
@@ -19,18 +20,19 @@ namespace MK52_Interpreter{
     class Display{
       public:
         virtual unsigned long init( void *components[]);
-        virtual void activate();
+        virtual int activate();
         virtual void tick();
         inline bool isActive(){ return _mode != 0;};
       protected:
         uint8_t _mode = 0;
         MK52_Hardware::LCD_Manager *_lcd;
+        MK52_Interpreter::Program_Memory *_pmem;
     };
 
     class AUTO_Display: public Display{
       public:
         unsigned long init( void *components[]);
-        void activate();
+        int activate();
         void tick();
       protected:
         MK52_Interpreter::Number_Receiver *_nr;
@@ -40,27 +42,27 @@ namespace MK52_Interpreter{
     class PROG_Display: public Display{
       public:
         unsigned long init( void *components[]);
-        void activate();
+        int activate();
         void tick();
       protected:
-        char buff[30];
-        char *_fakeData = "Some program line here";
+        MK52_Interpreter::Number_Receiver *_nr;
     };
 
     class DATA_Display: public Display{
       public:
         unsigned long init( void *components[]);
-        void activate();
+        int activate();
         void tick();
       protected:
         char buff[30];
         double _fakeData = -1.23456789012e+123;
+        MK52_Interpreter::Number_Receiver *_nr;
     };
 
     class FILE_Display: public Display{
       public:
         unsigned long init( void *components[]);
-        void activate();
+        int activate();
         void tick();
       protected:
         MK52_Hardware::SD_Manager *_sd;

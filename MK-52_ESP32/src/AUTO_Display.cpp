@@ -19,13 +19,13 @@ unsigned long AUTO_Display::init( void *components[]) {
     return Display::init( components);
 }
 
-void AUTO_Display::activate(){
+int AUTO_Display::activate(){
     #ifdef __DEBUG
     long TargetTime = millis();
     #endif
     _lcd->dimScreen();
     _lcd->clearScreen( false);
-    _lcd->outputStatus( "1234", "5678", "DEG", "BBB");
+    _lcd->outputStatus( _pmem->getCounter(), 5678, "DEG", "BBB");
     _lcd->outputCalcRegister( 0, _fakeData);
     _lcd->outputCalcLabel( 0, "X: should be a number");
     _lcd->outputCalcRegister( 1, NAN);
@@ -42,15 +42,16 @@ void AUTO_Display::activate(){
     Serial.println (" ms");
     delay( DEBUG_SHOW_DELAY);
     #endif
+    return -1;
 }
 
 void AUTO_Display::tick(){
     if( _nr->isActive()){
-        _lcd->updateStatus( "1234", "5678", "DEG", "NUM");
+        _lcd->updateStatus( _pmem->getCounter(), 5678, "DEG", "NUM");
         _lcd->updateCalcRegister( 0, _nr->toString());
     }
     else{
-        _lcd->updateStatus( "1234", "5678", "DEG", "TST");
+        _lcd->updateStatus( _pmem->getCounter(), 5678, "DEG", "   ");
         _lcd->updateCalcRegister( 0, _fakeData);
     }    
 }

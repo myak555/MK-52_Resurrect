@@ -13,7 +13,12 @@
 static MK52_Hardware::LCD_Manager _m_Hardware_LCD;
 static MK52_Hardware::KBD_Manager _m_Hardware_KBD;
 static MK52_Hardware::SD_Manager _m_Hardware_SD;
+
+static MK52_Interpreter::Program_Memory _m_ProgramMemory;
+
 static MK52_Interpreter::Number_Receiver _m_Receiver_Number;
+static MK52_Interpreter::PROG_N_Receiver _m_Receiver_PROG_N;
+
 static MK52_Interpreter::AUTO_Display _m_Display_AUTO;
 static MK52_Interpreter::PROG_Display _m_Display_PROG;
 static MK52_Interpreter::FILE_Display _m_Display_FILE;
@@ -46,12 +51,17 @@ unsigned long MK52_Host::init() {
     _components[ COMPONENT_LCD_MANAGER] = &_m_Hardware_LCD;
     _components[ COMPONENT_KBD_MANAGER] = &_m_Hardware_KBD;
     _components[ COMPONENT_SD_MANAGER] = &_m_Hardware_SD;
+    _components[ COMPONENT_PROGRAM_MEMORY] = &_m_ProgramMemory;
     _components[ COMPONENT_NUMBER_RECEIVER] = &_m_Receiver_Number;
+    _components[ COMPONENT_PROG_N_RECEIVER] = &_m_Receiver_PROG_N;
     _components[ COMPONENT_AUTO_DISPLAY] = &_m_Display_AUTO;
     _components[ COMPONENT_PROG_DISPLAY] = &_m_Display_PROG;
     _components[ COMPONENT_DATA_DISPLAY] = &_m_Display_FILE;
     _components[ COMPONENT_FILE_DISPLAY] = &_m_Display_DATA;
+
+    _m_ProgramMemory.init( _components);
     _m_Receiver_Number.init( _components);
+    _m_Receiver_PROG_N.init( _components);
     _m_Display_AUTO.init( _components);
     _m_Display_PROG.init( _components);
     _m_Display_DATA.init( _components);
@@ -63,36 +73,27 @@ unsigned long MK52_Host::init() {
     if( _m_Hardware_SD.SDMounted) Serial.println("mounted");
     else Serial.println("not found");
     #endif
-    _m_Hardware_LCD.waitForEndSplash( splashReady, true);
+
+    // end splash and start serving keyboard
+    _m_Hardware_LCD.waitForEndSplash( splashReady, false);
+    setDisplay( COMPONENT_PROG_DISPLAY);
 }
 
-// void FILE_Display::activate(){
-//     #ifdef __DEBUG
-//     long TargetTime = millis();
-//     #endif
-//     _lcd->dimScreen();
-//     _lcd->clearScreen( false);
+int MK52_Host::tick(){
+    int newReceiver = current_Receiver->tick();
+    if( newReceiver != NO_PARENT_RETURN) setReceiver( newReceiver);
+    current_Display->tick();
+}
 
-//     char *strs[10];
-//     char *tmp = (char *)malloc( 300);
-//     for( int i=0; i<10; i++, tmp+=30) strs[i] = tmp;
-//     _sd->startFolderListing( strs, 10, 29);
+void MK52_Host::setDisplay(int id){
+    if( id<0) return;
+    current_Display = getDisplay( id);
+    int receiver = current_Display->activate();
+    setReceiver(receiver);
+    }
 
-//     _lcd->outputStatus( "0000", "9999", "RAD", "NUM");
-//     for( int i=0; i<10; i++)
-//         _lcd->outputTerminalLine( i, strs[i]);
-
-//     _lcd->undimScreen();
-//     free(strs[0]);
-
-//     #ifdef __DEBUG
-//     TargetTime = millis() - TargetTime;
-//     Serial.print ("FILE display activated in ");
-//     Serial.print ( TargetTime);
-//     Serial.println (" ms");
-//     delay( DEBUG_SHOW_DELAY);
-//     #endif
-// }
-
-// void FILE_Display::tick(){
-// }
+void MK52_Host::setReceiver(int id){
+    if( id<0) return;
+    current_Receiver = getReceiver( id);
+    current_Receiver->activate();
+}

@@ -16,16 +16,17 @@ using namespace MK52_Interpreter;
 // Inits LIST display
 //
 unsigned long DATA_Display::init( void *components[]) {
+    _nr = (MK52_Interpreter::Number_Receiver *)components[COMPONENT_NUMBER_RECEIVER];
     return Display::init( components);
 }
 
-void DATA_Display::activate(){
+int DATA_Display::activate(){
     #ifdef __DEBUG
     long TargetTime = millis();
     #endif
     _lcd->dimScreen();
     _lcd->clearScreen( false);
-    _lcd->outputStatus( "1234", "5678", "GRD", " F ");
+    _lcd->outputStatus( _pmem->getCounter(), 5678, "GRD", " F ");
     for( int i=10; i>=0; i--){
         if(i<10)
             snprintf(buff, 30, "%04d  %18.11E", i, _fakeData);
@@ -42,6 +43,7 @@ void DATA_Display::activate(){
     Serial.println (" ms");
     delay( DEBUG_SHOW_DELAY);
     #endif
+    return -1;
 }
 
 void DATA_Display::tick(){

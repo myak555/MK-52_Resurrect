@@ -17,21 +17,21 @@ using namespace MK52_Interpreter;
 // Inits number entry
 //
 unsigned long Number_Receiver::init( void *components[]) {
-    _kbd = (MK52_Hardware::KBD_Manager *)components[COMPONENT_KBD_MANAGER];
-    return millis(); 
+    return Input_Receiver::init(components);
 }
 
-void Number_Receiver::activate( uint8_t scancode){
+void Number_Receiver::activate( int parentReturn, uint8_t scancode){
+    Input_Receiver::activate( parentReturn, scancode);
     strcpy_P( _text, PSTR(" "));
     _mode = 1;
     if(!scancode) return;
     _appendChar( _convertButton( scancode));
 }
 
-void Number_Receiver::tick(){
-    uint8_t scancode = _kbd->scan();
-    if( !scancode) return;
-    _appendChar( _convertButton( scancode));
+int Number_Receiver::tick( uint8_t scancode){
+    if(scancode == 0) scancode = _kbd->scan();
+    if( !scancode) return NO_PARENT_RETURN;
+    return _appendChar( _convertButton( scancode));
 }
 
 char Number_Receiver::_convertButton(uint8_t scancode){
@@ -40,11 +40,11 @@ char Number_Receiver::_convertButton(uint8_t scancode){
     return c;
 }
 
-void Number_Receiver::_appendChar( char c){
+int Number_Receiver::_appendChar( char c){
     int ln = strlen(_text);
     switch( c){
       case 0:
-          return;
+          return NO_PARENT_RETURN;
       case '0':
       case '1':
       case '2':
@@ -57,86 +57,86 @@ void Number_Receiver::_appendChar( char c){
       case '9':
           if( ln == 2 && _text[1] == '0'){
               _text[1] = c;
-              return;
+              return NO_PARENT_RETURN;
           }
-          if( _mode == 1 && ln>12) return;
-          if( _mode == 2 && ln>13) return;
+          if( _mode == 1 && ln>12) return NO_PARENT_RETURN;
+          if( _mode == 2 && ln>13) return NO_PARENT_RETURN;
           if( _mode == 3){
               _text[ln-3] = _text[ln-2]; 
               _text[ln-2] = _text[ln-1]; 
               _text[ln-1] = c; 
-              return;
+              return NO_PARENT_RETURN;
           }
           _text[ln] = c;
           _text[ln+1] = 0;
-          return;
+          return NO_PARENT_RETURN;
       case '-':
           if( _mode == 3){
               _swapSign( _text + ln - 4, '+');
-              return;
+              return NO_PARENT_RETURN;
           }
           _swapSign( _text, ' ');
-          return;
+          return NO_PARENT_RETURN;
       case '.':
-          if( _mode >= 2) return;
+          if( _mode >= 2) return NO_PARENT_RETURN;
           _mode = 2;
           if( ln == 1){
               strcpy_P( _text+1, PSTR("0."));
-              return;
+              return NO_PARENT_RETURN;
           }
           strcpy_P( _text+ln, PSTR("."));
-          return;
+          return NO_PARENT_RETURN;
       case 'E':
           if( _mode == 3){
               _text[ln-5] = 0;
               _mode = 2;
-              return;
+              return NO_PARENT_RETURN;
           }
           if( ln == 1 || strcmp_P(_text+1, PSTR("0.0")) == 0 || strcmp_P(_text+1, PSTR("0.")) == 0){
               strcpy_P( _text+1, _NR_StandardUnity);
               _mode = 3;
-              return;
+              return NO_PARENT_RETURN;
           }
           if( ln == 2 && _text[1] == '0'){
               strcpy_P( _text+1, _NR_StandardUnity);
               _mode = 3;
-              return;
+              return NO_PARENT_RETURN;
           }
           if( _mode == 1){
               strcpy_P( _text+ln, _NR_StandardUnity+1);
               _mode = 3;
-              return;
+              return NO_PARENT_RETURN;
           }
           _mode = 3;
           if( _text[ln-1] == '.'){
               strcpy_P( _text+ln, _NR_StandardUnity+2);
-              return;
+              return NO_PARENT_RETURN;
           }
           strcpy_P( _text+ln, _NR_StandardUnity+3);
-          return;
+          return NO_PARENT_RETURN;
       case 'e': // entry completed
           _mode = 0;
-          return;
+          return _parentReturn;
       case 'c': // erase
           if( _mode == 3){
               _text[ln-1] = _text[ln-2];
               _text[ln-2] = _text[ln-3];
               _text[ln-3] = '0';
-              return;
+              return NO_PARENT_RETURN;
           }
           if( _mode == 2 && _text[ln-1] == '.'){
               _text[ln-1] = 0;
               _mode = 1;
-              return;
+              return NO_PARENT_RETURN;
           }
           if( ln>1){
               _text[ln-1] = 0;
-              return;
+              return NO_PARENT_RETURN;
           }
           strcpy_P( _text, PSTR(" 0"));
           _mode = 0;
-          return;
+          return _parentReturn;
       default:
-          return;
+          return NO_PARENT_RETURN;
     }
 }

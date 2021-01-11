@@ -20,7 +20,7 @@ unsigned long FILE_Display::init( void *components[]) {
     return Display::init( components);
 }
 
-void FILE_Display::activate(){
+int FILE_Display::activate(){
     #ifdef __DEBUG
     long TargetTime = millis();
     #endif
@@ -32,7 +32,7 @@ void FILE_Display::activate(){
     for( int i=0; i<10; i++, tmp+=30) strs[i] = tmp;
     _sd->startFolderListing( strs, 10, 29);
 
-    _lcd->outputStatus( "0000", "9999", "RAD", "NUM");
+    _lcd->outputStatus( _pmem->getCounter(), 9999, "RAD", "NUM");
     for( int i=0; i<10; i++)
         _lcd->outputTerminalLine( i, strs[i]);
 
@@ -46,6 +46,7 @@ void FILE_Display::activate(){
     Serial.println (" ms");
     delay( DEBUG_SHOW_DELAY);
     #endif
+    return -1;
 }
 
 void FILE_Display::tick(){
