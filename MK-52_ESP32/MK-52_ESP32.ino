@@ -92,11 +92,11 @@ static char buff[30];
 void setup(void) {
     MyHost.init();
     //FontTest();
-    //MyHost.getDisplay( COMPONENT_FILE_DISPLAY)->activate();
-    //MyHost.getDisplay( COMPONENT_DATA_DISPLAY)->activate();
-    //MyHost.getDisplay( COMPONENT_AUTO_DISPLAY)->activate();
-    //MyHost.getDisplay( COMPONENT_PROG_DISPLAY)->activate();
-    //MyHost.setDisplay( COMPONENT_PROG_DISPLAY);
+    //MyHost.getDisplay( COMPONENT_Display_FILE)->activate();
+    //MyHost.getDisplay( COMPONENT_Display_DATA)->activate();
+    //MyHost.getDisplay( COMPONENT_Display_AUTO)->activate();
+    //MyHost.getDisplay( COMPONENT_Display_PROG)->activate();
+    //MyHost.setDisplay( COMPONENT_Display_PROG);
     //MyHost.setReceiver( COMPONENT_PROG_N_RECEIVER);
 }
 
