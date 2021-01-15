@@ -36,9 +36,9 @@
 #define COMPONENT_STACK             6
 #define COMPONENT_NUMBER_RECEIVER   7
 #define COMPONENT_PROG_N_RECEIVER   8
-#define COMPONENT_AUTO_DISPLAY      9
-#define COMPONENT_PROG_DISPLAY      10
-#define COMPONENT_DATA_DISPLAY      11
-#define COMPONENT_FILE_DISPLAY      12
+#define COMPONENT_Display_AUTO      9
+#define COMPONENT_Display_PROG      10
+#define COMPONENT_Display_DATA      11
+#define COMPONENT_Display_FILE      12
 
 #define N_COMPONENTS                13

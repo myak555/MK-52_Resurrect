@@ -19,10 +19,10 @@ static MK52_Interpreter::Program_Memory _m_ProgramMemory;
 static MK52_Interpreter::Number_Receiver _m_Receiver_Number;
 static MK52_Interpreter::PROG_N_Receiver _m_Receiver_PROG_N;
 
-static MK52_Interpreter::AUTO_Display _m_Display_AUTO;
-static MK52_Interpreter::PROG_Display _m_Display_PROG;
-static MK52_Interpreter::FILE_Display _m_Display_FILE;
-static MK52_Interpreter::DATA_Display _m_Display_DATA;
+static MK52_Interpreter::Display_AUTO _m_Display_AUTO;
+static MK52_Interpreter::Display_PROG _m_Display_PROG;
+static MK52_Interpreter::Display_FILE _m_Display_FILE;
+static MK52_Interpreter::Display_DATA _m_Display_DATA;
 
 using namespace MK52_Interpreter;
 
@@ -54,10 +54,10 @@ unsigned long MK52_Host::init() {
     _components[ COMPONENT_PROGRAM_MEMORY] = &_m_ProgramMemory;
     _components[ COMPONENT_NUMBER_RECEIVER] = &_m_Receiver_Number;
     _components[ COMPONENT_PROG_N_RECEIVER] = &_m_Receiver_PROG_N;
-    _components[ COMPONENT_AUTO_DISPLAY] = &_m_Display_AUTO;
-    _components[ COMPONENT_PROG_DISPLAY] = &_m_Display_PROG;
-    _components[ COMPONENT_DATA_DISPLAY] = &_m_Display_FILE;
-    _components[ COMPONENT_FILE_DISPLAY] = &_m_Display_DATA;
+    _components[ COMPONENT_Display_AUTO] = &_m_Display_AUTO;
+    _components[ COMPONENT_Display_PROG] = &_m_Display_PROG;
+    _components[ COMPONENT_Display_DATA] = &_m_Display_FILE;
+    _components[ COMPONENT_Display_FILE] = &_m_Display_DATA;
 
     _m_ProgramMemory.init( _components);
     _m_Receiver_Number.init( _components);
@@ -76,7 +76,7 @@ unsigned long MK52_Host::init() {
 
     // end splash and start serving keyboard
     _m_Hardware_LCD.waitForEndSplash( splashReady, false);
-    setDisplay( COMPONENT_PROG_DISPLAY);
+    setDisplay( COMPONENT_Display_PROG);
 }
 
 int MK52_Host::tick(){

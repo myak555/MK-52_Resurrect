@@ -29,7 +29,7 @@ namespace MK52_Interpreter{
         MK52_Interpreter::Program_Memory *_pmem;
     };
 
-    class AUTO_Display: public Display{
+    class Display_AUTO: public Display{
       public:
         unsigned long init( void *components[]);
         int activate();
@@ -39,7 +39,7 @@ namespace MK52_Interpreter{
         double _fakeData = -1.23456789012e+123;
     };
 
-    class PROG_Display: public Display{
+    class Display_PROG: public Display{
       public:
         unsigned long init( void *components[]);
         int activate();
@@ -48,7 +48,7 @@ namespace MK52_Interpreter{
         MK52_Interpreter::Number_Receiver *_nr;
     };
 
-    class DATA_Display: public Display{
+    class Display_DATA: public Display{
       public:
         unsigned long init( void *components[]);
         int activate();
@@ -59,7 +59,7 @@ namespace MK52_Interpreter{
         MK52_Interpreter::Number_Receiver *_nr;
     };
 
-    class FILE_Display: public Display{
+    class Display_FILE: public Display{
       public:
         unsigned long init( void *components[]);
         int activate();
