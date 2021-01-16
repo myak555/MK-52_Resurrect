@@ -9,7 +9,7 @@ This page is in early stage of development.
 
 Available resources:
 
-* Simulator in C#
+* Working simulator in C#
 * Hardware completed except for power transistors (components ordered)
 * ESP32 code stub
 * [Wiki stub](https://github.com/myak555/MK-52_Resurrect/wiki)
