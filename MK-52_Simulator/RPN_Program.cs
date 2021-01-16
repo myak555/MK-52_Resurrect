@@ -15,14 +15,14 @@ namespace MK52Simulator
     {
         public const int ProgramSize = 1000;
 
-        private RPN_Calculator _parent = null;
+        private MK52_Host _parent = null;
         private Dictionary<int, string> ProgramMemory = new Dictionary<int, string>();
 
         public RPN_Counter Counter = new RPN_Counter( "PC", ProgramSize);
         public InputReceiver_String Text = null;
         public InputReceiver_Value Number = null;
 
-        public RPN_Program( RPN_Calculator parent)
+        public RPN_Program( MK52_Host parent)
         {
             _parent = parent;
             Text = new InputReceiver_String(parent);
@@ -33,41 +33,6 @@ namespace MK52Simulator
         {
             ProgramMemory.Clear();
             Counter.Set(0);
-        }
-
-        public void ToStrings(string[] inp)
-        {
-            for (int i = -7, j = 1; j <= 8; i++, j++)
-            {
-                int dl = Counter.V + i;
-                inp[j] = "";
-                if (dl < 0) continue;
-                if (dl >= ProgramSize) continue;
-                StringBuilder sb = new StringBuilder();
-                sb.Append(dl.ToString("000"));
-                sb.Append((i == 0) ? "> " : "  ");
-                if (j < 8)
-                {
-                    sb.Append(GetLine(dl));
-                    inp[j] = sb.ToString();
-                    continue;
-                }
-                if (Number.isActive)
-                {
-                    sb.Append(Number.ToString());
-                    inp[j] = sb.ToString();
-                    continue;
-                }
-                if (Counter.isActive)
-                {
-                    sb.Append(GetLine(dl));
-                    sb.Append(Counter.ActiveEntry);
-                    inp[j] = sb.ToString();
-                    continue;
-                }
-                sb.Append(GetLine(dl));
-                inp[j] = sb.ToString();
-            }
         }
 
         public bool isAtStop

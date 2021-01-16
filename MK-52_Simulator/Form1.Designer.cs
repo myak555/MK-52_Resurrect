@@ -49,16 +49,16 @@ namespace MK52Simulator
             this.functionsListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
-            this.screenControl1 = new MK52Simulator.ScreenControl();
-            this.keyboardControl1 = new MK52Simulator.KeyboardControl();
             this.saveFileDialog2 = new System.Windows.Forms.SaveFileDialog();
             this.saveFileDialog3 = new System.Windows.Forms.SaveFileDialog();
+            this.LCD_Manager1 = new MK52Simulator.LCD_Manager();
+            this.KBD_Manager1 = new MK52Simulator.KBD_Manager();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // timer1
             // 
-            this.timer1.Interval = 10;
+            this.timer1.Interval = 500;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // menuStrip1
@@ -70,7 +70,7 @@ namespace MK52Simulator
             this.listToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1012, 31);
+            this.menuStrip1.Size = new System.Drawing.Size(914, 31);
             this.menuStrip1.TabIndex = 2;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -197,24 +197,6 @@ namespace MK52Simulator
             this.saveFileDialog1.RestoreDirectory = true;
             this.saveFileDialog1.Title = "Save program";
             // 
-            // screenControl1
-            // 
-            this.screenControl1.BackColor = System.Drawing.Color.Black;
-            this.screenControl1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.screenControl1.Location = new System.Drawing.Point(35, 45);
-            this.screenControl1.Name = "screenControl1";
-            this.screenControl1.Size = new System.Drawing.Size(371, 236);
-            this.screenControl1.TabIndex = 1;
-            // 
-            // keyboardControl1
-            // 
-            this.keyboardControl1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("keyboardControl1.BackgroundImage")));
-            this.keyboardControl1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.keyboardControl1.Location = new System.Drawing.Point(440, 45);
-            this.keyboardControl1.Name = "keyboardControl1";
-            this.keyboardControl1.Size = new System.Drawing.Size(560, 275);
-            this.keyboardControl1.TabIndex = 0;
-            // 
             // saveFileDialog2
             // 
             this.saveFileDialog2.DefaultExt = "MK52";
@@ -229,13 +211,31 @@ namespace MK52Simulator
             this.saveFileDialog3.RestoreDirectory = true;
             this.saveFileDialog3.Title = "Save implemented  functions list";
             // 
+            // LCD_Manager1
+            // 
+            this.LCD_Manager1.BackColor = System.Drawing.Color.DimGray;
+            this.LCD_Manager1.ForeColor = System.Drawing.SystemColors.ControlLight;
+            this.LCD_Manager1.Location = new System.Drawing.Point(5, 35);
+            this.LCD_Manager1.Name = "LCD_Manager1";
+            this.LCD_Manager1.Size = new System.Drawing.Size(340, 275);
+            this.LCD_Manager1.TabIndex = 3;
+            // 
+            // KBD_Manager1
+            // 
+            this.KBD_Manager1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("KBD_Manager1.BackgroundImage")));
+            this.KBD_Manager1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.KBD_Manager1.Location = new System.Drawing.Point(350, 35);
+            this.KBD_Manager1.Name = "KBD_Manager1";
+            this.KBD_Manager1.Size = new System.Drawing.Size(560, 275);
+            this.KBD_Manager1.TabIndex = 0;
+            // 
             // Form1
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackColor = System.Drawing.Color.Black;
-            this.ClientSize = new System.Drawing.Size(1012, 333);
-            this.Controls.Add(this.screenControl1);
-            this.Controls.Add(this.keyboardControl1);
+            this.ClientSize = new System.Drawing.Size(914, 315);
+            this.Controls.Add(this.LCD_Manager1);
+            this.Controls.Add(this.KBD_Manager1);
             this.Controls.Add(this.menuStrip1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MainMenuStrip = this.menuStrip1;
@@ -253,8 +253,7 @@ namespace MK52Simulator
 
         #endregion
 
-        private KeyboardControl keyboardControl1;
-        private ScreenControl screenControl1;
+        private KBD_Manager KBD_Manager1;
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem programToolStripMenuItem;
@@ -276,6 +275,7 @@ namespace MK52Simulator
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
         private System.Windows.Forms.SaveFileDialog saveFileDialog2;
         private System.Windows.Forms.SaveFileDialog saveFileDialog3;
+        private LCD_Manager LCD_Manager1;
     }
 }
 

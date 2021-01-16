@@ -23,7 +23,7 @@ namespace MK52Simulator
         private const string LoopRegisterNames = "L0L1L2L3";
         private int _addressMode = None;
 
-        private RPN_Calculator _parent = null;
+        private MK52_Host _parent = null;
         private List<RPN_Value> PrimaryRegisters = new List<RPN_Value>();
         private int[] LoopRegisters = new int[LoopSize];
 
@@ -31,7 +31,7 @@ namespace MK52Simulator
         private bool _isActive = false;
 
         #region Constructors
-        public RPN_Registers( RPN_Calculator parent)
+        public RPN_Registers( MK52_Host parent)
         {
             _parent = parent;
             for (int i = 0; i < MemorySize; i++)

@@ -36,6 +36,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Displays\Display_Splash.cs" />
+    <Compile Include="Displays\Display_RUN.cs" />
+    <Compile Include="Displays\Display_FILE.cs" />
+    <Compile Include="LCD_Manager.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="LCD_Manager.Designer.cs">
+      <DependentUpon>LCD_Manager.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program_Memory.cs" />
     <Compile Include="Receivers\InputReceiver_Address.cs" />
     <Compile Include="Receivers\InputReceiver_String.cs" />
     <Compile Include="Functions\RPN_Function_AXtoM.cs" />
@@ -75,27 +85,26 @@
     <Compile Include="Functions\RPN_Function_LblY.cs" />
     <Compile Include="RPN_Button.cs" />
     <Compile Include="RPN_Counter.cs" />
-    <Compile Include="Displays\Screen_OFF.cs" />
+    <Compile Include="Displays\Display_OFF.cs" />
     <Compile Include="Receivers\InputReceiver_RUN.cs" />
-    <Compile Include="Receivers\InputReceiver_LIST_K.cs" />
-    <Compile Include="Receivers\InputReceiver_LIST_F.cs" />
-    <Compile Include="Receivers\InputReceiver_LIST_A.cs" />
+    <Compile Include="Receivers\InputReceiver_DATA_K.cs" />
+    <Compile Include="Receivers\InputReceiver_DATA_F.cs" />
+    <Compile Include="Receivers\InputReceiver_DATA_A.cs" />
     <Compile Include="Receivers\InputReceiver_PROG_K.cs" />
     <Compile Include="Receivers\InputReceiver_PROG_F.cs" />
     <Compile Include="Receivers\InputReceiver_PROG_A.cs" />
     <Compile Include="Receivers\InputReceiver_AUTO_A.cs" />
     <Compile Include="Receivers\InputReceiver_AUTO_K.cs" />
     <Compile Include="Receivers\InputReceiver_AUTO_F.cs" />
-    <Compile Include="Receivers\InputReceiver_LIST_N.cs" />
+    <Compile Include="Receivers\InputReceiver_DATA_N.cs" />
     <Compile Include="Receivers\InputReceiver_PROG_N.cs" />
     <Compile Include="Receivers\InputReceiver_OFF.cs" />
     <Compile Include="Receivers\InputReceiver_AUTO_N.cs" />
     <Compile Include="Receivers\RPN_InputReceiver.cs" />
-    <Compile Include="Displays\RPN_Screen.cs" />
-    <Compile Include="Displays\Screen_LIST.cs" />
-    <Compile Include="RPN_Display.cs" />
-    <Compile Include="Displays\Screen_AUTO.cs" />
-    <Compile Include="Displays\Screen_PROG.cs" />
+    <Compile Include="Displays\Display.cs" />
+    <Compile Include="Displays\Display_DATA.cs" />
+    <Compile Include="Displays\Display_AUTO.cs" />
+    <Compile Include="Displays\Display_PROG.cs" />
     <Compile Include="Functions\RPN_Function_XtoM.cs" />
     <Compile Include="Functions\RPN_Function_MtoX.cs" />
     <Compile Include="Receivers\InputReceiver_Value.cs" />
@@ -147,18 +156,18 @@
     <Compile Include="Functions\RPN_Function_SIN.cs" />
     <Compile Include="Functions\RPN_Function.cs" />
     <Compile Include="Functions\RPN_Function_pi.cs" />
-    <Compile Include="RPN_Calculator.cs" />
+    <Compile Include="MK52_Host.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
-    <Compile Include="KeyboardControl.cs">
+    <Compile Include="KBD_Manager.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="KeyboardControl.Designer.cs">
-      <DependentUpon>KeyboardControl.cs</DependentUpon>
+    <Compile Include="KBD_Manager.Designer.cs">
+      <DependentUpon>KBD_Manager.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -166,18 +175,18 @@
       <SubType>Designer</SubType>
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="KeyboardControl.resx">
+    <EmbeddedResource Include="KBD_Manager.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>KeyboardControl.cs</DependentUpon>
+      <DependentUpon>KBD_Manager.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LCD_Manager.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>LCD_Manager.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ScreenControl.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>ScreenControl.cs</DependentUpon>
     </EmbeddedResource>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -193,16 +202,12 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="ScreenControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="ScreenControl.Designer.cs">
-      <DependentUpon>ScreenControl.cs</DependentUpon>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Documents\Annoyances_Fixed.txt" />
     <Content Include="Documents\Additional_Functions.txt" />
+    <Content Include="Images\Keyboard2.png" />
+    <Content Include="Images\Keyboard3.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

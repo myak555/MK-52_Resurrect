@@ -14,7 +14,7 @@ namespace MK52Simulator
     {
         public const int StackSize = 4;
 
-        private RPN_Calculator _parent = null;
+        private MK52_Host _parent = null;
         private string[] _standardLabels = { "X:", "Y:", "Z:", "T:" };
 
         // stack data
@@ -27,7 +27,7 @@ namespace MK52Simulator
 
         private InputReceiver_Value _numberEntry = null;
 
-        public RPN_Stack(RPN_Calculator parent)
+        public RPN_Stack(MK52_Host parent)
         {
             _parent = parent;
             _numberEntry = new InputReceiver_Value(parent);
@@ -41,6 +41,14 @@ namespace MK52Simulator
             get
             {
                 return _numberEntry.isActive;
+            }
+        }
+
+        public string activeEntry
+        {
+            get
+            {
+                return _numberEntry.ToString();
             }
         }
 
@@ -263,10 +271,10 @@ namespace MK52Simulator
                 case "9":
                 case ".":
                     if (!_numberEntry.isActive) Push(1);
-                    _numberEntry.onButton(button);
+                    _numberEntry.tick(button);
                     return;
                 case "/-/":
-                    if (_numberEntry.isActive) _numberEntry.onButton(button);
+                    if (_numberEntry.isActive) _numberEntry.tick(button);
                     else StackValues[0].Negate();
                     return;
                 case "+":
@@ -288,7 +296,7 @@ namespace MK52Simulator
                     if (!_numberEntry.isActive)
                         _numberEntry.FromValue(StackValues[0]);
                     else
-                        _numberEntry.onButton(button);
+                        _numberEntry.tick(button);
                     return;
                 case "Enter":
                     Enter();
@@ -299,7 +307,7 @@ namespace MK52Simulator
                         ClearLabels();
                         return;
                     }
-                    if (_numberEntry.isActive) _numberEntry.onButton(button);
+                    if (_numberEntry.isActive) _numberEntry.tick(button);
                     else StackValues[0].Clear();
                     return;
                 default:

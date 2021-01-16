@@ -17,12 +17,12 @@ namespace MK52Simulator
         public const int StackToMemory = 2;
         private int _addressMode = SetAddressOnly;
 
-        private RPN_Calculator _parent = null;
+        private MK52_Host _parent = null;
         private Dictionary<int, RPN_Value> ExtendedMemory = new Dictionary<int, RPN_Value>();
 
         public RPN_Counter Counter = new RPN_Counter("MC", ExtendedMemorySize);
 
-        public RPN_Memory( RPN_Calculator parent)
+        public RPN_Memory( MK52_Host parent)
         {
             _parent = parent;
         }

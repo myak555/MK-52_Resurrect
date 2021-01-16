@@ -49,7 +49,7 @@ namespace MK52Simulator
 
         public void ActivateEntry()
         {
-            _ira.Activate();
+            _ira.ActivateEntry();
             _isNewAddress = false;
         }
 
@@ -123,7 +123,7 @@ namespace MK52Simulator
                 _setPoiterToAddress(setCounter);
                 return true;
             }
-            _ira.onButton(button);
+            _ira.tick(button);
             _isNewAddress = true;
             if (!_ira.isComplete) return false;
             _setPoiterToAddress(setCounter);
