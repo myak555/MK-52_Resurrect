@@ -11,145 +11,120 @@ namespace MK52Simulator.Receivers
     //
     public class InputReceiver_AUTO_K: RPN_InputReceiver
     {
-        public InputReceiver_AUTO_K(RPN_Calculator parent, RPN_Screen display) :
-            base( parent, display)
+        public InputReceiver_AUTO_K(MK52_Host parent)
+            : base( parent)
         {
             Moniker = "AUTO_K";
             _displayName = " K ";
         }
 
-        public override void onButton(RPN_Button button)
+        public override string tick(RPN_Button button)
         {
             if (_parent.Registers.isActive)
             {
                 _parent.Registers.onButton(button);
-                return;
+                return "Nothing";
             }
             switch (button.Moniker)
             {
                 // Column 1
                 case "Func F":
-                    _parent.setReceiver("AUTO_F");
-                    return;
+                    return "AUTO_F";
                 case "Func A":
-                    _parent.setReceiver("AUTO_A");
-                    return;
+                    return "AUTO_A";
                 case "Mode":
                     _parent.SwapDegreeMode();
-                    return;
+                    return "Nothing";
 
                 // Column 1
                 case "->":
                     _parent.Memory.Counter.Increment();
-                    _parent.setReceiver("AUTO_N");
-                    return;
+                    return "AUTO_N";
                 case "<-":
                     _parent.Memory.Counter.Decrement();
-                    _parent.setReceiver("AUTO_N");
-                    return;
+                    return "AUTO_N";
                 case "B/O":
                     _parent.Memory.Counter.Set(0);
-                    _parent.setReceiver("AUTO_N");
-                    return;
+                    return "AUTO_N";
 
                 // Column 2
                 case "M->X":
                     _parent.Registers.ActivateEntry(RPN_Registers.ExtendedToStack);
-                    return;
+                    return "Nothing";
                 case "X->M":
                     _parent.Registers.ActivateEntry(RPN_Registers.StackToExtended);
-                    return;
+                    return "Nothing";
 
                 // Column 3
                 case "7":
                     _parent.executeFunction("[X]");
-                    _parent.setReceiver("AUTO_N");
-                    return;
+                    return "AUTO_N";
                 case "4":
                     _parent.executeFunction("|X|");
-                    _parent.setReceiver("AUTO_N");
-                    return;
+                    return "AUTO_N";
                 case "1":
                     _parent.executeFunction("e");
-                    _parent.setReceiver("AUTO_N");
-                    return;
+                    return "AUTO_N";
                 case "0":
-                    _parent.setReceiver("AUTO_N"); //NOP
-                    return;
+                    return "AUTO_N"; // NOP
 
                 // Column 4
                 case "8":
                     _parent.executeFunction("{X}");
-                    _parent.setReceiver("AUTO_N");
-                    return;
+                    return "AUTO_N";
                 case "5":
                     _parent.executeFunction("SIGN");
-                    _parent.setReceiver("AUTO_N");
-                    return;
+                    return "AUTO_N";
                 case "2":
                     _parent.executeFunction("LOG");
-                    _parent.setReceiver("AUTO_N");
-                    return;
+                    return "AUTO_N";
                 case ".":
                     _parent.executeFunction("AND");
-                    _parent.setReceiver("AUTO_N");
-                    return;
+                    return "AUTO_N";
 
                 // Column 5
                 case "9":
                     _parent.executeFunction("MAX");
-                    _parent.setReceiver("AUTO_N");
-                    return;
+                    return "AUTO_N";
                 case "6":
                     _parent.executeFunction("<-DM");
-                    _parent.setReceiver("AUTO_N");
-                    return;
+                    return "AUTO_N";
                 case "3":
                     _parent.executeFunction("<-DMS");
-                    _parent.setReceiver("AUTO_N");
-                    return;
+                    return "AUTO_N";
                 case "/-/":
                     _parent.executeFunction("OR");
-                    _parent.setReceiver("AUTO_N");
-                    return;
+                    return "AUTO_N";
 
                 // Column 6
                 case "-":
                     // TODO: root
-                    _parent.setReceiver("AUTO_N");
-                    return;
+                    return "AUTO_N";
                 case "+":
                     _parent.executeFunction("DM->");
-                    _parent.setReceiver("AUTO_N");
-                    return;
+                    return "AUTO_N";
                 case "Swap":
                     _parent.executeFunction("DMS->");
-                    _parent.setReceiver("AUTO_N");
-                    return;
+                    return "AUTO_N";
                 case "EE":
                     _parent.executeFunction("XOR");
-                    _parent.setReceiver("AUTO_N");
-                    return;
+                    return "AUTO_N";
 
                 // Column 7
                 case "/":
                     //TODO;
-                    _parent.setReceiver("AUTO_N");
-                    return;
+                    return "AUTO_N";
                 case "*":
                     //TODO Quadratic
-                    _parent.setReceiver("AUTO_N");
-                    return;
+                    return "AUTO_N";
                 case "Enter":
                     _parent.executeFunction("RAND");
-                    _parent.setReceiver("AUTO_N");
-                    return;
+                    return "AUTO_N";
                 case "Cx":
                     _parent.executeFunction( "NOT");
-                    _parent.setReceiver("AUTO_N");
-                    return;
+                    return "AUTO_N";
                 default:
-                    return;
+                    return "Nothing";
             }                
         }
     }

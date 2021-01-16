@@ -13,7 +13,6 @@ namespace MK52Simulator.Receivers
         private const int _Text = 1;
         private const int _Number = 2;
         private const int _K = 3;
-        private int _mode = _Off;
         
         // fields used for entry editing
         public string EntryText = "";
@@ -21,7 +20,7 @@ namespace MK52Simulator.Receivers
         /// <summary>
         /// Constructor
         /// </summary>
-        public InputReceiver_String(RPN_Calculator parent)
+        public InputReceiver_String(MK52_Host parent)
             : base(parent)
         {
             Clear();
@@ -38,6 +37,12 @@ namespace MK52Simulator.Receivers
             }
         }
 
+        public void ActivateEntry()
+        {
+            EntryText = "";
+            _mode = _Text;
+        }
+
         /// <summary>
         /// Clears all substrings, resets the mode;
         /// </summary>
@@ -51,71 +56,89 @@ namespace MK52Simulator.Receivers
         /// Called by the hardware button processing
         /// </summary>
         /// <param name="key">Button pressed</param>
-        public override void onButton(RPN_Button button)
+        public override string tick(RPN_Button button)
         {
             switch (_mode)
             {
                 case _Off:
-                    _mode = _Text;
-                    AddLetter( button);
-                    return;
+                    return "Nothing";
                 case _Text:
                     AddLetter(button);
-                    return;
+                    return "Nothing";
                 case _Number:
                     AddDigit(button);
+                    return "Nothing";
+                default:
+                    return "Nothing";
+            }
+        }
+
+        private void AddDigit(RPN_Button button)
+        {
+            switch (button.Moniker)
+            {
+                case "0":
+                case "1":
+                case "2":
+                case "3":
+                case "4":
+                case "5":
+                case "6":
+                case "7":
+                case "8":
+                case "9":
+                case ".":
+                case "+":
+                case "-":
+                case "*":
+                case "/":
+                    EntryText += button.Moniker;
+                    return;
+                case "EE":
+                    EntryText += "E";
+                    return;
+                case "Enter":
+                    _mode = _Off;
+                    return;
+                case "Mode":
+                    _mode = _Text;
+                    return;
+                case "Func K":
+                    _mode = _K;
+                    return;
+                case "Cx":
+                    if (EntryText.Length <= 0) return;
+                    EntryText = EntryText.Substring(0, EntryText.Length-1);
                     return;
                 default:
                     return;
             }
         }
 
-        private void AddDigit(RPN_Button button)
-        {
-            //EntryText += key;
-            //switch (_mode)
-            //{
-            //    case _Off:
-            //    case _Whole:
-            //        _mode = _Whole;
-            //        if (WholePart == "0") WholePart = key;
-            //        else WholePart += key;
-            //        return;
-            //    case _Number:
-            //        DecimalPart += key;
-            //        return;
-            //    default:
-            //        ExponentPart += key;
-            //        while (ExponentPart.Length > 3) ExponentPart = ExponentPart.Substring(1); 
-            //        return;
-            //}
-        }
-
         private void AddLetter( RPN_Button button)
         {
-            //switch (button.Moniker)
-            //{
-            //    case "Func F":
-            //    case "Func K":
-            //    case "Func A":
-            //        return;
-            //    case "Mode":
-            //        _mode = _Number;
-            //        return;
-
-            //    case _Whole:
-            //        _mode = _Whole;
-            //        if (WholePart == "0") WholePart = key;
-            //        else WholePart += key;
-            //        return;
-            //    case _Number:
-            //        DecimalPart += key;
-            //        return;
-            //    default:
-            //        ExponentPart += key;
-            //        while (ExponentPart.Length > 3) ExponentPart = ExponentPart.Substring(1);
-            //        return;
-            //}
+            switch (button.Moniker)
+            {
+                case "Func F":
+                case "Func A":
+                    return;
+                case "Func K":
+                    _mode = _Text;
+                    return;
+                case "Enter":
+                    _mode = _Off;
+                    return;
+                case "Mode":
+                    _mode = _Number;
+                    return;
+                case "Cx":
+                    if (EntryText.Length <= 0) return;
+                    EntryText = EntryText.Substring(0, EntryText.Length - 1);
+                    return;
+                default:
+                    EntryText += button.Letter;
+                    return;
+            }
         }
 
         /// <summary>

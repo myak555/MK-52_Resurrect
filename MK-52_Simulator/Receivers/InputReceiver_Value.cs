@@ -13,7 +13,6 @@ namespace MK52Simulator.Receivers
         private const int _Whole = 1;
         private const int _Decimal = 2;
         private const int _Exponent = 3;
-        private int _mode = _Off;
         
         // fields used for entry editing
         public string Sign = " ";
@@ -25,7 +24,7 @@ namespace MK52Simulator.Receivers
         /// <summary>
         /// Constructor
         /// </summary>
-        public InputReceiver_Value(RPN_Calculator parent):
+        public InputReceiver_Value(MK52_Host parent):
             base( parent)
         {
             Clear();
@@ -59,7 +58,7 @@ namespace MK52Simulator.Receivers
         /// Called by the hardware button processing
         /// </summary>
         /// <param name="button">Button pressed</param>
-        public override void onButton(RPN_Button button)
+        public override string tick(RPN_Button button)
         {
             switch (button.Moniker)
             {
@@ -74,21 +73,21 @@ namespace MK52Simulator.Receivers
                 case "8":
                 case "9":
                     AddDigit(button.Moniker);
-                    return;
+                    return "Nothing";
                 case ".":
                     AddDecimal();
-                    return;
+                    return "Nothing";
                 case "EE":
                     AddExponent();
-                    return;
+                    return "Nothing";
                 case "Cx":
                     AddCx();
-                    return;
+                    return "Nothing";
                 case "/-/":
                     AddMinus();
-                    return;
+                    return "Nothing";
                 default:
-                    return;
+                    return "Nothing";
             }
         }
 

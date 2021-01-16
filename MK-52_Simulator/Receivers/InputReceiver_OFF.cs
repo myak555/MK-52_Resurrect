@@ -13,22 +13,22 @@ namespace MK52Simulator.Receivers
     {
         private string _previousReceiver = "AUTO_N";
 
-        public InputReceiver_OFF(RPN_Calculator parent, RPN_Screen display) :
-            base( parent, display)
+        public InputReceiver_OFF(MK52_Host parent)
+            : base( parent)
         {
             Moniker = "OFF";
         }
 
-        public override void onButton(RPN_Button button)
+        public override string tick(RPN_Button button)
         {
-            if (button.Moniker != "Cx") return;
-            _parent.setReceiver(_previousReceiver);
-            return;
+            if (button.Moniker != "Cx") return "Nothing";
+            _parent.setDisplay("AUTO");
+            return "AUTO_N";
         }
 
-        public override void onSet()
+        public override void activate()
         {
-            _previousReceiver = _parent.CurrentReceiver.Moniker;
+            _previousReceiver = _parent.current_Receiver.Moniker;
         }
     }
 }

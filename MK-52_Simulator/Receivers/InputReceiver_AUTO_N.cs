@@ -11,81 +11,78 @@ namespace MK52Simulator.Receivers
     //
     public class InputReceiver_AUTO_N: RPN_InputReceiver
     {
-        public InputReceiver_AUTO_N(RPN_Calculator parent, RPN_Screen display) :
-            base( parent, display)
+        public InputReceiver_AUTO_N(MK52_Host parent)
+            : base( parent)
         {
             Moniker = "AUTO_N";
         }
 
-        public override void onButton(RPN_Button button)
+        public override string tick(RPN_Button button)
         {
             if (_parent.Program.Counter.isActive)
             {
                 _parent.Program.Counter.onButton(button, true);
-                return;
+                return "Nothing";
             }
             if (_parent.Registers.isActive)
             {
                 _parent.Registers.onButton(button);
-                return;
+                return "Nothing";
             }
             switch (button.Moniker)
             {
                 // Column 0
                 case "Func F":
-                    _parent.setReceiver("AUTO_F");
-                    return;
+                    return "AUTO_F";
                 case "Func K":
-                    _parent.setReceiver("AUTO_K");
-                    return;
+                    return "AUTO_K";
                 case "Func A":
-                    _parent.setReceiver("AUTO_A");
-                    return;
+                    return "AUTO_A";
                 case "Mode":
                     _parent.SwapDegreeMode();
-                    return;
+                    return "Nothing";
 
                 // Column 1
                 case "->":
                     _parent.Program.Counter.Increment();
-                    return;
+                    return "Nothing";
                 case "<-":
                     _parent.Program.Counter.Decrement();
-                    return;
+                    return "Nothing";
                 case "B/O":
                     _parent.Program.Counter.Set(0);
                     _parent.CallStack.Clear();
-                    return;
+                    return "Nothing";
                 case "S/P":
                     if (_parent.Program.isAtStop)
                         _parent.Program.Counter.Increment();
                     _parent.setReceiver("AUTO_R");
-                    return;
+                    return "Nothing";
 
                 // Column 2
                 case "M->X":
                     _parent.Registers.ActivateEntry( RPN_Registers.RegisterToStack);
-                    return;
+                    return "Nothing";
                 case "X->M":
                     _parent.Registers.ActivateEntry(RPN_Registers.StackToRegister);
-                    return;
+                    return "Nothing";
                 case "GOTO":
                     _parent.Program.Counter.ActivateEntry();
-                    return;
+                    return "Nothing";
                 case "GOSUB":
                     if (_parent.Program.isAtStop && _parent.CalcStack.X_Label.StartsWith("STOP"))
                     {
                         _parent.CalcStack.X_Label = "X:";
                         _parent.Program.Counter.Increment();
-                        return;
+                        return "Nothing";
                     }
                     _parent.Program.ExecuteCurrentLine();
                     if (_parent.Program.isAtStop)
                         _parent.CalcStack.X_Label = "STOP reached";
-                    return;
+                    return "Nothing";
                 default:
                     _parent.CalcStack.onButton(button);
-                    return;
+                    return "Nothing";
             }                
         }
 

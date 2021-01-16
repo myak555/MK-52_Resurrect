@@ -11,25 +11,25 @@ namespace MK52Simulator.Receivers
     //
     public class InputReceiver_PROG_N: RPN_InputReceiver
     {
-        public InputReceiver_PROG_N(RPN_Calculator parent, RPN_Screen display) :
-            base( parent, display)
+        public InputReceiver_PROG_N(MK52_Host parent)
+            : base( parent)
         {
             Moniker = "PROG_N";
         }
 
-        public override void onButton(RPN_Button button)
+        public override string tick(RPN_Button button)
         {
             if ( _parent.Program.Number.isActive)
             {
                 if (button.Moniker != "Enter")
                 {
-                    _parent.Program.Number.onButton(button);
-                    return;
+                    _parent.Program.Number.tick(button);
+                    return "Nothing";
                 }
                 _parent.Program.SetCurrentLine( _parent.Program.Number.ToString().Trim());
                 _parent.Program.Counter.Increment();
                 _parent.Program.Number.Clear();
-                return;
+                return "Nothing";
             }
             if (_parent.Program.Counter.isActive)
             {
@@ -39,7 +39,7 @@ namespace MK52Simulator.Receivers
                     _parent.Program.AppendCounterString();
                     _parent.Program.Counter.Increment();
                 }
-                return;
+                return "Nothing";
             }
             if (_parent.Registers.isActive)
             {
@@ -49,54 +49,54 @@ namespace MK52Simulator.Receivers
                     _parent.Registers.AppendRegisterString();
                     _parent.Program.Counter.Increment();
                 }
-                return;
+                return "Nothing";
             }
             switch (button.Moniker)
             {
                 // Column 0
                 case "Func F":
                     _parent.setReceiver("PROG_F");
-                    return;
+                    return "Nothing";
                 case "Func K":
                     _parent.setReceiver("PROG_K");
-                    return;
+                    return "Nothing";
                 case "Func A":
                     _parent.setReceiver("PROG_A");
-                    return;
+                    return "Nothing";
 
                 // Column 1
                 case "->":
                     _parent.Program.Counter.Increment();
-                    return;
+                    return "Nothing";
                 case "<-":
                     _parent.Program.Counter.Decrement();
-                    return;
+                    return "Nothing";
                 case "B/O":
                     _parent.Program.SetCurrentLine( "RETURN");
                     _parent.Program.Counter.Increment();
-                    return;
+                    return "Nothing";
                 case "S/P":
                     _parent.Program.SetCurrentLine("STOP");
                     _parent.Program.Counter.Increment();
-                    return;
+                    return "Nothing";
 
                 // Column 2
                 case "M->X":
                     _parent.Program.SetCurrentLine("M->X ");
                     _parent.Registers.ActivateEntry( RPN_Registers.None);
-                    return;
+                    return "Nothing";
                 case "X->M":
                     _parent.Program.SetCurrentLine("X->M ");
                     _parent.Registers.ActivateEntry( RPN_Registers.None);
-                    return;
+                    return "Nothing";
                 case "GOTO":
                     _parent.Program.SetCurrentLine("GOTO ");
                     _parent.Program.Counter.ActivateEntry();
-                    return;
+                    return "Nothing";
                 case "GOSUB":
                     _parent.Program.SetCurrentLine("GOSUB ");
                     _parent.Program.Counter.ActivateEntry();
-                    return;
+                    return "Nothing";
 
                 // Number entry (columns 3-5)
                 case "0":
@@ -111,14 +111,14 @@ namespace MK52Simulator.Receivers
                 case "9":
                 case ".":
                 case "EE":
-                    _parent.Program.Number.onButton(button); 
-                    return;
+                    _parent.Program.Number.tick(button);
+                    return "Nothing";
 
                 // Operations
                 default:
                     _parent.Program.SetCurrentLine( button.Moniker);
                     _parent.Program.Counter.Increment();
-                    return;
+                    return "Nothing";
             }            
         }
 

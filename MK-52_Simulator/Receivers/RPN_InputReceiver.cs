@@ -12,38 +12,47 @@ namespace MK52Simulator.Receivers
     public class RPN_InputReceiver
     {
         public string Moniker = "";
-        public RPN_Screen Display = null;
 
-        protected RPN_Calculator _parent;
-        protected string _partial = "";
+        protected MK52_Host _parent;
+        protected uint _mode = 0;
+        protected string _parentReturn = "None";
         protected string _displayName = "   ";
+        protected string _inputString = "";
 
-        public RPN_InputReceiver(RPN_Calculator parent)
+        public RPN_InputReceiver(MK52_Host parent)
         {
             _parent = parent;
         }
 
-        public RPN_InputReceiver(RPN_Calculator parent, RPN_Screen display)
+        public virtual void activate()
         {
-            _parent = parent;
-            Display = display;
         }
 
-        public virtual void onButton(RPN_Button button)
+        public virtual void activate( string return_to)
         {
-            return;
+            _parentReturn = return_to;
         }
 
-        public virtual void onSet()
+        public virtual void activate( string return_to, RPN_Button button)
         {
-            return;
+            _parentReturn = return_to;
+        }
+
+        public virtual string tick()
+        {
+            return _parentReturn;
+        }
+
+        public virtual string tick( RPN_Button button)
+        {
+            return _parentReturn;
         }
 
         public virtual bool isActive
         {
             get
             {
-                return false;
+                return _mode != 0;
             }
         }
 

@@ -11,24 +11,24 @@ namespace MK52Simulator.Receivers
     //
     public class InputReceiver_RUN: RPN_InputReceiver
     {
-        public InputReceiver_RUN(RPN_Calculator parent, RPN_Screen display) :
-            base( parent, display)
+        public InputReceiver_RUN(MK52_Host parent)
+            : base( parent)
         {
             Moniker = "AUTO_R";
             _displayName = "RUN";
         }
 
-        public override void onButton(RPN_Button button)
+        public override string tick(RPN_Button button)
         {
             switch (button.Moniker)
             {
                 // Column 1
                 case "S/P":
                     _parent.setReceiver("AUTO_N");
-                    return;
+                    return "Nothing";
                 default:
                     _parent.Program.ExecuteCurrentLine();
-                    return;
+                    return "Nothing";
             }                
         }
     }

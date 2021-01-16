@@ -11,54 +11,52 @@ namespace MK52Simulator.Receivers
     //
     public class InputReceiver_AUTO_A: RPN_InputReceiver
     {
-        public InputReceiver_AUTO_A(RPN_Calculator parent, RPN_Screen display) :
-            base( parent, display)
+        public InputReceiver_AUTO_A(MK52_Host parent)
+            : base( parent)
         {
             Moniker = "AUTO_A";
             _displayName = " A ";
         }
 
-        public override void onButton(RPN_Button button)
+        public override string tick(RPN_Button button)
         {
             if (_parent.Memory.Counter.isActive)
             {
                 _parent.Memory.onButton(button);
-                return;
+                return "Nothing";
             }
             switch (button.Moniker)
             {
                 // Column 0
                 case "Func F":
-                    _parent.setReceiver("AUTO_F");
-                    return;
+                    return "AUTO_F";
                 case "Func K":
-                    _parent.setReceiver("AUTO_K");
-                    return;
+                    return "AUTO_K";
                 case "Mode":
                     _parent.SwapDegreeMode();
-                    return;
+                    return "Nothing";
 
                 // Column 1
                 case "->":
                     _parent.Memory.Counter.Increment();
-                    return;
+                    return "Nothing";
                 case "<-":
                     _parent.Memory.Counter.Decrement();
-                    return;
+                    return "Nothing";
                 case "B/O":
                     _parent.Memory.Counter.Set(0);
-                    return;
+                    return "Nothing";
 
                 // Column 2
                 case "M->X":
                     _parent.Memory.ActivateEntry( RPN_Memory.MemoryToStack);
-                    return;
+                    return "Nothing";
                 case "X->M":
                     _parent.Memory.ActivateEntry(RPN_Memory.StackToMemory);
-                    return;
+                    return "Nothing";
                 case "GOTO":
                     _parent.Memory.Counter.ActivateEntry();
-                    return;
+                    return "Nothing";
 
                 // Column 3
                 // Does nothing
@@ -69,38 +67,32 @@ namespace MK52Simulator.Receivers
                 // Column 5
                 case "6":
                     _parent.executeFunction("<-RAD");
-                    _parent.setReceiver("AUTO_N");
-                    return;
+                    return "AUTO_N";
                 case "3":
                     _parent.executeFunction("<-IN");
-                    _parent.setReceiver("AUTO_N");
-                    return;
+                    return "AUTO_N";
 
                 // Column 6
                 case "+":
                     _parent.executeFunction("RAD->");
-                    _parent.setReceiver("AUTO_N");
-                    return;
+                    return "AUTO_N";
                 case "Swap":
                     _parent.executeFunction("IN->");
-                    _parent.setReceiver("AUTO_N");
-                    return;
+                    return "AUTO_N";
                 case "EE":
-                    _parent.setReceiver("LIST_N");
-                    return;
+                    return "DATA_N";
 
                 // Column 7
                 case "Enter":
                     _parent.executeFunction("SEED");
-                    _parent.setReceiver("AUTO_N");
-                    return;
+                    return "AUTO_N";
                 case "Cx":
                     _parent.CalcStack.CompleteEntry();
                     _parent.setReceiver("AUTO_N");
                     _parent.Shutdown();
-                    return;
+                    return "OFF";
                 default:
-                    return;
+                    return "Nothing";
             }                
         }
     }

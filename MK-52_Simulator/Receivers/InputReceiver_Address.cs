@@ -9,9 +9,8 @@ namespace MK52Simulator.Receivers
     //
     public class InputReceiver_Address : RPN_InputReceiver
     {        
-        private const bool _Off = false;
-        private const bool _On = true;
-        private bool _mode = _Off;
+        private const int _Off = 0;
+        private const int _On = 1;
         
         // fields used for entry editing
         public string Entry = "";
@@ -19,21 +18,10 @@ namespace MK52Simulator.Receivers
         /// <summary>
         /// Constructor
         /// </summary>
-        public InputReceiver_Address(RPN_Calculator parent):
+        public InputReceiver_Address(MK52_Host parent):
             base( parent)
         {
             Clear();
-        }
-
-        /// <summary>
-        /// Returns true if entry is on-going
-        /// </summary>
-        public override bool isActive
-        {
-            get
-            {
-                return _mode != _Off;
-            }
         }
 
         /// <summary>
@@ -42,10 +30,10 @@ namespace MK52Simulator.Receivers
         public void Clear()
         {
             Entry = "";
-            _mode = _Off;
+            _mode = 0;
         }
 
-        public void Activate()
+        public void ActivateEntry()
         {
             _mode = _On;
         }
@@ -54,7 +42,7 @@ namespace MK52Simulator.Receivers
         /// Called by the hardware button processing
         /// </summary>
         /// <param name="button">Button pressed</param>
-        public override void onButton(RPN_Button button)
+        public override string tick(RPN_Button button)
         {
             switch (button.Moniker)
             {
@@ -69,12 +57,12 @@ namespace MK52Simulator.Receivers
                 case "8":
                 case "9":
                     AddDigit(button.Moniker);
-                    return;
+                    return "Nothing";
                 case "Cx":
                     AddCx();
-                    return;
+                    return "Nothing";
                 default:
-                    return;
+                    return "Nothing";
             }
         }
 
