@@ -7,7 +7,7 @@ namespace MK52Simulator.Functions
 {
     public class RPN_Function_DEG : RPN_Function
     {
-        public RPN_Function_DEG( RPN_Calculator parent):
+        public RPN_Function_DEG( MK52_Host parent):
             base(parent)
         {
             Keyword = "DEG";
@@ -16,7 +16,7 @@ namespace MK52Simulator.Functions
 
         public override void execute(string code)
         {
-            _parent.dMode = RPN_Calculator.dMode_Degrees; 
+            _parent.dMode = MK52_Host.dMode_Degrees; 
         }
     }
 }

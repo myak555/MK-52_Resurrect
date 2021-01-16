@@ -11,9 +11,9 @@ namespace MK52Simulator.Functions
         public string Description = "Unknown empty function";
         public bool containsAddress = false;
         public bool containsRegister = false;
-        protected static RPN_Calculator _parent = null;
+        protected static MK52_Host _parent = null;
 
-        public RPN_Function( RPN_Calculator parent)
+        public RPN_Function( MK52_Host parent)
         {
             _parent = parent;
         }
@@ -35,9 +35,9 @@ namespace MK52Simulator.Functions
         {
             switch (_parent.dMode)
             {
-                case RPN_Calculator.dMode_Degrees:
+                case MK52_Host.dMode_Degrees:
                     return getPeriodicDegrees(v, 90);
-                case RPN_Calculator.dMode_Gradian:
+                case MK52_Host.dMode_Gradian:
                     return getPeriodicDegrees(v, 100);
                 default:
                     return getPeriodicRadians(v, Math.PI * 0.5);
@@ -48,9 +48,9 @@ namespace MK52Simulator.Functions
         {
             switch (_parent.dMode)
             {
-                case RPN_Calculator.dMode_Degrees:
+                case MK52_Host.dMode_Degrees:
                     return getPeriodicDegrees(v, 45);
-                case RPN_Calculator.dMode_Gradian:
+                case MK52_Host.dMode_Gradian:
                     return getPeriodicDegrees(v, 50);
                 default:
                     return getPeriodicRadians(v, Math.PI*0.25);
@@ -61,9 +61,9 @@ namespace MK52Simulator.Functions
         {
             switch (_parent.dMode)
             {
-                case RPN_Calculator.dMode_Radian:
+                case MK52_Host.dMode_Radian:
                     return v.asReal;
-                case RPN_Calculator.dMode_Degrees:
+                case MK52_Host.dMode_Degrees:
                     return v.asReal * Math.PI / 180.0;
                 default:
                     return v.asReal * Math.PI / 200.0;
@@ -75,10 +75,10 @@ namespace MK52Simulator.Functions
             RPN_Value v = _parent.CalcStack.X;
             switch (_parent.dMode)
             {
-                case RPN_Calculator.dMode_Radian:
+                case MK52_Host.dMode_Radian:
                     v.asReal = result;
                     break;
-                case RPN_Calculator.dMode_Degrees:
+                case MK52_Host.dMode_Degrees:
                     v.asReal = result * 180.0 / Math.PI;
                     break;
                 default:

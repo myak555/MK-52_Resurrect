@@ -7,7 +7,7 @@ namespace MK52Simulator.Functions
 {
     public class RPN_Function_FromRAD : RPN_Function
     {
-        public RPN_Function_FromRAD(RPN_Calculator parent)
+        public RPN_Function_FromRAD(MK52_Host parent)
             : base(parent)
         {
             Keyword = "<-RAD";

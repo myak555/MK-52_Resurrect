@@ -10,7 +10,7 @@ namespace MK52Simulator.Functions
         //
         // Ignore an empty line
         //
-        public RPN_Function_Empty(RPN_Calculator parent)
+        public RPN_Function_Empty(MK52_Host parent)
             : base(parent)
         {
             Keyword = "Empty";

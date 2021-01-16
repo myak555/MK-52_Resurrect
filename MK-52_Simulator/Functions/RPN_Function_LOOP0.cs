@@ -7,7 +7,7 @@ namespace MK52Simulator.Functions
 {
     public class RPN_Function_LOOP0 : RPN_Function
     {
-        public RPN_Function_LOOP0(RPN_Calculator parent)
+        public RPN_Function_LOOP0(MK52_Host parent)
             : base(parent)
         {
             Keyword = "WHILE L0>0 GOTO ";

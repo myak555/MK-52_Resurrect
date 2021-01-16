@@ -7,7 +7,7 @@ namespace MK52Simulator.Functions
 {
     public class RPN_Function_GOTO : RPN_Function
     {
-        public RPN_Function_GOTO(RPN_Calculator parent)
+        public RPN_Function_GOTO(MK52_Host parent)
             : base(parent)
         {
             Keyword = "GOTO ";

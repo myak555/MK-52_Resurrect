@@ -12,7 +12,7 @@ namespace MK52Simulator.Functions
         //
         // Tries to process a generic number into stack X value
         //
-        public RPN_Function_Number(RPN_Calculator parent)
+        public RPN_Function_Number(MK52_Host parent)
             : base(parent)
         {
             Keyword = "Number";

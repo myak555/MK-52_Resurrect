@@ -7,7 +7,7 @@ namespace MK52Simulator.Functions
 {
     public class RPN_Function_RAD : RPN_Function
     {
-        public RPN_Function_RAD( RPN_Calculator parent):
+        public RPN_Function_RAD( MK52_Host parent):
             base(parent)
         {
             Keyword = "RAD";
@@ -16,7 +16,7 @@ namespace MK52Simulator.Functions
 
         public override void execute(string code)
         {
-            _parent.dMode = RPN_Calculator.dMode_Radian; 
+            _parent.dMode = MK52_Host.dMode_Radian; 
         }
     }
 }

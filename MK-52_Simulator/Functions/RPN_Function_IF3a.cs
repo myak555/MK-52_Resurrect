@@ -7,7 +7,7 @@ namespace MK52Simulator.Functions
 {
     public class RPN_Function_IF3a : RPN_Function
     {
-        public RPN_Function_IF3a(RPN_Calculator parent)
+        public RPN_Function_IF3a(MK52_Host parent)
             : base(parent)
         {
             Keyword = "IFNOT X!=Y GOTO ";

@@ -10,7 +10,7 @@ namespace MK52Simulator.Functions
         //
         // Comment - ignore the line
         //
-        public RPN_Function_Comment(RPN_Calculator parent)
+        public RPN_Function_Comment(MK52_Host parent)
             : base(parent)
         {
             Keyword = "Comment";

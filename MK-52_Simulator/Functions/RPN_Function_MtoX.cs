@@ -7,7 +7,7 @@ namespace MK52Simulator.Functions
 {
     public class RPN_Function_MtoX : RPN_Function
     {
-        public RPN_Function_MtoX( RPN_Calculator parent):
+        public RPN_Function_MtoX( MK52_Host parent):
             base(parent)
         {
             Keyword = "M->X";

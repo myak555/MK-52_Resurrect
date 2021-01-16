@@ -7,7 +7,7 @@ namespace MK52Simulator.Functions
 {
     public class RPN_Function_LOG : RPN_Function
     {
-        public RPN_Function_LOG( RPN_Calculator parent):
+        public RPN_Function_LOG( MK52_Host parent):
             base(parent)
         {
             Keyword = "LOG";

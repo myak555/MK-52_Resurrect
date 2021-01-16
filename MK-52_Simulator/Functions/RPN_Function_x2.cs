@@ -7,7 +7,7 @@ namespace MK52Simulator.Functions
 {
     public class RPN_Function_x2 : RPN_Function
     {
-        public RPN_Function_x2(RPN_Calculator parent)
+        public RPN_Function_x2(MK52_Host parent)
             : base(parent)
         {
             Keyword = "X^2";

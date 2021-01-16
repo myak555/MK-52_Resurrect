@@ -7,7 +7,7 @@ namespace MK52Simulator.Functions
 {
     public class RPN_Function_MAX : RPN_Function
     {
-        public RPN_Function_MAX( RPN_Calculator parent):
+        public RPN_Function_MAX( MK52_Host parent):
             base(parent)
         {
             Keyword = "MAX";

@@ -7,7 +7,7 @@ namespace MK52Simulator.Functions
 {
     public class RPN_Function_Enter : RPN_Function
     {
-        public RPN_Function_Enter( RPN_Calculator parent): base(parent)
+        public RPN_Function_Enter( MK52_Host parent): base(parent)
         {
             Keyword = "Enter";
             Description = "Enters value into the stack";
