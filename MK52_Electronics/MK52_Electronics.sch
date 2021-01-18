@@ -1,4 +1,5 @@
 EESchema Schematic File Version 4
+LIBS:MK52_Electronics-cache
 EELAYER 29 0
 EELAYER END
 $Descr A4 11693 8268
@@ -16,27 +17,25 @@ $EndDescr
 $Comp
 L Transistor_FET:BS250 Q1
 U 1 1 5FE6E4D4
-P 3900 1300
-F 0 "Q1" H 4106 1254 50  0000 L CNN
-F 1 "BS250" H 4106 1345 50  0000 L CNN
-F 2 "Package_TO_SOT_THT:TO-92_Inline" H 4100 1225 50  0001 L CIN
-F 3 "http://www.vishay.com/docs/70209/70209.pdf" H 3900 1300 50  0001 L CNN
-	1    3900 1300
+P 3400 1300
+F 0 "Q1" H 3606 1254 50  0000 L CNN
+F 1 "BS250" H 3606 1345 50  0000 L CNN
+F 2 "Package_TO_SOT_THT:TO-92_Inline" H 3600 1225 50  0001 L CIN
+F 3 "http://www.vishay.com/docs/70209/70209.pdf" H 3400 1300 50  0001 L CNN
+	1    3400 1300
 	-1   0    0    1   
 $EndComp
 $Comp
 L power:+6V #PWR02
 U 1 1 5FE6EF69
-P 3800 800
-F 0 "#PWR02" H 3800 650 50  0001 C CNN
-F 1 "+6V" H 3815 973 50  0000 C CNN
-F 2 "" H 3800 800 50  0001 C CNN
-F 3 "" H 3800 800 50  0001 C CNN
-	1    3800 800 
+P 3300 800
+F 0 "#PWR02" H 3300 650 50  0001 C CNN
+F 1 "+6V" H 3315 973 50  0000 C CNN
+F 2 "" H 3300 800 50  0001 C CNN
+F 3 "" H 3300 800 50  0001 C CNN
+	1    3300 800 
 	1    0    0    -1  
 $EndComp
-Wire Wire Line
-	3800 800  3800 900 
 $Comp
 L Device:R R2
 U 1 1 5FE6F3D2
@@ -49,18 +48,9 @@ F 3 "~" H 4200 1100 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	4100 1300 4200 1300
-Wire Wire Line
 	4200 1300 4200 1250
 Wire Wire Line
-	3800 900  4200 900 
-Wire Wire Line
 	4200 900  4200 950 
-Connection ~ 3800 900 
-Wire Wire Line
-	3800 900  3800 1100
-Wire Wire Line
-	3800 1750 3800 1500
 Text Notes 1950 3650 0    50   ~ 0
 1 - RAW Power\n2 - Power Hold\n3 - KBD reset\n4 - KBD select\n5 - KBD sense\n6 - Power sense\n7 - 3.3V\n8 - GND
 $Comp
@@ -89,18 +79,16 @@ Connection ~ 4200 1300
 $Comp
 L Device:R R1
 U 1 1 5FE77DA3
-P 3800 2050
-F 0 "R1" H 3870 2096 50  0000 L CNN
-F 1 "4.7M" H 3870 2005 50  0000 L CNN
-F 2 "" V 3730 2050 50  0001 C CNN
-F 3 "~" H 3800 2050 50  0001 C CNN
-	1    3800 2050
+P 3500 2050
+F 0 "R1" H 3570 2096 50  0000 L CNN
+F 1 "4.7M" H 3570 2005 50  0000 L CNN
+F 2 "" V 3430 2050 50  0001 C CNN
+F 3 "~" H 3500 2050 50  0001 C CNN
+	1    3500 2050
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
 	4200 1300 4200 1650
-Wire Wire Line
-	3300 1750 3800 1750
 $Comp
 L power:GND #PWR06
 U 1 1 5FE831A3
@@ -134,28 +122,19 @@ F 3 "" H 4200 2300 50  0001 C CNN
 	1    4200 2300
 	1    0    0    -1  
 $EndComp
-Wire Wire Line
-	3250 1850 3800 1850
 $Comp
 L power:GND #PWR03
 U 1 1 5FE8927B
-P 3800 2300
-F 0 "#PWR03" H 3800 2050 50  0001 C CNN
-F 1 "GND" H 3805 2127 50  0000 C CNN
-F 2 "" H 3800 2300 50  0001 C CNN
-F 3 "" H 3800 2300 50  0001 C CNN
-	1    3800 2300
+P 3500 2300
+F 0 "#PWR03" H 3500 2050 50  0001 C CNN
+F 1 "GND" H 3505 2127 50  0000 C CNN
+F 2 "" H 3500 2300 50  0001 C CNN
+F 3 "" H 3500 2300 50  0001 C CNN
+	1    3500 2300
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
 	4200 2050 4200 2300
-Wire Wire Line
-	3800 2200 3800 2300
-Wire Wire Line
-	3800 1850 3800 1900
-Connection ~ 3800 1850
-Wire Wire Line
-	3800 1850 3900 1850
 $Comp
 L Transistor_FET:2N7000 Q3
 U 1 1 5FE8A545
@@ -452,8 +431,6 @@ Wire Wire Line
 Wire Wire Line
 	2900 3100 3300 3100
 Wire Wire Line
-	3300 1750 3300 3100
-Wire Wire Line
 	2900 3200 3250 3200
 Wire Wire Line
 	2900 3400 5500 3400
@@ -556,10 +533,6 @@ Wire Wire Line
 	2900 3500 5800 3500
 Wire Wire Line
 	2900 3600 3750 3600
-Wire Wire Line
-	5400 2750 5400 1850
-Wire Wire Line
-	5400 1850 5350 1850
 $Comp
 L Switch:SW_Push SW1
 U 1 1 5FF3F0D4
@@ -571,7 +544,6 @@ F 3 "~" H 5050 1100 50  0001 C CNN
 	1    5050 900 
 	1    0    0    -1  
 $EndComp
-Connection ~ 5400 1850
 Wire Wire Line
 	4900 4150 4900 4300
 Wire Wire Line
@@ -581,8 +553,6 @@ Wire Wire Line
 	4900 3200 4900 3600
 Wire Wire Line
 	4900 2900 4900 2750
-Wire Wire Line
-	4900 2750 5400 2750
 Connection ~ 4900 3600
 Wire Wire Line
 	4900 3600 4900 3850
@@ -591,10 +561,6 @@ Wire Wire Line
 Wire Wire Line
 	4200 900  4850 900 
 Connection ~ 4200 900 
-Wire Wire Line
-	5250 900  5400 900 
-Wire Wire Line
-	5400 900  5400 1850
 Wire Wire Line
 	6400 800  6400 1600
 Wire Wire Line
@@ -610,4 +576,70 @@ Wire Wire Line
 	3200 2600 3200 3700
 Wire Wire Line
 	6400 800  8500 800 
+$Comp
+L Device:R R11
+U 1 1 6003BE54
+P 3850 1300
+F 0 "R11" V 3950 1300 50  0000 L CNN
+F 1 "430R" V 3750 1200 50  0000 L CNN
+F 2 "" V 3780 1300 50  0001 C CNN
+F 3 "~" H 3850 1300 50  0001 C CNN
+	1    3850 1300
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	3600 1300 3700 1300
+Wire Wire Line
+	4000 1300 4200 1300
+Wire Wire Line
+	3300 1100 3300 900 
+Wire Wire Line
+	3300 800  3300 900 
+Connection ~ 3300 900 
+Wire Wire Line
+	3300 900  4200 900 
+Wire Wire Line
+	3300 1500 3300 3100
+Wire Wire Line
+	3500 2200 3500 2300
+$Comp
+L Device:R R10
+U 1 1 60058690
+P 3750 1850
+F 0 "R10" V 3850 1850 50  0000 L CNN
+F 1 "430R" V 3650 1750 50  0000 L CNN
+F 2 "" V 3680 1850 50  0001 C CNN
+F 3 "~" H 3750 1850 50  0001 C CNN
+	1    3750 1850
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	3250 1850 3500 1850
+Wire Wire Line
+	3500 1900 3500 1850
+Connection ~ 3500 1850
+Wire Wire Line
+	3500 1850 3600 1850
+$Comp
+L Device:R R12
+U 1 1 60060935
+P 5500 1850
+F 0 "R12" V 5600 1850 50  0000 L CNN
+F 1 "430R" V 5400 1750 50  0000 L CNN
+F 2 "" V 5430 1850 50  0001 C CNN
+F 3 "~" H 5500 1850 50  0001 C CNN
+	1    5500 1850
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	5700 900  5700 1850
+Wire Wire Line
+	5700 1850 5650 1850
+Wire Wire Line
+	5250 900  5700 900 
+Wire Wire Line
+	5700 1850 5700 2750
+Wire Wire Line
+	4900 2750 5700 2750
+Connection ~ 5700 1850
 $EndSCHEMATC
