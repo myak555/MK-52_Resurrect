@@ -21,7 +21,7 @@ namespace MK52_Interpreter{
     class MK52_Host{
 
       public:
-        Input_Receiver *current_Receiver = NULL;
+        Receiver *current_Receiver = NULL;
         Display *current_Display = NULL;
         unsigned long init();
 
@@ -36,16 +36,16 @@ namespace MK52_Interpreter{
           return (Display *)_components[id];};
         void setDisplay(int id);
 
-        inline Input_Receiver *getReceiver( int id){
-          return (Input_Receiver *)_components[id];};
+        inline Receiver *getReceiver( int id){
+          return (Receiver *)_components[id];};
         void setReceiver(int id);
 
-        int tick();
+        void tick();
 
         inline void shutdown(){ digitalWrite( SYSTEM_POWER_HOLD, LOW); };
 
       protected:
-        void *_components[];
+        void *_components[N_COMPONENTS];
     };    
 };
 

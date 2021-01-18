@@ -16,9 +16,10 @@
 #include "../hardware/Nixedsys_1251.h"
 #include "../hardware/Status_Template.h"
 
-//#define __DEBUG
+#define __DEBUG
 
-static TFT_eSPI tft = TFT_eSPI();  // Invoke library, pins defined in User_Setup.h
+TFT_eSPI _MyTFT = TFT_eSPI();  // Invoke library, pins defined in User_Setup.h
+
 static const uint16_t _statusLocations[] = { 77, 167, 231, 279};
 static const uint8_t _statusLengths[] = { 4, 4, 3, 3};
 static const uint8_t _statusOffsets[] = { 2, 7, 12, 16};
@@ -47,10 +48,10 @@ unsigned long LCD_Manager::init() {
     _ledcAnalogWrite(LCD_LEDC_CHANNEL_0, 0); // Screen PWM off initially
 
     //perform init sequence and show splash
-    tft.init();
-    tft.setRotation(3);
-    tft.fillScreen( bgcolor);
-    tft.drawBitmap( 95, 85, Simple_Icon_128x60px, 128, 60, fgcolor, bgcolor);
+    _MyTFT.init();
+    _MyTFT.setRotation(3);
+    _MyTFT.fillScreen( bgcolor);
+    _MyTFT.drawBitmap( 95, 85, Simple_Icon_128x60px, 128, 60, fgcolor, bgcolor);
     _dimLED( 0, ledBrightness, 60); // lit slowly
 
     long t = millis();
@@ -58,12 +59,12 @@ unsigned long LCD_Manager::init() {
     // The first row is split:
     // 5 bytes each for pc and mc
     // 3 bytes each for dmode and fmode
-    _buffer = (char *)malloc( SCREEN_COLS *  SCREEN_ROWS);
-    memset( _buffer, 0, SCREEN_COLS *  SCREEN_ROWS );
+    _buffer = (char *)malloc( SCREEN_BUFFER_SIZE);
+    memset( _buffer, 0, SCREEN_BUFFER_SIZE);
     char *ptr = _buffer;
     for( uint8_t i=0; i<SCREEN_ROWS; i++){
         _lines[i] = ptr;
-        ptr += SCREEN_COLS;
+        ptr += SCREEN_COLS + 1;
     }
     return t; 
 }
@@ -78,7 +79,7 @@ void LCD_Manager::waitForEndSplash( unsigned long start, bool cls) {
 }
 
 void LCD_Manager::outputStatus( uint32_t pc, uint32_t mc, char *dmode, char *fmode){
-    tft.drawBitmap( 0, 0, StatusTemplate_320x20px, 320, 20, bgcolor, fgcolor);
+    _MyTFT.drawBitmap( 0, 0, StatusTemplate_320x20px, 320, 20, bgcolor, fgcolor);
     memset( _buffer, 0, SCREEN_COLS);
     outputCharString( 51, 0, "PC", bgcolor, fgcolor);
     sprintf( _text, "%04d", pc % 10000);
@@ -145,15 +146,15 @@ void LCD_Manager::updateCalcRegister( uint8_t row, int64_t value){
 
 void LCD_Manager::_redrawCalcRegister( uint8_t row, char *line, char* text){
     if( strcmp(line, text) == 0) return; // strings identical
-    strncpy( line, text, CALC_COLS-1);
-    line[CALC_COLS-1] = 0; // safety zero
+    strncpy( line, text, CALC_COLS);
+    line[CALC_COLS] = 0; // safety zero
     uint8_t j = strlen(line);
     uint8_t j2 = 19-j;
     int16_t x = 12;
     int16_t y = _calcRegisterLocations[row];
-    tft.drawBitmap( 0, y, Seven_segment_16x27px, 12, 30, bgcolor, bgcolor);
+    _MyTFT.drawBitmap( 0, y, Seven_segment_16x27px, 12, 30, bgcolor, bgcolor);
     for( uint8_t i=0; i<j2; i++, x+=16)
-        tft.drawBitmap( x, y, Seven_segment_16x27px, 16, 30, bgcolor, bgcolor);
+        _MyTFT.drawBitmap( x, y, Seven_segment_16x27px, 16, 30, bgcolor, bgcolor);
     for( uint8_t i=0; i<j; i++, x+=16)
         outputDigit( x, y, line[i], fgcolor, bgcolor);
 }
@@ -207,7 +208,7 @@ void LCD_Manager::eraseTerminalLine( uint8_t row){
     Serial.println( row);
     #endif
     int16_t y = (row+1) * 20;
-    tft.drawBitmap( 0, y, Nixedsys_12x20, 320, 20, bgcolor, bgcolor);
+    _MyTFT.drawBitmap( 0, y, Nixedsys_12x20, 320, 20, bgcolor, bgcolor);
     *line=0;    
 }
 
@@ -218,8 +219,8 @@ void LCD_Manager::_redrawTerminalLine( uint8_t row, char *line, char* text){
     Serial.print("Update row ");
     Serial.println( row);
     #endif
-    strncpy( line, text, SCREEN_COLS-1);
-    line[SCREEN_COLS-1] = 0; // safety zero
+    strncpy( line, text, SCREEN_COLS);
+    line[SCREEN_COLS] = 0; // safety zero
     int ln = strlen(line);
     int16_t x = 1;
     int16_t y = (row+1) * 20;
@@ -231,7 +232,7 @@ void LCD_Manager::_redrawTerminalLine( uint8_t row, char *line, char* text){
 
 void LCD_Manager::clearScreen( bool dim){
     if( dim) _dimLED( ledBrightness, 0, 5); // dim before cleaning
-    tft.fillScreen( bgcolor);
+    _MyTFT.fillScreen( bgcolor);
     if( dim) _dimLED( 0, ledBrightness, 5);
 }
 
@@ -246,13 +247,13 @@ void LCD_Manager::outputDigitString( int16_t x, int16_t y, char *src, uint16_t f
 void LCD_Manager::outputDigit( int16_t x, int16_t y, char d, uint16_t fg, uint16_t bg){
     char *ptr = strchr( _calcCharacters, d);
     if( ptr == NULL){
-        tft.drawBitmap( x, y, Seven_segment_16x27px, 16, 30, bg, bg);
+        _MyTFT.drawBitmap( x, y, Seven_segment_16x27px, 16, 30, bg, bg);
         return;     
     }
     const uint8_t *bmp = Seven_segment_16x27px + 54 * (int16_t)( ptr-_calcCharacters);
-    tft.drawBitmap( x, y, bmp, 16, 1, bg, bg);
-    tft.drawBitmap( x, y+1, bmp, 16, 27, fg, bg);
-    tft.drawBitmap( x, y+28, bmp, 16, 2, bg, bg);
+    _MyTFT.drawBitmap( x, y, bmp, 16, 1, bg, bg);
+    _MyTFT.drawBitmap( x, y+1, bmp, 16, 27, fg, bg);
+    _MyTFT.drawBitmap( x, y+28, bmp, 16, 2, bg, bg);
 }
 
 void LCD_Manager::outputCharString( int16_t x, int16_t y, char *src, uint16_t fg, uint16_t bg){
@@ -267,9 +268,9 @@ void LCD_Manager::outputCharString( int16_t x, int16_t y, char *src, uint16_t fg
 void LCD_Manager::outputChar( int16_t x, int16_t y, uint8_t c, uint16_t fg, uint16_t bg){
     uint16_t shift = (uint16_t)c;
     const uint8_t *bmp = Nixedsys_12x20 + (shift<<5);
-    tft.drawBitmap( x, y, bmp, 11, 3, bg, bg);
-    tft.drawBitmap( x, y+3, bmp, 11, 16, fg, bg);
-    tft.drawBitmap( x, y+19, bmp, 11, 1, bg, bg);
+    _MyTFT.drawBitmap( x, y, bmp, 11, 3, bg, bg);
+    _MyTFT.drawBitmap( x, y+3, bmp, 11, 16, fg, bg);
+    _MyTFT.drawBitmap( x, y+19, bmp, 11, 1, bg, bg);
 }
 
 //

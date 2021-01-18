@@ -53,7 +53,7 @@
 #define BLINKER_RATE 500
 
 // show splashscreen in ms
-#define SCR_SPLASH  5000
+#define SCR_SPLASH  500
 
 namespace MK52_Hardware{
     class LCD_Manager{
@@ -93,7 +93,7 @@ namespace MK52_Hardware{
         inline char *getOutputBuffer(){return _text;};
 
       private:
-        char _text[SCREEN_COLS]; // temporary output buffer
+        char _text[SCREEN_COLS+1]; // temporary output buffer
         char *_buffer = NULL;
         char *_lines[SCREEN_ROWS];
         int64_t *_ledPWM = NULL;

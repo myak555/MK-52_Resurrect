@@ -15,7 +15,7 @@ using namespace MK52_Interpreter;
 // Inits display for AUTO mode
 //
 unsigned long Display_AUTO::init( void *components[]) {
-    _nr = (MK52_Interpreter::Number_Receiver *)components[COMPONENT_NUMBER_RECEIVER];
+    //_nr = (MK52_Interpreter::Receiver_Number *)components[COMPONENT_RECEIVER_NUMBER];
     return Display::init( components);
 }
 

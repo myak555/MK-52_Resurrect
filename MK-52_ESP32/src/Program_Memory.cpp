@@ -11,53 +11,26 @@
 #define __DEBUG
 using namespace MK52_Interpreter;
 
-const char _Test_Command_1[] PROGMEM = "TEST LINE 1";
-const char _Test_Command_2[] PROGMEM = "TEST LINE 2";
-const char _Test_Command_3[] PROGMEM = "TEST LINE 3";
-
 //
 // Inits the calculator program memory
 //
 unsigned long Program_Memory::init( void *components[]) {
+    clearText();
+    setInputMode(PSTR("   "));
     _buffer = (uint8_t *)malloc( PROGRAM_MEMORY_SIZE);
+    #ifdef __DEBUG
+    if( _buffer == NULL){
+        Serial.println("Malloc busted!");
+        return millis();
+    }
+    #endif
     _limit = _buffer + PROGRAM_MEMORY_SIZE;
     clear();
 
-    // TODO: Testing only
-    appendLine_P( _Test_Command_1 );
-    appendLine_P( _Test_Command_2 );
-    appendLine_P( _Test_Command_3 );
-    incrementCounter();
-    incrementCounter();
-    incrementCounter();
-    incrementCounter();
-    Serial.print("Counter1 [4]: ");
-    Serial.println( getCounter());
-    Serial.print("Position1: ");
-    Serial.println( (uint32_t)(_pointer-_buffer));
-    Serial.print("Free1: ");
+    #ifdef __DEBUG
+    Serial.print("Free program memory: ");
     Serial.println( free());
-    // setCounter( 100);
-    // Serial.print("Counter2 [100]: ");
-    // Serial.println( getCounter());
-    // Serial.print("Position2: ");
-    // Serial.println( (uint32_t)(_pointer-_buffer));
-    // Serial.print("Free2: ");
-    // Serial.println( free());
-    // setCounter( 1);
-    // Serial.print("Counter3 [1]: ");
-    // Serial.println( getCounter());
-    // Serial.print("Position3: ");
-    // Serial.println( (uint32_t)(_pointer-_buffer));
-    // Serial.print("Free3: ");
-    // Serial.println( free());
-    // setCounter( 0);
-    // Serial.print("Counter4 [0]: ");
-    // Serial.println( getCounter());
-    // Serial.print("Position4: ");
-    // Serial.println( (uint32_t)(_pointer-_buffer));
-    // Serial.print("Free4: ");
-    // Serial.println( free());
+    #endif
     return millis();
 }
 
@@ -76,6 +49,7 @@ void Program_Memory::resetCounter(){
 // Returns true if not enough memory
 //
 bool Program_Memory::appendLine(char *line){
+    if( line == NULL) line = _text;
     size_t ln = strlen( (line));
     if( ln >= free()) return true;
     strcpy( (char *)_bottom, line);
@@ -101,6 +75,16 @@ uint32_t Program_Memory::setCounter(uint32_t c){
         if( decrementCounter()) break;
     }
     return _counter;
+}
+uint32_t Program_Memory::setCounter(char *s){
+    int ln = strlen(s);
+    if( ln <= 0) return _counter;
+    uint32_t n = 0;
+    while( *s){
+        n = n*10 + *s - '0';
+        s++; 
+    }
+    return setCounter(n);
 }
 
 //
@@ -144,6 +128,7 @@ bool Program_Memory::decrementCounter(){
 }
 
 bool Program_Memory::replaceLine(char *line){
+    if( line == NULL) line = _text;
     size_t toCopy = strlen(line) + 1;
     if( _pointer + toCopy >= _limit) return false; // no space
     if( _pointer >= _bottom){
@@ -207,8 +192,50 @@ bool Program_Memory::replaceLine_P(const char *line){
     return true;
 }
 
-bool Program_Memory::insertLine(char *line){}
-bool Program_Memory::insertLine_P(const char *line){}
+bool Program_Memory::insertLine(char *line){
+    if( line == NULL) line = _text;
+    size_t toCopy = strlen(line) + 1;
+    if( _pointer + toCopy >= _limit) return false; // no space
+    if( _pointer >= _bottom){
+        if( _pointer+toCopy >= _limit) return false;
+        memcpy( _pointer, line, toCopy);
+        _bottom = _pointer + toCopy;
+        return true;
+    }
+    size_t toMove = _bottom - _pointer;
+    memmove( _pointer+toCopy, _pointer, toMove+1);
+    _bottom += toCopy;
+    *_bottom = 0;
+    memcpy( _pointer, line, toCopy);
+    return true;
+}
+bool Program_Memory::insertLine_P(const char *line){
+    size_t toCopy = strlen(line) + 1;
+    if( _pointer + toCopy >= _limit) return false; // no space
+    if( _pointer >= _bottom){
+        if( _pointer+toCopy >= _limit) return false;
+        memcpy_P( _pointer, line, toCopy);
+        _bottom = _pointer + toCopy;
+        return true;
+    }
+    size_t toMove = _bottom - _pointer;
+    memmove( _pointer+toCopy, _pointer, toMove+1);
+    _bottom += toCopy;
+    *_bottom = 0;
+    memcpy_P( _pointer, line, toCopy);
+    return true;
+}
+
+bool Program_Memory::updateLine(char *line){
+    if( EditOverwrite) replaceLine(line);
+    else insertLine(line);
+}
+
+bool Program_Memory::updateLine_P(const char *line){
+    if( EditOverwrite) replaceLine_P(line);
+    else insertLine_P(line);
+}
+
 
 void Program_Memory::deleteLine(){
     if( _pointer >= _bottom) return;
@@ -217,4 +244,28 @@ void Program_Memory::deleteLine(){
     memmove( _pointer, source, toCopy);
     memset( _bottom, 0, toCopy);
     _bottom -= toCopy;
+}
+
+char *Program_Memory::appendText( char *text){
+    int8_t ln = strlen(_text);
+    char *ptr = _text + ln;
+    while( ln<PROGRAM_LINE_LENGTH && *text){
+        *ptr++ = *text++;
+        ln++;
+    }
+    *ptr = 0;
+    return ptr;
+}
+
+char *Program_Memory::appendText_P( const char *text){
+    int8_t ln = strlen(_text);
+    char *ptr = _text + ln;
+    char c = (char)pgm_read_byte(text++);
+    while( ln<PROGRAM_LINE_LENGTH && c){
+        *ptr++ = c;
+        c = (char)pgm_read_byte(text++);
+        ln++;
+    }
+    *ptr = 0;
+    return ptr;
 }

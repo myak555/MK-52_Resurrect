@@ -9,11 +9,7 @@
 #ifndef DISPLAYS_HPP
 #define DISPLAYS_HPP
 
-#include "Common.h"
-#include "LCD_Manager.hpp"
-#include "SD_Manager.hpp"
-#include "Program_Memory.hpp"
-#include "Input_Receivers.hpp"
+#include "Receivers.hpp"
 
 namespace MK52_Interpreter{
 
@@ -35,7 +31,7 @@ namespace MK52_Interpreter{
         int activate();
         void tick();
       protected:
-        MK52_Interpreter::Number_Receiver *_nr;
+        MK52_Interpreter::Receiver_Number *_nr;
         double _fakeData = -1.23456789012e+123;
     };
 
@@ -45,7 +41,14 @@ namespace MK52_Interpreter{
         int activate();
         void tick();
       protected:
-        MK52_Interpreter::Number_Receiver *_nr;
+        MK52_Interpreter::Receiver_Number *_nr;
+        MK52_Interpreter::Receiver_Address *_ar;
+        MK52_Interpreter::Receiver_Register *_rr;
+        void _printNumber();
+        void _printOperatorWithAddress();
+        void _printOperatorWithRegister();
+        void _printOperator();
+        void _printStatus( bool output=false);
     };
 
     class Display_DATA: public Display{
@@ -56,7 +59,7 @@ namespace MK52_Interpreter{
       protected:
         char buff[30];
         double _fakeData = -1.23456789012e+123;
-        MK52_Interpreter::Number_Receiver *_nr;
+        MK52_Interpreter::Receiver_Number *_nr;
     };
 
     class Display_FILE: public Display{
