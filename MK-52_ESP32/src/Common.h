@@ -24,12 +24,29 @@
 
 // How long the system waits between the keyboard scans
 #define KBD_IDLE_DELAY              30
-#define DEBUG_SHOW_DELAY            5000
+#define DEBUG_SHOW_DELAY            10000
+
+#define VALUE_TYPE_EMPTY            0
+#define VALUE_TYPE_INTEGER          1
+#define VALUE_TYPE_DOUBLE           2
+
+// not accounting for the Bx (the total size is 5)
+#define RPN_STACK_SIZE              4
+
+#define HUGE_POSITIVE_INTEGER       (9000000000000000000L)
+#define HUGE_NEGATIVE_INTEGER       (-9000000000000000000L)
+#define HUGE_POSITIVE_AS_REAL       (9e18)
+#define HUGE_NEGATIVE_AS_REAL       (-9e18)
+
+#define DMODE_DEGREES               0
+#define DMODE_RADIANS               1
+#define DMODE_GRADS                 2
 
 #define PROGRAM_MEMORY_SIZE         64000
 #define EXTENDED_MEMORY_SIZE        36000
 
-#define NO_PARENT_RETURN            -1
+#define NO_CHANGE                   -1
+#define SHUTDOWN_REQUESTED          -2
 #define COMPONENT_LCD_MANAGER       0
 #define COMPONENT_KBD_MANAGER       1
 #define COMPONENT_SD_MANAGER        2

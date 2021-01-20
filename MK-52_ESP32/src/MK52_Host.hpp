@@ -21,8 +21,8 @@ namespace MK52_Interpreter{
     class MK52_Host{
 
       public:
-        Receiver *current_Receiver = NULL;
         Display *current_Display = NULL;
+
         unsigned long init();
 
         inline MK52_Hardware::LCD_Manager *getLCD(){
@@ -35,10 +35,6 @@ namespace MK52_Interpreter{
         inline Display *getDisplay( int id){
           return (Display *)_components[id];};
         void setDisplay(int id);
-
-        inline Receiver *getReceiver( int id){
-          return (Receiver *)_components[id];};
-        void setReceiver(int id);
 
         void tick();
 

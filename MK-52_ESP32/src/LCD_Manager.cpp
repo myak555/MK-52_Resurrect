@@ -27,13 +27,6 @@ static const char _calcCharacters[] = "0123456789ABCDEFIfnor-+.:";
 static const int16_t _calcRegisterLocations[] = {210,155,100,45};
 static const int16_t _calcLabelLocations[] = {188,133,78,23};
 
-const char _standard_DoubleFormat[] PROGMEM = "%f";  
-const char _standard_FullPrecision[] PROGMEM = "%13.11f";  
-const char _standard_ExponentFormat[] PROGMEM = "%+04d";  
-const char _standard_Error[] PROGMEM = "Error";  
-const char _standard_MinusInfinity[] PROGMEM = "-Inf";  
-const char _standard_PlusInfinity[] PROGMEM = "+Inf";  
-
 using namespace MK52_Hardware;
 
 //
@@ -119,29 +112,9 @@ void LCD_Manager::outputCalcRegister( uint8_t row, char *text){
     _redrawCalcRegister( row, line, text);
 }
 
-void LCD_Manager::outputCalcRegister( uint8_t row, double value){
-    if( row > 3) return;
-    outputCalcRegister( row, _composeDouble( _text, value));
-}
-
-void LCD_Manager::outputCalcRegister( uint8_t row, int64_t value){
-    if( row > 3) return;
-    outputCalcRegister( row, _composeInt64( _text, value));
-}
-
 void LCD_Manager::updateCalcRegister( uint8_t row, char *text){
     if( row > 3) return;
     _redrawCalcRegister( row, _lines[ (row<<1) + 1], text);
-}
-
-void LCD_Manager::updateCalcRegister( uint8_t row, double value){
-    if( row > 3) return;
-    updateCalcRegister( row, _composeDouble( _text, value));
-}
-
-void LCD_Manager::updateCalcRegister( uint8_t row, int64_t value){
-    if( row > 3) return;
-    updateCalcRegister( row, _composeInt64( _text, value));
 }
 
 void LCD_Manager::_redrawCalcRegister( uint8_t row, char *line, char* text){
@@ -300,82 +273,4 @@ void LCD_Manager::_dimLED( byte start_duty, byte stop_duty, byte step){
 void LCD_Manager::_ledcAnalogWrite(uint8_t channel, uint8_t value) {
     uint32_t duty = (LCD_LEDC_MAX_DUTY * value) >> 8;
     ledcWrite(channel, duty);
-}
-
-//
-// Converts double number
-//
-char *LCD_Manager::_composeDouble(char *text, double value){ 
-    if( isnan(value)){
-        sprintf_P(text, _standard_Error);
-        return text;
-    }
-    if( value == -INFINITY){
-        sprintf_P(text, _standard_MinusInfinity);
-        return text;
-    }
-    if( value == INFINITY){
-        sprintf_P(text, _standard_PlusInfinity);
-        return text;
-    }
-    bool negative = false;
-    if( value < 0.0){
-        negative = true;
-        value = -value;
-    } 
-    if( 0.1 <= value && value < 1.e12){
-      snprintf_P(text, 29, _standard_DoubleFormat, negative? -value: value);
-      text[29] = 0;
-      return text;
-    }
-    int16_t exponent = 0;
-    while(value<1.0){
-      exponent--;
-      value *= 10.0;
-    }
-    while(value>=10.0){
-      exponent++;
-      value *= 0.1;
-    }
-    snprintf_P(text, 24, _standard_FullPrecision, negative? -value: value);
-    text[24] = 0;
-    int16_t i = strlen(text);
-    snprintf_P(text+i, 29-i, _standard_ExponentFormat, exponent);
-    text[29] = 0; // safety zero
-    return text;
-}
-
-//
-// Converts int
-//
-char *LCD_Manager::_composeInt64(char *text, int64_t value){ 
-  if( value > 9000000000000000000L){
-    snprintf_P(text, 29, _standard_MinusInfinity);
-    return text;
-  }
-  if( value < -9000000000000000000L){
-    snprintf_P(text, 29, _standard_PlusInfinity);
-    return text;
-  }
-  // my own version of lltoa
-  // return lltoa( value, text, 10);
-  char *ptr = text;
-  if( value == 0L){
-    *ptr++ = '0';
-    *ptr = 0;
-    return text;
-  }
-  if( value < 0){
-    *ptr++ = '-';
-    value = -value;
-  }
-  int64_t mult = 1000000000000000000L;
-  while( mult && !(value / mult)) mult /= 10;
-  while( mult){
-    *ptr++ = '0' + (int8_t)(value / mult);
-    value %= mult;
-    mult /= 10;
-  }
-  *ptr = 0;
-  return text;
 }

@@ -18,13 +18,9 @@ unsigned long Receiver::init( void *components[]) {
     return millis(); 
 }
 
-void Receiver::activate( int parentReturn, uint8_t scancode ){
-    _parentReturn = parentReturn;
+void Receiver::activate( uint8_t scancode, int8_t parent){
+    _parentReceiver = parent;
 }
-
-int Receiver::tick( uint8_t scancode){
-}
-
 
 char Receiver::_convertButton(const char *list, uint8_t scancode){
     char c = (char)pgm_read_byte(list + scancode);

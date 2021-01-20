@@ -13,19 +13,23 @@
 #include "LCD_Manager.hpp"
 #include "KBD_Manager.hpp"
 #include "SD_Manager.hpp"
+#include "RPN_Stack.hpp"
 #include "Program_Memory.hpp"
+#include "Extended_Memory.hpp"
 
 namespace MK52_Interpreter{
 
     class Receiver{
       public:
         virtual unsigned long init( void *components[]);
-        virtual void activate( int parentReturn=NO_PARENT_RETURN, uint8_t scancode = 0);
+        virtual void activate( uint8_t scancode = 0, int8_t parent = NO_CHANGE);
         virtual int tick( uint8_t scancode = 0);
         inline bool isActive(){ return _mode != 0;};
+        inline char *moniker(){ return _moniker;};
       protected:
         uint8_t _mode = 0;
-        int _parentReturn;
+        int8_t _parentReceiver = -1;
+        char *_moniker ="   ";
         char _convertButton(const char *list, uint8_t scancode);
         MK52_Hardware::KBD_Manager *_kbd;
     };
@@ -33,7 +37,7 @@ namespace MK52_Interpreter{
     class Receiver_Number: public Receiver{
       public:
         unsigned long init( void *components[]);
-        void activate( int parentReturn=NO_PARENT_RETURN, uint8_t scancode = 0);
+        void activate( uint8_t scancode = 0, int8_t parent = NO_CHANGE);
         int tick( uint8_t scancode = 0);
         inline char *toString(){ return _text;};
         inline char *toTrimmedString(){ return (*_text == ' ')? _text+1: _text;};
@@ -46,7 +50,7 @@ namespace MK52_Interpreter{
     class Receiver_Address: public Receiver{
       public:
         unsigned long init( void *components[]);
-        void activate( int parentReturn=NO_PARENT_RETURN, uint8_t scancode = 0);
+        void activate( uint8_t scancode = 0, int8_t parent = NO_CHANGE);
         int tick( uint8_t scancode = 0);
         inline char *toString(){ return _text;};
       protected:
@@ -57,7 +61,7 @@ namespace MK52_Interpreter{
     class Receiver_Register: public Receiver{
       public:
         unsigned long init( void *components[]);
-        void activate( int parentReturn=NO_PARENT_RETURN, uint8_t scancode = 0);
+        void activate( uint8_t scancode = 0, int8_t parent = NO_CHANGE);
         int tick( uint8_t scancode = 0);
         inline char *toString(){ return _text;};
       protected:
@@ -68,9 +72,10 @@ namespace MK52_Interpreter{
     class Receiver_AUTO_N: public Receiver{
       public:
         unsigned long init( void *components[]);
-        void activate( int parentReturn=NO_PARENT_RETURN, uint8_t scancode = 0);
+        void activate( uint8_t scancode = 0, int8_t parent = NO_CHANGE);
         int tick( uint8_t scancode = 0);
       protected:
+        RPN_Stack *_stack;
         Receiver_Number *_nr;
         int _appendButton(uint8_t scancode);
     };
@@ -78,7 +83,7 @@ namespace MK52_Interpreter{
     class Receiver_PROG_N: public Receiver{
       public:
         unsigned long init( void *components[]);
-        void activate( int parentReturn=NO_PARENT_RETURN, uint8_t scancode = 0);
+        void activate( uint8_t scancode = 0, int8_t parent = NO_CHANGE);
         int tick( uint8_t scancode = 0);
       protected:
         Receiver_Number *_nr;
@@ -91,7 +96,7 @@ namespace MK52_Interpreter{
     class Receiver_PROG_F: public Receiver{
       public:
         unsigned long init( void *components[]);
-        void activate( int parentReturn=NO_PARENT_RETURN, uint8_t scancode = 0);
+        void activate( uint8_t scancode = 0, int8_t parent = NO_CHANGE);
         int tick( uint8_t scancode = 0);
       protected:
         Receiver_Address *_ar;

@@ -74,11 +74,7 @@ namespace MK52_Hardware{
         void updateStatus( uint32_t pc, uint32_t mc, char *dmode, char *fmode);
 
         void outputCalcRegister( uint8_t row, char *text);
-        void outputCalcRegister( uint8_t row, double value);
-        void outputCalcRegister( uint8_t row, int64_t value);
         void updateCalcRegister( uint8_t row, char *text);
-        void updateCalcRegister( uint8_t row, double value);
-        void updateCalcRegister( uint8_t row, int64_t value);
         void outputCalcLabel( uint8_t row, char *text);
         void updateCalcLabel( uint8_t row, char *text);
         void outputTerminalLine( uint8_t row, char *text);
@@ -103,8 +99,6 @@ namespace MK52_Hardware{
         void _redrawCalcLabel( uint8_t row, char *line, char* text);
         void _redrawCalcRegister( uint8_t row, char *line, char* text);
         void _redrawTerminalLine( uint8_t row, char *line, char* text);
-        char *_composeDouble(char *text, double value); 
-        char *_composeInt64(char *text, int64_t value);
     };
 };
 #endif // LCD_MANAGER_HPP

@@ -14,11 +14,15 @@ static MK52_Hardware::LCD_Manager _m_Hardware_LCD;
 static MK52_Hardware::KBD_Manager _m_Hardware_KBD;
 static MK52_Hardware::SD_Manager _m_Hardware_SD;
 
+static MK52_Interpreter::RPN_Stack _m_RPN_Stack;
 static MK52_Interpreter::Program_Memory _m_Program_Memory;
+static MK52_Interpreter::Extended_Memory _m_Extended_Memory;
 
 static MK52_Interpreter::Receiver_Number _m_Receiver_Number;
 static MK52_Interpreter::Receiver_Address _m_Receiver_Address;
 static MK52_Interpreter::Receiver_Register _m_Receiver_Register;
+
+static MK52_Interpreter::Receiver_AUTO_N _m_Receiver_AUTO_N;
 static MK52_Interpreter::Receiver_PROG_N _m_Receiver_PROG_N;
 static MK52_Interpreter::Receiver_PROG_F _m_Receiver_PROG_F;
 
@@ -54,10 +58,13 @@ unsigned long MK52_Host::init() {
     _components[ COMPONENT_LCD_MANAGER] = &_m_Hardware_LCD;
     _components[ COMPONENT_KBD_MANAGER] = &_m_Hardware_KBD;
     _components[ COMPONENT_SD_MANAGER] = &_m_Hardware_SD;
+    _components[ COMPONENT_STACK] = &_m_RPN_Stack;
     _components[ COMPONENT_PROGRAM_MEMORY] = &_m_Program_Memory;
+    _components[ COMPONENT_EXTENDED_MEMORY] = &_m_Extended_Memory;
     _components[ COMPONENT_RECEIVER_NUMBER] = &_m_Receiver_Number;
     _components[ COMPONENT_RECEIVER_ADDRESS] = &_m_Receiver_Address;
     _components[ COMPONENT_RECEIVER_REGISTER] = &_m_Receiver_Register;
+    _components[ COMPONENT_RECEIVER_AUTO_N] = &_m_Receiver_AUTO_N;
     _components[ COMPONENT_RECEIVER_PROG_N] = &_m_Receiver_PROG_N;
     _components[ COMPONENT_RECEIVER_PROG_F] = &_m_Receiver_PROG_F;
     _components[ COMPONENT_DISPLAY_AUTO] = &_m_Display_AUTO;
@@ -65,10 +72,13 @@ unsigned long MK52_Host::init() {
     _components[ COMPONENT_DISPLAY_DATA] = &_m_Display_FILE;
     _components[ COMPONENT_DISPLAY_FILE] = &_m_Display_DATA;
 
+    _m_RPN_Stack.init( _components);
     _m_Program_Memory.init( _components);
+    _m_Extended_Memory.init( _components);
     _m_Receiver_Number.init( _components);
     _m_Receiver_Address.init( _components);
     _m_Receiver_Register.init( _components);
+    _m_Receiver_AUTO_N.init( _components);
     _m_Receiver_PROG_N.init( _components);
     _m_Receiver_PROG_F.init( _components);
     _m_Display_AUTO.init( _components);
@@ -85,29 +95,30 @@ unsigned long MK52_Host::init() {
 
     // end splash and start serving keyboard
     _m_Hardware_LCD.waitForEndSplash( splashReady, false);
-    setDisplay( COMPONENT_DISPLAY_PROG);
+    #ifdef __DEBUG
+    // testing all displays
+    //setDisplay( COMPONENT_DISPLAY_FILE);
+    //delay(DEBUG_SHOW_DELAY);
+    //setDisplay( COMPONENT_DISPLAY_DATA);
+    //delay(DEBUG_SHOW_DELAY);
+    //setDisplay( COMPONENT_DISPLAY_PROG);
+    //delay(DEBUG_SHOW_DELAY);
+    #endif
+
+    setDisplay( COMPONENT_DISPLAY_AUTO);
     return millis();
 }
 
 void MK52_Host::tick(){
-    if( current_Receiver == NULL) return;
-    int newReceiver = current_Receiver->tick();
-    setReceiver( newReceiver);
     if( current_Display == NULL) return;
-    current_Display->tick();
+    int newDisplay = current_Display->tick();
+    if( newDisplay == SHUTDOWN_REQUESTED) shutdown();
+    setDisplay( newDisplay);
 }
 
 void MK52_Host::setDisplay(int id){
     if( id<0) return;
     current_Display = getDisplay( id);
     if( current_Display == NULL) return;
-    int receiver = current_Display->activate();
-    setReceiver(receiver);
-}
-
-void MK52_Host::setReceiver(int id){
-    if( id<0) return;
-    current_Receiver = getReceiver( id);
-    if( current_Receiver == NULL) return;
-    current_Receiver->activate();
+    current_Display->activate();
 }

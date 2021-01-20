@@ -20,7 +20,7 @@ unsigned long Display_DATA::init( void *components[]) {
     return Display::init( components);
 }
 
-int Display_DATA::activate(){
+void Display_DATA::activate(){
     #ifdef __DEBUG
     long TargetTime = millis();
     #endif
@@ -43,8 +43,9 @@ int Display_DATA::activate(){
     Serial.println (" ms");
     delay( DEBUG_SHOW_DELAY);
     #endif
-    return -1;
+    return;
 }
 
-void Display_DATA::tick(){
+int Display_DATA::tick(){
+    return -1;
 }

@@ -24,8 +24,8 @@ unsigned long Receiver_Address::init( void *components[]) {
     return Receiver::init(components);
 }
 
-void Receiver_Address::activate( int parentReturn, uint8_t scancode){
-    Receiver::activate( parentReturn, scancode);
+void Receiver_Address::activate( uint8_t scancode, int8_t parent){
+    Receiver::activate( scancode, parent);
     *_text = 0; 
     _mode = 1;
     if(!scancode) return;
@@ -34,7 +34,7 @@ void Receiver_Address::activate( int parentReturn, uint8_t scancode){
 
 int Receiver_Address::tick( uint8_t scancode){
     if(scancode == 0) scancode = _kbd->scan();
-    if( !scancode) return NO_PARENT_RETURN;
+    if( !scancode) return NO_CHANGE;
     return _appendChar( _convertButton( _AR_ButtonConversion, scancode));
 }
 
@@ -42,7 +42,7 @@ int Receiver_Address::_appendChar( char c){
     int ln = strlen(_text);
     switch( c){
         case 0:
-            return NO_PARENT_RETURN;
+            return NO_CHANGE;
         case '0':
         case '1':
         case '2':
@@ -55,20 +55,20 @@ int Receiver_Address::_appendChar( char c){
         case '9':
             _text[ln++] = c;
             _text[ln] = 0;
-            if( ln < 4) return NO_PARENT_RETURN;
+            if( ln < 4) return NO_CHANGE;
             _mode = 0;
-            return _parentReturn;
+            return _parentReceiver;
         case 'e': // entry completed
             _mode = 0;
-            return _parentReturn;
+            return _parentReceiver;
         case 'c': // erase
             if( ln > 0){
                 _text[ln-1] = 0;
-                return NO_PARENT_RETURN;
+                return NO_CHANGE;
             }
             _mode = 0;
-            return _parentReturn;
+            return _parentReceiver;
         default:
-          return NO_PARENT_RETURN;
+          return NO_CHANGE;
     }
 }

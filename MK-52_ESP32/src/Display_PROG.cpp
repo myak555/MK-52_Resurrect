@@ -29,7 +29,7 @@ unsigned long Display_PROG::init( void *components[]) {
     return Display::init( components);
 }
 
-int Display_PROG::activate(){
+void Display_PROG::activate(){
     #ifdef __DEBUG
     Serial.println("Activating PROG Display...");
     long TargetTime = millis();
@@ -57,10 +57,10 @@ int Display_PROG::activate(){
     Serial.print ( TargetTime);
     Serial.println (" ms");
     #endif
-    return COMPONENT_RECEIVER_PROG_N;
+    return;
 }
 
-void Display_PROG::tick(){
+int Display_PROG::tick(){
     unsigned long start = millis();
     char *buff = _lcd->getOutputBuffer();
     uint32_t prev_PC = _pmem->getCounter();
@@ -82,6 +82,7 @@ void Display_PROG::tick(){
     }
     if( millis()-start < KBD_IDLE_DELAY) delay(KBD_IDLE_DELAY);
     _pmem->setCounter( prev_PC);
+    return -1;
 }
 
 void Display_PROG::_printNumber(){

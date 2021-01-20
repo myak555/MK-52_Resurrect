@@ -15,31 +15,37 @@ namespace MK52_Interpreter{
 
     class Display{
       public:
+        Receiver *current_Receiver = NULL;
         virtual unsigned long init( void *components[]);
-        virtual int activate();
-        virtual void tick();
-        inline bool isActive(){ return _mode != 0;};
+        virtual void activate();
+        virtual int tick();
+        inline Receiver *getReceiver( int id){
+            return (Receiver *)_components[id];};
+
       protected:
-        uint8_t _mode = 0;
+        void **_components;
         MK52_Hardware::LCD_Manager *_lcd;
+        MK52_Hardware::KBD_Manager *_kbd;
         MK52_Interpreter::Program_Memory *_pmem;
+        MK52_Interpreter::Extended_Memory *_emem;
+        void _setCurrentReceiver( uint8_t id, uint8_t scancode=0, int8_t parent=-1);
     };
 
     class Display_AUTO: public Display{
       public:
         unsigned long init( void *components[]);
-        int activate();
-        void tick();
+        void activate();
+        int tick();
       protected:
+        MK52_Interpreter::RPN_Stack *_stack;
         MK52_Interpreter::Receiver_Number *_nr;
-        double _fakeData = -1.23456789012e+123;
     };
 
     class Display_PROG: public Display{
       public:
         unsigned long init( void *components[]);
-        int activate();
-        void tick();
+        void activate();
+        int tick();
       protected:
         MK52_Interpreter::Receiver_Number *_nr;
         MK52_Interpreter::Receiver_Address *_ar;
@@ -54,8 +60,8 @@ namespace MK52_Interpreter{
     class Display_DATA: public Display{
       public:
         unsigned long init( void *components[]);
-        int activate();
-        void tick();
+        void activate();
+        int tick();
       protected:
         char buff[30];
         double _fakeData = -1.23456789012e+123;
@@ -65,8 +71,8 @@ namespace MK52_Interpreter{
     class Display_FILE: public Display{
       public:
         unsigned long init( void *components[]);
-        int activate();
-        void tick();
+        void activate();
+        int tick();
       protected:
         MK52_Hardware::SD_Manager *_sd;
     };

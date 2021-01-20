@@ -82,22 +82,19 @@
 //
 ////////////////////////////////////////////////////////
 
-//#define __DEBUG
-
 #include "./src/MK52_Host.hpp"
+
+//#define __DEBUG
 
 static MK52_Interpreter::MK52_Host MyHost;
 static char buff[30];
 
 void setup(void) {
     MyHost.init();
-    //FontTest();
-    //MyHost.getDisplay( COMPONENT_DISPLAY_FILE)->activate();
-    //MyHost.getDisplay( COMPONENT_DISPLAY_DATA)->activate();
-    //MyHost.getDisplay( COMPONENT_DISPLAY_AUTO)->activate();
-    //MyHost.getDisplay( COMPONENT_DISPLAY_PROG)->activate();
-    //MyHost.setDisplay( COMPONENT_DISPLAY_PROG);
-    //MyHost.setReceiver( COMPONENT_RECEIVER_PROG_N);
+    #ifdef __DEBUG
+    FontTest();
+    MyHost.setDisplay(COMPONENT_DISPLAY_PROG);
+    #endif
 }
 
 void loop(void) {
@@ -120,15 +117,16 @@ void loop(void) {
         }
         return;
     }
-    delay(KBD_IDLE_DELAY);
 }
 
+#ifdef __DEBUG
 void FontTest(){
     MK52_Hardware::LCD_Manager *myLCD = MyHost.getLCD();
     for( int i=0; i<256; i++){
-      int x = (i%30)*11;
-      int y = (i/30)*20;
+      int x = (i%29)*11;
+      int y = (i/29)*20;
       myLCD->outputChar( x, y, (uint8_t)i);
     }
     delay( DEBUG_SHOW_DELAY);
 }
+#endif
