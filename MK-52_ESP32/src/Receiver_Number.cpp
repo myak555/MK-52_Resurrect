@@ -27,6 +27,7 @@ unsigned long Receiver_Number::init( void *components[]) {
 
 void Receiver_Number::activate( uint8_t scancode, int8_t parent){
     Receiver::activate( scancode, parent);
+    _lcd->updateStatusFMODE( "NUM");
     strcpy_P( _text, PSTR(" "));
     _mode = 1;
     if(!scancode) return;

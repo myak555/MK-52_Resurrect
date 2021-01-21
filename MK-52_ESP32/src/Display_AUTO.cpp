@@ -7,6 +7,7 @@
 //////////////////////////////////////////////////////////
 
 #include "Displays.hpp"
+#include "../functions/functions.h"
 
 #define __DEBUG
 using namespace MK52_Interpreter;
@@ -24,11 +25,10 @@ void Display_AUTO::activate(){
     #ifdef __DEBUG
     long TargetTime = millis();
     #endif
-    _setCurrentReceiver( COMPONENT_RECEIVER_AUTO_N);
-    char *buff = _lcd->getOutputBuffer(); 
+    char *buff = _lcd->getOutputBuffer();
     _lcd->dimScreen();
     _lcd->clearScreen( false);
-    _lcd->outputStatus( _pmem->getCounter(), _emem->getCounter(), _stack->getDModeName(), current_Receiver->moniker());
+    _lcd->outputStatus( _rpnf->progMem->getCounter(), _rpnf->extMem->getCounter(), _rpnf->Stack->getDModeName(), "   ");
     _lcd->outputCalcRegister( 0, _stack->X->toString( buff));
     _lcd->outputCalcLabel( 0, _stack->X_Label);
     _lcd->outputCalcRegister( 1, _stack->Y->toString(buff));
@@ -38,6 +38,7 @@ void Display_AUTO::activate(){
     _lcd->outputCalcRegister( 3, _stack->T->toString(buff));
     _lcd->outputCalcLabel( 3, _stack->T_Label);
     _lcd->undimScreen();
+    _setCurrentReceiver( COMPONENT_RECEIVER_AUTO_N);
     #ifdef __DEBUG
     TargetTime = millis() - TargetTime;
     Serial.print ("AUTO display activated in ");
@@ -55,19 +56,19 @@ int Display_AUTO::tick(){
             delay(KBD_IDLE_DELAY);
             return NO_CHANGE;
         case 4:
-            _stack->flipDMode();
-            break;
+            _rpnf->execute(FUNC_TOGGLE_DMOD);
+            _lcd->updateStatusDMODE(_rpnf->Stack->getDModeName());
+            return NO_CHANGE;
         default:
             if( current_Receiver == NULL) return NO_CHANGE;
             int newReceiver = current_Receiver->tick( scancode);
-            if( newReceiver < 0) return newReceiver; 
-            _setCurrentReceiver( newReceiver, scancode, newReceiver);
+            if( newReceiver < -1) return newReceiver; 
+            if( newReceiver >= 0) _setCurrentReceiver( newReceiver, scancode, newReceiver);
             break;
     }
     
     // display update part
     char *buff = _lcd->getOutputBuffer(); 
-    _lcd->updateStatus( _pmem->getCounter(), _emem->getCounter(), _stack->getDModeName(), current_Receiver->moniker());
     if( _nr->isActive())
         _lcd->updateCalcRegister( 0, _nr->toString());
     else

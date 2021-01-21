@@ -6,14 +6,14 @@
 //
 //////////////////////////////////////////////////////////
 
-#ifndef PROGRAM_MEMORY_HPP
-#define PROGRAM_MEMORY_HPP
+#ifndef REGISTER_MEMORY_HPP
+#define REGISTER_MEMORY_HPP
 
 #include "UniversalValue.hpp"
 
 namespace MK52_Interpreter{
 
-    class Program_Memory{
+    class Register_Memory{
       public:
         bool EditOverwrite = true;
         unsigned long init( void *components[]);
@@ -61,4 +61,4 @@ namespace MK52_Interpreter{
     };
 };
 
-#endif // PROGRAM_MEMORY_HPP
+#endif // REGISTER_MEMORY_HPP

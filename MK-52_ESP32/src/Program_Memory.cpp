@@ -20,7 +20,7 @@ unsigned long Program_Memory::init( void *components[]) {
     _buffer = (uint8_t *)malloc( PROGRAM_MEMORY_SIZE);
     #ifdef __DEBUG
     if( _buffer == NULL){
-        Serial.println("Malloc busted!");
+        Serial.println("Program Memory malloc busted!");
         return millis();
     }
     #endif
@@ -29,7 +29,7 @@ unsigned long Program_Memory::init( void *components[]) {
 
     #ifdef __DEBUG
     Serial.print("Free program memory: ");
-    Serial.println( free());
+    Serial.println( getFree());
     #endif
     return millis();
 }
@@ -51,14 +51,14 @@ void Program_Memory::resetCounter(){
 bool Program_Memory::appendLine(char *line){
     if( line == NULL) line = _text;
     size_t ln = strlen( (line));
-    if( ln >= free()) return true;
+    if( ln >= getFree()) return true;
     strcpy( (char *)_bottom, line);
     _bottom += ln+1;
     return false;
 }
 bool Program_Memory::appendLine_P(const char *line){
     size_t ln = strlen_P( (line));
-    if( ln >= free()) return true;
+    if( ln >= getFree()) return true;
     strcpy_P( (char *)_bottom, line);
     _bottom += ln+1;
     return false;

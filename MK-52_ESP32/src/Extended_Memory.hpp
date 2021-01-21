@@ -9,8 +9,7 @@
 #ifndef EXTENDED_MEMORY_HPP
 #define EXTENDED_MEMORY_HPP
 
-#include "Common.h"
-#include "SD_Manager.hpp"
+#include "UniversalValue.hpp"
 
 namespace MK52_Interpreter{
 
@@ -27,7 +26,7 @@ namespace MK52_Interpreter{
         bool incrementCounter();
         bool decrementCounter();
 
-        inline uint32_t free(){return (uint32_t)(_limit-_bottom);};
+        inline uint32_t getFree(){return (uint32_t)(_limit-_bottom);};
         inline char *getCurrentLine(){return (char*)_pointer;};
         inline char *getNextLine(){return (char*)_pointer + strlen((char *)_pointer) + 1;};
 

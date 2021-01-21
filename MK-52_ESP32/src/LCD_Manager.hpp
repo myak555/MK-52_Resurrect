@@ -70,6 +70,12 @@ namespace MK52_Hardware{
         inline void undimScreen(){_dimLED( 0, ledBrightness, 5);};
         void clearScreen( bool dim=false);
 
+        inline void updateStatusPC( char *pc){_redrawStatusPosition( pc, 0);};
+        void updateStatusPC( uint32_t pc);
+        inline void updateStatusMC( char *mc){_redrawStatusPosition( mc, 1);};
+        void updateStatusMC( uint32_t mc);
+        inline void updateStatusDMODE( char *dmode){_redrawStatusPosition( dmode, 2);};
+        inline void updateStatusFMODE( char *fmode){_redrawStatusPosition( fmode, 3);};
         void outputStatus( uint32_t pc, uint32_t mc, char *dmode, char *fmode);
         void updateStatus( uint32_t pc, uint32_t mc, char *dmode, char *fmode);
 
@@ -99,6 +105,7 @@ namespace MK52_Hardware{
         void _redrawCalcLabel( uint8_t row, char *line, char* text);
         void _redrawCalcRegister( uint8_t row, char *line, char* text);
         void _redrawTerminalLine( uint8_t row, char *line, char* text);
+        inline void _printCounter( uint32_t c){ sprintf_P( _text, PSTR("%04d"), c % 10000);};
     };
 };
 #endif // LCD_MANAGER_HPP

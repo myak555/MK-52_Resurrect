@@ -37,6 +37,10 @@ namespace MK52_Interpreter{
             inline double *_asRealPtr(){return (double *)(_ptr+1);};
             char *_composeDouble(char *text, double value); 
             char *_composeInt64(char *text, int64_t value);
+            double _recoverDecimal(char *ptr);
+            int64_t _recoverInt64(char *ptr);
+            void _checkRounding();
+            bool _isDecimal(char c);
     };
 }
 

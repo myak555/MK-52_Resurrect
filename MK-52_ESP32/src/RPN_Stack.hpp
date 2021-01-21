@@ -24,7 +24,7 @@ namespace MK52_Interpreter{
             char *Z_Label = NULL;
             char *T_Label = NULL;
 
-            void init( void *components[]);
+            unsigned long init( void *components[]);
             void clearStack();
             void resetStackLabels();
             bool customStackLabels();
@@ -34,12 +34,12 @@ namespace MK52_Interpreter{
             inline uint8_t getDMode(){ return _dMode;}; 
             inline char *getDModeName(){ return _dModeName;}; 
             void setDMode(uint8_t m); 
-            uint8_t flipDMode(); 
+            uint8_t toggleAngleMode(); 
         private:
             uint8_t _stackValues[(RPN_STACK_SIZE+1)*9];
             char _stackLabels[SCREEN_COLS*4+4];
             uint8_t _dMode = DMODE_DEGREES;
-            char _dModeName[4];
+            char _dModeName[5];
     };
 }
 

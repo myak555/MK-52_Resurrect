@@ -17,6 +17,8 @@ static MK52_Hardware::SD_Manager _m_Hardware_SD;
 static MK52_Interpreter::RPN_Stack _m_RPN_Stack;
 static MK52_Interpreter::Program_Memory _m_Program_Memory;
 static MK52_Interpreter::Extended_Memory _m_Extended_Memory;
+static MK52_Interpreter::Register_Memory _m_Register_Memory;
+static MK52_Interpreter::RPN_Functions _m_RPN_Functions;
 
 static MK52_Interpreter::Receiver_Number _m_Receiver_Number;
 static MK52_Interpreter::Receiver_Address _m_Receiver_Address;
@@ -58,9 +60,13 @@ unsigned long MK52_Host::init() {
     _components[ COMPONENT_LCD_MANAGER] = &_m_Hardware_LCD;
     _components[ COMPONENT_KBD_MANAGER] = &_m_Hardware_KBD;
     _components[ COMPONENT_SD_MANAGER] = &_m_Hardware_SD;
+
     _components[ COMPONENT_STACK] = &_m_RPN_Stack;
     _components[ COMPONENT_PROGRAM_MEMORY] = &_m_Program_Memory;
     _components[ COMPONENT_EXTENDED_MEMORY] = &_m_Extended_Memory;
+    _components[ COMPONENT_REGISTER_MEMORY] = &_m_Register_Memory;
+    _components[ COMPONENT_FUNCTIONS] = &_m_RPN_Functions;
+
     _components[ COMPONENT_RECEIVER_NUMBER] = &_m_Receiver_Number;
     _components[ COMPONENT_RECEIVER_ADDRESS] = &_m_Receiver_Address;
     _components[ COMPONENT_RECEIVER_REGISTER] = &_m_Receiver_Register;
@@ -72,9 +78,12 @@ unsigned long MK52_Host::init() {
     _components[ COMPONENT_DISPLAY_DATA] = &_m_Display_FILE;
     _components[ COMPONENT_DISPLAY_FILE] = &_m_Display_DATA;
 
-    _m_RPN_Stack.init( _components);
     _m_Program_Memory.init( _components);
     _m_Extended_Memory.init( _components);
+    _m_Register_Memory.init( _components);
+    _m_RPN_Stack.init( _components);
+    _m_RPN_Functions.init( _components);
+
     _m_Receiver_Number.init( _components);
     _m_Receiver_Address.init( _components);
     _m_Receiver_Register.init( _components);
@@ -87,6 +96,12 @@ unsigned long MK52_Host::init() {
     _m_Display_FILE.init( _components);
  
     #ifdef __DEBUG
+    Serial.println("Checks:");
+    Serial.println( _m_RPN_Functions.progMem->getCounter());
+    Serial.println( _m_RPN_Functions.extMem->getCounter());
+    Serial.print( "[");
+    Serial.print( _m_RPN_Functions.Stack->getDModeName());
+    Serial.println( "]");
     Serial.print("SD card ");
     if( _m_Hardware_SD.SDMounted) Serial.println("mounted");
     else Serial.println("not found");
@@ -118,6 +133,7 @@ void MK52_Host::tick(){
 
 void MK52_Host::setDisplay(int id){
     if( id<0) return;
+    Serial.println("Setting display...");
     current_Display = getDisplay( id);
     if( current_Display == NULL) return;
     current_Display->activate();

@@ -26,8 +26,9 @@ namespace MK52_Interpreter{
         void **_components;
         MK52_Hardware::LCD_Manager *_lcd;
         MK52_Hardware::KBD_Manager *_kbd;
-        MK52_Interpreter::Program_Memory *_pmem;
-        MK52_Interpreter::Extended_Memory *_emem;
+        Program_Memory *_pmem;
+        Extended_Memory *_emem;
+        RPN_Functions *_rpnf;
         void _setCurrentReceiver( uint8_t id, uint8_t scancode=0, int8_t parent=-1);
     };
 
@@ -37,8 +38,8 @@ namespace MK52_Interpreter{
         void activate();
         int tick();
       protected:
-        MK52_Interpreter::RPN_Stack *_stack;
-        MK52_Interpreter::Receiver_Number *_nr;
+        RPN_Stack *_stack;
+        Receiver_Number *_nr;
     };
 
     class Display_PROG: public Display{
@@ -47,9 +48,9 @@ namespace MK52_Interpreter{
         void activate();
         int tick();
       protected:
-        MK52_Interpreter::Receiver_Number *_nr;
-        MK52_Interpreter::Receiver_Address *_ar;
-        MK52_Interpreter::Receiver_Register *_rr;
+        Receiver_Number *_nr;
+        Receiver_Address *_ar;
+        Receiver_Register *_rr;
         void _printNumber();
         void _printOperatorWithAddress();
         void _printOperatorWithRegister();
@@ -65,7 +66,7 @@ namespace MK52_Interpreter{
       protected:
         char buff[30];
         double _fakeData = -1.23456789012e+123;
-        MK52_Interpreter::Receiver_Number *_nr;
+        Receiver_Number *_nr;
     };
 
     class Display_FILE: public Display{

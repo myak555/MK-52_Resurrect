@@ -7,6 +7,7 @@
 //////////////////////////////////////////////////////////
 
 #include "Receivers.hpp"
+#include "../functions/functions.h"
 
 //#define __DEBUG
 
@@ -16,14 +17,17 @@ unsigned long Receiver_AUTO_N::init( void *components[]) {
     #ifdef __DEBUG
     Serial.println( "Init PROG_N");
     #endif
-    _stack = (RPN_Stack *)components[COMPONENT_STACK];
+    _nr = (Receiver_Number *)components[COMPONENT_RECEIVER_NUMBER];
     return Receiver::init(components);
 }
 
 void Receiver_AUTO_N::activate( uint8_t scancode, int8_t parent){
     Receiver::activate( scancode, parent);
+    Serial.println("Activating AUTO N 1..."); 
+    _lcd->updateStatusFMODE( "   ");
     _mode = 1;
     if(!scancode) return;
+    Serial.println("Activating AUTO N 2..."); 
     _appendButton(scancode);
 }
 
@@ -34,12 +38,13 @@ int Receiver_AUTO_N::tick( uint8_t scancode){
 }
 
 int Receiver_AUTO_N::_appendButton(uint8_t scancode){
-//     if( _nr->isActive()){
-//         if( _nr->tick( scancode) == NO_CHANGE) return NO_CHANGE;
-//         _pmem->updateLine( _nr->toTrimmedString());
-//         _pmem->incrementCounter();
-//         return NO_CHANGE;
-//     }
+    if( _nr->isActive()){
+        Serial.println("Ticking 2 (num)...");
+        if( _nr->tick( scancode) == NO_CHANGE) return NO_CHANGE;
+        _mode = 1;
+        _rpnf->Stack->X->fromString( _nr->toTrimmedString());
+        return NO_CHANGE;
+    }
 //     if( _ar->isActive()){
 //         if( _ar->tick( scancode) == NO_CHANGE) return NO_CHANGE;
 //         char *tmp = _ar->toString();
@@ -59,6 +64,7 @@ int Receiver_AUTO_N::_appendButton(uint8_t scancode){
 //         _pmem->incrementCounter();
 //         return NO_CHANGE;
 //     }
+    Serial.println("Ticking 2 (scan)...");
     switch( scancode){
         case 0:
         case 2:
@@ -70,11 +76,17 @@ int Receiver_AUTO_N::_appendButton(uint8_t scancode){
         //     Serial.println("F pressed!");
         //     return COMPONENT_RECEIVER_PROG_F;
 
-        // // Column 1
-        // case 5:
-        //     Serial.println("Increment!");
-        //     _pmem->incrementCounter();
-        //     return NO_CHANGE;
+        // Column 1
+        case 5:
+            Serial.println("Increment!");
+            _rpnf->execute( FUNC_INCREMENT_PC);
+            _lcd->updateStatusPC( _rpnf->progMem->getCounter());
+            return NO_CHANGE;
+        case 6:
+            Serial.println("Decrement!");
+            _rpnf->execute( FUNC_DECREMENT_PC);
+            _lcd->updateStatusPC( _rpnf->progMem->getCounter());
+            return NO_CHANGE;
         // case 6:
         //     Serial.println("Decrement!");
         //     _pmem->decrementCounter();
@@ -149,8 +161,10 @@ int Receiver_AUTO_N::_appendButton(uint8_t scancode){
         //     return NO_CHANGE;
 
         default: // all other buttons activate number entry
-            //_nr->activate(COMPONENT_RECEIVER_PROG_N, scancode);
-            break;
+            _mode = 2;
+            _nr->activate( scancode, COMPONENT_RECEIVER_AUTO_N);
+            return NO_CHANGE;
+            //return COMPONENT_RECEIVER_NUMBER;
     }
     return NO_CHANGE;
 }

@@ -17,10 +17,7 @@ const char _RPN_Stack_LabelY[] PROGMEM = "Y:";
 const char _RPN_Stack_LabelZ[] PROGMEM = "Z:";
 const char _RPN_Stack_LabelT[] PROGMEM = "T:";
 
-void RPN_Stack::init( void *components[]){
-    #ifdef __DEBUG
-    Serial.println("Started RPN Stack init...");
-    #endif
+unsigned long RPN_Stack::init( void *components[]){
     Bx = new UniversalValue(_stackValues);
     X = new UniversalValue(_stackValues+9);
     Y = new UniversalValue(_stackValues+18);
@@ -34,6 +31,13 @@ void RPN_Stack::init( void *components[]){
     T_Label = ptr;
     resetStackLabels();
     setDMode( DMODE_DEGREES);
+    #ifdef __DEBUG
+    Serial.print("Stack init with: ");
+    Serial.println( getDModeName());
+    Serial.print("Labels are: ");
+    Serial.println( customStackLabels());
+    #endif
+    return millis();
 }
 
 void RPN_Stack::resetStackLabels(){
@@ -55,8 +59,8 @@ bool RPN_Stack::customStackLabels(){
 // Resets stack to zero integers
 //
 void RPN_Stack::clearStack(){
-    memset( _stackValues, 0, (RPN_STACK_SIZE+1)*9);
-    for( int i=0; i<45; i+=9) _stackValues[i] = VALUE_TYPE_INTEGER;
+    memset( _stackValues, 0, (RPN_STACK_SIZE + 1)*9);
+    for( int i=0; i<(RPN_STACK_SIZE + 1)*9; i+=9) _stackValues[i] = VALUE_TYPE_INTEGER;
 }
 
 //
@@ -78,21 +82,21 @@ void RPN_Stack::setDMode(uint8_t m){
     switch(m){
         case 1:
             _dMode = DMODE_RADIANS;
-            strcpy_P( _dModeName, PSTR("RAD"));
+            strncpy_P( _dModeName, PSTR("RAD"), 3);
             break;
         case 2:
             _dMode = DMODE_GRADS;
-            strcpy_P( _dModeName, PSTR("GRD"));
+            strncpy_P( _dModeName, PSTR("GRD"), 3);
             break;
         default:
             _dMode = DMODE_DEGREES;
-            strcpy_P( _dModeName, PSTR("DEG"));
+            strncpy_P( _dModeName, PSTR("DEG"), 3);
             break;
     }
+    _dModeName[3] = 0;
 } 
 
-uint8_t RPN_Stack::flipDMode(){
+uint8_t RPN_Stack::toggleAngleMode(){
     setDMode( _dMode+1);
     return _dMode;
 } 
-

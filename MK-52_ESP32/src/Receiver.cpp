@@ -15,6 +15,8 @@ using namespace MK52_Interpreter;
 //
 unsigned long Receiver::init( void *components[]) {
     _kbd = (MK52_Hardware::KBD_Manager *)components[COMPONENT_KBD_MANAGER];
+    _lcd = (MK52_Hardware::LCD_Manager *)components[COMPONENT_LCD_MANAGER];
+    _rpnf = (RPN_Functions*)components[COMPONENT_FUNCTIONS];
     return millis(); 
 }
 

@@ -16,7 +16,7 @@
 #include "../hardware/Nixedsys_1251.h"
 #include "../hardware/Status_Template.h"
 
-#define __DEBUG
+//#define __DEBUG
 
 TFT_eSPI _MyTFT = TFT_eSPI();  // Invoke library, pins defined in User_Setup.h
 
@@ -75,22 +75,32 @@ void LCD_Manager::outputStatus( uint32_t pc, uint32_t mc, char *dmode, char *fmo
     _MyTFT.drawBitmap( 0, 0, StatusTemplate_320x20px, 320, 20, bgcolor, fgcolor);
     memset( _buffer, 0, SCREEN_COLS);
     outputCharString( 51, 0, "PC", bgcolor, fgcolor);
-    sprintf( _text, "%04d", pc % 10000);
+    _printCounter(pc);
     _redrawStatusPosition( _text, 0);
     outputCharString( 141, 0, "MC", bgcolor, fgcolor);
-    sprintf( _text, "%04d", mc % 10000);
+    _printCounter(mc);
     _redrawStatusPosition( _text, 1);
     _redrawStatusPosition( dmode, 2);
     _redrawStatusPosition( fmode, 3);
 }
 
 void LCD_Manager::updateStatus( uint32_t pc, uint32_t mc, char *dmode, char *fmode){
-    sprintf( _text, "%04d", pc % 10000);
+    _printCounter(pc);
     _redrawStatusPosition( _text, 0);
-    sprintf( _text, "%04d", mc % 10000);
+    _printCounter(mc);
     _redrawStatusPosition( _text, 1);
     _redrawStatusPosition( dmode, 2);
     _redrawStatusPosition( fmode, 3);
+}
+
+void LCD_Manager::updateStatusPC( uint32_t pc){
+    _printCounter(pc);
+    _redrawStatusPosition( _text, 0);
+}
+
+void LCD_Manager::updateStatusMC( uint32_t mc){
+    _printCounter(mc);
+    _redrawStatusPosition( _text, 1);
 }
 
 void LCD_Manager::_redrawStatusPosition( char *message, uint8_t pos){

@@ -9,13 +9,9 @@
 #ifndef INPUT_RECEIVERS_HPP
 #define INPUT_RECEIVERS_HPP
 
-#include "Common.h"
 #include "LCD_Manager.hpp"
 #include "KBD_Manager.hpp"
-#include "SD_Manager.hpp"
-#include "RPN_Stack.hpp"
-#include "Program_Memory.hpp"
-#include "Extended_Memory.hpp"
+#include "RPN_Functions.hpp"
 
 namespace MK52_Interpreter{
 
@@ -25,13 +21,13 @@ namespace MK52_Interpreter{
         virtual void activate( uint8_t scancode = 0, int8_t parent = NO_CHANGE);
         virtual int tick( uint8_t scancode = 0);
         inline bool isActive(){ return _mode != 0;};
-        inline char *moniker(){ return _moniker;};
       protected:
         uint8_t _mode = 0;
         int8_t _parentReceiver = -1;
-        char *_moniker ="   ";
-        char _convertButton(const char *list, uint8_t scancode);
         MK52_Hardware::KBD_Manager *_kbd;
+        MK52_Hardware::LCD_Manager *_lcd;
+        RPN_Functions *_rpnf;
+        char _convertButton(const char *list, uint8_t scancode);
     };
 
     class Receiver_Number: public Receiver{
@@ -42,8 +38,8 @@ namespace MK52_Interpreter{
         inline char *toString(){ return _text;};
         inline char *toTrimmedString(){ return (*_text == ' ')? _text+1: _text;};
       protected:
-        int _appendChar( char c);
         char _text[SCREEN_COLS]; // temporary input buffer
+        int _appendChar( char c);
         inline void _swapSign( char *pos, char plusChar){ *pos = (*pos == '-')? plusChar: '-';};
     };
 
@@ -54,8 +50,8 @@ namespace MK52_Interpreter{
         int tick( uint8_t scancode = 0);
         inline char *toString(){ return _text;};
       protected:
-        int _appendChar( char c);
         char _text[SCREEN_COLS]; // temporary input buffer
+        int _appendChar( char c);
     };
 
     class Receiver_Register: public Receiver{
@@ -75,7 +71,6 @@ namespace MK52_Interpreter{
         void activate( uint8_t scancode = 0, int8_t parent = NO_CHANGE);
         int tick( uint8_t scancode = 0);
       protected:
-        RPN_Stack *_stack;
         Receiver_Number *_nr;
         int _appendButton(uint8_t scancode);
     };

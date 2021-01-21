@@ -20,7 +20,7 @@ unsigned long Extended_Memory::init( void *components[]) {
     _buffer = (uint8_t *)malloc( PROGRAM_MEMORY_SIZE);
     #ifdef __DEBUG
     if( _buffer == NULL){
-        Serial.println("Malloc busted!");
+        Serial.println("Extended Memory malloc busted!");
         return millis();
     }
     #endif
@@ -28,8 +28,8 @@ unsigned long Extended_Memory::init( void *components[]) {
     clear();
 
     #ifdef __DEBUG
-    Serial.print("Free program memory: ");
-    Serial.println( free());
+    Serial.print("Free extended memory: ");
+    Serial.println( getFree());
     #endif
     return millis();
 }
@@ -51,14 +51,14 @@ void Extended_Memory::resetCounter(){
 bool Extended_Memory::appendLine(char *line){
     if( line == NULL) line = _text;
     size_t ln = strlen( (line));
-    if( ln >= free()) return true;
+    if( ln >= getFree()) return true;
     strcpy( (char *)_bottom, line);
     _bottom += ln+1;
     return false;
 }
 bool Extended_Memory::appendLine_P(const char *line){
     size_t ln = strlen_P( (line));
-    if( ln >= free()) return true;
+    if( ln >= getFree()) return true;
     strcpy_P( (char *)_bottom, line);
     _bottom += ln+1;
     return false;
