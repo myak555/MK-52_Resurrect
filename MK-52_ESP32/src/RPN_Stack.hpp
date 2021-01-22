@@ -34,7 +34,18 @@ namespace MK52_Interpreter{
             inline uint8_t getDMode(){ return _dMode;}; 
             inline char *getDModeName(){ return _dModeName;}; 
             void setDMode(uint8_t m); 
-            uint8_t toggleAngleMode(); 
+            uint8_t toggleAngleMode();
+
+            void push( uint16_t start=1);
+            void pop( uint16_t start=1);
+            void storeBx();
+            void swap();
+            void rotate();
+
+            double XtoRadian();
+            int8_t XtoOctant();
+            void RadianToX(double value);
+            void OctantToX(int8_t value);
         private:
             uint8_t _stackValues[(RPN_STACK_SIZE+1)*9];
             char _stackLabels[SCREEN_COLS*4+4];

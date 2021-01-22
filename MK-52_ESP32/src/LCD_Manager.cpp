@@ -131,14 +131,15 @@ void LCD_Manager::_redrawCalcRegister( uint8_t row, char *line, char* text){
     if( strcmp(line, text) == 0) return; // strings identical
     strncpy( line, text, CALC_COLS);
     line[CALC_COLS] = 0; // safety zero
-    uint8_t j = strlen(line);
-    uint8_t j2 = 19-j;
-    int16_t x = 12;
+    int16_t j = strlen(line);
+    int16_t j2 = CALC_COLS-j;
+    if( j2 < 0) j2 = 0;
+    int16_t x = 0;
     int16_t y = _calcRegisterLocations[row];
-    _MyTFT.drawBitmap( 0, y, Seven_segment_16x27px, 12, 30, bgcolor, bgcolor);
-    for( uint8_t i=0; i<j2; i++, x+=16)
+    //_MyTFT.drawBitmap( 0, y, Seven_segment_16x27px, 8, 30, bgcolor, bgcolor);
+    for( int16_t i=0; i<j2; i++, x+=16)
         _MyTFT.drawBitmap( x, y, Seven_segment_16x27px, 16, 30, bgcolor, bgcolor);
-    for( uint8_t i=0; i<j; i++, x+=16)
+    for( int16_t i=0; i<j; i++, x+=16)
         outputDigit( x, y, line[i], fgcolor, bgcolor);
 }
 
@@ -158,11 +159,11 @@ void LCD_Manager::_redrawCalcLabel( uint8_t row, char *line, char* text){
     if( strcmp(line, text) == 0) return; // strings identical
     strncpy( line, text, SCREEN_COLS);
     line[SCREEN_COLS] = 0; // safety zero
-    int l = strlen(line);
+    int ln = strlen(line);
     int16_t x = 4;
     int16_t y = _calcLabelLocations[row];
     for( uint8_t i=0; i<SCREEN_COLS; i++, x+=11){
-        if( i<l) outputChar( x, y, line[i], fgcolor, bgcolor);
+        if( i<ln) outputChar( x, y, line[i], fgcolor, bgcolor);
         else outputChar( x, y, ' ', bgcolor, bgcolor);
     }
 }

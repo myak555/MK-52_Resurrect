@@ -8,7 +8,7 @@
 
 #include "Receivers.hpp"
 
-//#define __DEBUG
+#define __DEBUG
 
 using namespace MK52_Interpreter;
 
@@ -72,20 +72,16 @@ int Receiver_PROG_N::_appendButton(uint8_t scancode){
 
         // Column 0
         case 1:
-            Serial.println("F pressed!");
             return COMPONENT_RECEIVER_PROG_F;
         case 4:
-            Serial.println("Mode pressed!");
             _pmem->EditOverwrite = !_pmem->EditOverwrite;
             return NO_CHANGE;
 
         // Column 1
         case 5:
-            Serial.println("Increment!");
             _pmem->incrementCounter();
             return NO_CHANGE;
         case 6:
-            Serial.println("Decrement!");
             _pmem->decrementCounter();
             return NO_CHANGE;
         case 7:

@@ -109,20 +109,24 @@ bool Program_Memory::incrementCounter(){
 // Returns true if the counter is not moving
 //
 bool Program_Memory::decrementCounter(){
-    if( _pointer == _buffer) return true;
+    if( _pointer == _buffer) return true; // already at top
 
     // Skip to end of previous line
     uint8_t *tmp = _pointer;
     _pointer--;
-    if( _pointer == _buffer){
-        _counter--;
+    if( _pointer == _buffer){ // top reached
+        _counter = 0;
         return false;
     }
 
     // Skip to beginning of previous line
     _pointer--;
     while( _pointer > _buffer && *_pointer != 0) _pointer--;
-    if( _pointer > _buffer) _pointer++;
+    if( _pointer == _buffer){ // top reached
+        _counter = 0;
+        return false;
+    }
+    _pointer++;
     _counter--;
     return false;
 }

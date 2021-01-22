@@ -13,37 +13,29 @@
 
 using namespace MK52_Interpreter;
 
-unsigned long Receiver_AUTO_N::init( void *components[]) {
+unsigned long Receiver_AUTO_K::init( void *components[]) {
     #ifdef __DEBUG
-    Serial.println( "Init AUTO_N");
+    Serial.println( "Init AUTO_K");
     #endif
     _nr = (Receiver_Number *)components[COMPONENT_RECEIVER_NUMBER];
     return Receiver::init(components);
 }
 
-void Receiver_AUTO_N::activate( uint8_t scancode, int8_t parent){
+void Receiver_AUTO_K::activate( uint8_t scancode, int8_t parent){
     Receiver::activate( scancode, parent);
-    _lcd->updateStatusFMODE( "   ");
+    _lcd->updateStatusFMODE( " K ");
     _mode = 1;
     if(!scancode) return;
     _appendButton(scancode);
 }
 
-int Receiver_AUTO_N::tick( uint8_t scancode){
+int Receiver_AUTO_K::tick( uint8_t scancode){
     if(scancode == 0) scancode = _kbd->scan();
     if( !scancode) return NO_CHANGE;
     return _appendButton( scancode);
 }
 
-int Receiver_AUTO_N::_appendButton(uint8_t scancode){
-    if( _nr->isActive()){
-        int8_t r = _nr->tick( scancode);
-        if( r == NO_CHANGE) return NO_CHANGE;
-        _completeSubentry();
-        scancode = (uint8_t)r;
-        Serial.print("Scancode returned: ");
-        Serial.println(scancode);
-    }
+int Receiver_AUTO_K::_appendButton(uint8_t scancode){
 //     if( _ar->isActive()){
 //         if( _ar->tick( scancode) == NO_CHANGE) return NO_CHANGE;
 //         char *tmp = _ar->toString();
@@ -64,24 +56,17 @@ int Receiver_AUTO_N::_appendButton(uint8_t scancode){
 //         return NO_CHANGE;
 //     }
     switch( scancode){
-        case 0: // keyboard inactive
-            delay(KBD_IDLE_DELAY);
+        case 0:
+        case 2:
             return NO_CHANGE;
 
         // Column 0
         case 1:
             _mode = 0;
             return COMPONENT_RECEIVER_AUTO_F;
-        case 2:
-            _mode = 0;
-            return COMPONENT_RECEIVER_AUTO_K;
         case 3:
             _mode = 0;
             return COMPONENT_RECEIVER_AUTO_A;
-        case 4:
-            _rpnf->execute(FUNC_TOGGLE_DMOD);
-            _lcd->updateStatusDMODE(_rpnf->Stack->getDModeName());
-            return NO_CHANGE;
 
         // Column 1
         case 5:
@@ -96,8 +81,16 @@ int Receiver_AUTO_N::_appendButton(uint8_t scancode){
             _rpnf->execute( FUNC_RESET_PC);
             _lcd->updateStatusPC( _rpnf->progMem->getCounter());
             return NO_CHANGE;
-        case 8:
-            return COMPONENT_RECEIVER_AUTO_R;
+        case 8: {// TODO START
+
+            uint32_t newAddress = _rpnf->progMem->getCounter() + 99; // fake program "running"
+            while( _rpnf->progMem->getCounter() < newAddress){
+                _rpnf->execute( FUNC_INCREMENT_PC);
+                _lcd->updateStatusPC( _rpnf->progMem->getCounter());
+            }}
+            //     _pmem->updateLine_P( PSTR("STOP"));
+            //     _pmem->incrementCounter();
+            return NO_CHANGE;
 
         // Column 2
         case 9:
@@ -153,20 +146,22 @@ int Receiver_AUTO_N::_appendButton(uint8_t scancode){
             _rpnf->execute( FUNC_ENTER);
             return NO_CHANGE;
         case 32:
-            if(_rpnf->Stack->customStackLabels()) _rpnf->Stack->resetStackLabels();              
-            else _rpnf->execute( FUNC_CLEAR_X);
+            if(_rpnf->Stack->customStackLabels())
+                _rpnf->Stack->resetStackLabels();                
+        //     _pmem->updateLine_P( PSTR("Cx"));
+        //     _pmem->incrementCounter();
             return NO_CHANGE;
 
         default: // all other buttons activate number entry
             _rpnf->execute( FUNC_ENTER);
             _mode = 2;
-            _nr->activate( scancode, COMPONENT_RECEIVER_AUTO_N);
+            _nr->activate( scancode, COMPONENT_RECEIVER_AUTO_K);
             return NO_CHANGE;
     }
     return NO_CHANGE;
 }
 
-void Receiver_AUTO_N::_completeSubentry(){
+void Receiver_AUTO_K::_completeSubentry(){
     switch( _mode){
         case 0:
         case 1:

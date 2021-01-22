@@ -8,7 +8,7 @@
 
 #include "Receivers.hpp"
 
-//#define __DEBUG
+#define __DEBUG
 
 const char _RR_ButtonConversion[] PROGMEM = "#########abcd7410852A963B###C#FED";
 

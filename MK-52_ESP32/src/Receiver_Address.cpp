@@ -8,7 +8,7 @@
 
 #include "Receivers.hpp"
 
-//#define __DEBUG
+#define __DEBUG
 
 const char _AR_ButtonConversion[] PROGMEM = "#############7410852#963#######ec";
 
@@ -19,7 +19,7 @@ using namespace MK52_Interpreter;
 //
 unsigned long Receiver_Address::init( void *components[]) {
     #ifdef __DEBUG
-    Serial.println("Init address");
+    Serial.println("Init address entry");
     #endif
     return Receiver::init(components);
 }

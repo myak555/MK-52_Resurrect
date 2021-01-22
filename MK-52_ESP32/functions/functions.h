@@ -9,3 +9,15 @@
 #define FUNC_SET_DMOD_DEG       9
 #define FUNC_SET_DMOD_RAD       10
 #define FUNC_SET_DMOD_GRD       11
+#define FUNC_NEGATE             12
+#define FUNC_ENTER              13
+#define FUNC_SWAP               14
+#define FUNC_PLUS               15
+#define FUNC_MINUS              16
+#define FUNC_MULTIPLY           17
+#define FUNC_DIVIDE             18
+#define FUNC_CLEAR_X            19
+#define FUNC_SIN                20
+#define FUNC_ARCSIN             21
+#define FUNC_EXP                22
+#define FUNC_10X                23

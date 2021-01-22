@@ -8,9 +8,9 @@
 
 #include "Receivers.hpp"
 
-//#define __DEBUG
+#define __DEBUG
 
-const char _RN_ButtonConversion[] PROGMEM = "#############7410852.963-###E##ec";
+const char _RN_ButtonConversion[] PROGMEM = "#fff#ffffffff7410852.963-fffEffec";
 const char _RN_StandardUnity[] PROGMEM = "1.0E+000";
 
 using namespace MK52_Interpreter;
@@ -20,7 +20,7 @@ using namespace MK52_Interpreter;
 //
 unsigned long Receiver_Number::init( void *components[]) {
     #ifdef __DEBUG
-    Serial.println("Init number");
+    Serial.println("Init number entry");
     #endif
     return Receiver::init(components);
 }
@@ -31,20 +31,20 @@ void Receiver_Number::activate( uint8_t scancode, int8_t parent){
     strcpy_P( _text, PSTR(" "));
     _mode = 1;
     if(!scancode) return;
-    _appendChar( _convertButton(_RN_ButtonConversion,  scancode));
+    tick( scancode);
 }
 
 int Receiver_Number::tick( uint8_t scancode){
-    if(scancode == 0) scancode = _kbd->scan();
-    if( !scancode) return NO_CHANGE;
-    return _appendChar( _convertButton( _RN_ButtonConversion, scancode));
-}
-
-int Receiver_Number::_appendChar( char c){
     int ln = strlen(_text);
+    char c = _convertButton( _RN_ButtonConversion, scancode); 
     switch( c){
         case 0:
             return NO_CHANGE;
+        case 'e': // entry completed
+            scancode = 0;
+        case 'f':
+            _mode = 0;
+            return scancode;
         case '0':
         case '1':
         case '2':
@@ -114,9 +114,6 @@ int Receiver_Number::_appendChar( char c){
             }
             strcpy_P( _text+ln, _RN_StandardUnity+3);
             return NO_CHANGE;
-        case 'e': // entry completed
-          _mode = 0;
-          return _parentReceiver;
         case 'c': // erase
             if( _mode == 3){
                 _text[ln-1] = _text[ln-2];

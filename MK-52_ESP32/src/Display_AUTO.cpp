@@ -16,6 +16,9 @@ using namespace MK52_Interpreter;
 // Inits display for AUTO mode
 //
 unsigned long Display_AUTO::init( void *components[]) {
+    #ifdef __DEBUG
+    Serial.println( "Init Display AUTO");
+    #endif
     _stack = (RPN_Stack *)components[COMPONENT_STACK];
     _nr = (Receiver_Number *)components[COMPONENT_RECEIVER_NUMBER];
     return Display::init( components);
@@ -51,21 +54,10 @@ void Display_AUTO::activate(){
 int Display_AUTO::tick(){
     // keyboard serve part
     uint8_t scancode = _kbd->scan();
-    switch( scancode){
-        case 0: // keyboard inactive
-            delay(KBD_IDLE_DELAY);
-            return NO_CHANGE;
-        case 4:
-            _rpnf->execute(FUNC_TOGGLE_DMOD);
-            _lcd->updateStatusDMODE(_rpnf->Stack->getDModeName());
-            return NO_CHANGE;
-        default:
-            if( current_Receiver == NULL) return NO_CHANGE;
-            int newReceiver = current_Receiver->tick( scancode);
-            if( newReceiver < -1) return newReceiver; 
-            if( newReceiver >= 0) _setCurrentReceiver( newReceiver, scancode, newReceiver);
-            break;
-    }
+    if( current_Receiver == NULL) return NO_CHANGE;
+    int newReceiver = current_Receiver->tick( scancode);
+    if( newReceiver < -1) return newReceiver; 
+    if( newReceiver >= 0) _setCurrentReceiver( newReceiver, 0, COMPONENT_RECEIVER_AUTO_N);
     
     // display update part
     char *buff = _lcd->getOutputBuffer(); 

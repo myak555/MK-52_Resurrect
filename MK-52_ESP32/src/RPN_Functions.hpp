@@ -19,12 +19,14 @@ namespace MK52_Interpreter{
 
     class RPN_Function{
         public:
-            virtual uint16_t getID();
             virtual bool checkID( uint16_t id);
             virtual bool checkName(char *name);
             virtual const char*Name();
             virtual const char*IOName();
-            virtual void execute( void *components[]);
+            virtual void execute(void *components[], char *command=NULL);
+        protected:
+            RPN_Stack *_dealWithClergy1(void *components[]);
+            RPN_Stack *_dealWithClergy2(void *components[]);
     };
 
     class RPN_Functions{
@@ -35,6 +37,7 @@ namespace MK52_Interpreter{
 
             unsigned long init( void *components[]);
             void execute( int16_t id=-1);
+            void execute( char *s);
 
       private:
             void **_components;

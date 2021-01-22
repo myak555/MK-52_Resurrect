@@ -16,6 +16,9 @@ using namespace MK52_Interpreter;
 // Inits LIST display
 //
 unsigned long Display_DATA::init( void *components[]) {
+    #ifdef __DEBUG
+    Serial.println( "Init Display DATA");
+    #endif
     _nr = (MK52_Interpreter::Receiver_Number *)components[COMPONENT_RECEIVER_NUMBER];
     return Display::init( components);
 }

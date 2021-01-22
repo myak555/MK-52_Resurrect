@@ -21,7 +21,7 @@ using namespace MK52_Interpreter;
 //
 unsigned long Display_PROG::init( void *components[]) {
     #ifdef __DEBUG
-    Serial.println("Init PROG Display");
+    Serial.println( "Init Display PROG");
     #endif
     _nr = (MK52_Interpreter::Receiver_Number *)components[COMPONENT_RECEIVER_NUMBER];
     _ar = (MK52_Interpreter::Receiver_Address *)components[COMPONENT_RECEIVER_ADDRESS];
@@ -46,7 +46,6 @@ void Display_PROG::activate(){
         if( _pmem->decrementCounter()) break;
         snprintf_P(buff, SCREEN_COLS, _programLineFormat, _pmem->getCounter() % 10000, _pmem->getCurrentLine());
         buff[ SCREEN_COLS] = 0;
-        Serial.println(buff);
         _lcd->outputTerminalLine( i, buff);
     }
     _pmem->setCounter( prev_PC);

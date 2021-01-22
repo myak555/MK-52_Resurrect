@@ -8,7 +8,7 @@
 
 #include "UniversalValue.hpp"
 
-const char _standard_DoubleFormat[] PROGMEM = "%f";  
+//const char _standard_DoubleFormat[] PROGMEM = "%f";  
 const char _standard_FullPrecision[] PROGMEM = "%13.11f";  
 const char _standard_ExponentFormat[] PROGMEM = "%+04d";  
 const char _standard_Error[] PROGMEM = "Error";  
@@ -146,11 +146,9 @@ char *UniversalValue::_composeDouble(char *text, double value){
         negative = true;
         value = -value;
     } 
-    if( 0.1 <= value && value < 1.e12){
-        snprintf_P(text, 29, _standard_DoubleFormat, negative? -value: value);
-        text[29] = 0;
-        return text;
-    }
+    if( 0.1 <= value && value < 1.e12)
+        return _composeFloat(text, negative? -value: value);
+
     int16_t exponent = 0;
     while(value<1.0){
         exponent--;
@@ -163,8 +161,43 @@ char *UniversalValue::_composeDouble(char *text, double value){
     snprintf_P(text, 24, _standard_FullPrecision, negative? -value: value);
     text[24] = 0;
     int16_t i = strlen(text);
-    snprintf_P(text+i, 29-i, _standard_ExponentFormat, exponent);
+    text[i] = 'E';
+    snprintf_P(text+i+1, 28-i, _standard_ExponentFormat, exponent);
     text[29] = 0; // safety zero
+    return text;
+}
+
+//
+// Converts a floating-point number from 0.1 to 1e12 to 12 meaningful digits
+//
+char *UniversalValue::_composeFloat(char *text, double value){ 
+    char *ptr = text;
+    if( value == 0.0){
+        *ptr++ = '0';
+        *ptr = 0;
+        return text;
+    }
+    if( value < 0.0){
+        *ptr++ = '-';
+        value = -value;
+    }
+    int exponent = 0;
+    while( value>=1.0){
+        value *= 0.1;
+        exponent++;
+    }
+    if( exponent==0){
+        *ptr++ = '0';
+    }
+    for( int i=0; i<12; i++){
+        if( i == exponent) *ptr++ = '.'; 
+        value *= 10.0;
+        double fl = floor(value);
+        value -= fl;
+        *ptr++ = '0' + (uint8_t)fl;
+    }
+    if( ptr[-1] == '.') *ptr++ = '0';
+    *ptr = 0;
     return text;
 }
 
@@ -174,10 +207,12 @@ char *UniversalValue::_composeDouble(char *text, double value){
 char *UniversalValue::_composeInt64(char *text, int64_t value){ 
     if( value > HUGE_POSITIVE_INTEGER){
         snprintf_P(text, 29, _standard_MinusInfinity);
+        text[29]=0;
         return text;
     }
     if( value < HUGE_NEGATIVE_INTEGER){
         snprintf_P(text, 29, _standard_PlusInfinity);
+        text[29]=0;
         return text;
     }
     // my own version of lltoa
@@ -193,9 +228,10 @@ char *UniversalValue::_composeInt64(char *text, int64_t value){
         value = -value;
     }
     int64_t mult = 1000000000000000000L;
-    while( mult && !(value / mult)) mult /= 10;
-    while( mult){
-        *ptr++ = '0' + (int8_t)(value / mult);
+    while( mult > 0 && (value / mult) == 0) mult /= 10;
+    while( mult > 0){
+        uint8_t tt = (uint8_t)(value / mult);
+        *ptr++ = '0' + tt;
         value %= mult;
         mult /= 10;
     }
@@ -251,33 +287,30 @@ void UniversalValue::_checkRounding(){
     if( value<0.0){
         positive = false;
         value = -value;
-    }    
-    int exponent = 0;
-    while( value >= 10.0){
-        exponent++;
-        value *= 0.1;
     }
-    while( value < 1.0){
-        exponent--;
-        value *= 10.0;
-    }
-    // at this point, value is normalized to 1 <= x < 10.0
-    // we check, if the decimal part is less than 1e-12
-    double fl = floor(value);
-    if( value - fl >= 1.0e-12) return;
-    while( exponent > 0){
-        exponent--;
-        fl *= 10.0;
-    }
-    while( exponent < 0){
-        exponent++;
-        fl *= 0.1;
-    }
-    if( fl < HUGE_POSITIVE_INTEGER){
-        fromInt( positive? (int64_t)fl: -(int64_t)fl);
+    if( value < 1.0e-300){ // true zero;
+        fromInt( 0);
         return;
     }
-    fromReal( positive? fl: -fl);
+    if( value > HUGE_POSITIVE_AS_REAL) return; // cannot convert
+    if( value < 0.99999999997) return; // whole part < 1. 
+    if( value < 1.00000000003){
+        fromInt( positive? 1: -1);
+        return;
+    }
+
+    double vLimit = 1.0e12;
+    double cutoff = 0.2;
+    while( value < vLimit){
+        vLimit *= 0.1;
+        cutoff *= 0.1;
+    }
+    double fl = floor(value);
+    double frac = value - fl;
+    if( cutoff < frac && frac < 1.0-cutoff) return; // meaningful decimal present
+    if( frac > 0.5) fl += 1.0;
+    
+    fromInt( positive? (int64_t)fl: -(int64_t)fl);
 }
 
 bool UniversalValue::_isDecimal(char c){

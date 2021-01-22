@@ -39,7 +39,6 @@ namespace MK52_Interpreter{
         inline char *toTrimmedString(){ return (*_text == ' ')? _text+1: _text;};
       protected:
         char _text[SCREEN_COLS]; // temporary input buffer
-        int _appendChar( char c);
         inline void _swapSign( char *pos, char plusChar){ *pos = (*pos == '-')? plusChar: '-';};
     };
 
@@ -73,6 +72,47 @@ namespace MK52_Interpreter{
       protected:
         Receiver_Number *_nr;
         int _appendButton(uint8_t scancode);
+        void _completeSubentry();
+    };
+
+    class Receiver_AUTO_F: public Receiver{
+      public:
+        unsigned long init( void *components[]);
+        void activate( uint8_t scancode = 0, int8_t parent = NO_CHANGE);
+        int tick( uint8_t scancode = 0);
+      protected:
+        Receiver_Number *_nr;
+        int _appendButton(uint8_t scancode);
+        void _completeSubentry();
+    };
+
+    class Receiver_AUTO_K: public Receiver{
+      public:
+        unsigned long init( void *components[]);
+        void activate( uint8_t scancode = 0, int8_t parent = NO_CHANGE);
+        int tick( uint8_t scancode = 0);
+      protected:
+        Receiver_Number *_nr;
+        int _appendButton(uint8_t scancode);
+        void _completeSubentry();
+    };
+
+    class Receiver_AUTO_A: public Receiver{
+      public:
+        unsigned long init( void *components[]);
+        void activate( uint8_t scancode = 0, int8_t parent = NO_CHANGE);
+        int tick( uint8_t scancode = 0);
+      protected:
+        Receiver_Number *_nr;
+        int _appendButton(uint8_t scancode);
+        void _completeSubentry();
+    };
+
+    class Receiver_AUTO_R: public Receiver{
+      public:
+        unsigned long init( void *components[]);
+        void activate( uint8_t scancode = 0, int8_t parent = NO_CHANGE);
+        int tick( uint8_t scancode = 0);
     };
 
     class Receiver_PROG_N: public Receiver{

@@ -25,6 +25,11 @@ static MK52_Interpreter::Receiver_Address _m_Receiver_Address;
 static MK52_Interpreter::Receiver_Register _m_Receiver_Register;
 
 static MK52_Interpreter::Receiver_AUTO_N _m_Receiver_AUTO_N;
+static MK52_Interpreter::Receiver_AUTO_F _m_Receiver_AUTO_F;
+static MK52_Interpreter::Receiver_AUTO_K _m_Receiver_AUTO_K;
+static MK52_Interpreter::Receiver_AUTO_A _m_Receiver_AUTO_A;
+static MK52_Interpreter::Receiver_AUTO_R _m_Receiver_AUTO_R;
+
 static MK52_Interpreter::Receiver_PROG_N _m_Receiver_PROG_N;
 static MK52_Interpreter::Receiver_PROG_F _m_Receiver_PROG_F;
 
@@ -70,9 +75,16 @@ unsigned long MK52_Host::init() {
     _components[ COMPONENT_RECEIVER_NUMBER] = &_m_Receiver_Number;
     _components[ COMPONENT_RECEIVER_ADDRESS] = &_m_Receiver_Address;
     _components[ COMPONENT_RECEIVER_REGISTER] = &_m_Receiver_Register;
+    
     _components[ COMPONENT_RECEIVER_AUTO_N] = &_m_Receiver_AUTO_N;
+    _components[ COMPONENT_RECEIVER_AUTO_F] = &_m_Receiver_AUTO_F;
+    _components[ COMPONENT_RECEIVER_AUTO_K] = &_m_Receiver_AUTO_K;
+    _components[ COMPONENT_RECEIVER_AUTO_A] = &_m_Receiver_AUTO_A;
+    _components[ COMPONENT_RECEIVER_AUTO_R] = &_m_Receiver_AUTO_R;
+
     _components[ COMPONENT_RECEIVER_PROG_N] = &_m_Receiver_PROG_N;
     _components[ COMPONENT_RECEIVER_PROG_F] = &_m_Receiver_PROG_F;
+
     _components[ COMPONENT_DISPLAY_AUTO] = &_m_Display_AUTO;
     _components[ COMPONENT_DISPLAY_PROG] = &_m_Display_PROG;
     _components[ COMPONENT_DISPLAY_DATA] = &_m_Display_FILE;
@@ -87,9 +99,16 @@ unsigned long MK52_Host::init() {
     _m_Receiver_Number.init( _components);
     _m_Receiver_Address.init( _components);
     _m_Receiver_Register.init( _components);
+
     _m_Receiver_AUTO_N.init( _components);
+    _m_Receiver_AUTO_F.init( _components);
+    _m_Receiver_AUTO_K.init( _components);
+    _m_Receiver_AUTO_A.init( _components);
+    _m_Receiver_AUTO_R.init( _components);
+    
     _m_Receiver_PROG_N.init( _components);
     _m_Receiver_PROG_F.init( _components);
+    
     _m_Display_AUTO.init( _components);
     _m_Display_PROG.init( _components);
     _m_Display_DATA.init( _components);
@@ -103,8 +122,7 @@ unsigned long MK52_Host::init() {
     Serial.print( _m_RPN_Functions.Stack->getDModeName());
     Serial.println( "]");
     Serial.print("SD card ");
-    if( _m_Hardware_SD.SDMounted) Serial.println("mounted");
-    else Serial.println("not found");
+    Serial.println( _m_Hardware_SD.SDMounted? "mounted": "not found");
     Serial.println("MK-52 Resurrect!");
     #endif
 
@@ -133,7 +151,6 @@ void MK52_Host::tick(){
 
 void MK52_Host::setDisplay(int id){
     if( id<0) return;
-    Serial.println("Setting display...");
     current_Display = getDisplay( id);
     if( current_Display == NULL) return;
     current_Display->activate();

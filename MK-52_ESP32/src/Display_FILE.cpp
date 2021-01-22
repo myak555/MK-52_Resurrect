@@ -16,6 +16,9 @@ using namespace MK52_Interpreter;
 // Inits FILE display
 //
 unsigned long Display_FILE::init( void *components[]) {
+    #ifdef __DEBUG
+    Serial.println( "Init Display FILE");
+    #endif
     _sd = (MK52_Hardware::SD_Manager *)components[COMPONENT_SD_MANAGER];
     return Display::init( components);
 }
