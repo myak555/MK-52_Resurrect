@@ -1,5 +1,4 @@
-void Func_Plus::execute( void *components[], char *command)
-{
+void Func_Plus::execute( void *components[], char *command){
     RPN_Stack *s = _dealWithClergy2(components);
     if( s == NULL) return;
     double valueX = s->X->toReal();

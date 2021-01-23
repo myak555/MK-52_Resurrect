@@ -16,6 +16,10 @@ const char _RPN_Stack_LabelX[] PROGMEM = "X:";
 const char _RPN_Stack_LabelY[] PROGMEM = "Y:";
 const char _RPN_Stack_LabelZ[] PROGMEM = "Z:";
 const char _RPN_Stack_LabelT[] PROGMEM = "T:";
+
+const char _RPN_Stack_TrigAccuracy[] PROGMEM = "Warn: Trig Accuracy";
+const char _RPN_Stack_ComplexRoot[] PROGMEM = "Warn: Complex";
+
 static double _DMODE_ConversionsToRadian[] = {1.745329252e-2, 1.0, 1.570796327e-2};
 static double _DMODE_ConversionsFromRadian[] = {5.729577951e1, 1.0, 6.366197724e1};
 
@@ -155,8 +159,34 @@ int8_t RPN_Stack::XtoOctant(){
 
 void RPN_Stack::RadianToX(double value){
     X->fromReal( value * _DMODE_ConversionsFromRadian[_dMode]);
+    // in case of degrees and grads, need to round-up higher, to account for the Radian conversion
+    if( _dMode != DMODE_RADIANS) X->_checkRounding( __ROUNDING_ACCURACY * 0.01);
 }
 
 void RPN_Stack::OctantToX(int8_t value){
+    switch( _dMode){
+        case DMODE_DEGREES:
+            X->fromInt( value * 45);
+            break;
+        case DMODE_GRADS:
+            X->fromInt( value * 50);
+            break;
+        default:
+            X->fromReal( __PI4 * value);
+    }
+}
 
+//
+// value in radians
+// if outside of -1e12 to 1e12 range, perioodic functions lose precision
+//
+void RPN_Stack::setTrigAccuracyWarning( double value){
+    if( -1e12 <= value && value <= 1e12) return;
+    setStackLabel_P(0, _RPN_Stack_TrigAccuracy);
+}
+
+bool RPN_Stack::setNegativeRootWarning( double value){
+    if( value >= 0) return false;
+    setStackLabel_P(0, _RPN_Stack_ComplexRoot);
+    return true;
 }

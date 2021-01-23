@@ -17,7 +17,6 @@ unsigned long Receiver_AUTO_A::init( void *components[]) {
     #ifdef __DEBUG
     Serial.println( "Init AUTO_A");
     #endif
-    _nr = (Receiver_Number *)components[COMPONENT_RECEIVER_NUMBER];
     return Receiver::init(components);
 }
 
@@ -36,12 +35,7 @@ int Receiver_AUTO_A::tick( uint8_t scancode){
 }
 
 int Receiver_AUTO_A::_appendButton(uint8_t scancode){
-    if( _nr->isActive()){
-        int8_t r = _nr->tick( scancode);
-        if( r == NO_CHANGE) return NO_CHANGE;
-        _completeSubentry();
-        scancode = (uint8_t)r;
-    }
+    int return_value = COMPONENT_RECEIVER_AUTO_N;
 //     if( _ar->isActive()){
 //         if( _ar->tick( scancode) == NO_CHANGE) return NO_CHANGE;
 //         char *tmp = _ar->toString();
@@ -62,109 +56,71 @@ int Receiver_AUTO_A::_appendButton(uint8_t scancode){
 //         return NO_CHANGE;
 //     }
     switch( scancode){
-        case 0:
-        case 3:
-            return NO_CHANGE;
-
         // Column 0
         case 1:
-            _mode = 0;
-            return COMPONENT_RECEIVER_AUTO_F;
+            return_value = COMPONENT_RECEIVER_AUTO_F;
+            break;
         case 2:
-            _mode = 0;
-            return COMPONENT_RECEIVER_AUTO_K;
+            return_value = COMPONENT_RECEIVER_AUTO_K;
+            break;
 
-        // Column 1
-        case 5:
-            _rpnf->execute( FUNC_INCREMENT_PC);
-            _lcd->updateStatusPC( _rpnf->progMem->getCounter());
-            return NO_CHANGE;
-        case 6:
-            _rpnf->execute( FUNC_DECREMENT_PC);
-            _lcd->updateStatusPC( _rpnf->progMem->getCounter());
-            return NO_CHANGE;
-        case 7:
-            _rpnf->execute( FUNC_RESET_PC);
-            _lcd->updateStatusPC( _rpnf->progMem->getCounter());
-            return NO_CHANGE;
-        case 8: {// TODO START
-
-            uint32_t newAddress = _rpnf->progMem->getCounter() + 99; // fake program "running"
-            while( _rpnf->progMem->getCounter() < newAddress){
-                _rpnf->execute( FUNC_INCREMENT_PC);
-                _lcd->updateStatusPC( _rpnf->progMem->getCounter());
-            }}
-            //     _pmem->updateLine_P( PSTR("STOP"));
-            //     _pmem->incrementCounter();
-            return NO_CHANGE;
-
-        // Column 2
-        case 9:
-        //     _pmem->clearText();
-        //     _pmem->appendText_P( PSTR("M->X ") );
-        //     _rr->activate(COMPONENT_RECEIVER_PROG_N, 0);
-            return NO_CHANGE;
-        case 10:
-        //     _pmem->clearText();
-        //     _pmem->appendText_P( PSTR("X->M ") );
-        //     _rr->activate(COMPONENT_RECEIVER_PROG_N, 0);
-            return NO_CHANGE;
-        case 11:
-        //     _pmem->clearText();
-        //     _pmem->appendText_P( PSTR("GOTO ") );
-        //     _ar->activate(COMPONENT_RECEIVER_PROG_N, 0);
-            return NO_CHANGE;
-        case 12: // TODO STEP
-            _rpnf->execute( FUNC_INCREMENT_PC);
-            _rpnf->Stack->setStackLabel_P( 0, PSTR("STEP!"));
-            _lcd->updateStatusPC( _rpnf->progMem->getCounter());
-            return NO_CHANGE;
-
-        //     _pmem->clearText();
-        //     _pmem->appendText_P( PSTR("GOSUB ") );
-        //     _ar->activate(COMPONENT_RECEIVER_PROG_N, 0);
-            return NO_CHANGE;
+        // Column 1 does nothing
+        // Column 2 does nothing
+        // Column 3 does nothing
+        // Column 4 does nothing
 
         // Column 5
+        case 21:
+            //_rpnf->execute( FUNC_TG);
+            break;
+        case 22:
+            Serial.println("DEG to RAD");
+            //_rpnf->execute( FUNC_ARCTG);
+            break;
+        case 23:
+            Serial.println("mm to inch");
+            //_rpnf->execute( FUNC_NEGATE);
+            break;
         case 24:
-            _rpnf->execute( FUNC_NEGATE);
-            return NO_CHANGE;
+            //_rpnf->execute( FUNC_NEGATE);
+            break;
 
         // Column 6
         case 25:
-            _rpnf->execute( FUNC_MINUS);
-            return NO_CHANGE;
+            //_rpnf->execute( FUNC_COS);
+            break;
         case 26:
-            _rpnf->execute( FUNC_PLUS);
-            return NO_CHANGE;
+            Serial.println("RAD to DEG");
+            //_rpnf->execute( FUNC_PI);
+            break;
         case 27:
-            _rpnf->execute( FUNC_SWAP);
-            return NO_CHANGE;
+            Serial.println("inch to mm");
+            //_rpnf->execute( FUNC_NEGATE);
+            break;
+        case 28:
+            //_rpnf->execute( FUNC_ROT);
+            break;
 
         // Column 7
         case 29:
-            _rpnf->execute( FUNC_DIVIDE);
-            return NO_CHANGE;
+            //_rpnf->execute( FUNC_COS);
+            break;
         case 30:
-            _rpnf->execute( FUNC_MULTIPLY);
-            return NO_CHANGE;
+            //_rpnf->execute( FUNC_ARCCOS);
+            break;
         case 31:
-            _rpnf->execute( FUNC_ENTER);
-            return NO_CHANGE;
+            _rpnf->execute( FUNC_SEED);
+            break;
         case 32:
-            if(_rpnf->Stack->customStackLabels())
-                _rpnf->Stack->resetStackLabels();                
-        //     _pmem->updateLine_P( PSTR("Cx"));
-        //     _pmem->incrementCounter();
-            return NO_CHANGE;
+            break;
 
-        default: // all other buttons activate number entry
-            _rpnf->execute( FUNC_ENTER);
-            _mode = 2;
-            _nr->activate( scancode, COMPONENT_RECEIVER_AUTO_A);
-            return NO_CHANGE;
+        default: // all other buttons do nothing - keep A-mode
+           delay(KBD_IDLE_DELAY);
+           return NO_CHANGE;
     }
-    return NO_CHANGE;
+    _mode = 0;
+    delay(KBD_IDLE_DELAY);
+    return return_value;
 }
 
 void Receiver_AUTO_A::_completeSubentry(){
@@ -174,7 +130,6 @@ void Receiver_AUTO_A::_completeSubentry(){
             return;
         case 2:
             _mode = 1;
-            _rpnf->execute( _nr->toTrimmedString());
             break;
         default:
             break;

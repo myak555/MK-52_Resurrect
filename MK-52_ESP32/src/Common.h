@@ -37,6 +37,10 @@
 #define HUGE_NEGATIVE_INTEGER       (-9000000000000000000L)
 #define HUGE_POSITIVE_AS_REAL       (9e18)
 #define HUGE_NEGATIVE_AS_REAL       (-9e18)
+#define __PI                        (3.14159265359)
+#define __PI4                       (0.78539816339)
+#define __EE                        (2.71828182846)
+#define __ROUNDING_ACCURACY         (1e11)
 
 #define DMODE_DEGREES               0
 #define DMODE_RADIANS               1

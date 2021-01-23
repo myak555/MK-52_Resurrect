@@ -10,7 +10,7 @@
 
 #define __DEBUG
 
-const char _RN_ButtonConversion[] PROGMEM = "#fff#ffffffff7410852.963-fffEffec";
+const char _RN_ButtonConversion[] PROGMEM = "#ffffffffffff7410852.963-fffEffec";
 const char _RN_StandardUnity[] PROGMEM = "1.0E+000";
 
 using namespace MK52_Interpreter;

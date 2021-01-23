@@ -277,7 +277,7 @@ int64_t UniversalValue::_recoverInt64(char *ptr){
     return positive? tmp: -tmp;
 }
 
-void UniversalValue::_checkRounding(){
+void UniversalValue::_checkRounding(double accuracy){
     if( !isReal()) return;
     double value = *_asRealPtr();
     if( isnan(value)) return;
@@ -292,15 +292,15 @@ void UniversalValue::_checkRounding(){
         fromInt( 0);
         return;
     }
-    if( value > HUGE_POSITIVE_AS_REAL) return; // cannot convert
+    if( value >= accuracy) return; // should not convert
     if( value < 0.99999999997) return; // whole part < 1. 
     if( value < 1.00000000003){
         fromInt( positive? 1: -1);
         return;
     }
 
-    double vLimit = 1.0e12;
-    double cutoff = 0.2;
+    double vLimit = accuracy;
+    double cutoff = 0.3;
     while( value < vLimit){
         vLimit *= 0.1;
         cutoff *= 0.1;

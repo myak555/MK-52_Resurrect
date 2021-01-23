@@ -46,6 +46,9 @@ namespace MK52_Interpreter{
             int8_t XtoOctant();
             void RadianToX(double value);
             void OctantToX(int8_t value);
+
+            void setTrigAccuracyWarning( double value);
+            bool setNegativeRootWarning( double value);
         private:
             uint8_t _stackValues[(RPN_STACK_SIZE+1)*9];
             char _stackLabels[SCREEN_COLS*4+4];

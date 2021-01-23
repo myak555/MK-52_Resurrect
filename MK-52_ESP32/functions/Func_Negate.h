@@ -1,5 +1,4 @@
-void Func_Negate::execute( void *components[], char *command)
-{
+void Func_Negate::execute( void *components[], char *command){
     RPN_Stack *s = (RPN_Stack *)components[COMPONENT_STACK];
     if( s->X->isEmpty()) return;
     if( s->X->isInt()){

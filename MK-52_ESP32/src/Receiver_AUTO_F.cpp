@@ -17,7 +17,6 @@ unsigned long Receiver_AUTO_F::init( void *components[]) {
     #ifdef __DEBUG
     Serial.println( "Init AUTO_F");
     #endif
-    _nr = (Receiver_Number *)components[COMPONENT_RECEIVER_NUMBER];
     return Receiver::init(components);
 }
 
@@ -36,6 +35,7 @@ int Receiver_AUTO_F::tick( uint8_t scancode){
 }
 
 int Receiver_AUTO_F::_appendButton(uint8_t scancode){
+    int return_value = COMPONENT_RECEIVER_AUTO_N;
 //     if( _ar->isActive()){
 //         if( _ar->tick( scancode) == NO_CHANGE) return NO_CHANGE;
 //         char *tmp = _ar->toString();
@@ -56,18 +56,12 @@ int Receiver_AUTO_F::_appendButton(uint8_t scancode){
 //         return NO_CHANGE;
 //     }
     switch( scancode){
-        case 0:
-        case 1:
-            delay(KBD_IDLE_DELAY);
-            return NO_CHANGE;
-
         // Column 0
         case 2:
-            _mode = 0;
-            return COMPONENT_RECEIVER_AUTO_K;
+            return_value = COMPONENT_RECEIVER_AUTO_K;
+            break;
         case 3:
-            _mode = 0;
-            return COMPONENT_RECEIVER_AUTO_A;
+            return_value = COMPONENT_RECEIVER_AUTO_A;
         case 4:
             _rpnf->execute(FUNC_TOGGLE_DMOD);
             _lcd->updateStatusDMODE(_rpnf->Stack->getDModeName());
@@ -79,34 +73,81 @@ int Receiver_AUTO_F::_appendButton(uint8_t scancode){
         // Column 3
         case 13:
             _rpnf->execute( FUNC_SIN);
-            _mode = 0;
-            Serial.println("SIN Called");
-            return COMPONENT_RECEIVER_AUTO_N;
+            break;
         case 14:
-            Serial.println("ArcSIN");
-            //_rpnf->execute( FUNC_NEGATE);
-            _mode = 0;
-            return COMPONENT_RECEIVER_AUTO_N;
+            _rpnf->execute( FUNC_ARCSIN);
+            break;
         case 15:
-            Serial.println("Exp");
-            //_rpnf->execute( FUNC_NEGATE);
-            _mode = 0;
-            return COMPONENT_RECEIVER_AUTO_N;
+            _rpnf->execute( FUNC_EXP);
+            break;
         case 16:
-            Serial.println("10^x");
+            _rpnf->execute( FUNC_10X);
+            break;
+
+        // Column 4
+        case 17:
+            _rpnf->execute( FUNC_COS);
+            break;
+        case 18:
+            _rpnf->execute( FUNC_ARCCOS);
+            break;
+        case 19:
+            _rpnf->execute( FUNC_LG);
+            break;
+        case 20:
+            _rpnf->execute( FUNC_ROT);
+            break;
+
+        // Column 5
+        case 21:
+            _rpnf->execute( FUNC_TG);
+            break;
+        case 22:
+            _rpnf->execute( FUNC_ARCTG);
+            break;
+        case 23:
+            _rpnf->execute( FUNC_LN);
+            break;
+        case 24:
+            Serial.println("AUTO");
             //_rpnf->execute( FUNC_NEGATE);
-            _mode = 0;
-            return COMPONENT_RECEIVER_AUTO_N;
+            break;
 
+        // Column 6
+        case 25:
+            _rpnf->execute( FUNC_SQRT);
+            break;
+        case 26:
+            _rpnf->execute( FUNC_PI);
+            break;
+        case 27:
+            _rpnf->execute( FUNC_POW);
+            break;
+        case 28:
+            Serial.println("PRG");
+            //_rpnf->execute( FUNC_ROT);
+            break;
+
+        // Column 7
+        case 29:
+            _rpnf->execute( FUNC_1X);
+            break;
+        case 30:
+            _rpnf->execute( FUNC_X2);
+            break;
+        case 31:
+            _rpnf->execute( FUNC_BX);
+            break;
         case 32:
-            _mode = 0;
-            return COMPONENT_RECEIVER_AUTO_N;
+            break;
 
-        default: // all other buttons do nothing
+        default: // all other buttons do nothing, keeping F-mode
            delay(KBD_IDLE_DELAY);
            return NO_CHANGE;
     }
-    return NO_CHANGE;
+    _mode = 0;
+    delay(KBD_IDLE_DELAY);
+    return return_value;
 }
 
 void Receiver_AUTO_F::_completeSubentry(){
@@ -116,7 +157,6 @@ void Receiver_AUTO_F::_completeSubentry(){
             return;
         case 2:
             _mode = 1;
-            _rpnf->execute( _nr->toTrimmedString());
             break;
         default:
             break;

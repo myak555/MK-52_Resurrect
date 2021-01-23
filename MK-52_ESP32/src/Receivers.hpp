@@ -81,7 +81,6 @@ namespace MK52_Interpreter{
         void activate( uint8_t scancode = 0, int8_t parent = NO_CHANGE);
         int tick( uint8_t scancode = 0);
       protected:
-        Receiver_Number *_nr;
         int _appendButton(uint8_t scancode);
         void _completeSubentry();
     };
@@ -92,7 +91,6 @@ namespace MK52_Interpreter{
         void activate( uint8_t scancode = 0, int8_t parent = NO_CHANGE);
         int tick( uint8_t scancode = 0);
       protected:
-        Receiver_Number *_nr;
         int _appendButton(uint8_t scancode);
         void _completeSubentry();
     };
@@ -103,7 +101,6 @@ namespace MK52_Interpreter{
         void activate( uint8_t scancode = 0, int8_t parent = NO_CHANGE);
         int tick( uint8_t scancode = 0);
       protected:
-        Receiver_Number *_nr;
         int _appendButton(uint8_t scancode);
         void _completeSubentry();
     };

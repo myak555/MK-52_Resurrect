@@ -35,6 +35,7 @@ namespace MK52_Interpreter{
             char *toString( char *text);
             inline uint64_t *_asIntPtr(){return (uint64_t *)(_ptr+1);};
             inline double *_asRealPtr(){return (double *)(_ptr+1);};
+            void _checkRounding( double accuracy = __ROUNDING_ACCURACY);
 
         private:
             uint8_t *_ptr = NULL;
@@ -43,7 +44,6 @@ namespace MK52_Interpreter{
             char *_composeInt64(char *text, int64_t value);
             double _recoverDecimal(char *ptr);
             int64_t _recoverInt64(char *ptr);
-            void _checkRounding();
             bool _isDecimal(char c);
     };
 }

@@ -23,26 +23,96 @@ unsigned long RPN_Functions::init( void *components[]) {
     progMem = (Program_Memory *)components[COMPONENT_PROGRAM_MEMORY];
     extMem = (Extended_Memory *)components[COMPONENT_EXTENDED_MEMORY];
     
+    // #define FUNC_COMMENT            1
     _appendFunction( new Func_Comment());
+    // #define FUNC_INCREMENT_PC       2
     _appendFunction( new Func_Increment_PC());
+    // #define FUNC_DECREMENT_PC       3
     _appendFunction( new Func_Decrement_PC());
+    // #define FUNC_INCREMENT_MC       4
     _appendFunction( new Func_Increment_MC());
+    // #define FUNC_DECREMENT_MC       5
     _appendFunction( new Func_Decrement_MC());
+    // #define FUNC_RESET_PC           6
     _appendFunction( new Func_Reset_PC());
+    // #define FUNC_RESET_MC           7
     _appendFunction( new Func_Reset_MC());
+    // #define FUNC_TOGGLE_DMOD        8
     _appendFunction( new Func_Toggle_DMOD());
+    // #define FUNC_SET_DMOD_DEG       9
     _appendFunction( new Func_set_DMOD_DEG());
+    // #define FUNC_SET_DMOD_RAD       10
     _appendFunction( new Func_set_DMOD_RAD());
+    // #define FUNC_SET_DMOD_GRD       11
     _appendFunction( new Func_set_DMOD_GRD());
+    // #define FUNC_NEGATE             12
     _appendFunction( new Func_Negate());
+    // #define FUNC_ENTER              13
     _appendFunction( new Func_Enter());
+    // #define FUNC_SWAP               14
     _appendFunction( new Func_Swap());
+    // #define FUNC_PLUS               15
     _appendFunction( new Func_Plus());
+    // #define FUNC_MINUS              16
     _appendFunction( new Func_Minus());
+    // #define FUNC_MULTIPLY           17
     _appendFunction( new Func_Multiply());
+    // #define FUNC_DIVIDE             18
     _appendFunction( new Func_Divide());
+    // #define FUNC_CLEAR_X            19
     _appendFunction( new Func_Clear_X());
+    // #define FUNC_SIN                20
     _appendFunction( new Func_Sin());
+    // #define FUNC_ARCSIN             21
+    _appendFunction( new Func_ArcSin());
+    // #define FUNC_COS                22
+    _appendFunction( new Func_Cos());
+    // #define FUNC_ARCCOS             23
+    _appendFunction( new Func_ArcCos());
+    // #define FUNC_TG                 24
+    _appendFunction( new Func_Tg());
+    // #define FUNC_ARCTG              25
+    _appendFunction( new Func_ArcTg());
+    // #define FUNC_EXP                26
+    _appendFunction( new Func_Exp());
+    // #define FUNC_10X                27
+    _appendFunction( new Func_10x());
+    // #define FUNC_LG                 28
+    _appendFunction( new Func_Lg());
+    // #define FUNC_LN                 29
+    _appendFunction( new Func_Ln());
+    // #define FUNC_POW                30
+    _appendFunction( new Func_Pow());
+    // #define FUNC_LOG                31
+    _appendFunction( new Func_Log());
+    // #define FUNC_ROT                32
+    _appendFunction( new Func_Rot());
+    // #define FUNC_X2                 33
+    _appendFunction( new Func_X2());
+    // #define FUNC_1X                 34
+    _appendFunction( new Func_1X());
+    // #define FUNC_SQRT               35
+    _appendFunction( new Func_SQRT());
+    // #define FUNC_PI                 36
+    _appendFunction( new Func_PI());
+    // #define FUNC_EE                 37
+    _appendFunction( new Func_EE());
+    // #define FUNC_BX                 38
+    _appendFunction( new Func_Bx());
+    // #define FUNC_RAND               39
+    _appendFunction( new Func_Rand());
+    // #define FUNC_SEED               40
+    _appendFunction( new Func_Seed());
+    // #define FUNC_WHOLE              41
+    _appendFunction( new Func_Whole());
+    // #define FUNC_FRAC               42
+    _appendFunction( new Func_Frac());
+    // #define FUNC_MAX                43
+    _appendFunction( new Func_Max());
+    // #define FUNC_ABS                44
+    _appendFunction( new Func_Abs());
+    // #define FUNC_SIGN               45
+    _appendFunction( new Func_Sign());
 
     #ifdef __DEBUG
     Serial.print( _nfunctions);
@@ -118,3 +188,7 @@ void RPN_Functions::_appendFunction( RPN_Function *f){
 #include "../functions/Func_Negate.h"
 #include "../functions/Func_Plus.h"
 #include "../functions/Func_Trig.h"
+#include "../functions/Func_Pow.h"
+#include "../functions/Func_Log.h"
+#include "../functions/Func_Rand.h"
+#include "../functions/Func_Numb.h"
