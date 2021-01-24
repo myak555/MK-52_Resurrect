@@ -10,7 +10,7 @@
 
 #define __DEBUG
 
-const char _RR_ButtonConversion[] PROGMEM = "#########abcd7410852A963B###C#FED";
+const char _RR_ButtonConversion[] PROGMEM = "####f####abcd7410852A963B###C#FED";
 
 using namespace MK52_Interpreter;
 
@@ -26,22 +26,22 @@ unsigned long Receiver_Register::init( void *components[]) {
 
 void Receiver_Register::activate( uint8_t scancode, int8_t parent){
     Receiver::activate( scancode, parent);
-    *_text = 0; 
+    *_text = 0;
+    _lcd->updateStatusFMODE( "MEM");
     _mode = 1;
-    if(!scancode) return;
-    _appendChar( _convertButton( _RR_ButtonConversion, scancode));
 }
 
 int Receiver_Register::tick( uint8_t scancode){
     if(scancode == 0) scancode = _kbd->scan();
     if( !scancode) return NO_CHANGE;
-    return _appendChar( _convertButton( _RR_ButtonConversion, scancode));
-}
-
-int Receiver_Register::_appendChar( char c){
+    char c = _convertButton( _RR_ButtonConversion, scancode);
     switch( c){
         case 0:
+            //delay(KBD_IDLE_DELAY);
             return NO_CHANGE;
+        case 'f':
+            _parentReceiver = (int)scancode;
+            break;
         case 'a':
         case 'b':
         case 'c':
@@ -49,12 +49,13 @@ int Receiver_Register::_appendChar( char c){
             _text[0] = 'L';
             _text[1] = c - 'a' + '0';
             _text[2] = 0;
-            _mode = 0;
-            return _parentReceiver;
+            break;
         default:
             _text[0] = c;
             _text[1] = 0;
-            _mode = 0;
-            return _parentReceiver;
+            break;
     }
+    _mode = 0;
+    //delay(KBD_IDLE_DELAY);
+    return _parentReceiver;
 }

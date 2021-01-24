@@ -23,7 +23,7 @@
 #define SCREEN_BUFFER_SIZE          372 
 
 // How long the system waits between the keyboard scans
-#define KBD_IDLE_DELAY              100
+#define KBD_IDLE_DELAY              30
 #define DEBUG_SHOW_DELAY            10000
 
 #define VALUE_TYPE_EMPTY            0

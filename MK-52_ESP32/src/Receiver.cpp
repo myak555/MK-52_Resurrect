@@ -25,7 +25,6 @@ void Receiver::activate( uint8_t scancode, int8_t parent){
 }
 
 char Receiver::_convertButton(const char *list, uint8_t scancode){
-    _parentReceiver = (int8_t)(scancode & 0x3F);
     char c = (char)pgm_read_byte(list + scancode);
     if( c == '#') return 0;
     return c;

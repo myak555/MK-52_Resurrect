@@ -24,6 +24,8 @@ namespace MK52_Interpreter{
         void XtoM(int8_t n);
         void K_MtoX(int8_t n);
         void K_XtoM(int8_t n);
+        void A_MtoX(int64_t index);
+        void A_XtoM(int64_t index);
 
         int8_t registerByName( char *name);
 
@@ -35,6 +37,8 @@ namespace MK52_Interpreter{
             K_MtoX( registerByName(name));};
         inline void K_XtoM(char *name){
             K_XtoM( registerByName(name));};
+        void A_MtoX(char *address);
+        void A_XtoM(char *address);
 
       private:
         uint8_t *_buffer = NULL;

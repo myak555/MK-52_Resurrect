@@ -601,3 +601,47 @@ class Func_K_X2M: public RPN_Function{
             Register_Memory *rm = (Register_Memory *)components[COMPONENT_REGISTER_MEMORY];
             rm->K_XtoM(command);};
 };
+
+class Func_A_M2X: public RPN_Function{
+    public:
+        inline bool checkID( uint16_t id){ return id == FUNC_A_M2X;};
+        inline bool checkName(char *name){ return _startsWith( name, Name());};
+        inline const char*Name(){ return PSTR("A M->X ");};
+        inline const char*IOName(){ return Name();};
+        void execute( void *components[], char *command){
+            Register_Memory *rm = (Register_Memory *)components[COMPONENT_REGISTER_MEMORY];
+            rm->A_MtoX(command);};
+};
+
+class Func_A_X2M: public RPN_Function{
+    public:
+        inline bool checkID( uint16_t id){ return id == FUNC_A_X2M;};
+        inline bool checkName(char *name){ return _startsWith( name, Name());};
+        inline const char*Name(){ return PSTR("A X->M ");};
+        inline const char*IOName(){ return Name();};
+        void execute( void *components[], char *command){
+            Register_Memory *rm = (Register_Memory *)components[COMPONENT_REGISTER_MEMORY];
+            rm->A_XtoM(command);};
+};
+
+class Func_GOTO: public RPN_Function{
+    public:
+        inline bool checkID( uint16_t id){ return id == FUNC_GOTO;};
+        inline bool checkName(char *name){ return _startsWith( name, Name());};
+        inline const char*Name(){ return PSTR("GOTO ");};
+        inline const char*IOName(){ return Name();};
+        void execute( void *components[], char *command){
+            Program_Memory *pm = (Program_Memory *)components[COMPONENT_PROGRAM_MEMORY];
+            pm->setCounter(command);};
+};
+
+class Func_GOSUB: public RPN_Function{
+    public:
+        inline bool checkID( uint16_t id){ return id == FUNC_GOSUB;};
+        inline bool checkName(char *name){ return _startsWith( name, Name());};
+        inline const char*Name(){ return PSTR("GOSUB ");};
+        inline const char*IOName(){ return Name();};
+        void execute( void *components[], char *command){
+            Program_Memory *pm = (Program_Memory *)components[COMPONENT_PROGRAM_MEMORY];
+            pm->setCounter(command);};
+};

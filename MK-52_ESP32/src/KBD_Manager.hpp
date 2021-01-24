@@ -32,10 +32,12 @@ namespace MK52_Hardware{
     class KBD_Manager{
       public:
         uint8_t lastScan = 0;
+        unsigned long lastScanTime = 0L;
         bool LEDOn = true;
 
         void init();
         uint8_t scan();
+        uint8_t scanImmediate();
       private:
         void _pulseRST();
         void _pulseCLK();

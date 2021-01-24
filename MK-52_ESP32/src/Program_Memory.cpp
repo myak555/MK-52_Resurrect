@@ -79,8 +79,13 @@ uint32_t Program_Memory::setCounter(uint32_t c){
 uint32_t Program_Memory::setCounter(char *s){
     int ln = strlen(s);
     if( ln <= 0) return _counter;
+    if( s[0]==' ') return _counter;
     uint32_t n = 0;
     while( *s){
+        if( *s == ' '){
+            s++;
+            continue;
+        }
         n = n*10 + *s - '0';
         s++; 
     }

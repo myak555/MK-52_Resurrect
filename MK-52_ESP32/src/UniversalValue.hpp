@@ -32,6 +32,9 @@ namespace MK52_Interpreter{
             int64_t toInt();
             double toReal();
             inline uint8_t *toBytes(){return (uint8_t *)_ptr;};
+            inline uint8_t toLocation( uint8_t *location){
+                memcpy(location, _ptr, 9);
+                return *location;};                
             char *toString( char *text);
             inline uint64_t *_asIntPtr(){return (uint64_t *)(_ptr+1);};
             inline double *_asRealPtr(){return (double *)(_ptr+1);};

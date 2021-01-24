@@ -18,6 +18,8 @@ unsigned long Receiver_AUTO_N::init( void *components[]) {
     Serial.println( "Init AUTO_N");
     #endif
     _nr = (Receiver_Number *)components[COMPONENT_RECEIVER_NUMBER];
+    _ar = (Receiver_Address *)components[COMPONENT_RECEIVER_ADDRESS];
+    _rr = (Receiver_Register *)components[COMPONENT_RECEIVER_REGISTER];
     return Receiver::init(components);
 }
 
@@ -37,31 +39,9 @@ int Receiver_AUTO_N::tick( uint8_t scancode){
 
 int Receiver_AUTO_N::_appendButton(uint8_t scancode){
     int return_value = NO_CHANGE;
-    if( _nr->isActive()){
-        int8_t r = _nr->tick( scancode);
-        if( r == NO_CHANGE) return NO_CHANGE;
-        _completeSubentry();
-        scancode = (uint8_t)r;
-    }
-//     if( _ar->isActive()){
-//         if( _ar->tick( scancode) == NO_CHANGE) return NO_CHANGE;
-//         char *tmp = _ar->toString();
-//         if( *tmp == 0){
-//             _pmem->deleteLine();
-//             return NO_CHANGE;
-//         }
-//         _pmem->appendText( tmp);
-//         _pmem->updateLine();
-//         _pmem->incrementCounter();
-//         return NO_CHANGE;
-//     }
-//     if( _rr->isActive()){
-//         if( _rr->tick( scancode) == NO_CHANGE) return NO_CHANGE;
-//         _pmem->appendText( _rr->toString());
-//         _pmem->updateLine();
-//         _pmem->incrementCounter();
-//         return NO_CHANGE;
-//     }
+    int r = _completeSubentry(scancode);
+    if( r <= 0) return return_value;
+    scancode = (uint8_t)r;
     switch( scancode){
         case 0: // keyboard inactive
             break;
@@ -98,26 +78,22 @@ int Receiver_AUTO_N::_appendButton(uint8_t scancode){
             _lcd->updateStatusPC( _rpnf->progMem->getCounter());
             break;
         case 8:
-            // no need to wait on keyboard!
+            // no need to wait on keyboard
             return COMPONENT_RECEIVER_AUTO_R;
 
         // Column 2
         case 9:
-            _rpnf->execute( FUNC_M2X, "A");
-        //     _pmem->clearText();
-        //     _pmem->appendText_P( PSTR("M->X ") );
-        //     _rr->activate(COMPONENT_RECEIVER_PROG_N, 0);
+            _mode = 3;
+            _rr->activate(0, 0);
             break;
         case 10:
-            _rpnf->execute( FUNC_X2M, "A");
-        //     _pmem->clearText();
-        //     _pmem->appendText_P( PSTR("X->M ") );
-        //     _rr->activate(COMPONENT_RECEIVER_PROG_N, 0);
+            _mode = 4;
+            _rr->activate(0, 0);
             break;
         case 11:
-        //     _pmem->clearText();
-        //     _pmem->appendText_P( PSTR("GOTO ") );
-        //     _ar->activate(COMPONENT_RECEIVER_PROG_N, 0);
+            _mode = 5;
+            _ar->activate(0, 0);
+            _lcd->updateStatusPC( _ar->toString());
             break;
         case 12: // TODO STEP
             _rpnf->execute( FUNC_INCREMENT_PC);
@@ -162,21 +138,40 @@ int Receiver_AUTO_N::_appendButton(uint8_t scancode){
             _nr->activate( scancode, COMPONENT_RECEIVER_AUTO_N);
             break;
     }
-    delay(KBD_IDLE_DELAY);
+    //delay(KBD_IDLE_DELAY);
     return return_value;
 }
 
-void Receiver_AUTO_N::_completeSubentry(){
+int Receiver_AUTO_N::_completeSubentry( uint8_t scancode){
+    int8_t r = (int)scancode;
     switch( _mode){
         case 0:
         case 1:
-            return;
+            return r;
         case 2:
-            _mode = 1;
+            r = _nr->tick( scancode);
+            if( r == NO_CHANGE) return NO_CHANGE;
             _rpnf->execute( _nr->toTrimmedString());
+            break;
+        case 3:
+        case 4:
+            r = _rr->tick( scancode);
+            if( r == NO_CHANGE) return NO_CHANGE;
+            _rpnf->execute( (_mode==3)? FUNC_M2X : FUNC_X2M, _rr->toString());
+            break;
+        case 5:
+            r = _ar->tick( scancode);
+            if( r == NO_CHANGE){
+                _lcd->updateStatusPC( _ar->toString());
+                return NO_CHANGE;
+            }
+            _rpnf->execute( FUNC_GOTO, _ar->toString());
+            _lcd->updateStatusPC( _rpnf->progMem->getCounter());
             break;
         default:
             break;
     }
+    _mode = 1;
     _lcd->updateStatusFMODE( "   ");
+    return r;
 }

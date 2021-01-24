@@ -59,3 +59,8 @@
 #define FUNC_X2M                59
 #define FUNC_K_M2X              60
 #define FUNC_K_X2M              61
+#define FUNC_A_M2X              62
+#define FUNC_A_X2M              63
+#define FUNC_GOTO               64
+#define FUNC_GOSUB              65
+#define FUNC_RETURN             66

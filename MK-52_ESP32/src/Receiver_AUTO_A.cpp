@@ -17,6 +17,8 @@ unsigned long Receiver_AUTO_A::init( void *components[]) {
     #ifdef __DEBUG
     Serial.println( "Init AUTO_A");
     #endif
+    _ar = (Receiver_Address *)components[COMPONENT_RECEIVER_ADDRESS];
+    //_rr = (Receiver_Register *)components[COMPONENT_RECEIVER_REGISTER];
     return Receiver::init(components);
 }
 
@@ -36,25 +38,10 @@ int Receiver_AUTO_A::tick( uint8_t scancode){
 
 int Receiver_AUTO_A::_appendButton(uint8_t scancode){
     int return_value = COMPONENT_RECEIVER_AUTO_N;
-//     if( _ar->isActive()){
-//         if( _ar->tick( scancode) == NO_CHANGE) return NO_CHANGE;
-//         char *tmp = _ar->toString();
-//         if( *tmp == 0){
-//             _pmem->deleteLine();
-//             return NO_CHANGE;
-//         }
-//         _pmem->appendText( tmp);
-//         _pmem->updateLine();
-//         _pmem->incrementCounter();
-//         return NO_CHANGE;
-//     }
-//     if( _rr->isActive()){
-//         if( _rr->tick( scancode) == NO_CHANGE) return NO_CHANGE;
-//         _pmem->appendText( _rr->toString());
-//         _pmem->updateLine();
-//         _pmem->incrementCounter();
-//         return NO_CHANGE;
-//     }
+    int r = _completeSubentry(scancode);
+    if( r < -1) return return_value;
+    if( r <= 0) return NO_CHANGE;
+    scancode = (uint8_t)r;
     switch( scancode){
         // Column 0
         case 1:
@@ -65,7 +52,19 @@ int Receiver_AUTO_A::_appendButton(uint8_t scancode){
             break;
 
         // Column 1 does nothing
-        // Column 2 does nothing
+
+        // Column 2
+        case 9:
+            _mode = 2;
+            _ar->activate(0, 0);
+            _lcd->updateStatusMC( _ar->toString());
+            return NO_CHANGE;
+        case 10:
+            _mode = 3;
+            _ar->activate(0, 0);
+            _lcd->updateStatusMC( _ar->toString());
+            return NO_CHANGE;
+
         // Column 3 does nothing
         // Column 4 does nothing
 
@@ -111,24 +110,34 @@ int Receiver_AUTO_A::_appendButton(uint8_t scancode){
             break;
 
         default: // all other buttons do nothing - keep A-mode
-           delay(KBD_IDLE_DELAY);
+           //delay(KBD_IDLE_DELAY);
            return NO_CHANGE;
     }
     _mode = 0;
-    delay(KBD_IDLE_DELAY);
+    //delay(KBD_IDLE_DELAY);
     return return_value;
 }
 
-void Receiver_AUTO_A::_completeSubentry(){
+int Receiver_AUTO_A::_completeSubentry( uint8_t scancode){
+    int8_t r = (int)scancode;
     switch( _mode){
         case 0:
         case 1:
-            return;
+            return r;
         case 2:
-            _mode = 1;
+        case 3:
+            r = _ar->tick( scancode);
+            if( r <= 0){
+                _lcd->updateStatusMC( _ar->toString());
+                return NO_CHANGE;
+            }
+            _rpnf->execute( (_mode==2)? FUNC_A_M2X : FUNC_A_X2M, _ar->toString());
+            _lcd->updateStatusMC( _rpnf->extMem->getCounter());
+            r = -3;
             break;
         default:
             break;
     }
-    _lcd->updateStatusFMODE( "   ");
+    _mode = 0;
+    return r;
 }

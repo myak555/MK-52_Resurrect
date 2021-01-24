@@ -20,8 +20,8 @@ const char _RPN_Stack_LabelT[] PROGMEM = "T:";
 const char _RPN_Stack_TrigAccuracy[] PROGMEM = "Warn: Trig Accuracy";
 const char _RPN_Stack_ComplexRoot[] PROGMEM = "Warn: Complex";
 
-static double _DMODE_ConversionsToRadian[] = {1.745329252e-2, 1.0, 1.570796327e-2};
-static double _DMODE_ConversionsFromRadian[] = {5.729577951e1, 1.0, 6.366197724e1};
+static double _DMODE_ConversionsToRadian[] = {1.7453292519943295e-2, 1.0, 1.5707963267948967e-2};
+static double _DMODE_ConversionsFromRadian[] = {57.29577951308232, 1.0, 63.66197723675813};
 
 unsigned long RPN_Stack::init( void *components[]){
     Bx = new UniversalValue(_stackValues);

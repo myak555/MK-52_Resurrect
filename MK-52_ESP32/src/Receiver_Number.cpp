@@ -136,6 +136,6 @@ int Receiver_Number::tick( uint8_t scancode){
         default:
             break;
     }
-    delay(KBD_IDLE_DELAY);
+    //delay(KBD_IDLE_DELAY);
     return return_value;
 }

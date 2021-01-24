@@ -201,13 +201,13 @@ void Func_Rad2D::execute( void *components[], char *command){
     RPN_Stack *s = (RPN_Stack *)components[COMPONENT_STACK];
     s->storeBx();
     double x = s->X->toReal();
-    s->X->fromReal( x * 5.729577951e1);
+    s->X->fromReal( x * 57.29577951308232);
 }
 
 void Func_D2Rad::execute( void *components[], char *command){
     RPN_Stack *s = (RPN_Stack *)components[COMPONENT_STACK];
     s->storeBx();
     double x = s->X->toReal();
-    s->X->fromReal( x * 1.745329252e-2);
-    s->X->_checkRounding( 1.0e9);
+    s->X->fromReal( x * 1.7453292519943295e-2);
+    //s->X->_checkRounding( 1.0e9);
 }

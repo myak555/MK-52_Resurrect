@@ -145,6 +145,15 @@ unsigned long RPN_Functions::init( void *components[]) {
     _appendFunction( new Func_K_M2X());
     // #define FUNC_K_X2M              61
     _appendFunction( new Func_K_X2M());
+    // #define FUNC_A_M2X              62
+    _appendFunction( new Func_A_M2X());
+    // #define FUNC_A_X2M              63
+    _appendFunction( new Func_A_X2M());
+    // #define FUNC_GOTO               64
+    _appendFunction( new Func_GOTO());
+    // #define FUNC_GOSUB              65
+    _appendFunction( new Func_GOSUB());
+    // #define FUNC_RETURN             66
 
     #ifdef __DEBUG
     Serial.print( _nfunctions);

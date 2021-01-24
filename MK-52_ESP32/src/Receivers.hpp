@@ -37,7 +37,7 @@ namespace MK52_Interpreter{
         int tick( uint8_t scancode = 0);
         inline char *toString(){ return _text;};
         inline char *toTrimmedString(){ return (*_text == ' ')? _text+1: _text;};
-      protected:
+      private:
         char _text[SCREEN_COLS]; // temporary input buffer
         inline void _swapSign( char *pos, char plusChar){ *pos = (*pos == '-')? plusChar: '-';};
     };
@@ -48,9 +48,9 @@ namespace MK52_Interpreter{
         void activate( uint8_t scancode = 0, int8_t parent = NO_CHANGE);
         int tick( uint8_t scancode = 0);
         inline char *toString(){ return _text;};
-      protected:
-        char _text[SCREEN_COLS]; // temporary input buffer
-        int _appendChar( char c);
+      private:
+        char _text[5]; // temporary input buffer
+        int _completeEntry();
     };
 
     class Receiver_Register: public Receiver{
@@ -59,8 +59,7 @@ namespace MK52_Interpreter{
         void activate( uint8_t scancode = 0, int8_t parent = NO_CHANGE);
         int tick( uint8_t scancode = 0);
         inline char *toString(){ return _text;};
-      protected:
-        int _appendChar( char c);
+      private:
         char _text[3]; // temporary input buffer
     };
 
@@ -69,10 +68,12 @@ namespace MK52_Interpreter{
         unsigned long init( void *components[]);
         void activate( uint8_t scancode = 0, int8_t parent = NO_CHANGE);
         int tick( uint8_t scancode = 0);
-      protected:
+      private:
         Receiver_Number *_nr;
+        Receiver_Address *_ar;
+        Receiver_Register *_rr;
         int _appendButton(uint8_t scancode);
-        void _completeSubentry();
+        int _completeSubentry( uint8_t scancode);
     };
 
     class Receiver_AUTO_F: public Receiver{
@@ -80,9 +81,8 @@ namespace MK52_Interpreter{
         unsigned long init( void *components[]);
         void activate( uint8_t scancode = 0, int8_t parent = NO_CHANGE);
         int tick( uint8_t scancode = 0);
-      protected:
+      private:
         int _appendButton(uint8_t scancode);
-        void _completeSubentry();
     };
 
     class Receiver_AUTO_K: public Receiver{
@@ -90,9 +90,10 @@ namespace MK52_Interpreter{
         unsigned long init( void *components[]);
         void activate( uint8_t scancode = 0, int8_t parent = NO_CHANGE);
         int tick( uint8_t scancode = 0);
-      protected:
+      private:
+        Receiver_Register *_rr;
         int _appendButton(uint8_t scancode);
-        void _completeSubentry();
+        int _completeSubentry( uint8_t scancode);
     };
 
     class Receiver_AUTO_A: public Receiver{
@@ -100,9 +101,10 @@ namespace MK52_Interpreter{
         unsigned long init( void *components[]);
         void activate( uint8_t scancode = 0, int8_t parent = NO_CHANGE);
         int tick( uint8_t scancode = 0);
-      protected:
+      private:
+        Receiver_Address *_ar;
         int _appendButton(uint8_t scancode);
-        void _completeSubentry();
+        int _completeSubentry( uint8_t scancode);
     };
 
     class Receiver_AUTO_R: public Receiver{
@@ -117,7 +119,7 @@ namespace MK52_Interpreter{
         unsigned long init( void *components[]);
         void activate( uint8_t scancode = 0, int8_t parent = NO_CHANGE);
         int tick( uint8_t scancode = 0);
-      protected:
+      private:
         Receiver_Number *_nr;
         Receiver_Address *_ar;
         Receiver_Register *_rr;
@@ -130,7 +132,7 @@ namespace MK52_Interpreter{
         unsigned long init( void *components[]);
         void activate( uint8_t scancode = 0, int8_t parent = NO_CHANGE);
         int tick( uint8_t scancode = 0);
-      protected:
+      private:
         Receiver_Address *_ar;
         Program_Memory *_pmem;
         int _appendButton(uint8_t scancode);

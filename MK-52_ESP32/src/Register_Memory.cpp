@@ -66,13 +66,7 @@ void Register_Memory::K_MtoX(int8_t n){
     UniversalValue *uv = new UniversalValue( _registerAddress(n));
     int64_t index = uv->toInt();
     delete(uv);
-    if( index<0 || index>=EXTENDED_MEMORY_NVALS){
-        _rst->X->fromInt(0);
-        return;
-    }
-    // TODO
-    _emem->setCounter(index);
-    _rst->X->fromInt(0);
+    A_MtoX( index);
 }
 
 void Register_Memory::K_XtoM(int8_t n){
@@ -80,12 +74,43 @@ void Register_Memory::K_XtoM(int8_t n){
     UniversalValue *uv = new UniversalValue( _registerAddress(n));
     int64_t index = uv->toInt();
     delete(uv);
+    A_XtoM( index);
+}
+
+void Register_Memory::A_MtoX(int64_t index){
+    _rst->storeBx();
+    _rst->push();
+    if( index<0 || index>=EXTENDED_MEMORY_NVALS){
+        _rst->X->fromInt(0);
+        return;
+    }
+    _emem->setCounter(index);
+    uint8_t *ptr = _emem->getCurrentLine();
+    if( *ptr == 0) _rst->X->fromInt(0);
+    else _rst->X->fromLocation( ptr);
+}
+
+void Register_Memory::A_XtoM(int64_t index){
     if( index<0 || index>=EXTENDED_MEMORY_NVALS){
         _rst->setStackLabel(0, "No such address");
         return;
     }
     _emem->setCounter(index);
-    // TODO - memory writing
+    uint8_t *ptr = _emem->getCurrentLine();
+    _rst->X->toLocation( ptr);
+}
+
+void Register_Memory::A_MtoX(char *address){
+    _emem->setCounter(address);
+    uint8_t *ptr = _emem->getCurrentLine();
+    if( *ptr == 0) _rst->X->fromInt(0);
+    else _rst->X->fromLocation( ptr);
+}
+
+void Register_Memory::A_XtoM(char *address){
+    _emem->setCounter(address);
+    uint8_t *ptr = _emem->getCurrentLine();
+    _rst->X->toLocation( ptr);
 }
 
 //

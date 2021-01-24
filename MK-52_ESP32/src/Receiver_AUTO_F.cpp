@@ -36,25 +36,6 @@ int Receiver_AUTO_F::tick( uint8_t scancode){
 
 int Receiver_AUTO_F::_appendButton(uint8_t scancode){
     int return_value = COMPONENT_RECEIVER_AUTO_N;
-//     if( _ar->isActive()){
-//         if( _ar->tick( scancode) == NO_CHANGE) return NO_CHANGE;
-//         char *tmp = _ar->toString();
-//         if( *tmp == 0){
-//             _pmem->deleteLine();
-//             return NO_CHANGE;
-//         }
-//         _pmem->appendText( tmp);
-//         _pmem->updateLine();
-//         _pmem->incrementCounter();
-//         return NO_CHANGE;
-//     }
-//     if( _rr->isActive()){
-//         if( _rr->tick( scancode) == NO_CHANGE) return NO_CHANGE;
-//         _pmem->appendText( _rr->toString());
-//         _pmem->updateLine();
-//         _pmem->incrementCounter();
-//         return NO_CHANGE;
-//     }
     switch( scancode){
         // Column 0
         case 2:
@@ -142,24 +123,10 @@ int Receiver_AUTO_F::_appendButton(uint8_t scancode){
             break;
 
         default: // all other buttons do nothing, keeping F-mode
-           delay(KBD_IDLE_DELAY);
+           //delay(KBD_IDLE_DELAY);
            return NO_CHANGE;
     }
     _mode = 0;
-    delay(KBD_IDLE_DELAY);
+    //delay(KBD_IDLE_DELAY);
     return return_value;
-}
-
-void Receiver_AUTO_F::_completeSubentry(){
-    switch( _mode){
-        case 0:
-        case 1:
-            return;
-        case 2:
-            _mode = 1;
-            break;
-        default:
-            break;
-    }
-    _lcd->updateStatusFMODE( "   ");
 }

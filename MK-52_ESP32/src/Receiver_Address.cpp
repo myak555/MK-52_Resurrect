@@ -10,7 +10,7 @@
 
 #define __DEBUG
 
-const char _AR_ButtonConversion[] PROGMEM = "#############7410852#963#######ec";
+const char _AR_ButtonConversion[] PROGMEM = "####f########7410852#963#######ec";
 
 using namespace MK52_Interpreter;
 
@@ -26,23 +26,18 @@ unsigned long Receiver_Address::init( void *components[]) {
 
 void Receiver_Address::activate( uint8_t scancode, int8_t parent){
     Receiver::activate( scancode, parent);
-    *_text = 0; 
+    memset( _text, ' ', 4);
+    _text[4] = 0; 
     _mode = 1;
-    if(!scancode) return;
-    _appendChar( _convertButton( _AR_ButtonConversion, scancode));
+    _lcd->updateStatusFMODE( "ADR");
 }
 
 int Receiver_Address::tick( uint8_t scancode){
-    if(scancode == 0) scancode = _kbd->scan();
-    if( !scancode) return NO_CHANGE;
-    return _appendChar( _convertButton( _AR_ButtonConversion, scancode));
-}
-
-int Receiver_Address::_appendChar( char c){
-    int ln = strlen(_text);
+    char c = _convertButton( _AR_ButtonConversion, scancode);
     switch( c){
-        case 0:
-            return NO_CHANGE;
+        case 'f':
+            _mode = 0;
+            return (int)scancode;
         case '0':
         case '1':
         case '2':
@@ -53,22 +48,30 @@ int Receiver_Address::_appendChar( char c){
         case '7':
         case '8':
         case '9':
-            _text[ln++] = c;
-            _text[ln] = 0;
-            if( ln < 4) return NO_CHANGE;
-            _mode = 0;
-            return _parentReceiver;
-        case 'e': // entry completed
-            _mode = 0;
-            return _parentReceiver;
+            memmove( _text, _text+1, 3);
+            _text[3] = c;
+            _text[4] = 0;
+            if( _text[0] == ' ') break;
+            return _completeEntry();
         case 'c': // erase
-            if( ln > 0){
-                _text[ln-1] = 0;
-                return NO_CHANGE;
-            }
-            _mode = 0;
-            return _parentReceiver;
+            memmove( _text+1, _text, 3);
+            _text[0] = ' ';
+            if( _text[3] != ' ') break;
+        case 'e': // entry completed
+            return _completeEntry();
         default:
-          return NO_CHANGE;
+            break;
     }
+    //delay(KBD_IDLE_DELAY);
+    return NO_CHANGE;
+}
+
+int Receiver_Address::_completeEntry(){
+    _mode = 0;
+    for( int8_t i=0; i<4; i++){
+        if( _text[i] != ' ') break;
+        _text[i] = '0';
+    }
+    //delay(KBD_IDLE_DELAY);
+    return _parentReceiver;
 }
