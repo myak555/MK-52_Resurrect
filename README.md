@@ -7,7 +7,7 @@ Available resources:
 * Hardware completed except for power transistors (components ordered)
 * ESP32 code works in AUTO mode (no programming at this time): all functions verified!
 * [Wiki stub](https://github.com/myak555/MK-52_Resurrect/wiki) started
-* [MK-52 program examples] (https://github.com/myak555/MK-52_Resurrect/tree/main/MK-52_Simulator/Tests)
+* [MK-52 program examples](https://github.com/myak555/MK-52_Resurrect/tree/main/MK-52_Simulator/Tests)
 
 ![Simulator in C#](https://github.com/myak555/MK-52_Resurrect/blob/main/Images/Simulator_Running.png)
 
