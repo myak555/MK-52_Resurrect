@@ -449,3 +449,155 @@ class Func_Sign: public RPN_Function{
         inline const char*IOName(){ return Name();};
         void execute( void *components[], char *command);
 };
+
+class Func_And: public RPN_Function{
+    public:
+        inline bool checkID( uint16_t id){ return id == FUNC_AND;};
+        inline bool checkName(char *name){ return strcmp_P(name, Name())==0;};
+        inline const char*Name(){ return PSTR("AND");};
+        inline const char*IOName(){ return Name();};
+        void execute( void *components[], char *command);
+};
+
+class Func_Or: public RPN_Function{
+    public:
+        inline bool checkID( uint16_t id){ return id == FUNC_OR;};
+        inline bool checkName(char *name){ return strcmp_P(name, Name())==0;};
+        inline const char*Name(){ return PSTR("OR");};
+        inline const char*IOName(){ return Name();};
+        void execute( void *components[], char *command);
+};
+
+class Func_Xor: public RPN_Function{
+    public:
+        inline bool checkID( uint16_t id){ return id == FUNC_XOR;};
+        inline bool checkName(char *name){ return strcmp_P(name, Name())==0;};
+        inline const char*Name(){ return PSTR("XOR");};
+        inline const char*IOName(){ return Name();};
+        void execute( void *components[], char *command);
+};
+
+class Func_Not: public RPN_Function{
+    public:
+        inline bool checkID( uint16_t id){ return id == FUNC_NOT;};
+        inline bool checkName(char *name){ return strcmp_P(name, Name())==0;};
+        inline const char*Name(){ return PSTR("NOT");};
+        inline const char*IOName(){ return Name();};
+        void execute( void *components[], char *command);
+};
+
+class Func_D2Rad: public RPN_Function{
+    public:
+        inline bool checkID( uint16_t id){ return id == FUNC_D2RAD;};
+        inline bool checkName(char *name){ return strcmp_P(name, Name())==0;};
+        inline const char*Name(){ return PSTR("DEG->RAD");};
+        inline const char*IOName(){ return Name();};
+        void execute( void *components[], char *command);
+};
+
+class Func_Rad2D: public RPN_Function{
+    public:
+        inline bool checkID( uint16_t id){ return id == FUNC_RAD2D;};
+        inline bool checkName(char *name){ return strcmp_P(name, Name())==0;};
+        inline const char*Name(){ return PSTR("RAD->DEG");};
+        inline const char*IOName(){ return Name();};
+        void execute( void *components[], char *command);
+};
+
+class Func_DM2D: public RPN_Function{
+    public:
+        inline bool checkID( uint16_t id){ return id == FUNC_DM2D;};
+        inline bool checkName(char *name){ return strcmp_P(name, Name())==0;};
+        inline const char*Name(){ return PSTR("DM->DEG");};
+        inline const char*IOName(){ return Name();};
+        void execute( void *components[], char *command);
+};
+
+class Func_D2DM: public RPN_Function{
+    public:
+        inline bool checkID( uint16_t id){ return id == FUNC_D2DM;};
+        inline bool checkName(char *name){ return strcmp_P(name, Name())==0;};
+        inline const char*Name(){ return PSTR("DEG->DM");};
+        inline const char*IOName(){ return Name();};
+        void execute( void *components[], char *command);
+};
+
+class Func_DMS2D: public RPN_Function{
+    public:
+        inline bool checkID( uint16_t id){ return id == FUNC_DMS2D;};
+        inline bool checkName(char *name){ return strcmp_P(name, Name())==0;};
+        inline const char*Name(){ return PSTR("DMS->DEG");};
+        inline const char*IOName(){ return Name();};
+        void execute( void *components[], char *command);
+};
+
+class Func_D2DMS: public RPN_Function{
+    public:
+        inline bool checkID( uint16_t id){ return id == FUNC_D2DMS;};
+        inline bool checkName(char *name){ return strcmp_P(name, Name())==0;};
+        inline const char*Name(){ return PSTR("DEG->DMS");};
+        inline const char*IOName(){ return Name();};
+        void execute( void *components[], char *command);
+};
+
+class Func_in2mm: public RPN_Function{
+    public:
+        inline bool checkID( uint16_t id){ return id == FUNC_IN2MM;};
+        inline bool checkName(char *name){ return strcmp_P(name, Name())==0;};
+        inline const char*Name(){ return PSTR("in->mm");};
+        inline const char*IOName(){ return Name();};
+        void execute( void *components[], char *command);
+};
+
+class Func_mm2in: public RPN_Function{
+    public:
+        inline bool checkID( uint16_t id){ return id == FUNC_MM2IN;};
+        inline bool checkName(char *name){ return strcmp_P(name, Name())==0;};
+        inline const char*Name(){ return PSTR("mm->in");};
+        inline const char*IOName(){ return Name();};
+        void execute( void *components[], char *command);
+};
+
+class Func_M2X: public RPN_Function{
+    public:
+        inline bool checkID( uint16_t id){ return id == FUNC_M2X;};
+        inline bool checkName(char *name){ return _startsWith( name, Name());};
+        inline const char*Name(){ return PSTR("M->X ");};
+        inline const char*IOName(){ return Name();};
+        void execute( void *components[], char *command){
+            Register_Memory *rm = (Register_Memory *)components[COMPONENT_REGISTER_MEMORY];
+            rm->MtoX(command);};
+};
+
+class Func_X2M: public RPN_Function{
+    public:
+        inline bool checkID( uint16_t id){ return id == FUNC_X2M;};
+        inline bool checkName(char *name){ return _startsWith( name, Name());};
+        inline const char*Name(){ return PSTR("X->M ");};
+        inline const char*IOName(){ return Name();};
+        void execute( void *components[], char *command){
+            Register_Memory *rm = (Register_Memory *)components[COMPONENT_REGISTER_MEMORY];
+            rm->XtoM(command);};
+};
+
+class Func_K_M2X: public RPN_Function{
+    public:
+        inline bool checkID( uint16_t id){ return id == FUNC_K_M2X;};
+        inline bool checkName(char *name){ return _startsWith( name, Name());};
+        inline const char*Name(){ return PSTR("K M->X ");};
+        inline const char*IOName(){ return Name();};
+        void execute( void *components[], char *command){
+            Register_Memory *rm = (Register_Memory *)components[COMPONENT_REGISTER_MEMORY];
+            rm->K_MtoX(command);};
+};
+
+class Func_K_X2M: public RPN_Function{
+    public:
+        inline bool checkID( uint16_t id){ return id == FUNC_K_X2M;};
+        inline bool checkName(char *name){ return _startsWith( name, Name());};
+        inline const char*Name(){ return PSTR("K X->M ");};
+        inline const char*IOName(){ return Name();};
+        void execute( void *components[], char *command){
+            Register_Memory *rm = (Register_Memory *)components[COMPONENT_REGISTER_MEMORY];
+            rm->K_XtoM(command);};
+};

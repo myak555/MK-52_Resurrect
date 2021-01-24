@@ -65,7 +65,20 @@ int Receiver_AUTO_K::_appendButton(uint8_t scancode){
             break;
 
         // Column 1 does nothing
-        // Column 2 does nothing
+        
+        // Column 2
+        case 9:
+            _rpnf->execute( FUNC_K_M2X);
+            break;
+        case 10:
+            _rpnf->execute( FUNC_K_X2M);
+            break;
+        case 11:
+            _rpnf->Stack->setStackLabel_P(0, PSTR("K-GOTO is bad for you!"));
+            break;
+        case 12:
+            _rpnf->Stack->setStackLabel_P(0, PSTR("K-GOSUB is bad for you!"));
+            break;
 
         // Column 3
         case 13:
@@ -92,7 +105,7 @@ int Receiver_AUTO_K::_appendButton(uint8_t scancode){
             _rpnf->execute( FUNC_LOG);
             break;
         case 20:
-            //_rpnf->execute( FUNC_ROT);
+            _rpnf->execute( FUNC_AND);
             break;
 
         // Column 5
@@ -100,43 +113,50 @@ int Receiver_AUTO_K::_appendButton(uint8_t scancode){
             _rpnf->execute( FUNC_MAX);
             break;
         case 22:
-            //_rpnf->execute( FUNC_ARCTG);
+            _rpnf->execute( FUNC_DM2D);
             break;
         case 23:
-            //Serial.println("Lg");
-            //_rpnf->execute( FUNC_NEGATE);
+            _rpnf->execute( FUNC_DMS2D);
             break;
         case 24:
-            Serial.println("OR");
-            //_rpnf->execute( FUNC_NEGATE);
+            _rpnf->execute( FUNC_OR);
             break;
 
         // Column 6
         case 25:
-            //_rpnf->execute( FUNC_COS);
+            #ifdef __DEBUG
+            Serial.println("Put something for K-SQRT");
+            #endif
+            //_rpnf->execute( FUNC_SQRT);
             break;
         case 26:
-            //_rpnf->execute( FUNC_PI);
+            _rpnf->execute( FUNC_D2DM);
             break;
         case 27:
-            //Serial.println("Lg");
-            //_rpnf->execute( FUNC_NEGATE);
+            _rpnf->execute( FUNC_D2DMS);
             break;
         case 28:
-            //_rpnf->execute( FUNC_ROT);
+            _rpnf->execute( FUNC_XOR);
             break;
 
         // Column 7
         case 29:
+            #ifdef __DEBUG
+            Serial.println("Put something for K-1/X");
+            #endif
             //_rpnf->execute( FUNC_COS);
             break;
         case 30:
+            #ifdef __DEBUG
+            Serial.println("Put something for K-X2");
+            #endif
             //_rpnf->execute( FUNC_ARCCOS);
             break;
         case 31:
             _rpnf->execute( FUNC_RAND);
             break;
         case 32:
+            _rpnf->execute( FUNC_NOT);
             break;
 
         default: // all other buttons do nothing - keep K-mode

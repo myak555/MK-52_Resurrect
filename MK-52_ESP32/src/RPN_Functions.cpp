@@ -113,6 +113,38 @@ unsigned long RPN_Functions::init( void *components[]) {
     _appendFunction( new Func_Abs());
     // #define FUNC_SIGN               45
     _appendFunction( new Func_Sign());
+    // #define FUNC_AND                46
+    _appendFunction( new Func_And());
+    // #define FUNC_OR                 47
+    _appendFunction( new Func_Or());
+    // #define FUNC_XOR                48
+    _appendFunction( new Func_Xor());
+    // #define FUNC_NOT                49
+    _appendFunction( new Func_Not());
+    // #define FUNC_D2DM               50
+    _appendFunction( new Func_D2DM());
+    // #define FUNC_D2DMS              51
+    _appendFunction( new Func_D2DMS());
+    // #define FUNC_DM2D               52
+    _appendFunction( new Func_DM2D());
+    // #define FUNC_DMS2D              53
+    _appendFunction( new Func_DMS2D());
+    // #define FUNC_D2RAD              54
+    _appendFunction( new Func_D2Rad());
+    // #define FUNC_RAD2D              55
+    _appendFunction( new Func_Rad2D());
+    // #define FUNC_MM2IN              56
+    _appendFunction( new Func_mm2in());
+    // #define FUNC_IN2MM              57
+    _appendFunction( new Func_in2mm());
+    // #define FUNC_M2X                58
+    _appendFunction( new Func_M2X());
+    // #define FUNC_X2M                59
+    _appendFunction( new Func_X2M());
+    // #define FUNC_K_M2X              60
+    _appendFunction( new Func_K_M2X());
+    // #define FUNC_K_X2M              61
+    _appendFunction( new Func_K_X2M());
 
     #ifdef __DEBUG
     Serial.print( _nfunctions);
@@ -121,26 +153,27 @@ unsigned long RPN_Functions::init( void *components[]) {
     return millis();
 }
 
-void RPN_Functions::execute( int16_t id){
+void RPN_Functions::execute( int16_t id, char *command){
     if( id<0) return;
     for(int16_t i=0; i<_nfunctions; i++){
         RPN_Function *pf = (RPN_Function *)_functions[i];
         if( !pf->checkID( id)) continue;
-        pf->execute( _components);
+        pf->execute( _components, command);
         break;
     }
 }
 
-void RPN_Functions::execute( char *s){
-    if( strlen(s)<=0) return;
+void RPN_Functions::execute( char *command){
+    if( strlen(command)<=0) return;
     for(int16_t i=0; i<_nfunctions; i++){
         RPN_Function *pf = (RPN_Function *)_functions[i];
-        if( !pf->checkName( s)) continue;
-        pf->execute( _components, s);
+        if( !pf->checkName( command)) continue;
+        int operand = strlen_P( pf->Name());
+        pf->execute( _components, command+operand);
         return;
     }
     // if the name is not found, it must be a number and should be placed to register X
-    Stack->X->fromString( s);
+    Stack->X->fromString( command);
 }
 
 //
@@ -177,6 +210,15 @@ RPN_Stack *RPN_Function::_dealWithClergy2(void *components[]){
     return s; // the rest of ariphmetics
 }
 
+bool RPN_Function::_startsWith(char *name, const char *keyword){
+    int8_t ln = strlen_P( keyword);
+    for( int8_t i=0; i<ln; i++, name++){
+        if( !(*name)) return false;
+        if( (char)pgm_read_byte( keyword+i) != *name) return false;
+    }
+    return true; // all letters are the same
+}
+
 void RPN_Functions::_appendFunction( RPN_Function *f){
     if( _nfunctions >= MK52_NFUNCTIONS) return;
     _functions[ _nfunctions++] = f;
@@ -192,3 +234,5 @@ void RPN_Functions::_appendFunction( RPN_Function *f){
 #include "../functions/Func_Log.h"
 #include "../functions/Func_Rand.h"
 #include "../functions/Func_Numb.h"
+#include "../functions/Func_Logical.h"
+#include "../functions/Func_Convert.h"

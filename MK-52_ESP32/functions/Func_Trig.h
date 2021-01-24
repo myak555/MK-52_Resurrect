@@ -196,3 +196,18 @@ void Func_PI::execute( void *components[], char *command){
     s->push();
     s->X->fromReal( __PI);
 }
+
+void Func_Rad2D::execute( void *components[], char *command){
+    RPN_Stack *s = (RPN_Stack *)components[COMPONENT_STACK];
+    s->storeBx();
+    double x = s->X->toReal();
+    s->X->fromReal( x * 5.729577951e1);
+}
+
+void Func_D2Rad::execute( void *components[], char *command){
+    RPN_Stack *s = (RPN_Stack *)components[COMPONENT_STACK];
+    s->storeBx();
+    double x = s->X->toReal();
+    s->X->fromReal( x * 1.745329252e-2);
+    s->X->_checkRounding( 1.0e9);
+}

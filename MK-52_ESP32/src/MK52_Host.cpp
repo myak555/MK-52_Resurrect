@@ -61,17 +61,19 @@ unsigned long MK52_Host::init() {
     _m_Hardware_KBD.init();
     _m_Hardware_SD.init();
 
-    // set components and init the rest
+    // hardware components
     _components[ COMPONENT_LCD_MANAGER] = &_m_Hardware_LCD;
     _components[ COMPONENT_KBD_MANAGER] = &_m_Hardware_KBD;
     _components[ COMPONENT_SD_MANAGER] = &_m_Hardware_SD;
 
+    // interpreter engine components
     _components[ COMPONENT_STACK] = &_m_RPN_Stack;
     _components[ COMPONENT_PROGRAM_MEMORY] = &_m_Program_Memory;
     _components[ COMPONENT_EXTENDED_MEMORY] = &_m_Extended_Memory;
     _components[ COMPONENT_REGISTER_MEMORY] = &_m_Register_Memory;
     _components[ COMPONENT_FUNCTIONS] = &_m_RPN_Functions;
 
+    // UI data receivers
     _components[ COMPONENT_RECEIVER_NUMBER] = &_m_Receiver_Number;
     _components[ COMPONENT_RECEIVER_ADDRESS] = &_m_Receiver_Address;
     _components[ COMPONENT_RECEIVER_REGISTER] = &_m_Receiver_Register;
@@ -85,6 +87,7 @@ unsigned long MK52_Host::init() {
     _components[ COMPONENT_RECEIVER_PROG_N] = &_m_Receiver_PROG_N;
     _components[ COMPONENT_RECEIVER_PROG_F] = &_m_Receiver_PROG_F;
 
+    // User interfaces
     _components[ COMPONENT_DISPLAY_AUTO] = &_m_Display_AUTO;
     _components[ COMPONENT_DISPLAY_PROG] = &_m_Display_PROG;
     _components[ COMPONENT_DISPLAY_DATA] = &_m_Display_FILE;

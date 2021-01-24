@@ -10,9 +10,7 @@
 #define RPN_FUNCTIONS_HPP
 
 #include "SD_Manager.hpp"
-#include "RPN_Stack.hpp"
 #include "Program_Memory.hpp"
-#include "Extended_Memory.hpp"
 #include "Register_Memory.hpp"
 
 namespace MK52_Interpreter{
@@ -27,6 +25,7 @@ namespace MK52_Interpreter{
         protected:
             RPN_Stack *_dealWithClergy1(void *components[]);
             RPN_Stack *_dealWithClergy2(void *components[]);
+            bool _startsWith(char *name, const char *keyword);
     };
 
     class RPN_Functions{
@@ -36,8 +35,8 @@ namespace MK52_Interpreter{
             Extended_Memory *extMem;
 
             unsigned long init( void *components[]);
-            void execute( int16_t id=-1);
-            void execute( char *s);
+            void execute( int16_t id=-1, char *command=NULL);
+            void execute( char *command);
 
       private:
             void **_components;

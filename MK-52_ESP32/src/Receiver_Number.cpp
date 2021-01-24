@@ -36,15 +36,14 @@ void Receiver_Number::activate( uint8_t scancode, int8_t parent){
 
 int Receiver_Number::tick( uint8_t scancode){
     int ln = strlen(_text);
-    char c = _convertButton( _RN_ButtonConversion, scancode); 
+    char c = _convertButton( _RN_ButtonConversion, scancode);
+    int return_value = NO_CHANGE; 
     switch( c){
-        case 0:
-            return NO_CHANGE;
         case 'e': // entry completed
             scancode = 0;
         case 'f':
             _mode = 0;
-            return scancode;
+            return (int)scancode;
         case '0':
         case '1':
         case '2':
@@ -57,83 +56,86 @@ int Receiver_Number::tick( uint8_t scancode){
         case '9':
             if( ln == 2 && _text[1] == '0'){
                 _text[1] = c;
-                return NO_CHANGE;
+                break;
             }
-            if( _mode == 1 && ln>12) return NO_CHANGE;
-            if( _mode == 2 && ln>13) return NO_CHANGE;
+            if( _mode == 1 && ln>12) break;
+            if( _mode == 2 && ln>13) break;
             if( _mode == 3){
                 _text[ln-3] = _text[ln-2]; 
                 _text[ln-2] = _text[ln-1]; 
                 _text[ln-1] = c; 
-                return NO_CHANGE;
+                break;
             }
             _text[ln] = c;
             _text[ln+1] = 0;
-            return NO_CHANGE;
+            break;
         case '-':
             if( _mode == 3){
                 _swapSign( _text + ln - 4, '+');
-                return NO_CHANGE;
+                break;
             }
             _swapSign( _text, ' ');
-            return NO_CHANGE;
+            break;
             case '.':
-            if( _mode >= 2) return NO_CHANGE;
+            if( _mode >= 2) break;
             _mode = 2;
             if( ln == 1){
                 strcpy_P( _text+1, PSTR("0."));
-                return NO_CHANGE;
+                break;
             }
             strcpy_P( _text+ln, PSTR("."));
-            return NO_CHANGE;
+            break;
         case 'E':
             if( _mode == 3){
                 _text[ln-5] = 0;
                 _mode = 2;
-                return NO_CHANGE;
+                break;
             }
             if( ln == 1 || strcmp_P(_text+1, PSTR("0.0")) == 0 || strcmp_P(_text+1, PSTR("0.")) == 0){
                 strcpy_P( _text+1, _RN_StandardUnity);
                 _mode = 3;
-                return NO_CHANGE;
+                break;
             }
             if( ln == 2 && _text[1] == '0'){
                 strcpy_P( _text+1, _RN_StandardUnity);
                 _mode = 3;
-                return NO_CHANGE;
+                break;
             }
             if( _mode == 1){
                 strcpy_P( _text+ln, _RN_StandardUnity+1);
                 _mode = 3;
-                return NO_CHANGE;
+                break;
             }
             _mode = 3;
             if( _text[ln-1] == '.'){
                 strcpy_P( _text+ln, _RN_StandardUnity+2);
-                return NO_CHANGE;
+                break;
             }
             strcpy_P( _text+ln, _RN_StandardUnity+3);
-            return NO_CHANGE;
+            break;
         case 'c': // erase
             if( _mode == 3){
                 _text[ln-1] = _text[ln-2];
                 _text[ln-2] = _text[ln-3];
                 _text[ln-3] = '0';
-                return NO_CHANGE;
+                break;
             }
             if( _mode == 2 && _text[ln-1] == '.'){
                 _text[ln-1] = 0;
                 _mode = 1;
-                return NO_CHANGE;
+                break;
             }
             if( ln>1){
                 _text[ln-1] = 0;
-                return NO_CHANGE;
+                break;
             }
             strcpy_P( _text, PSTR(" 0"));
             _mode = 0;
-            return _parentReceiver;
+            return_value = _parentReceiver;
+            break;
         default:
-            return NO_CHANGE;
+            break;
     }
+    delay(KBD_IDLE_DELAY);
+    return return_value;
 }

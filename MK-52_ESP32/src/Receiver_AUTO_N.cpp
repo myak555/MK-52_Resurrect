@@ -103,11 +103,13 @@ int Receiver_AUTO_N::_appendButton(uint8_t scancode){
 
         // Column 2
         case 9:
+            _rpnf->execute( FUNC_M2X, "A");
         //     _pmem->clearText();
         //     _pmem->appendText_P( PSTR("M->X ") );
         //     _rr->activate(COMPONENT_RECEIVER_PROG_N, 0);
             break;
         case 10:
+            _rpnf->execute( FUNC_X2M, "A");
         //     _pmem->clearText();
         //     _pmem->appendText_P( PSTR("X->M ") );
         //     _rr->activate(COMPONENT_RECEIVER_PROG_N, 0);

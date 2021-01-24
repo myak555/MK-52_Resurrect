@@ -74,12 +74,10 @@ int Receiver_AUTO_A::_appendButton(uint8_t scancode){
             //_rpnf->execute( FUNC_TG);
             break;
         case 22:
-            Serial.println("DEG to RAD");
-            //_rpnf->execute( FUNC_ARCTG);
+            _rpnf->execute( FUNC_D2RAD);
             break;
         case 23:
-            Serial.println("mm to inch");
-            //_rpnf->execute( FUNC_NEGATE);
+            _rpnf->execute( FUNC_MM2IN);
             break;
         case 24:
             //_rpnf->execute( FUNC_NEGATE);
@@ -90,12 +88,10 @@ int Receiver_AUTO_A::_appendButton(uint8_t scancode){
             //_rpnf->execute( FUNC_COS);
             break;
         case 26:
-            Serial.println("RAD to DEG");
-            //_rpnf->execute( FUNC_PI);
+            _rpnf->execute( FUNC_RAD2D);
             break;
         case 27:
-            Serial.println("inch to mm");
-            //_rpnf->execute( FUNC_NEGATE);
+            _rpnf->execute( FUNC_IN2MM);
             break;
         case 28:
             //_rpnf->execute( FUNC_ROT);
