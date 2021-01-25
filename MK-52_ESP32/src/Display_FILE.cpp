@@ -35,7 +35,7 @@ void Display_FILE::activate(){
     for( int i=0; i<10; i++, tmp+=30) strs[i] = tmp;
     _sd->startFolderListing( strs, 10, 29);
 
-    _lcd->outputStatus( _pmem->getCounter(), 9999, "RAD", "NUM");
+    _lcd->outputStatus( _pmem->getCounter(), _emem->getCounter(), "DSK", "   ");
     for( int i=0; i<10; i++)
         _lcd->outputTerminalLine( i, strs[i]);
 
@@ -53,5 +53,6 @@ void Display_FILE::activate(){
 }
 
 int Display_FILE::tick(){
-    return -1;
+    delay( 10000);
+    return COMPONENT_DISPLAY_AUTO;
 }

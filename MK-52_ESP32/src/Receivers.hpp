@@ -72,7 +72,6 @@ namespace MK52_Interpreter{
         Receiver_Number *_nr;
         Receiver_Address *_ar;
         Receiver_Register *_rr;
-        int _appendButton(uint8_t scancode);
         int _completeSubentry( uint8_t scancode);
     };
 
@@ -81,8 +80,6 @@ namespace MK52_Interpreter{
         unsigned long init( void *components[]);
         void activate( uint8_t scancode = 0, int8_t parent = NO_CHANGE);
         int tick( uint8_t scancode = 0);
-      private:
-        int _appendButton(uint8_t scancode);
     };
 
     class Receiver_AUTO_K: public Receiver{
@@ -92,7 +89,6 @@ namespace MK52_Interpreter{
         int tick( uint8_t scancode = 0);
       private:
         Receiver_Register *_rr;
-        int _appendButton(uint8_t scancode);
         int _completeSubentry( uint8_t scancode);
     };
 
@@ -103,7 +99,6 @@ namespace MK52_Interpreter{
         int tick( uint8_t scancode = 0);
       private:
         Receiver_Address *_ar;
-        int _appendButton(uint8_t scancode);
         int _completeSubentry( uint8_t scancode);
     };
 
@@ -136,6 +131,61 @@ namespace MK52_Interpreter{
         Receiver_Address *_ar;
         Program_Memory *_pmem;
         int _appendButton(uint8_t scancode);
+    };
+
+    class Receiver_PROG_K: public Receiver{
+      public:
+        unsigned long init( void *components[]);
+        void activate( uint8_t scancode = 0, int8_t parent = NO_CHANGE);
+        int tick( uint8_t scancode = 0);
+      private:
+        Receiver_Register *_rr;
+        int _appendButton(uint8_t scancode);
+        int _completeSubentry( uint8_t scancode);
+    };
+
+    class Receiver_PROG_A: public Receiver{
+      public:
+        unsigned long init( void *components[]);
+        void activate( uint8_t scancode = 0, int8_t parent = NO_CHANGE);
+        int tick( uint8_t scancode = 0);
+      private:
+        Receiver_Address *_ar;
+        int _appendButton(uint8_t scancode);
+        int _completeSubentry( uint8_t scancode);
+    };
+
+    class Receiver_DATA_N: public Receiver{
+      public:
+        unsigned long init( void *components[]);
+        void activate( uint8_t scancode = 0, int8_t parent = NO_CHANGE);
+        int tick( uint8_t scancode = 0);
+      private:
+        Receiver_Number *_nr;
+        Receiver_Address *_ar;
+        Receiver_Register *_rr;
+        int _completeSubentry( uint8_t scancode);
+    };
+
+    class Receiver_DATA_F: public Receiver{
+      public:
+        unsigned long init( void *components[]);
+        void activate( uint8_t scancode = 0, int8_t parent = NO_CHANGE);
+        int tick( uint8_t scancode = 0);
+    };
+
+    class Receiver_DATA_K: public Receiver{
+      public:
+        unsigned long init( void *components[]);
+        void activate( uint8_t scancode = 0, int8_t parent = NO_CHANGE);
+        int tick( uint8_t scancode = 0);
+    };
+
+    class Receiver_DATA_A: public Receiver{
+      public:
+        unsigned long init( void *components[]);
+        void activate( uint8_t scancode = 0, int8_t parent = NO_CHANGE);
+        int tick( uint8_t scancode = 0);
     };
 };
 

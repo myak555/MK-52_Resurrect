@@ -13,9 +13,9 @@
 
 using namespace MK52_Interpreter;
 
-unsigned long Receiver_AUTO_N::init( void *components[]) {
+unsigned long Receiver_DATA_N::init( void *components[]) {
     #ifdef __DEBUG
-    Serial.println( "Init AUTO_N");
+    Serial.println( "Init DATA_N");
     #endif
     _nr = (Receiver_Number *)components[COMPONENT_RECEIVER_NUMBER];
     _ar = (Receiver_Address *)components[COMPONENT_RECEIVER_ADDRESS];
@@ -23,9 +23,9 @@ unsigned long Receiver_AUTO_N::init( void *components[]) {
     return Receiver::init(components);
 }
 
-void Receiver_AUTO_N::activate( uint8_t scancode, int8_t parent){
+void Receiver_DATA_N::activate( uint8_t scancode, int8_t parent){
     #ifdef __DEBUG
-    Serial.println( "Activating receiver AUTO_N");
+    Serial.println( "Activating receiver DATA_N");
     #endif
     Receiver::activate( scancode, parent);
     _lcd->updateStatusFMODE( "   ");
@@ -34,7 +34,7 @@ void Receiver_AUTO_N::activate( uint8_t scancode, int8_t parent){
     tick(scancode);
 }
 
-int Receiver_AUTO_N::tick( uint8_t scancode){
+int Receiver_DATA_N::tick( uint8_t scancode){
     int return_value = NO_CHANGE;
     int r = _completeSubentry(scancode);
     if( r <= 0) return return_value;
@@ -46,15 +46,15 @@ int Receiver_AUTO_N::tick( uint8_t scancode){
         // Column 0
         case 1:
             _mode = 0;
-            return_value = COMPONENT_RECEIVER_AUTO_F;
+            return_value = COMPONENT_RECEIVER_DATA_F;
             break;
         case 2:
             _mode = 0;
-            return_value = COMPONENT_RECEIVER_AUTO_K;
+            return_value = COMPONENT_RECEIVER_DATA_K;
             break;
         case 3:
             _mode = 0;
-            return_value = COMPONENT_RECEIVER_AUTO_A;
+            return_value = COMPONENT_RECEIVER_DATA_A;
             break;
         case 4:
             _rpnf->execute(FUNC_TOGGLE_DMOD);
@@ -63,20 +63,20 @@ int Receiver_AUTO_N::tick( uint8_t scancode){
 
         // Column 1
         case 5:
-            _rpnf->execute( FUNC_INCREMENT_PC);
-            _lcd->updateStatusPC( _rpnf->progMem->getCounter());
+            _rpnf->execute( FUNC_INCREMENT_MC);
+            _lcd->updateStatusMC( _rpnf->extMem->getCounter());
             break;
         case 6:
-            _rpnf->execute( FUNC_DECREMENT_PC);
-            _lcd->updateStatusPC( _rpnf->progMem->getCounter());
+            _rpnf->execute( FUNC_DECREMENT_MC);
+            _lcd->updateStatusMC( _rpnf->extMem->getCounter());
             break;
         case 7:
-            _rpnf->execute( FUNC_RESET_PC);
-            _lcd->updateStatusPC( _rpnf->progMem->getCounter());
+            _rpnf->execute( FUNC_RESET_MC);
+            _lcd->updateStatusMC( _rpnf->extMem->getCounter());
             break;
         case 8:
-            // no need to wait on keyboard
-            return COMPONENT_RECEIVER_AUTO_R;
+            _rpnf->execute( FUNC_MEXTOX);
+            break;
 
         // Column 2
         case 9:
@@ -88,57 +88,52 @@ int Receiver_AUTO_N::tick( uint8_t scancode){
             _rr->activate(0, 0);
             break;
         case 11:
+            Serial.print( "Address entry activating...");
             _mode = 5;
             _ar->activate(0, 0);
-            _lcd->updateStatusPC( _ar->toString());
+            _lcd->updateStatusMC( _ar->toString());
             break;
-        case 12: // TODO STEP
-            _rpnf->execute( FUNC_INCREMENT_PC);
-            _rpnf->Stack->setStackLabel_P( 0, PSTR("STEP!"));
-            _lcd->updateStatusPC( _rpnf->progMem->getCounter());
-            break;
-
-        // Column 5
-        case 24:
-            _rpnf->execute( FUNC_NEGATE);
+        case 12:
+            _rpnf->execute( FUNC_XTOMEX);
+            _rpnf->execute( FUNC_INCREMENT_MC);
+            _lcd->updateStatusMC( _rpnf->extMem->getCounter());
             break;
 
+        // Columns 3-5 - number entry
+ 
         // Column 6
-        case 25:
-            _rpnf->execute( FUNC_MINUS);
-            break;
-        case 26:
-            _rpnf->execute( FUNC_PLUS);
+        case 25: // minus
+        case 26: // plus
             break;
         case 27:
-            _rpnf->execute( FUNC_SWAP);
+            _rpnf->execute( FUNC_MEMSWP);
             break;
 
         // Column 7
-        case 29:
-            _rpnf->execute( FUNC_DIVIDE);
-            break;
-        case 30:
-            _rpnf->execute( FUNC_MULTIPLY);
+        case 29: // divide
+        case 30: // multiply
             break;
         case 31:
-            _rpnf->execute( FUNC_ENTER);
+            _rpnf->execute( FUNC_MEMSET, _nr->toTrimmedString());
+            _rpnf->execute( FUNC_INCREMENT_MC);
+            _lcd->updateStatusMC( _rpnf->extMem->getCounter());
             break;
         case 32:
-            if(_rpnf->Stack->customStackLabels()) _rpnf->Stack->resetStackLabels();              
-            else _rpnf->execute( FUNC_CLEAR_X);
+            _rpnf->execute( FUNC_MEXCLR);
+            _rpnf->execute( FUNC_INCREMENT_MC);
+            _lcd->updateStatusMC( _rpnf->extMem->getCounter());
             break;
 
         default: // all other buttons activate number entry
-            _rpnf->execute( FUNC_ENTER);
             _mode = 2;
-            _nr->activate( scancode, COMPONENT_RECEIVER_AUTO_N);
+            _nr->activate( scancode, COMPONENT_RECEIVER_DATA_N);
             break;
     }
+    //delay(KBD_IDLE_DELAY);
     return return_value;
 }
 
-int Receiver_AUTO_N::_completeSubentry( uint8_t scancode){
+int Receiver_DATA_N::_completeSubentry( uint8_t scancode){
     int8_t r = (int)scancode;
     switch( _mode){
         case 0:
@@ -155,19 +150,15 @@ int Receiver_AUTO_N::_completeSubentry( uint8_t scancode){
             Serial.print("Received number: ");
             Serial.println(_nr->toTrimmedString());
             #endif 
-            _rpnf->execute( _nr->toTrimmedString());
-            #ifdef __DEBUG
-            Serial.print("Number in stack: ");
-            Serial.println( _rpnf->Stack->X->toReal());
-            Serial.print("Number updated, returning ");
-            Serial.println(r);
-            #endif 
+            _rpnf->execute( FUNC_MEMSET, _nr->toTrimmedString());
+            _rpnf->execute( FUNC_INCREMENT_MC);
+            _lcd->updateStatusMC( _rpnf->extMem->getCounter());
             break;
         case 3:
         case 4:
             r = _rr->tick( scancode);
             if( r == NO_CHANGE) return NO_CHANGE;
-            _rpnf->execute( (_mode==3)? FUNC_M2X : FUNC_X2M, _rr->toString());
+            _rpnf->execute( (_mode==3)? FUNC_MEXTOR : FUNC_RTOMEX, _rr->toString());
             #ifdef __DEBUG
             Serial.print("Registers updated, returning ");
             Serial.println(r);
@@ -176,11 +167,11 @@ int Receiver_AUTO_N::_completeSubentry( uint8_t scancode){
         case 5:
             r = _ar->tick( scancode);
             if( r == NO_CHANGE){
-                _lcd->updateStatusPC( _ar->toString());
+                _lcd->updateStatusMC( _ar->toString());
                 return NO_CHANGE;
             }
-            _rpnf->execute( FUNC_GOTO, _ar->toString());
-            _lcd->updateStatusPC( _rpnf->progMem->getCounter());
+            _rpnf->extMem->setCounter(_ar->toString());
+            _lcd->updateStatusMC( _rpnf->extMem->getCounter());
             #ifdef __DEBUG
             Serial.print("GOTO done, returning ");
             Serial.println(r);

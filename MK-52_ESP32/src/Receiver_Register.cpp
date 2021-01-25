@@ -8,7 +8,7 @@
 
 #include "Receivers.hpp"
 
-#define __DEBUG
+//#define __DEBUG
 
 const char _RR_ButtonConversion[] PROGMEM = "####f####abcd7410852A963B###C#FED";
 
@@ -25,6 +25,9 @@ unsigned long Receiver_Register::init( void *components[]) {
 }
 
 void Receiver_Register::activate( uint8_t scancode, int8_t parent){
+    #ifdef __DEBUG
+    Serial.println( "Activating receiver REGISTER");
+    #endif
     Receiver::activate( scancode, parent);
     *_text = 0;
     _lcd->updateStatusFMODE( "MEM");
@@ -32,8 +35,6 @@ void Receiver_Register::activate( uint8_t scancode, int8_t parent){
 }
 
 int Receiver_Register::tick( uint8_t scancode){
-    if(scancode == 0) scancode = _kbd->scan();
-    if( !scancode) return NO_CHANGE;
     char c = _convertButton( _RR_ButtonConversion, scancode);
     switch( c){
         case 0:
@@ -56,6 +57,9 @@ int Receiver_Register::tick( uint8_t scancode){
             break;
     }
     _mode = 0;
+    #ifdef __DEBUG
+    Serial.println( "Receiver REGISTER ticked");
+    #endif
     //delay(KBD_IDLE_DELAY);
     return _parentReceiver;
 }

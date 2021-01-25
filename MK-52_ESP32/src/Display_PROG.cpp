@@ -60,28 +60,31 @@ void Display_PROG::activate(){
 }
 
 int Display_PROG::tick(){
-    unsigned long start = millis();
-    char *buff = _lcd->getOutputBuffer();
-    uint32_t prev_PC = _pmem->getCounter();
-    _printNumber();
-    _printOperatorWithAddress();
-    _printOperatorWithRegister();
-    _printOperator();
-    buff[ SCREEN_COLS-1] = 0;
-    _lcd->updateTerminalLine( 10, buff);
-    for( int i=9; i>=0; i--){
-        if( !_pmem->decrementCounter()){
-            snprintf_P(buff, SCREEN_COLS-1, _programLineFormat, _pmem->getCounter() % 10000, _pmem->getCurrentLine());
-            buff[ SCREEN_COLS-1] = 0;
-            _lcd->updateTerminalLine( i, buff);
-        }
-        else
-            _lcd->eraseTerminalLine( i);
-        //if( millis()-start > KBD_IDLE_DELAY) break; // we can do the rest of redraw later!
-    }
-    if( millis()-start < KBD_IDLE_DELAY) delay(KBD_IDLE_DELAY);
-    _pmem->setCounter( prev_PC);
-    return -1;
+    delay( 10000);
+    return COMPONENT_DISPLAY_AUTO;
+
+    // unsigned long start = millis();
+    // char *buff = _lcd->getOutputBuffer();
+    // uint32_t prev_PC = _pmem->getCounter();
+    // _printNumber();
+    // _printOperatorWithAddress();
+    // _printOperatorWithRegister();
+    // _printOperator();
+    // buff[ SCREEN_COLS-1] = 0;
+    // _lcd->updateTerminalLine( 10, buff);
+    // for( int i=9; i>=0; i--){
+    //     if( !_pmem->decrementCounter()){
+    //         snprintf_P(buff, SCREEN_COLS-1, _programLineFormat, _pmem->getCounter() % 10000, _pmem->getCurrentLine());
+    //         buff[ SCREEN_COLS-1] = 0;
+    //         _lcd->updateTerminalLine( i, buff);
+    //     }
+    //     else
+    //         _lcd->eraseTerminalLine( i);
+    //     //if( millis()-start > KBD_IDLE_DELAY) break; // we can do the rest of redraw later!
+    // }
+    // if( millis()-start < KBD_IDLE_DELAY) delay(KBD_IDLE_DELAY);
+    // _pmem->setCounter( prev_PC);
+    // return -1;
 }
 
 void Display_PROG::_printNumber(){
@@ -116,8 +119,9 @@ void Display_PROG::_printOperator(){
 
 void Display_PROG::_printStatus( bool output){
     uint32_t pc = _pmem->getCounter();
+    uint32_t mc = _emem->getCounter();
     char *iMod = _pmem->getInputMode();
     char *eMod = _pmem->getEditMode();
-    if( output) _lcd->outputStatus( pc, 9999, eMod, iMod); 
-    else _lcd->updateStatus( pc, 9999, eMod, iMod); 
+    if( output) _lcd->outputStatus( pc, mc, eMod, iMod); 
+    else _lcd->updateStatus( pc, mc, eMod, iMod); 
 }

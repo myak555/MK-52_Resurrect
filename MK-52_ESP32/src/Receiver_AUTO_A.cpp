@@ -23,23 +23,24 @@ unsigned long Receiver_AUTO_A::init( void *components[]) {
 }
 
 void Receiver_AUTO_A::activate( uint8_t scancode, int8_t parent){
+    #ifdef __DEBUG
+    Serial.println( "Activating receiver AUTO_A");
+    #endif
     Receiver::activate( scancode, parent);
     _lcd->updateStatusFMODE( " A ");
     _mode = 1;
     if(!scancode) return;
-    _appendButton(scancode);
+    tick(scancode);
 }
 
 int Receiver_AUTO_A::tick( uint8_t scancode){
-    if(scancode == 0) scancode = _kbd->scan();
-    if( !scancode) return NO_CHANGE;
-    return _appendButton( scancode);
-}
-
-int Receiver_AUTO_A::_appendButton(uint8_t scancode){
     int return_value = COMPONENT_RECEIVER_AUTO_N;
     int r = _completeSubentry(scancode);
-    if( r < -1) return return_value;
+    if( r < NO_CHANGE){
+        Serial.print("Leaving subentry, returning ");
+        Serial.println( return_value);
+        return return_value;
+    }
     if( r <= 0) return NO_CHANGE;
     scancode = (uint8_t)r;
     switch( scancode){
@@ -50,18 +51,22 @@ int Receiver_AUTO_A::_appendButton(uint8_t scancode){
         case 2:
             return_value = COMPONENT_RECEIVER_AUTO_K;
             break;
+        case 4:
+            _rpnf->execute(FUNC_TOGGLE_DMOD);
+            _lcd->updateStatusDMODE(_rpnf->Stack->getDModeName());
+            return NO_CHANGE;
 
         // Column 1 does nothing
 
         // Column 2
         case 9:
             _mode = 2;
-            _ar->activate(0, 0);
+            _ar->activate(0, -2);
             _lcd->updateStatusMC( _ar->toString());
             return NO_CHANGE;
         case 10:
             _mode = 3;
-            _ar->activate(0, 0);
+            _ar->activate(0, -3);
             _lcd->updateStatusMC( _ar->toString());
             return NO_CHANGE;
 
@@ -79,7 +84,8 @@ int Receiver_AUTO_A::_appendButton(uint8_t scancode){
             _rpnf->execute( FUNC_MM2IN);
             break;
         case 24:
-            //_rpnf->execute( FUNC_NEGATE);
+            // present FILE display
+            return COMPONENT_DISPLAY_FILE;
             break;
 
         // Column 6
@@ -93,7 +99,8 @@ int Receiver_AUTO_A::_appendButton(uint8_t scancode){
             _rpnf->execute( FUNC_IN2MM);
             break;
         case 28:
-            //_rpnf->execute( FUNC_ROT);
+            // present DATA display
+            return COMPONENT_DISPLAY_DATA;
             break;
 
         // Column 7
@@ -107,7 +114,7 @@ int Receiver_AUTO_A::_appendButton(uint8_t scancode){
             _rpnf->execute( FUNC_SEED);
             break;
         case 32:
-            break;
+            return SHUTDOWN_REQUESTED;
 
         default: // all other buttons do nothing - keep A-mode
            //delay(KBD_IDLE_DELAY);
@@ -127,13 +134,16 @@ int Receiver_AUTO_A::_completeSubentry( uint8_t scancode){
         case 2:
         case 3:
             r = _ar->tick( scancode);
-            if( r <= 0){
+            if( r == NO_CHANGE){
                 _lcd->updateStatusMC( _ar->toString());
                 return NO_CHANGE;
             }
+            Serial.print("Accessing extended memory at ");
+            Serial.println( _ar->toString());
             _rpnf->execute( (_mode==2)? FUNC_A_M2X : FUNC_A_X2M, _ar->toString());
             _lcd->updateStatusMC( _rpnf->extMem->getCounter());
-            r = -3;
+            Serial.print("Memory setting done... returning ");
+            Serial.println(r);
             break;
         default:
             break;

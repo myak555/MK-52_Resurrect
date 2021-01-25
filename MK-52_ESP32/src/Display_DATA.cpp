@@ -27,28 +27,61 @@ void Display_DATA::activate(){
     #ifdef __DEBUG
     long TargetTime = millis();
     #endif
+    char *buff = _lcd->getOutputBuffer();
     _lcd->dimScreen();
     _lcd->clearScreen( false);
-    _lcd->outputStatus( _pmem->getCounter(), 5678, "GRD", " F ");
-    for( int i=10; i>=0; i--){
-        if(i<10)
-            snprintf(buff, 30, "%04d  %18.11E", i, _fakeData);
-        else
-            snprintf(buff, 30, "%04d: %18.11E", i, _fakeData);
-        buff[29] = 0;
-        _lcd->outputTerminalLine( i, buff);
+    _lcd->outputStatus( _pmem->getCounter(), _emem->getCounter(), _rpnf->Stack->getDModeName(), "   ");
+    int cnt = (int)_emem->getCounter();
+    for( int32_t i=10, j=cnt; i>=0; i--, j--){
+        _lcd->outputTerminalLine( i, _emem->toString(buff, j));
     }
+    _setCurrentReceiver( COMPONENT_RECEIVER_DATA_N);
     _lcd->undimScreen();
     #ifdef __DEBUG
     TargetTime = millis() - TargetTime;
     Serial.print ("DATA display activated in ");
     Serial.print ( TargetTime);
     Serial.println (" ms");
-    delay( DEBUG_SHOW_DELAY);
     #endif
-    return;
 }
 
 int Display_DATA::tick(){
-    return -1;
+    // keyboard serve part
+    Serial.print("DATA display ticking");
+    uint8_t scancode = _kbd->scan();
+    if( current_Receiver == NULL) return NO_CHANGE;
+    int newReceiver = current_Receiver->tick( scancode);
+    if( newReceiver < -1) return newReceiver;
+    switch( newReceiver){
+        case COMPONENT_DISPLAY_AUTO:
+        case COMPONENT_DISPLAY_FILE:
+        case COMPONENT_DISPLAY_PROG:
+            return newReceiver;
+        case 0:
+        case -1:
+            break;
+        default:
+            Serial.print( "Setting receiver ");
+            Serial.println( newReceiver);
+            _setCurrentReceiver( newReceiver, 0, COMPONENT_RECEIVER_DATA_N);
+            break;
+    }
+    
+    // display update part
+    unsigned long start = millis();
+    char *buff = _lcd->getOutputBuffer();
+    int cnt = (int)_emem->getCounter();
+    if( _nr->isActive()){
+        snprintf_P( buff, SCREEN_COLS, PSTR("%04u> %s"), _emem->getCounter(), _nr->toString());
+        buff[SCREEN_COLS] = 0;
+        _lcd->updateTerminalLine( 10, buff);
+    }
+    else{
+        _lcd->outputTerminalLine( 10, _emem->toString(buff, cnt));
+    }
+    for( int32_t i=9, j=cnt-1; i>=0; i--, j--){
+        _lcd->updateTerminalLine( i, _emem->toString(buff, j));
+        if( millis()-start > KBD_IDLE_DELAY) break; // we can do the rest of redraw later!
+    }
+    return NO_CHANGE;
 }

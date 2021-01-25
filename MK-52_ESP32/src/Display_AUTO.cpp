@@ -48,7 +48,6 @@ void Display_AUTO::activate(){
     Serial.print ( TargetTime);
     Serial.println (" ms");
     #endif
-    return;
 }
 
 int Display_AUTO::tick(){
@@ -56,8 +55,19 @@ int Display_AUTO::tick(){
     uint8_t scancode = _kbd->scan();
     if( current_Receiver == NULL) return NO_CHANGE;
     int newReceiver = current_Receiver->tick( scancode);
-    if( newReceiver < -1) return newReceiver; 
-    if( newReceiver >= 0) _setCurrentReceiver( newReceiver, 0, COMPONENT_RECEIVER_AUTO_N);
+    if( newReceiver < -1) return newReceiver;
+    switch( newReceiver){
+        case COMPONENT_DISPLAY_DATA:
+        case COMPONENT_DISPLAY_FILE:
+        case COMPONENT_DISPLAY_PROG:
+            return newReceiver;
+        case 0:
+        case -1:
+            break;
+        default:
+            _setCurrentReceiver( newReceiver, 0, COMPONENT_RECEIVER_AUTO_N);
+            break;
+    }
     
     // display update part
     char *buff = _lcd->getOutputBuffer(); 

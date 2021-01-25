@@ -37,7 +37,7 @@ namespace MK52_Interpreter{
         unsigned long init( void *components[]);
         void activate();
         int tick();
-      protected:
+      private:
         RPN_Stack *_stack;
         Receiver_Number *_nr;
     };
@@ -47,7 +47,7 @@ namespace MK52_Interpreter{
         unsigned long init( void *components[]);
         void activate();
         int tick();
-      protected:
+      private:
         Receiver_Number *_nr;
         Receiver_Address *_ar;
         Receiver_Register *_rr;
@@ -63,9 +63,7 @@ namespace MK52_Interpreter{
         unsigned long init( void *components[]);
         void activate();
         int tick();
-      protected:
-        char buff[30];
-        double _fakeData = -1.23456789012e+123;
+      private:
         Receiver_Number *_nr;
     };
 
@@ -74,7 +72,7 @@ namespace MK52_Interpreter{
         unsigned long init( void *components[]);
         void activate();
         int tick();
-      protected:
+      private:
         MK52_Hardware::SD_Manager *_sd;
     };
 };

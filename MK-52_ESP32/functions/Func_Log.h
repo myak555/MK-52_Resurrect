@@ -17,11 +17,11 @@ void Func_Lg::execute( void *components[], char *command){
 }
 
 void Func_Log::execute( void *components[], char *command){
-    RPN_Stack *s = _dealWithClergy1(components);
+    RPN_Stack *s = _dealWithClergy2(components);
     if( s == NULL) return;
-    s->storeBx();
     double x = s->X->toReal();
     double y = s->Y->toReal();
+    s->pop(0);
     if ( x<=0.0 || y<=0.0){
         s->X->fromReal( NAN);
         return;

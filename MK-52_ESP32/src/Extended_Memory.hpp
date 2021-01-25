@@ -28,10 +28,14 @@ namespace MK52_Interpreter{
         inline uint8_t *getCurrentLine(){return _buffer + _counter * 9;};
         inline uint8_t *getLine( uint32_t n){return _buffer + n * 9;};
 
+        char *toString( char *buff, int32_t n);
+
       private:
         uint32_t _counter = 0;
         uint8_t *_buffer = NULL;
         char _text[PROGRAM_LINE_LENGTH]; // temporary input buffer
+        inline uint8_t *_memoryAddress( int32_t index){
+           return _buffer + index*9;};
     };
 };
 

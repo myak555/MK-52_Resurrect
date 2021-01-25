@@ -58,6 +58,8 @@ namespace MK52_Interpreter{
         char _inputMode[4];
         char *_editModeOverwrite = "OVR";
         char *_editModeInsert = "INS";
+        uint8_t *_returnStack = NULL;
+        uint8_t *_rsPtr = 0;
     };
 };
 

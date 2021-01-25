@@ -39,10 +39,7 @@ class Func_Increment_MC: public RPN_Function{
         inline bool checkName(char *name){ return false;};
         inline const char*Name(){ return (const char*)NULL;};
         inline const char*IOName(){ return (const char*)NULL;};
-        inline void execute( void *components[], char *command){
-            Extended_Memory *extMem = (Extended_Memory *)components[COMPONENT_EXTENDED_MEMORY];
-            extMem->incrementCounter();
-        };
+        void execute( void *components[], char *command);
 };
 
 class Func_Decrement_MC: public RPN_Function{
@@ -51,10 +48,7 @@ class Func_Decrement_MC: public RPN_Function{
         inline bool checkName(char *name){ return false;};
         inline const char*Name(){ return (const char*)NULL;};
         inline const char*IOName(){ return (const char*)NULL;};
-        inline void execute( void *components[], char *command){
-            Extended_Memory *extMem = (Extended_Memory *)components[COMPONENT_EXTENDED_MEMORY];
-            extMem->decrementCounter();
-        };
+        void execute( void *components[], char *command);
 };
 
 class Func_Reset_PC: public RPN_Function{
@@ -75,10 +69,7 @@ class Func_Reset_MC: public RPN_Function{
         inline bool checkName(char *name){ return false;};
         inline const char*Name(){ return (const char*)NULL;};
         inline const char*IOName(){ return (const char*)NULL;};
-        inline void execute( void *components[], char *command){
-            Extended_Memory *extMem = (Extended_Memory *)components[COMPONENT_EXTENDED_MEMORY];
-            extMem->resetCounter();
-        };
+        void execute( void *components[], char *command);
 };
 
 class Func_Toggle_DMOD: public RPN_Function{
@@ -564,9 +555,7 @@ class Func_M2X: public RPN_Function{
         inline bool checkName(char *name){ return _startsWith( name, Name());};
         inline const char*Name(){ return PSTR("M->X ");};
         inline const char*IOName(){ return Name();};
-        void execute( void *components[], char *command){
-            Register_Memory *rm = (Register_Memory *)components[COMPONENT_REGISTER_MEMORY];
-            rm->MtoX(command);};
+        void execute( void *components[], char *command);
 };
 
 class Func_X2M: public RPN_Function{
@@ -575,9 +564,7 @@ class Func_X2M: public RPN_Function{
         inline bool checkName(char *name){ return _startsWith( name, Name());};
         inline const char*Name(){ return PSTR("X->M ");};
         inline const char*IOName(){ return Name();};
-        void execute( void *components[], char *command){
-            Register_Memory *rm = (Register_Memory *)components[COMPONENT_REGISTER_MEMORY];
-            rm->XtoM(command);};
+        void execute( void *components[], char *command);
 };
 
 class Func_K_M2X: public RPN_Function{
@@ -586,9 +573,7 @@ class Func_K_M2X: public RPN_Function{
         inline bool checkName(char *name){ return _startsWith( name, Name());};
         inline const char*Name(){ return PSTR("K M->X ");};
         inline const char*IOName(){ return Name();};
-        void execute( void *components[], char *command){
-            Register_Memory *rm = (Register_Memory *)components[COMPONENT_REGISTER_MEMORY];
-            rm->K_MtoX(command);};
+        void execute( void *components[], char *command);
 };
 
 class Func_K_X2M: public RPN_Function{
@@ -597,9 +582,7 @@ class Func_K_X2M: public RPN_Function{
         inline bool checkName(char *name){ return _startsWith( name, Name());};
         inline const char*Name(){ return PSTR("K X->M ");};
         inline const char*IOName(){ return Name();};
-        void execute( void *components[], char *command){
-            Register_Memory *rm = (Register_Memory *)components[COMPONENT_REGISTER_MEMORY];
-            rm->K_XtoM(command);};
+        void execute( void *components[], char *command);
 };
 
 class Func_A_M2X: public RPN_Function{
@@ -608,9 +591,7 @@ class Func_A_M2X: public RPN_Function{
         inline bool checkName(char *name){ return _startsWith( name, Name());};
         inline const char*Name(){ return PSTR("A M->X ");};
         inline const char*IOName(){ return Name();};
-        void execute( void *components[], char *command){
-            Register_Memory *rm = (Register_Memory *)components[COMPONENT_REGISTER_MEMORY];
-            rm->A_MtoX(command);};
+        void execute( void *components[], char *command);
 };
 
 class Func_A_X2M: public RPN_Function{
@@ -619,9 +600,70 @@ class Func_A_X2M: public RPN_Function{
         inline bool checkName(char *name){ return _startsWith( name, Name());};
         inline const char*Name(){ return PSTR("A X->M ");};
         inline const char*IOName(){ return Name();};
-        void execute( void *components[], char *command){
-            Register_Memory *rm = (Register_Memory *)components[COMPONENT_REGISTER_MEMORY];
-            rm->A_XtoM(command);};
+        void execute( void *components[], char *command);
+};
+
+class Func_MemSet: public RPN_Function{
+    public:
+        inline bool checkID( uint16_t id){ return id == FUNC_MEMSET;};
+        inline bool checkName(char *name){ return _startsWith( name, Name());};
+        inline const char*Name(){ return PSTR("MEMSET ");};
+        inline const char*IOName(){ return Name();};
+        void execute( void *components[], char *command);
+};
+
+class Func_MemSwp: public RPN_Function{
+    public:
+        inline bool checkID( uint16_t id){ return id == FUNC_MEMSWP;};
+        inline bool checkName(char *name){ return _startsWith( name, Name());};
+        inline const char*Name(){ return PSTR("MEMSWP ");};
+        inline const char*IOName(){ return Name();};
+        void execute( void *components[], char *command);
+};
+
+class Func_MexToX: public RPN_Function{
+    public:
+        inline bool checkID( uint16_t id){ return id == FUNC_MEXTOX;};
+        inline bool checkName(char *name){ return _startsWith( name, Name());};
+        inline const char*Name(){ return PSTR("ExToX ");};
+        inline const char*IOName(){ return Name();};
+        void execute( void *components[], char *command);
+};
+
+class Func_XToMex: public RPN_Function{
+    public:
+        inline bool checkID( uint16_t id){ return id == FUNC_XTOMEX;};
+        inline bool checkName(char *name){ return _startsWith( name, Name());};
+        inline const char*Name(){ return PSTR("XToEx ");};
+        inline const char*IOName(){ return Name();};
+        void execute( void *components[], char *command);
+};
+
+class Func_MexToR: public RPN_Function{
+    public:
+        inline bool checkID( uint16_t id){ return id == FUNC_MEXTOR;};
+        inline bool checkName(char *name){ return _startsWith( name, Name());};
+        inline const char*Name(){ return PSTR("ExToR ");};
+        inline const char*IOName(){ return Name();};
+        void execute( void *components[], char *command);
+};
+
+class Func_RToMex: public RPN_Function{
+    public:
+        inline bool checkID( uint16_t id){ return id == FUNC_RTOMEX;};
+        inline bool checkName(char *name){ return _startsWith( name, Name());};
+        inline const char*Name(){ return PSTR("RToEx ");};
+        inline const char*IOName(){ return Name();};
+        void execute( void *components[], char *command);
+};
+
+class Func_MexClr: public RPN_Function{
+    public:
+        inline bool checkID( uint16_t id){ return id == FUNC_MEXCLR;};
+        inline bool checkName(char *name){ return _startsWith( name, Name());};
+        inline const char*Name(){ return PSTR("MexCx");};
+        inline const char*IOName(){ return Name();};
+        void execute( void *components[], char *command);
 };
 
 class Func_GOTO: public RPN_Function{

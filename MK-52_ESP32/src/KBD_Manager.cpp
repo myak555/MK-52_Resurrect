@@ -20,12 +20,15 @@ void KBD_Manager::init(){
 }
 
 uint8_t KBD_Manager::scan(){
-    uint8_t ret=scanImmediate();
-    if( ret == 0) return ret;
+    uint8_t ret = scanImmediate();
+    if( ret == 0){
+        delay(KBD_IDLE_DELAY);
+        return ret;
+    }
     lastScan = ret;
     while( ret != 0){
         ret = scanImmediate();
-        delay( 3);
+        delay( KBD_JITTER_DELAY);
     }
     lastScanTime = millis();
     return lastScan;

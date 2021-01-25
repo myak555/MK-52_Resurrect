@@ -8,7 +8,7 @@
 
 #include "Receivers.hpp"
 
-#define __DEBUG
+//#define __DEBUG
 
 const char _RN_ButtonConversion[] PROGMEM = "#ffffffffffff7410852.963-fffEffec";
 const char _RN_StandardUnity[] PROGMEM = "1.0E+000";
@@ -26,6 +26,9 @@ unsigned long Receiver_Number::init( void *components[]) {
 }
 
 void Receiver_Number::activate( uint8_t scancode, int8_t parent){
+    #ifdef __DEBUG
+    Serial.println( "Activating receiver NUMBER");
+    #endif
     Receiver::activate( scancode, parent);
     _lcd->updateStatusFMODE( "NUM");
     strcpy_P( _text, PSTR(" "));
@@ -43,6 +46,9 @@ int Receiver_Number::tick( uint8_t scancode){
             scancode = 0;
         case 'f':
             _mode = 0;
+            #ifdef __DEBUG
+            Serial.println( "Receiver NUMBER ticked");
+            #endif
             return (int)scancode;
         case '0':
         case '1':
@@ -54,6 +60,10 @@ int Receiver_Number::tick( uint8_t scancode){
         case '7':
         case '8':
         case '9':
+            #ifdef __DEBUG
+            Serial.print("Ticking digit: ");
+            Serial.println(_text);
+            #endif
             if( ln == 2 && _text[1] == '0'){
                 _text[1] = c;
                 break;
@@ -76,7 +86,7 @@ int Receiver_Number::tick( uint8_t scancode){
             }
             _swapSign( _text, ' ');
             break;
-            case '.':
+        case '.':
             if( _mode >= 2) break;
             _mode = 2;
             if( ln == 1){

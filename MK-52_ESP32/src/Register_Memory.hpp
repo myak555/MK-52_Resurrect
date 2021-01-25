@@ -28,6 +28,8 @@ namespace MK52_Interpreter{
         void A_XtoM(int64_t index);
 
         int8_t registerByName( char *name);
+        inline uint8_t *_registerAddress( int8_t n){
+           return _buffer + n*9;};
 
         inline void MtoX(char *name){
             MtoX( registerByName(name));};
@@ -44,9 +46,8 @@ namespace MK52_Interpreter{
         uint8_t *_buffer = NULL;
         RPN_Stack *_rst = NULL;
         Extended_Memory *_emem = NULL;
-        inline uint8_t *_registerAddress( int8_t n){
-           return _buffer + n*9;};
         int8_t _chrfind_P( char c);
+        void _autoIncrement( int8_t n, UniversalValue *uv);
     };
 };
 

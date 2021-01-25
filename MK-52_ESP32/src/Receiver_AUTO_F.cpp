@@ -21,20 +21,17 @@ unsigned long Receiver_AUTO_F::init( void *components[]) {
 }
 
 void Receiver_AUTO_F::activate( uint8_t scancode, int8_t parent){
+    #ifdef __DEBUG
+    Serial.println( "Activating receiver AUTO_F");
+    #endif
     Receiver::activate( scancode, parent);
     _lcd->updateStatusFMODE( " F ");
     _mode = 1;
     if(!scancode) return;
-    _appendButton(scancode);
+    tick(scancode);
 }
 
 int Receiver_AUTO_F::tick( uint8_t scancode){
-    if(scancode == 0) scancode = _kbd->scan();
-    if( !scancode) return NO_CHANGE;
-    return _appendButton( scancode);
-}
-
-int Receiver_AUTO_F::_appendButton(uint8_t scancode){
     int return_value = COMPONENT_RECEIVER_AUTO_N;
     switch( scancode){
         // Column 0
@@ -43,6 +40,7 @@ int Receiver_AUTO_F::_appendButton(uint8_t scancode){
             break;
         case 3:
             return_value = COMPONENT_RECEIVER_AUTO_A;
+            break;
         case 4:
             _rpnf->execute(FUNC_TOGGLE_DMOD);
             _lcd->updateStatusDMODE(_rpnf->Stack->getDModeName());
@@ -90,8 +88,9 @@ int Receiver_AUTO_F::_appendButton(uint8_t scancode){
             _rpnf->execute( FUNC_LN);
             break;
         case 24:
-            Serial.println("AUTO");
-            //_rpnf->execute( FUNC_NEGATE);
+            #ifdef __DEBUG
+            Serial.println("AUTO display already activated");
+            #endif
             break;
 
         // Column 6
@@ -105,9 +104,7 @@ int Receiver_AUTO_F::_appendButton(uint8_t scancode){
             _rpnf->execute( FUNC_POW);
             break;
         case 28:
-            Serial.println("PRG");
-            //_rpnf->execute( FUNC_ROT);
-            break;
+            return COMPONENT_DISPLAY_PROG;
 
         // Column 7
         case 29:
@@ -123,10 +120,8 @@ int Receiver_AUTO_F::_appendButton(uint8_t scancode){
             break;
 
         default: // all other buttons do nothing, keeping F-mode
-           //delay(KBD_IDLE_DELAY);
            return NO_CHANGE;
     }
     _mode = 0;
-    //delay(KBD_IDLE_DELAY);
     return return_value;
 }

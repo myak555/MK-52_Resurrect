@@ -64,3 +64,10 @@
 #define FUNC_GOTO               64
 #define FUNC_GOSUB              65
 #define FUNC_RETURN             66
+#define FUNC_MEMSET             67
+#define FUNC_MEMSWP             68
+#define FUNC_MEXTOX             69
+#define FUNC_XTOMEX             70
+#define FUNC_MEXTOR             71
+#define FUNC_RTOMEX             72
+#define FUNC_MEXCLR             73

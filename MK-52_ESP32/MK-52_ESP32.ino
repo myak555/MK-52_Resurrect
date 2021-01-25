@@ -99,24 +99,6 @@ void setup(void) {
 
 void loop(void) {
     MyHost.tick();
-
-    if(Serial.available()){
-        byte b = Serial.read();
-        if( b == 'e')
-        {
-            MyHost.getKBD()->LEDOn = !MyHost.getKBD()->LEDOn;
-            Serial.println("LED flop");
-            return;
-        }
-        if( b == 's')
-        {
-            Serial.println("Shutdown!");
-            delay( 500);
-            MyHost.shutdown();
-            return;
-        }
-        return;
-    }
 }
 
 #ifdef __DEBUG

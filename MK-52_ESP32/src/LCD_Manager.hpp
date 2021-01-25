@@ -95,7 +95,7 @@ namespace MK52_Hardware{
         inline char *getOutputBuffer(){return _text;};
 
       private:
-        char _text[SCREEN_COLS+1]; // temporary output buffer
+        char *_text = NULL; // temporary output buffer
         char *_buffer = NULL;
         char *_lines[SCREEN_ROWS];
         int64_t *_ledPWM = NULL;

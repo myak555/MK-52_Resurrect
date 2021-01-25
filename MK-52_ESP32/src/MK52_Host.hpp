@@ -37,8 +37,7 @@ namespace MK52_Interpreter{
         void setDisplay(int id);
 
         void tick();
-
-        inline void shutdown(){ digitalWrite( SYSTEM_POWER_HOLD, LOW); };
+        void shutdown(); 
 
       protected:
         void *_components[N_COMPONENTS];

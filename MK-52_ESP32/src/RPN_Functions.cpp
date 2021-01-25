@@ -154,6 +154,20 @@ unsigned long RPN_Functions::init( void *components[]) {
     // #define FUNC_GOSUB              65
     _appendFunction( new Func_GOSUB());
     // #define FUNC_RETURN             66
+    // #define FUNC_MEMSET             67
+    _appendFunction( new Func_MemSet());
+    // #define FUNC_MEMSWP             68
+    _appendFunction( new Func_MemSwp());
+    // #define FUNC_MEXTOX             69
+    _appendFunction( new Func_MexToX());
+    // #define FUNC_XTOMEX             70
+    _appendFunction( new Func_XToMex());
+    // #define FUNC_MEXTOR             71
+    _appendFunction( new Func_MexToR());
+    // #define FUNC_RTOMEX             72
+    _appendFunction( new Func_RToMex());
+    // #define FUNC_MEXCLR             73
+    _appendFunction( new Func_MexClr());
 
     #ifdef __DEBUG
     Serial.print( _nfunctions);
@@ -245,3 +259,4 @@ void RPN_Functions::_appendFunction( RPN_Function *f){
 #include "../functions/Func_Numb.h"
 #include "../functions/Func_Logical.h"
 #include "../functions/Func_Convert.h"
+#include "../functions/Func_Memory.h"

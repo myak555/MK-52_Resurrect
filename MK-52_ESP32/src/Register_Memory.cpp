@@ -22,7 +22,7 @@ unsigned long Register_Memory::init( void *components[]) {
     Serial.println("Register memory init");
     #endif
     _rst = (RPN_Stack*)components[COMPONENT_STACK];
-    _emem = (Extended_Memory *)components[COMPONENT_STACK];
+    _emem = (Extended_Memory *)components[COMPONENT_EXTENDED_MEMORY];
     _buffer = (uint8_t *)malloc( REGISTER_MEMORY_SIZE);
     #ifdef __DEBUG
     if( _buffer == NULL){
@@ -64,15 +64,33 @@ void Register_Memory::K_MtoX(int8_t n){
     _rst->push();
     if( n<0 || n>=REGISTER_MEMORY_NVALS) return;
     UniversalValue *uv = new UniversalValue( _registerAddress(n));
+    if( uv->isEmpty()){
+        delete(uv);
+        _rst->X->fromInt(0);
+        return;
+    }
     int64_t index = uv->toInt();
+    _autoIncrement( n, uv);
     delete(uv);
-    A_MtoX( index);
+    if( index<0 || index>=EXTENDED_MEMORY_NVALS){
+        _rst->X->fromInt(0);
+        return;
+    }
+    _emem->setCounter(index);
+    uint8_t *ptr = _emem->getCurrentLine();
+    if( *ptr == VALUE_TYPE_EMPTY) _rst->X->fromInt(0);
+    else _rst->X->fromLocation( ptr);
 }
 
 void Register_Memory::K_XtoM(int8_t n){
     if( n<0 || n>=REGISTER_MEMORY_NVALS) return;
     UniversalValue *uv = new UniversalValue( _registerAddress(n));
+    if( uv->isEmpty()){
+        delete(uv);
+        return;
+    }
     int64_t index = uv->toInt();
+    _autoIncrement( n, uv);
     delete(uv);
     A_XtoM( index);
 }
@@ -86,7 +104,7 @@ void Register_Memory::A_MtoX(int64_t index){
     }
     _emem->setCounter(index);
     uint8_t *ptr = _emem->getCurrentLine();
-    if( *ptr == 0) _rst->X->fromInt(0);
+    if( *ptr == VALUE_TYPE_EMPTY) _rst->X->fromInt(0);
     else _rst->X->fromLocation( ptr);
 }
 
@@ -101,9 +119,11 @@ void Register_Memory::A_XtoM(int64_t index){
 }
 
 void Register_Memory::A_MtoX(char *address){
+    _rst->storeBx();
+    _rst->push();
     _emem->setCounter(address);
     uint8_t *ptr = _emem->getCurrentLine();
-    if( *ptr == 0) _rst->X->fromInt(0);
+    if( *ptr == VALUE_TYPE_EMPTY) _rst->X->fromInt(0);
     else _rst->X->fromLocation( ptr);
 }
 
@@ -137,4 +157,17 @@ int8_t Register_Memory::_chrfind_P( char c){
         if( b==c) return i;
     }
     return -1;
+}
+
+void Register_Memory::_autoIncrement( int8_t n, UniversalValue *uv){
+    if( n>6) return;
+    int delta = (n>3)? 1: -1;
+    if( uv->isInt()){
+        uv->fromInt( uv->toInt() + delta);
+        return;
+    }
+    if( uv->isReal()){
+        uv->fromReal( uv->toReal() + (double)delta);
+        return;
+    }
 }

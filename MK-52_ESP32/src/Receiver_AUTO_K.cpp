@@ -23,22 +23,20 @@ unsigned long Receiver_AUTO_K::init( void *components[]) {
 }
 
 void Receiver_AUTO_K::activate( uint8_t scancode, int8_t parent){
+    #ifdef __DEBUG
+    Serial.println( "Activating receiver AUTO_K");
+    #endif
     Receiver::activate( scancode, parent);
     _lcd->updateStatusFMODE( " K ");
     _mode = 1;
     if(!scancode) return;
-    _appendButton(scancode);
+    tick(scancode);
 }
 
 int Receiver_AUTO_K::tick( uint8_t scancode){
-    if(scancode == 0) scancode = _kbd->scan();
-    if( !scancode) return NO_CHANGE;
-    return _appendButton( scancode);
-}
-
-int Receiver_AUTO_K::_appendButton(uint8_t scancode){
     int return_value = COMPONENT_RECEIVER_AUTO_N;
     int r = _completeSubentry(scancode);
+    if( r < NO_CHANGE) return return_value;
     if( r <= 0) return NO_CHANGE;
     scancode = (uint8_t)r;
     switch( scancode){
@@ -49,19 +47,21 @@ int Receiver_AUTO_K::_appendButton(uint8_t scancode){
         case 3:
             return_value = COMPONENT_RECEIVER_AUTO_A;
             break;
+        case 4:
+            _rpnf->execute(FUNC_TOGGLE_DMOD);
+            _lcd->updateStatusDMODE(_rpnf->Stack->getDModeName());
+            return NO_CHANGE;
 
         // Column 1 does nothing
         
         // Column 2
         case 9:
             _mode = 2;
-            _rr->activate(0 , 0);
-            //delay(KBD_IDLE_DELAY);
+            _rr->activate(0 , -2);
             return NO_CHANGE;
         case 10:
             _mode = 3;
-            _rr->activate(0 , 0);
-            //delay(KBD_IDLE_DELAY);
+            _rr->activate(0 , -3);
             return NO_CHANGE;
         case 11:
             _rpnf->Stack->setStackLabel_P(0, PSTR("K-GOTO is bad for you!"));
@@ -150,11 +150,9 @@ int Receiver_AUTO_K::_appendButton(uint8_t scancode){
             break;
 
         default: // all other buttons do nothing - keep K-mode
-           //delay(KBD_IDLE_DELAY);
            return NO_CHANGE;
     }
     _mode = 0;
-    //delay(KBD_IDLE_DELAY);
     return return_value;
 }
 
@@ -170,6 +168,10 @@ int Receiver_AUTO_K::_completeSubentry( uint8_t scancode){
             if( r == NO_CHANGE) return NO_CHANGE;
             _rpnf->execute( (_mode==2)? FUNC_K_M2X : FUNC_K_X2M, _rr->toString());
             _lcd->updateStatusMC( _rpnf->extMem->getCounter());
+            #ifdef __DEBUG
+            Serial.println("Memory updated, returning ");
+            Serial.print(r);
+            #endif 
             break;
         default:
             break;

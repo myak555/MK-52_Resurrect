@@ -8,7 +8,7 @@
 
 #include "Receivers.hpp"
 
-#define __DEBUG
+//#define __DEBUG
 
 const char _AR_ButtonConversion[] PROGMEM = "####f########7410852#963#######ec";
 
@@ -25,6 +25,9 @@ unsigned long Receiver_Address::init( void *components[]) {
 }
 
 void Receiver_Address::activate( uint8_t scancode, int8_t parent){
+    #ifdef __DEBUG
+    Serial.println( "Activating receiver ADDRESS");
+    #endif
     Receiver::activate( scancode, parent);
     memset( _text, ' ', 4);
     _text[4] = 0; 
@@ -37,6 +40,9 @@ int Receiver_Address::tick( uint8_t scancode){
     switch( c){
         case 'f':
             _mode = 0;
+            #ifdef __DEBUG
+            Serial.println( "Receiver ADDRESS ticked (aborted)");
+            #endif
             return (int)scancode;
         case '0':
         case '1':
@@ -72,6 +78,9 @@ int Receiver_Address::_completeEntry(){
         if( _text[i] != ' ') break;
         _text[i] = '0';
     }
+    #ifdef __DEBUG
+    Serial.println( "Receiver ADDRESS ticked");
+    #endif
     //delay(KBD_IDLE_DELAY);
     return _parentReceiver;
 }

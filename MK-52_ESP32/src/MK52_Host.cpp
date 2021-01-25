@@ -33,6 +33,11 @@ static MK52_Interpreter::Receiver_AUTO_R _m_Receiver_AUTO_R;
 static MK52_Interpreter::Receiver_PROG_N _m_Receiver_PROG_N;
 static MK52_Interpreter::Receiver_PROG_F _m_Receiver_PROG_F;
 
+static MK52_Interpreter::Receiver_DATA_N _m_Receiver_DATA_N;
+static MK52_Interpreter::Receiver_DATA_F _m_Receiver_DATA_F;
+static MK52_Interpreter::Receiver_DATA_K _m_Receiver_DATA_K;
+static MK52_Interpreter::Receiver_DATA_A _m_Receiver_DATA_A;
+
 static MK52_Interpreter::Display_AUTO _m_Display_AUTO;
 static MK52_Interpreter::Display_PROG _m_Display_PROG;
 static MK52_Interpreter::Display_FILE _m_Display_FILE;
@@ -87,11 +92,16 @@ unsigned long MK52_Host::init() {
     _components[ COMPONENT_RECEIVER_PROG_N] = &_m_Receiver_PROG_N;
     _components[ COMPONENT_RECEIVER_PROG_F] = &_m_Receiver_PROG_F;
 
+    _components[ COMPONENT_RECEIVER_DATA_N] = &_m_Receiver_DATA_N;
+    _components[ COMPONENT_RECEIVER_DATA_F] = &_m_Receiver_DATA_F;
+    _components[ COMPONENT_RECEIVER_DATA_K] = &_m_Receiver_DATA_K;
+    _components[ COMPONENT_RECEIVER_DATA_A] = &_m_Receiver_DATA_A;
+
     // User interfaces
     _components[ COMPONENT_DISPLAY_AUTO] = &_m_Display_AUTO;
     _components[ COMPONENT_DISPLAY_PROG] = &_m_Display_PROG;
-    _components[ COMPONENT_DISPLAY_DATA] = &_m_Display_FILE;
-    _components[ COMPONENT_DISPLAY_FILE] = &_m_Display_DATA;
+    _components[ COMPONENT_DISPLAY_DATA] = &_m_Display_DATA;
+    _components[ COMPONENT_DISPLAY_FILE] = &_m_Display_FILE;
 
     _m_Program_Memory.init( _components);
     _m_Extended_Memory.init( _components);
@@ -111,7 +121,12 @@ unsigned long MK52_Host::init() {
     
     _m_Receiver_PROG_N.init( _components);
     _m_Receiver_PROG_F.init( _components);
-    
+
+    _m_Receiver_DATA_N.init( _components);
+    _m_Receiver_DATA_F.init( _components);
+    _m_Receiver_DATA_K.init( _components);
+    _m_Receiver_DATA_A.init( _components);
+
     _m_Display_AUTO.init( _components);
     _m_Display_PROG.init( _components);
     _m_Display_DATA.init( _components);
@@ -157,4 +172,16 @@ void MK52_Host::setDisplay(int id){
     current_Display = getDisplay( id);
     if( current_Display == NULL) return;
     current_Display->activate();
+}
+
+//
+// For now, it is just a demo code for debugging (TODO)
+//
+void MK52_Host::shutdown(){
+    bool t = !(getKBD()->LEDOn);
+    getKBD()->LEDOn = t;
+    digitalWrite( SYSTEM_POWER_HOLD, t);
+
+    // after the power transistor is installed, this will not happen:
+    setDisplay( COMPONENT_DISPLAY_AUTO);
 }

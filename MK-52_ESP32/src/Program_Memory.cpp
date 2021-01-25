@@ -18,8 +18,11 @@ unsigned long Program_Memory::init( void *components[]) {
     clearText();
     setInputMode(PSTR("   "));
     _buffer = (uint8_t *)malloc( PROGRAM_MEMORY_SIZE);
+    _returnStack = (uint8_t *)malloc( 100);
     #ifdef __DEBUG
-    if( _buffer == NULL){
+    Serial.print("PTR size: ");
+    Serial.println( sizeof(void *));
+    if( _buffer == NULL || _returnStack == NULL){
         Serial.println("Program Memory malloc busted!");
         return millis();
     }
