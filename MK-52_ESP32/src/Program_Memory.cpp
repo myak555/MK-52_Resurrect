@@ -31,6 +31,15 @@ unsigned long Program_Memory::init( void *components[]) {
     clear();
 
     #ifdef __DEBUG
+    appendLine_P( PSTR("-1.2345678e-004"));
+    appendLine_P( PSTR("9"));
+    appendLine_P( PSTR("*"));
+    appendLine_P( PSTR("X->M A"));
+    appendLine_P( PSTR("X->M B"));
+    appendLine_P( PSTR("X->M C"));
+    appendLine_P( PSTR("Cx"));
+    appendLine_P( PSTR("M->X A"));
+    appendLine_P( PSTR("STOP"));
     Serial.print("Free program memory: ");
     Serial.println( getFree());
     #endif
@@ -221,6 +230,7 @@ bool Program_Memory::insertLine(char *line){
     memcpy( _pointer, line, toCopy);
     return true;
 }
+
 bool Program_Memory::insertLine_P(const char *line){
     size_t toCopy = strlen(line) + 1;
     if( _pointer + toCopy >= _limit) return false; // no space
@@ -280,4 +290,24 @@ char *Program_Memory::appendText_P( const char *text){
     }
     *ptr = 0;
     return ptr;
+}
+
+void Program_Memory::getPreviousLines( char *lines[], uint8_t n){
+    lines[0] = (char *)_pointer;
+    memset( lines+1, 0, n*sizeof( char*) );
+    if( _pointer == _buffer) return;
+
+    uint8_t i = 1;
+    char *ptr = (char*)_pointer;
+    ptr--;
+    while( i<n){
+        ptr--;
+        while( *ptr != 0) ptr--;
+        lines[i++] = ptr+1;
+        // at this point, the pointer is at the end of previous line
+        if( ptr == (char*)_buffer && i<n-1){
+            lines[i] = ptr;
+            break;
+        }
+    } 
 }

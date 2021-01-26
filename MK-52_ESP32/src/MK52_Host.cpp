@@ -21,6 +21,7 @@ static MK52_Interpreter::Register_Memory _m_Register_Memory;
 static MK52_Interpreter::RPN_Functions _m_RPN_Functions;
 
 static MK52_Interpreter::Receiver_Number _m_Receiver_Number;
+static MK52_Interpreter::Receiver_Text _m_Receiver_Text;
 static MK52_Interpreter::Receiver_Address _m_Receiver_Address;
 static MK52_Interpreter::Receiver_Register _m_Receiver_Register;
 
@@ -80,6 +81,7 @@ unsigned long MK52_Host::init() {
 
     // UI data receivers
     _components[ COMPONENT_RECEIVER_NUMBER] = &_m_Receiver_Number;
+    _components[ COMPONENT_RECEIVER_TEXT] = &_m_Receiver_Text;
     _components[ COMPONENT_RECEIVER_ADDRESS] = &_m_Receiver_Address;
     _components[ COMPONENT_RECEIVER_REGISTER] = &_m_Receiver_Register;
     
@@ -110,6 +112,7 @@ unsigned long MK52_Host::init() {
     _m_RPN_Functions.init( _components);
 
     _m_Receiver_Number.init( _components);
+    _m_Receiver_Text.init( _components);
     _m_Receiver_Address.init( _components);
     _m_Receiver_Register.init( _components);
 
@@ -148,6 +151,8 @@ unsigned long MK52_Host::init() {
     _m_Hardware_LCD.waitForEndSplash( splashReady, false);
     #ifdef __DEBUG
     // testing all displays
+    //setDisplay( COMPONENT_DISPLAY_AUTO);
+    //delay(DEBUG_SHOW_DELAY);
     //setDisplay( COMPONENT_DISPLAY_FILE);
     //delay(DEBUG_SHOW_DELAY);
     //setDisplay( COMPONENT_DISPLAY_DATA);

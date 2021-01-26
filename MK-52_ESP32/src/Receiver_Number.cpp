@@ -22,6 +22,7 @@ unsigned long Receiver_Number::init( void *components[]) {
     #ifdef __DEBUG
     Serial.println("Init number entry");
     #endif
+    _text = (char *)malloc(SCREEN_COLS+1);
     return Receiver::init(components);
 }
 
@@ -146,6 +147,5 @@ int Receiver_Number::tick( uint8_t scancode){
         default:
             break;
     }
-    //delay(KBD_IDLE_DELAY);
     return return_value;
 }

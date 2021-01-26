@@ -48,6 +48,8 @@ namespace MK52_Interpreter{
         inline char *getInputMode(){ return _inputMode;};
         inline char *getEditMode(){ return EditOverwrite? _editModeOverwrite: _editModeInsert;};
 
+        void getPreviousLines( char *lines[], uint8_t n);
+
       private:
         uint32_t _counter = 0;
         uint8_t *_buffer = NULL;

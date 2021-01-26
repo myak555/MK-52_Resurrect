@@ -17,6 +17,7 @@ unsigned long Receiver_PROG_N::init( void *components[]) {
     Serial.println( "Init PROG_N");
     #endif
     _nr = (Receiver_Number*)components[COMPONENT_RECEIVER_NUMBER];
+    _tr = (Receiver_Text*)components[COMPONENT_RECEIVER_TEXT];
     _ar = (Receiver_Address*)components[COMPONENT_RECEIVER_ADDRESS];
     _rr = (Receiver_Register*)components[COMPONENT_RECEIVER_REGISTER];
     _pmem = (Program_Memory*)components[COMPONENT_PROGRAM_MEMORY];

@@ -49,8 +49,10 @@ namespace MK52_Interpreter{
         int tick();
       private:
         Receiver_Number *_nr;
+        Receiver_Text *_tr;
         Receiver_Address *_ar;
         Receiver_Register *_rr;
+        char *_displayLines[SCREEN_ROWS-1];
         void _printNumber();
         void _printOperatorWithAddress();
         void _printOperatorWithRegister();

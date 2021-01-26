@@ -10,6 +10,8 @@
 
 #define __DEBUG
 
+const char _emptyLineFormat[] PROGMEM = "%04d";
+const char _emptyLineEditFormat[] PROGMEM = "%04d> ";
 const char _programLineFormat[] PROGMEM = "%04d  %s";
 const char _programLineEditFormat[] PROGMEM = "%04d> %s";
 const char _programLineEdit2Format[] PROGMEM = "%04d> %s%s";
@@ -24,6 +26,7 @@ unsigned long Display_PROG::init( void *components[]) {
     Serial.println( "Init Display PROG");
     #endif
     _nr = (MK52_Interpreter::Receiver_Number *)components[COMPONENT_RECEIVER_NUMBER];
+    _tr = (MK52_Interpreter::Receiver_Text *)components[COMPONENT_RECEIVER_TEXT];
     _ar = (MK52_Interpreter::Receiver_Address *)components[COMPONENT_RECEIVER_ADDRESS];
     _rr = (MK52_Interpreter::Receiver_Register *)components[COMPONENT_RECEIVER_REGISTER];
     return Display::init( components);
@@ -37,18 +40,41 @@ void Display_PROG::activate(){
     _lcd->dimScreen();
     _lcd->clearScreen( false);
     char *buff = _lcd->getOutputBuffer();
-    uint32_t prev_PC = _pmem->getCounter();
+    int32_t prev_PC = (int32_t)_pmem->getCounter();
     _printStatus(true);
-    snprintf_P(buff, SCREEN_COLS, _programLineEditFormat, prev_PC % 10000, _pmem->getCurrentLine());
+
+    // snprintf_P(buff, SCREEN_COLS, _programLineEditFormat, prev_PC % 10000, _pmem->getCurrentLine());
+    // buff[ SCREEN_COLS] = 0;
+    // _lcd->outputTerminalLine( 10, buff);
+    // for( int i=9; i>=0; i--){
+    //     if( _pmem->decrementCounter()) break;
+    //     snprintf_P(buff, SCREEN_COLS, _programLineFormat, _pmem->getCounter() % 10000, _pmem->getCurrentLine());
+    //     buff[ SCREEN_COLS] = 0;
+    //     _lcd->outputTerminalLine( i, buff);
+    // }
+    // _pmem->setCounter( prev_PC);
+
+    _pmem->getPreviousLines(_displayLines, SCREEN_ROWS-1);
+    if( _displayLines[0])
+        snprintf_P(buff, SCREEN_COLS, _programLineEditFormat, prev_PC, _displayLines[0]);
+    else
+        snprintf_P(buff, SCREEN_COLS, _emptyLineEditFormat, prev_PC--);
     buff[ SCREEN_COLS] = 0;
     _lcd->outputTerminalLine( 10, buff);
-    for( int i=9; i>=0; i--){
-        if( _pmem->decrementCounter()) break;
-        snprintf_P(buff, SCREEN_COLS, _programLineFormat, _pmem->getCounter() % 10000, _pmem->getCurrentLine());
+    for( int i=9, j=1; i>=0; i--, j++){
+        if( prevPC<0){
+            _lcd->outputTerminalLine( i, "");
+            continue;
+        }
+        if( _displayLines[j])
+            snprintf_P(buff, SCREEN_COLS, _programLineFormat, prev_PC--, _displayLines[j]);
+        else
+            snprintf_P(buff, SCREEN_COLS, _emptyLineFormat, prev_PC--);
         buff[ SCREEN_COLS] = 0;
         _lcd->outputTerminalLine( i, buff);
     }
-    _pmem->setCounter( prev_PC);
+    //_pmem->setCounter( prev_PC);
+
     _lcd->undimScreen();
     #ifdef __DEBUG
     TargetTime = millis() - TargetTime;

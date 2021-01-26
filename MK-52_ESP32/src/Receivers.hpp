@@ -38,8 +38,20 @@ namespace MK52_Interpreter{
         inline char *toString(){ return _text;};
         inline char *toTrimmedString(){ return (*_text == ' ')? _text+1: _text;};
       private:
-        char _text[SCREEN_COLS]; // temporary input buffer
+        char *_text = NULL;
         inline void _swapSign( char *pos, char plusChar){ *pos = (*pos == '-')? plusChar: '-';};
+    };
+
+    class Receiver_Text: public Receiver{
+      public:
+        unsigned long init( void *components[]);
+        void activate( uint8_t scancode = 0, int8_t parent = NO_CHANGE);
+        int tick( uint8_t scancode = 0);
+        inline char *toString(){ return _text;};
+        char *toTrimmedString();
+        void _setInputMode( uint8_t m, char *parentMode=NULL);
+      private:
+        char *_text = NULL;
     };
 
     class Receiver_Address: public Receiver{
@@ -116,6 +128,7 @@ namespace MK52_Interpreter{
         int tick( uint8_t scancode = 0);
       private:
         Receiver_Number *_nr;
+        Receiver_Text *_tr;
         Receiver_Address *_ar;
         Receiver_Register *_rr;
         Program_Memory *_pmem;
@@ -129,6 +142,7 @@ namespace MK52_Interpreter{
         int tick( uint8_t scancode = 0);
       private:
         Receiver_Address *_ar;
+        Receiver_Text *_tr;
         Program_Memory *_pmem;
         int _appendButton(uint8_t scancode);
     };
