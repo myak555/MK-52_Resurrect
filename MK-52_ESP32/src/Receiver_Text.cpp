@@ -183,3 +183,27 @@ void Receiver_Text::_setInputMode( uint8_t m, char *parentMode){
             return;
     }
 }
+
+char *Receiver_Text::appendText( char *text){
+    int8_t ln = strlen(_text);
+    char *ptr = _text + ln;
+    while( ln<PROGRAM_LINE_LENGTH && *text){
+        *ptr++ = *text++;
+        ln++;
+    }
+    *ptr = 0;
+    return ptr;
+}
+
+char *Receiver_Text::appendText_P( const char *text){
+    int8_t ln = strlen(_text);
+    char *ptr = _text + ln;
+    char c = (char)pgm_read_byte(text++);
+    while( ln<PROGRAM_LINE_LENGTH && c){
+        *ptr++ = c;
+        c = (char)pgm_read_byte(text++);
+        ln++;
+    }
+    *ptr = 0;
+    return ptr;
+}

@@ -57,7 +57,7 @@ namespace MK52_Interpreter{
         void _printOperatorWithAddress();
         void _printOperatorWithRegister();
         void _printOperator();
-        void _printStatus( bool output=false);
+        char *_getTerminalLine( char *buff, int32_t lineNumber, char *text);
     };
 
     class Display_DATA: public Display{

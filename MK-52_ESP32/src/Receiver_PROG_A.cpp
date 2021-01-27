@@ -13,17 +13,17 @@
 
 using namespace MK52_Interpreter;
 
-unsigned long Receiver_AUTO_A::init( void *components[]) {
+unsigned long Receiver_PROG_A::init( void *components[]) {
     #ifdef __DEBUG
-    Serial.println( "Init AUTO_A");
+    Serial.println( "Init PROG_A");
     #endif
     _ar = (Receiver_Address *)components[COMPONENT_RECEIVER_ADDRESS];
     return Receiver::init(components);
 }
 
-void Receiver_AUTO_A::activate( uint8_t scancode, int8_t parent){
+void Receiver_PROG_A::activate( uint8_t scancode, int8_t parent){
     #ifdef __DEBUG
-    Serial.println( "Activating receiver AUTO_A");
+    Serial.println( "Activating receiver PROG_A");
     #endif
     Receiver::activate( scancode, parent);
     _lcd->updateStatusFMODE( " A ");
@@ -32,7 +32,7 @@ void Receiver_AUTO_A::activate( uint8_t scancode, int8_t parent){
     tick(scancode);
 }
 
-int Receiver_AUTO_A::tick( uint8_t scancode){
+int Receiver_PROG_A::tick( uint8_t scancode){
     int return_value = COMPONENT_RECEIVER_AUTO_N;
     int r = _completeSubentry(scancode);
     if( r < NO_CHANGE){
@@ -45,14 +45,14 @@ int Receiver_AUTO_A::tick( uint8_t scancode){
     switch( scancode){
         // Column 0
         case 1:
-            return_value = COMPONENT_RECEIVER_AUTO_F;
+            return_value = COMPONENT_RECEIVER_PROG_F;
             break;
         case 2:
-            return_value = COMPONENT_RECEIVER_AUTO_K;
+            return_value = COMPONENT_RECEIVER_PROG_K;
             break;
         case 4:
-            _rpnf->execute(FUNC_TOGGLE_DMOD);
-            _lcd->updateStatusDMODE(_rpnf->Stack->getDModeName());
+            _rpnf->execute(FUNC_TOGGLE_EMOD);
+            _lcd->updateStatusDMODE(_rpnf->progMem->getEModeName());
             return NO_CHANGE;
 
         // Column 1 does nothing
@@ -120,10 +120,11 @@ int Receiver_AUTO_A::tick( uint8_t scancode){
            return NO_CHANGE;
     }
     _mode = 0;
+    //delay(KBD_IDLE_DELAY);
     return return_value;
 }
 
-int Receiver_AUTO_A::_completeSubentry( uint8_t scancode){
+int Receiver_PROG_A::_completeSubentry( uint8_t scancode){
     int8_t r = (int)scancode;
     switch( _mode){
         case 0:

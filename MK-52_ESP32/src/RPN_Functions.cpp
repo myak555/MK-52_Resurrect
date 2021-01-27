@@ -154,6 +154,7 @@ unsigned long RPN_Functions::init( void *components[]) {
     // #define FUNC_GOSUB              65
     _appendFunction( new Func_GOSUB());
     // #define FUNC_RETURN             66
+    _appendFunction( new Func_Return());
     // #define FUNC_MEMSET             67
     _appendFunction( new Func_MemSet());
     // #define FUNC_MEMSWP             68
@@ -168,6 +169,10 @@ unsigned long RPN_Functions::init( void *components[]) {
     _appendFunction( new Func_RToMex());
     // #define FUNC_MEXCLR             73
     _appendFunction( new Func_MexClr());
+    // #define FUNC_TOGGLE_EMOD        74
+    _appendFunction( new Func_Toggle_EMOD());
+    // #define FUNC_STOP               75
+    _appendFunction( new Func_Stop());
 
     #ifdef __DEBUG
     Serial.print( _nfunctions);
@@ -176,17 +181,33 @@ unsigned long RPN_Functions::init( void *components[]) {
     return millis();
 }
 
-void RPN_Functions::execute( int16_t id, char *command){
-    if( id<0) return;
+RPN_Function *RPN_Functions::getFunctionByID(int16_t id){
+    if( id<0) return NULL;
     for(int16_t i=0; i<_nfunctions; i++){
         RPN_Function *pf = (RPN_Function *)_functions[i];
         if( !pf->checkID( id)) continue;
-        pf->execute( _components, command);
-        break;
+        return pf;
     }
+    return NULL;
 }
 
-void RPN_Functions::execute( char *command){
+RPN_Function *RPN_Functions::getFunctionByName(char *command){
+    if( strlen(command)<=0) return NULL;
+    for(int16_t i=0; i<_nfunctions; i++){
+        RPN_Function *pf = (RPN_Function *)_functions[i];
+        if( !pf->checkName( command)) continue;
+        return pf;
+    }
+    return NULL;
+}
+
+void RPN_Functions::execute( int16_t id, char *command){
+    RPN_Function *pf = getFunctionByID( id);
+    if( pf==NULL) return;
+    pf->execute( _components, command);
+}
+
+void RPN_Functions::execute( char *command, bool pushNeeded){
     if( strlen(command)<=0) return;
     for(int16_t i=0; i<_nfunctions; i++){
         RPN_Function *pf = (RPN_Function *)_functions[i];
@@ -196,7 +217,32 @@ void RPN_Functions::execute( char *command){
         return;
     }
     // if the name is not found, it must be a number and should be placed to register X
+    if( pushNeeded){
+        Stack->storeBx();
+        Stack->push();
+    }
     Stack->X->fromString( command);
+}
+
+//
+// Executes one step at project counter
+//
+void RPN_Functions::executeStep(){
+    if(_atStop){
+        _atStop = false;
+        progMem->incrementCounter();
+    }
+    char *programLine = progMem->getCurrentLine();
+    #ifdef __DEBUG
+    Serial.print( "Execute: [");
+    Serial.print( programLine);
+    Serial.println( "]");
+    #endif
+    execute( programLine, true);
+    if( _atStop)
+        Stack->setStackLabel_P(0, PSTR("STOP Reached"));
+    else
+        progMem->incrementCounter();
 }
 
 //
@@ -260,3 +306,4 @@ void RPN_Functions::_appendFunction( RPN_Function *f){
 #include "../functions/Func_Logical.h"
 #include "../functions/Func_Convert.h"
 #include "../functions/Func_Memory.h"
+#include "../functions/Func_Goto.h"

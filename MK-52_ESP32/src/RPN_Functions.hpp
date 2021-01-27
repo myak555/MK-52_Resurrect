@@ -30,13 +30,17 @@ namespace MK52_Interpreter{
 
     class RPN_Functions{
         public:
+            bool _atStop = false;
             RPN_Stack *Stack;
             Program_Memory *progMem;
             Extended_Memory *extMem;
 
             unsigned long init( void *components[]);
+            RPN_Function *getFunctionByID(int16_t id);
+            RPN_Function *getFunctionByName(char *command);
             void execute( int16_t id=-1, char *command=NULL);
-            void execute( char *command);
+            void execute( char *command, bool pushNeeded=false);
+            void executeStep();
 
       private:
             void **_components;

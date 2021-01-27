@@ -13,17 +13,17 @@
 
 using namespace MK52_Interpreter;
 
-unsigned long Receiver_AUTO_K::init( void *components[]) {
+unsigned long Receiver_PROG_K::init( void *components[]) {
     #ifdef __DEBUG
-    Serial.println( "Init AUTO_K");
+    Serial.println( "Init PROG_K");
     #endif
     _rr = (Receiver_Register *)components[COMPONENT_RECEIVER_REGISTER];
     return Receiver::init(components);
 }
 
-void Receiver_AUTO_K::activate( uint8_t scancode, int8_t parent){
+void Receiver_PROG_K::activate( uint8_t scancode, int8_t parent){
     #ifdef __DEBUG
-    Serial.println( "Activating receiver AUTO_K");
+    Serial.println( "Activating receiver PROQ_K");
     #endif
     Receiver::activate( scancode, parent);
     _lcd->updateStatusFMODE( " K ");
@@ -32,7 +32,7 @@ void Receiver_AUTO_K::activate( uint8_t scancode, int8_t parent){
     tick(scancode);
 }
 
-int Receiver_AUTO_K::tick( uint8_t scancode){
+int Receiver_PROG_K::tick( uint8_t scancode){
     int return_value = COMPONENT_RECEIVER_AUTO_N;
     int r = _completeSubentry(scancode);
     if( r < NO_CHANGE) return return_value;
@@ -47,8 +47,8 @@ int Receiver_AUTO_K::tick( uint8_t scancode){
             return_value = COMPONENT_RECEIVER_AUTO_A;
             break;
         case 4:
-            _rpnf->execute(FUNC_TOGGLE_DMOD);
-            _lcd->updateStatusDMODE(_rpnf->Stack->getDModeName());
+            _rpnf->execute(FUNC_TOGGLE_EMOD);
+            _lcd->updateStatusDMODE(_rpnf->progMem->getEModeName());
             return NO_CHANGE;
 
         // Column 1 does nothing
@@ -155,7 +155,7 @@ int Receiver_AUTO_K::tick( uint8_t scancode){
     return return_value;
 }
 
-int Receiver_AUTO_K::_completeSubentry( uint8_t scancode){
+int Receiver_PROG_K::_completeSubentry( uint8_t scancode){
     int8_t r = (int)scancode;
     switch( _mode){
         case 0:

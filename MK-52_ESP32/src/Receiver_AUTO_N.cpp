@@ -92,9 +92,8 @@ int Receiver_AUTO_N::tick( uint8_t scancode){
             _ar->activate(0, 0);
             _lcd->updateStatusPC( _ar->toString());
             break;
-        case 12: // TODO STEP
-            _rpnf->execute( FUNC_INCREMENT_PC);
-            _rpnf->Stack->setStackLabel_P( 0, PSTR("STEP!"));
+        case 12:
+            _rpnf->executeStep();
             _lcd->updateStatusPC( _rpnf->progMem->getCounter());
             break;
 

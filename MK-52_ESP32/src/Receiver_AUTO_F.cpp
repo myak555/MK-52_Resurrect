@@ -104,7 +104,8 @@ int Receiver_AUTO_F::tick( uint8_t scancode){
             _rpnf->execute( FUNC_POW);
             break;
         case 28:
-            return COMPONENT_DISPLAY_PROG;
+            return_value = COMPONENT_DISPLAY_PROG;
+            break;
 
         // Column 7
         case 29:

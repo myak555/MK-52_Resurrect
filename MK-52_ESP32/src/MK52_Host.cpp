@@ -33,6 +33,8 @@ static MK52_Interpreter::Receiver_AUTO_R _m_Receiver_AUTO_R;
 
 static MK52_Interpreter::Receiver_PROG_N _m_Receiver_PROG_N;
 static MK52_Interpreter::Receiver_PROG_F _m_Receiver_PROG_F;
+static MK52_Interpreter::Receiver_PROG_K _m_Receiver_PROG_K;
+static MK52_Interpreter::Receiver_PROG_A _m_Receiver_PROG_A;
 
 static MK52_Interpreter::Receiver_DATA_N _m_Receiver_DATA_N;
 static MK52_Interpreter::Receiver_DATA_F _m_Receiver_DATA_F;
@@ -93,6 +95,8 @@ unsigned long MK52_Host::init() {
 
     _components[ COMPONENT_RECEIVER_PROG_N] = &_m_Receiver_PROG_N;
     _components[ COMPONENT_RECEIVER_PROG_F] = &_m_Receiver_PROG_F;
+    _components[ COMPONENT_RECEIVER_PROG_K] = &_m_Receiver_PROG_K;
+    _components[ COMPONENT_RECEIVER_PROG_A] = &_m_Receiver_PROG_A;
 
     _components[ COMPONENT_RECEIVER_DATA_N] = &_m_Receiver_DATA_N;
     _components[ COMPONENT_RECEIVER_DATA_F] = &_m_Receiver_DATA_F;
@@ -124,6 +128,8 @@ unsigned long MK52_Host::init() {
     
     _m_Receiver_PROG_N.init( _components);
     _m_Receiver_PROG_F.init( _components);
+    _m_Receiver_PROG_K.init( _components);
+    _m_Receiver_PROG_A.init( _components);
 
     _m_Receiver_DATA_N.init( _components);
     _m_Receiver_DATA_F.init( _components);

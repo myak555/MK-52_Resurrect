@@ -50,6 +50,8 @@ namespace MK52_Interpreter{
         inline char *toString(){ return _text;};
         char *toTrimmedString();
         void _setInputMode( uint8_t m, char *parentMode=NULL);
+        char *appendText( char *text);
+        char *appendText_P( const char *text);
       private:
         char *_text = NULL;
     };
@@ -133,6 +135,7 @@ namespace MK52_Interpreter{
         Receiver_Register *_rr;
         Program_Memory *_pmem;
         int _appendButton(uint8_t scancode);
+        int _completeSubentry( uint8_t scancode);
     };
 
     class Receiver_PROG_F: public Receiver{
@@ -144,7 +147,7 @@ namespace MK52_Interpreter{
         Receiver_Address *_ar;
         Receiver_Text *_tr;
         Program_Memory *_pmem;
-        int _appendButton(uint8_t scancode);
+        int _completeSubentry( uint8_t scancode);
     };
 
     class Receiver_PROG_K: public Receiver{
@@ -154,7 +157,6 @@ namespace MK52_Interpreter{
         int tick( uint8_t scancode = 0);
       private:
         Receiver_Register *_rr;
-        int _appendButton(uint8_t scancode);
         int _completeSubentry( uint8_t scancode);
     };
 
@@ -165,7 +167,6 @@ namespace MK52_Interpreter{
         int tick( uint8_t scancode = 0);
       private:
         Receiver_Address *_ar;
-        int _appendButton(uint8_t scancode);
         int _completeSubentry( uint8_t scancode);
     };
 

@@ -71,3 +71,5 @@
 #define FUNC_MEXTOR             71
 #define FUNC_RTOMEX             72
 #define FUNC_MEXCLR             73
+#define FUNC_TOGGLE_EMOD        74
+#define FUNC_STOP               75

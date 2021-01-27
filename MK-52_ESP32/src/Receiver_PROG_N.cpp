@@ -7,6 +7,7 @@
 //////////////////////////////////////////////////////////
 
 #include "Receivers.hpp"
+#include "../functions/functions.h"
 
 #define __DEBUG
 
@@ -26,8 +27,7 @@ unsigned long Receiver_PROG_N::init( void *components[]) {
 
 void Receiver_PROG_N::activate( uint8_t scancode, int8_t parent){
     Receiver::activate( scancode, parent);
-    _pmem->setInputMode(PSTR("   "));
-    _pmem->clearText();
+    _lcd->updateStatusFMODE( "   ");
     _mode = 1;
     if(!scancode) return;
     _appendButton(scancode);
@@ -40,50 +40,62 @@ int Receiver_PROG_N::tick( uint8_t scancode){
 }
 
 int Receiver_PROG_N::_appendButton(uint8_t scancode){
-    if( _nr->isActive()){
-        if( _nr->tick( scancode) == NO_CHANGE) return NO_CHANGE;
-        _pmem->updateLine( _nr->toTrimmedString());
-        _pmem->incrementCounter();
-        return NO_CHANGE;
-    }
-    if( _ar->isActive()){
-        if( _ar->tick( scancode) == NO_CHANGE) return NO_CHANGE;
-        char *tmp = _ar->toString();
-        if( *tmp == 0){
-            _pmem->deleteLine();
-            return NO_CHANGE;
-        }
-        _pmem->appendText( tmp);
-        _pmem->updateLine();
-        _pmem->incrementCounter();
-        return NO_CHANGE;
-    }
-    if( _rr->isActive()){
-        if( _rr->tick( scancode) == NO_CHANGE) return NO_CHANGE;
-        _pmem->appendText( _rr->toString());
-        _pmem->updateLine();
-        _pmem->incrementCounter();
-        return NO_CHANGE;
-    }
+    int return_value = NO_CHANGE;
+    // if( _nr->isActive()){
+    //     if( _nr->tick( scancode) == NO_CHANGE) return NO_CHANGE;
+    //     _pmem->updateLine( _nr->toTrimmedString());
+    //     _pmem->incrementCounter();
+    //     return NO_CHANGE;
+    // }
+    // if( _ar->isActive()){
+    //     if( _ar->tick( scancode) == NO_CHANGE) return NO_CHANGE;
+    //     char *tmp = _ar->toString();
+    //     if( *tmp == 0){
+    //         //_pmem->deleteLine();
+    //         return NO_CHANGE;
+    //     }
+    //     _tr->appendText( tmp);
+    //     _pmem->updateLine();
+    //     _pmem->incrementCounter();
+    //     return NO_CHANGE;
+    // }
+    // if( _rr->isActive()){
+    //     if( _rr->tick( scancode) == NO_CHANGE) return NO_CHANGE;
+    //     _tr->appendText( _rr->toString());
+    //     _pmem->updateLine();
+    //     _pmem->incrementCounter();
+    //     return NO_CHANGE;
+    // }
     switch( scancode){
         case 0:
-        case 2:
-        case 3:
-            return NO_CHANGE;
+            break;
 
         // Column 0
         case 1:
-            return COMPONENT_RECEIVER_PROG_F;
+            _mode = 0;
+            return_value = COMPONENT_RECEIVER_PROG_F;
+            break;
+        case 2:
+            _mode = 0;
+            return_value = COMPONENT_RECEIVER_PROG_K;
+            break;
+        case 3:
+            _mode = 0;
+            return_value = COMPONENT_RECEIVER_PROG_A;
+            break;
         case 4:
-            _pmem->EditOverwrite = !_pmem->EditOverwrite;
+            _rpnf->execute(FUNC_TOGGLE_EMOD);
+            _lcd->updateStatusDMODE(_rpnf->progMem->getEModeName());
             return NO_CHANGE;
 
         // Column 1
         case 5:
-            _pmem->incrementCounter();
+            _rpnf->execute( FUNC_INCREMENT_PC);
+            _lcd->updateStatusPC( _rpnf->progMem->getCounter());
             return NO_CHANGE;
         case 6:
-            _pmem->decrementCounter();
+            _rpnf->execute( FUNC_DECREMENT_PC);
+            _lcd->updateStatusPC( _rpnf->progMem->getCounter());
             return NO_CHANGE;
         case 7:
             _pmem->updateLine_P( PSTR("RETURN"));
@@ -96,23 +108,23 @@ int Receiver_PROG_N::_appendButton(uint8_t scancode){
 
         // Column 2
         case 9:
-            _pmem->clearText();
-            _pmem->appendText_P( PSTR("M->X ") );
+            _tr->activate();
+            _tr->appendText_P( PSTR("M->X ") );
             _rr->activate(0, COMPONENT_RECEIVER_PROG_N);
             return NO_CHANGE;
         case 10:
-            _pmem->clearText();
-            _pmem->appendText_P( PSTR("X->M ") );
+            _tr->activate();
+            _tr->appendText_P( PSTR("X->M ") );
             _rr->activate(0, COMPONENT_RECEIVER_PROG_N);
             return NO_CHANGE;
         case 11:
-            _pmem->clearText();
-            _pmem->appendText_P( PSTR("GOTO ") );
+            _tr->activate();
+            _tr->appendText_P( PSTR("GOTO ") );
             _ar->activate(0, COMPONENT_RECEIVER_PROG_N);
             return NO_CHANGE;
         case 12:
-            _pmem->clearText();
-            _pmem->appendText_P( PSTR("GOSUB ") );
+            _tr->activate();
+            _tr->appendText_P( PSTR("GOSUB ") );
             _ar->activate(0, COMPONENT_RECEIVER_PROG_N);
             return NO_CHANGE;
 
@@ -158,5 +170,5 @@ int Receiver_PROG_N::_appendButton(uint8_t scancode){
             _nr->activate(0, COMPONENT_RECEIVER_PROG_N);
             break;
     }
-    return NO_CHANGE;
+    return return_value;
 }

@@ -47,12 +47,17 @@
 #define DMODE_RADIANS               1
 #define DMODE_GRADS                 2
 
+#define EMODE_OWERWRITE             0
+#define EMODE_INSERT                1
+#define EMODE_SHIFT                 2
+
 #define PROGRAM_MEMORY_SIZE         64000
 #define EXTENDED_MEMORY_SIZE        36000
 #define EXTENDED_MEMORY_NVALS       4000
 #define REGISTER_MEMORY_SIZE        180
 #define REGISTER_MEMORY_NVALS       20
 #define MK52_NFUNCTIONS             100
+#define RETURN_STACK_SIZE           100
 
 #define NO_CHANGE                   -1
 #define SHUTDOWN_REQUESTED          -2

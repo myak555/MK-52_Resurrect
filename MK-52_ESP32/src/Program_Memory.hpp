@@ -15,20 +15,24 @@ namespace MK52_Interpreter{
 
     class Program_Memory{
       public:
-        bool EditOverwrite = true;
         unsigned long init( void *components[]);
         void clear();
         void resetCounter();
 
         inline uint32_t getCounter(){ return _counter;};
-        uint32_t setCounter(uint32_t c);
+        uint32_t setCounter(uint32_t address);
         uint32_t setCounter(char *s);
         bool incrementCounter();
         bool decrementCounter();
+        bool goSub( uint32_t address);
+        bool goSub( char *s);
+        bool returnFromSub();
 
-        inline uint32_t getFree(){return (uint32_t)(_limit-_bottom);};
-        inline char *getCurrentLine(){return (char*)_pointer;};
-        inline char *getNextLine(){return (char*)_pointer + strlen((char *)_pointer) + 1;};
+        inline uint32_t getFree(){return (uint32_t)(PROGRAM_MEMORY_SIZE-_bottom);};
+        inline char *getCurrentLine(){return (char*)(_buffer+_current);};
+        inline char *currentChar(){return (char*)_buffer[_current];};
+        char *getNextLine();
+        inline char *getBottom(){return (char*)(_buffer+_bottom);};
 
         bool appendLine(char *line=NULL);
         bool appendLine_P(const char *line);
@@ -40,28 +44,22 @@ namespace MK52_Interpreter{
         bool updateLine_P(const char *line);
         void deleteLine();
 
-        inline void clearText(){*_text=0;}; 
-        char *appendText( char *text);
-        char *appendText_P( const char *text);
-        inline char *toString(){return _text;};
-        inline void setInputMode(const char * m){ strcpy_P( _inputMode, m);};
-        inline char *getInputMode(){ return _inputMode;};
-        inline char *getEditMode(){ return EditOverwrite? _editModeOverwrite: _editModeInsert;};
+        inline uint8_t getEMode(){ return _eMode;}; 
+        inline char *getEModeName(){ return _eModeName;}; 
+        void setEMode(uint8_t m); 
+        uint8_t toggleEditMode();
 
         void getPreviousLines( char *lines[], uint8_t n);
 
       private:
         uint32_t _counter = 0;
+        uint32_t _bottom = 0;
+        uint32_t _current = 0;
         uint8_t *_buffer = NULL;
-        uint8_t *_bottom = NULL;
-        uint8_t *_limit = NULL;
-        uint8_t *_pointer = NULL;
-        char _text[PROGRAM_LINE_LENGTH]; // temporary input buffer
-        char _inputMode[4];
-        char *_editModeOverwrite = "OVR";
-        char *_editModeInsert = "INS";
-        uint8_t *_returnStack = NULL;
-        uint8_t *_rsPtr = 0;
+        uint8_t _eMode = EMODE_OWERWRITE;
+        char _eModeName[5];
+        uint32_t *_returnStack = NULL;
+        uint32_t _returnStackPtr = 0;
     };
 };
 
