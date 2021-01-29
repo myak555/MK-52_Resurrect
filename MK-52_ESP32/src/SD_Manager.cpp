@@ -9,7 +9,7 @@
 #include <SD.h>
 #include "SD_Manager.hpp"
 
-//#define __DEBUG
+#define __DEBUG
 
 const char SD_Error_NotMounted[] PROGMEM = "Error: Not mounted";
 // const char SD_Error_FileNameTooLong[] PROGMEM = "Err: Long name";
@@ -42,58 +42,26 @@ const char SD_DirMarker[] PROGMEM = " [DIR]";
 
 using namespace MK52_Hardware;
 
-// //
-// // Timer to check the SD status
-// //
-// static volatile bool SDCheckRequested = false;
-// static void IRAM_ATTR isrSD() {
-//   SDCheckRequested = true;
-// }
-
-// void SD_Manager::_checkSDPin(){
-//   if( !SDCheckRequested) return;
-//   SDCheckRequested = false;
-//   _detectSDCard();
-// }
-
-// bool SD_Manager::_detectSDCard(){
-//   bool inserted = !digitalRead(SD_DETECT_PIN);
-//   delay(30);
-//   inserted = inserted && (!digitalRead(SD_DETECT_PIN));
-//   if( SDInserted == inserted) return inserted;
-//   SDInserted = inserted;
-//   _iom->sendStringUTF8Ln( SD_Message_Table[ SDInserted? 0: 1]);
-//   cardSize = 0;
-//   if( !inserted){
-//     if( SDMounted){
-//       SD.end();
-//       SDMounted = false;
-//     }
-//     return false;
-//   }
-//   _iom->sendStringUTF8Ln( SD_Message_Table[ SDMounted? 2: 3]);
-//   cardSize = 0;
-//   if( !SDMounted) return inserted;
-//   cardSize = SD.cardSize() >> 20;
-//   sprintf( (char *)_io_buffer, SD_Message_Table[4], cardSize);
-//   _iom->sendStringUTF8Ln( (char *)_io_buffer);
-//   #ifdef __DEBUG  
-//   Serial.printf("SD Card Size: %llu MB\n", cardSize);
-//   #endif
-//   checkRootExists();
-//   keepAwake();
-//   return inserted;  
-// }
-
 //
 // Init and status update
 //
 unsigned long SD_Manager::init(){
     SDMounted = SD.begin();
-    _current_Dir = (char *)malloc( CURRENT_DIR_LEN+CURRENT_FILE_LEN);
-    _current_File = _current_Dir + CURRENT_DIR_LEN;
-    memset( _current_Dir, 0, CURRENT_DIR_LEN+CURRENT_FILE_LEN);
-    _resetRoot();
+    _buffer = (char *)malloc( DIRECTORY_LIST_SIZE);
+    _current_Dir_Name = (char *)malloc( CURRENT_DIR_LEN + CURRENT_FILE_LEN * 2);
+    #ifdef __DEBUG
+    if( _buffer == NULL || _current_Dir_Name == NULL){
+        Serial.println("File List malloc busted!");
+        return millis();
+    }
+    #endif
+    _clearItems();
+    memset( _current_Dir_Name, 0, CURRENT_DIR_LEN + CURRENT_FILE_LEN * 2);
+    _current_File_Name = _current_Dir_Name + CURRENT_DIR_LEN;
+    _text = _current_File_Name + CURRENT_FILE_LEN;
+    
+    setFolder_P(SD_root);
+    //_resetRoot();
     return millis(); 
 }
 
@@ -119,12 +87,12 @@ void SD_Manager::_resetRoot(){
     #ifdef __DEBUG
     Serial.println("Reset to root");
     #endif
-    strncpy_P( _current_Dir, SD_root, CURRENT_DIR_LEN);
+    strncpy_P( _current_Dir_Name, SD_root, CURRENT_DIR_LEN);
 }
 
 void SD_Manager::checkRootExists(){
     if(!SDMounted) return;
-    File root = SD.open( _current_Dir);
+    File root = SD.open( _current_Dir_Name);
     if(!root){
         _resetRoot();
         return;
@@ -135,7 +103,7 @@ void SD_Manager::checkRootExists(){
 
 File SD_Manager::_getCurrentDir(){
     checkRootExists();
-    return SD.open( _current_Dir);
+    return SD.open( _current_Dir_Name);
 }
 
 bool SD_Manager::checkEntityExists( const char *name){
@@ -146,27 +114,27 @@ bool SD_Manager::checkEntityExists( const char *name){
 //
 // Lists directory
 //
-void SD_Manager::startFolderListing( char **Lines, uint8_t nLines, uint8_t lineLen, char *name){
-    for( uint8_t i=0; i<nLines; i++) *(Lines[i]) = 0;
-    listingPosition = -1;
-    if( !SDMounted ){
-        strcpy_P( Lines[0], SD_Error_NotMounted);
-        return;
-    }
-    if( name == NULL) name = _current_Dir;
-    File root = SD.open( name);
-    if(!root) return;
-    uint8_t writePosition = 0;
-    if( strcmp_P( name, SD_root) != 0)
-        strcpy_P( Lines[writePosition++], SD_uproot);
-    listingPosition = 0;
-    size_t nameLen = 0;
-    char *namePtr = NULL;
-    File file = root.openNextFile();
-    while(writePosition < nLines && file){
-        _formEntityName( file, Lines[writePosition++], lineLen);
-        file = root.openNextFile();
-    }
+void SD_Manager::startFolderListing( char *Lines[], uint8_t nLines, uint8_t lineLen, char *name){
+    for( uint8_t i=0; i<nLines; i++) memset( Lines[i], 0, lineLen+1);
+    // listingPosition = -1;
+    // if( !SDMounted ){
+    //     strcpy_P( Lines[0], SD_Error_NotMounted);
+    //     return;
+    // }
+    // if( name == NULL) name = _current_Dir_Name;
+    // File root = SD.open( name);
+    // if(!root) return;
+    // uint8_t writePosition = 0;
+    // if( strcmp_P( name, SD_root) != 0)
+    //     strcpy_P( Lines[writePosition++], SD_uproot);
+    // listingPosition = 0;
+    // size_t nameLen = 0;
+    // char *namePtr = NULL;
+    // File file = root.openNextFile();
+    // while(writePosition < nLines && file){
+    //     _formEntityName( file, Lines[writePosition++], lineLen);
+    //     file = root.openNextFile();
+    // }
 }
 
 // bool SD_Manager::deleteEntity( const char *name){
@@ -633,41 +601,100 @@ void SD_Manager::startFolderListing( char **Lines, uint8_t nLines, uint8_t lineL
 //   return false;
 // }
 
+void SD_Manager::setFolder( char *name){
+    strncpy( _current_Dir_Name, name, CURRENT_DIR_LEN-1);
+    _current_Dir_Name[CURRENT_DIR_LEN-1] = 0;
+    readFolderItems();
+}
+
+void SD_Manager::setFolder_P( const char *name){
+    strncpy_P( _current_Dir_Name, name, CURRENT_DIR_LEN-1);
+    _current_Dir_Name[CURRENT_DIR_LEN-1] = 0;
+    readFolderItems();
+}
+
+void SD_Manager::readFolderItems(){
+    _clearItems();
+    if( !checkEntityExists(_current_Dir_Name)) return;
+    if( _current_Dir_Open){
+        _current_Dir.close();
+        _current_Dir_Open = false;
+    }
+    _current_Dir = SD.open( _current_Dir_Name);
+    if(!_current_Dir) return;
+    _current_Dir_Open = true;
+    File file = _current_Dir.openNextFile();
+    int16_t counter = 0;
+    while( file){
+        const char *ptr = (const char *)_formEntityName( file);
+        if( _insertItem( ptr, counter, counter++)) break; // too many items
+        file = _current_Dir.openNextFile();
+    }
+    _current_Dir.seek(0);
+}
+
+void SD_Manager::_clearItems(){
+    _nDirs = 0;
+    _nItems = 0;
+    memset( _buffer, 0, DIRECTORY_LIST_SIZE);
+}
+
+//
+// Returns true if the maximum directory length is exceeded
+//
+bool SD_Manager::_insertItem(const char *name, int16_t pos, int16_t slot){
+    if( slot>=DIRECTORY_LIST_NITEMS-1) return true;
+    if( slot>=_nItems) slot = _nItems;
+    int16_t toMove = _nItems - slot;
+    char *ptr = _buffer + slot * SCREEN_COLS;
+    if( toMove > 0) memmove( ptr+SCREEN_COLS, ptr, toMove*SCREEN_COLS);
+    int16_t toCopy = strlen( name);
+    if( toCopy > SCREEN_COLS-3) toCopy = SCREEN_COLS-3;
+    memcpy( ptr, &pos, 2);
+    memset( ptr+2, 0, SCREEN_COLS-2);
+    memcpy( ptr+2, name, toCopy);
+    if( slot<_nDirs)_nDirs++;
+    _nItems++;
+    return false;
+}
+
 char *SD_Manager::_stripFolders( const char *name){
   int16_t lastHash = strlen( (char*) name) - 1;
   while( lastHash>0 && name[lastHash] != '/') lastHash--;
   return (char *)name+lastHash+1; 
 }
 
-void SD_Manager::_formEntityName( File f, char *str, uint8_t lineLen){
+char *SD_Manager::_formEntityName( File f){
+    memset( _text, 0, SCREEN_COLS-3);
     const char *name = f.name();
-    uint8_t lLen = lineLen - 6;
     char *namePtr = _stripFolders( name);
     uint8_t nameLen = strlen( namePtr);
-    if( nameLen > lLen) nameLen = lLen;
-    for( uint8_t i=0; i<nameLen; i++) *str++ = *namePtr++;
-    for( uint8_t i=nameLen; i<lLen; i++) *str++ = ' ';
-    if( f.isDirectory())
-        strcpy_P( str, SD_DirMarker);
-    else
-        _appendFileSize( f, str);
+    if( nameLen > SCREEN_COLS - 9) nameLen = SCREEN_COLS - 9;
+    if( nameLen>0) memcpy( _text, namePtr, nameLen);
+    for( uint16_t i=strlen(_text); i<SCREEN_COLS-9; i++) _text[i] = ' ';
+    return _appendFileSize(f);
 }
 
-void SD_Manager::_appendFileSize( File f, char *str){
+char *SD_Manager::_appendFileSize( File f){
+    char *str = _text + SCREEN_COLS - 9;
+    if( f.isDirectory()){
+        strcpy_P( str, PSTR(" [DIR]"));
+        return _text;
+    }
     size_t size = f.size();
     if( size < 8192){
         sprintf_P( str, PSTR(" %04db"), (int)size);
-        return;
+        return _text;
     }
     size >>= 10;
     if( size < 8192){
         sprintf_P( str, PSTR(" %04dk"), (int)size);
-        return;
+        return _text;
     }
     size >>= 10;
     if( size < 8192){
         sprintf_P( str, PSTR(" %04dM"), (int)size);
-        return;
+        return _text;
     }
     size >>= 10;
     sprintf_P( str, PSTR(" %04dG"), (int)size);

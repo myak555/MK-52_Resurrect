@@ -27,13 +27,13 @@ void Display_DATA::activate(){
     #ifdef __DEBUG
     long TargetTime = millis();
     #endif
-    char *buff = _lcd->getOutputBuffer();
+    char *buff = _rpnf->getOutputBuffer();
     _lcd->dimScreen();
     _lcd->clearScreen( false);
-    _lcd->outputStatus( _pmem->getCounter(), _emem->getCounter(), _rpnf->Stack->getDModeName(), "   ");
-    int cnt = (int)_emem->getCounter();
+    _lcd->outputStatus( _rpnf->progMem->getCounter(), _rpnf->extMem->getCounter(), _rpnf->rpnStack->getDModeName(), "   ");
+    int cnt = (int)_rpnf->extMem->getCounter();
     for( int32_t i=10, j=cnt; i>=0; i--, j--){
-        _lcd->outputTerminalLine( i, _emem->toString(buff, j));
+        _lcd->outputTerminalLine( i, _rpnf->extMem->toString(buff, j));
     }
     _setCurrentReceiver( COMPONENT_RECEIVER_DATA_N);
     _lcd->undimScreen();
@@ -47,7 +47,6 @@ void Display_DATA::activate(){
 
 int Display_DATA::tick(){
     // keyboard serve part
-    Serial.print("DATA display ticking");
     uint8_t scancode = _kbd->scan();
     if( current_Receiver == NULL) return NO_CHANGE;
     int newReceiver = current_Receiver->tick( scancode);
@@ -69,18 +68,18 @@ int Display_DATA::tick(){
     
     // display update part
     unsigned long start = millis();
-    char *buff = _lcd->getOutputBuffer();
-    int cnt = (int)_emem->getCounter();
+    char *buff = _rpnf->getOutputBuffer();
+    int cnt = (int)_rpnf->extMem->getCounter();
     if( _nr->isActive()){
-        snprintf_P( buff, SCREEN_COLS, PSTR("%04u> %s"), _emem->getCounter(), _nr->toString());
+        snprintf_P( buff, SCREEN_COLS, PSTR("%04u> %s"), _rpnf->extMem->getCounter(), _nr->toString());
         buff[SCREEN_COLS] = 0;
         _lcd->updateTerminalLine( 10, buff);
     }
     else{
-        _lcd->outputTerminalLine( 10, _emem->toString(buff, cnt));
+        _lcd->outputTerminalLine( 10, _rpnf->extMem->toString(buff, cnt));
     }
     for( int32_t i=9, j=cnt-1; i>=0; i--, j--){
-        _lcd->updateTerminalLine( i, _emem->toString(buff, j));
+        _lcd->updateTerminalLine( i, _rpnf->extMem->toString(buff, j));
         if( millis()-start > KBD_IDLE_DELAY) break; // we can do the rest of redraw later!
     }
     return NO_CHANGE;

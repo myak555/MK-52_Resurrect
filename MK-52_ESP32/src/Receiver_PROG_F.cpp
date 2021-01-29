@@ -24,6 +24,9 @@ unsigned long Receiver_PROG_F::init( void *components[]) {
 }
 
 void Receiver_PROG_F::activate( uint8_t scancode, int8_t parent){
+    #ifdef __DEBUG
+    Serial.println( "Activating receiver PROG_F");
+    #endif
     Receiver::activate( scancode, parent);
     _lcd->updateStatusFMODE( " F ");
     _mode = 1;
@@ -152,7 +155,11 @@ int Receiver_PROG_F::tick( uint8_t scancode){
             _pmem->incrementCounter();
             return COMPONENT_RECEIVER_PROG_N;
         case 24:
-            return COMPONENT_RECEIVER_AUTO_N;
+            #ifdef __DEBUG
+            Serial.println("Going to AUTO Display");
+            #endif
+            return_value = COMPONENT_DISPLAY_AUTO;
+            break;
 
         // Column 6
         case 25:

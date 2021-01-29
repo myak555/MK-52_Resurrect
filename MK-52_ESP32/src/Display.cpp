@@ -17,8 +17,6 @@ unsigned long Display::init( void *components[]) {
     _components = components;
     _kbd = (MK52_Hardware::KBD_Manager *)components[COMPONENT_KBD_MANAGER];
     _lcd = (MK52_Hardware::LCD_Manager *)components[COMPONENT_LCD_MANAGER];
-    _pmem = (Program_Memory*)components[COMPONENT_PROGRAM_MEMORY];
-    _emem = (Extended_Memory*)components[COMPONENT_EXTENDED_MEMORY];
     _rpnf = (RPN_Functions*)components[COMPONENT_FUNCTIONS];
     return millis(); 
 }

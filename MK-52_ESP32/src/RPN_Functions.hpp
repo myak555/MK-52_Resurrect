@@ -31,9 +31,14 @@ namespace MK52_Interpreter{
     class RPN_Functions{
         public:
             bool _atStop = false;
-            RPN_Stack *Stack;
+            RPN_Stack *rpnStack;
             Program_Memory *progMem;
             Extended_Memory *extMem;
+
+            inline char *getOutputBuffer(){return _text;};
+            inline char *getOutputLine(int16_t n)
+                {return _buffer + (SCREEN_COLS+1)*n;};
+            inline char **getOutputLines() {return _lines;};
 
             unsigned long init( void *components[]);
             RPN_Function *getFunctionByID(int16_t id);
@@ -44,9 +49,12 @@ namespace MK52_Interpreter{
 
       private:
             void **_components;
-            void _appendFunction( RPN_Function *f);
             uint16_t _nfunctions = 0;
             void *_functions[MK52_NFUNCTIONS];
+            char *_text = NULL; // temporary output buffer
+            char *_buffer = NULL;
+            char *_lines[SCREEN_ROWS];
+            void _appendFunction( RPN_Function *f);
     };
 };
 

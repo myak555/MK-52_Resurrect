@@ -58,6 +58,10 @@
 #define REGISTER_MEMORY_NVALS       20
 #define MK52_NFUNCTIONS             100
 #define RETURN_STACK_SIZE           100
+#define DIRECTORY_LIST_SIZE         6000
+#define DIRECTORY_LIST_NITEMS       200
+#define CURRENT_DIR_LEN             256
+#define CURRENT_FILE_LEN            256
 
 #define NO_CHANGE                   -1
 #define SHUTDOWN_REQUESTED          -2

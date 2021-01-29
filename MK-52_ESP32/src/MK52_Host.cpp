@@ -41,6 +41,11 @@ static MK52_Interpreter::Receiver_DATA_F _m_Receiver_DATA_F;
 static MK52_Interpreter::Receiver_DATA_K _m_Receiver_DATA_K;
 static MK52_Interpreter::Receiver_DATA_A _m_Receiver_DATA_A;
 
+static MK52_Interpreter::Receiver_FILE_N _m_Receiver_FILE_N;
+static MK52_Interpreter::Receiver_FILE_F _m_Receiver_FILE_F;
+static MK52_Interpreter::Receiver_FILE_K _m_Receiver_FILE_K;
+static MK52_Interpreter::Receiver_FILE_A _m_Receiver_FILE_A;
+
 static MK52_Interpreter::Display_AUTO _m_Display_AUTO;
 static MK52_Interpreter::Display_PROG _m_Display_PROG;
 static MK52_Interpreter::Display_FILE _m_Display_FILE;
@@ -103,6 +108,11 @@ unsigned long MK52_Host::init() {
     _components[ COMPONENT_RECEIVER_DATA_K] = &_m_Receiver_DATA_K;
     _components[ COMPONENT_RECEIVER_DATA_A] = &_m_Receiver_DATA_A;
 
+    _components[ COMPONENT_RECEIVER_FILE_N] = &_m_Receiver_FILE_N;
+    _components[ COMPONENT_RECEIVER_FILE_F] = &_m_Receiver_FILE_F;
+    _components[ COMPONENT_RECEIVER_FILE_K] = &_m_Receiver_FILE_K;
+    _components[ COMPONENT_RECEIVER_FILE_A] = &_m_Receiver_FILE_A;
+
     // User interfaces
     _components[ COMPONENT_DISPLAY_AUTO] = &_m_Display_AUTO;
     _components[ COMPONENT_DISPLAY_PROG] = &_m_Display_PROG;
@@ -136,6 +146,11 @@ unsigned long MK52_Host::init() {
     _m_Receiver_DATA_K.init( _components);
     _m_Receiver_DATA_A.init( _components);
 
+    _m_Receiver_FILE_N.init( _components);
+    _m_Receiver_FILE_F.init( _components);
+    _m_Receiver_FILE_K.init( _components);
+    _m_Receiver_FILE_A.init( _components);
+
     _m_Display_AUTO.init( _components);
     _m_Display_PROG.init( _components);
     _m_Display_DATA.init( _components);
@@ -146,7 +161,7 @@ unsigned long MK52_Host::init() {
     Serial.println( _m_RPN_Functions.progMem->getCounter());
     Serial.println( _m_RPN_Functions.extMem->getCounter());
     Serial.print( "[");
-    Serial.print( _m_RPN_Functions.Stack->getDModeName());
+    Serial.print( _m_RPN_Functions.rpnStack->getDModeName());
     Serial.println( "]");
     Serial.print("SD card ");
     Serial.println( _m_Hardware_SD.SDMounted? "mounted": "not found");

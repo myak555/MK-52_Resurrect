@@ -92,8 +92,6 @@ namespace MK52_Hardware{
         void outputCharString( int16_t x, int16_t y, char *src, uint16_t fg=TFT_GREEN, uint16_t bg=TFT_BLACK);
         void outputChar( int16_t x, int16_t y, uint8_t c, uint16_t fg=TFT_GREEN, uint16_t bg=TFT_BLACK);
 
-        inline char *getOutputBuffer(){return _text;};
-
       private:
         char *_text = NULL; // temporary output buffer
         char *_buffer = NULL;

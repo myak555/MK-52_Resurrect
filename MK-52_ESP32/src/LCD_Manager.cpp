@@ -53,10 +53,9 @@ unsigned long LCD_Manager::init() {
     // 5 bytes each for pc and mc
     // 3 bytes each for dmode and fmode
     _buffer = (char *)malloc( SCREEN_BUFFER_SIZE);
-    _text = (char*)malloc( 2*SCREEN_COLS+1);
+    _text = (char*)malloc( SCREEN_COLS+1);
     memset( _buffer, 0, SCREEN_BUFFER_SIZE);
-    memset( _text, 0, 2*SCREEN_COLS+1);
-    _text = (char*)malloc( 2*SCREEN_COLS);
+    memset( _text, 0, SCREEN_COLS+1);
     char *ptr = _buffer;
     for( uint8_t i=0; i<SCREEN_ROWS; i++){
         _lines[i] = ptr;

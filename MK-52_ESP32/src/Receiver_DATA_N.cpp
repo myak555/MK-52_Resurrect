@@ -58,7 +58,7 @@ int Receiver_DATA_N::tick( uint8_t scancode){
             break;
         case 4:
             _rpnf->execute(FUNC_TOGGLE_DMOD);
-            _lcd->updateStatusDMODE(_rpnf->Stack->getDModeName());
+            _lcd->updateStatusDMODE(_rpnf->rpnStack->getDModeName());
             break;
 
         // Column 1

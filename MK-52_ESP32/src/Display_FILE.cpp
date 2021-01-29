@@ -29,30 +29,58 @@ void Display_FILE::activate(){
     #endif
     _lcd->dimScreen();
     _lcd->clearScreen( false);
+    //char **strs = _rpnf->getOutputLines();
+    //_sd->startFolderListing( strs, 10, SCREEN_COLS-1);
 
-    char *strs[10];
-    char *tmp = (char *)malloc( 300);
-    for( int i=0; i<10; i++, tmp+=30) strs[i] = tmp;
-    _sd->startFolderListing( strs, 10, 29);
-
-    _lcd->outputStatus( _pmem->getCounter(), _emem->getCounter(), "DSK", "   ");
-    for( int i=0; i<10; i++)
-        _lcd->outputTerminalLine( i, strs[i]);
-
+    _lcd->outputStatus( _rpnf->progMem->getCounter(), _rpnf->extMem->getCounter(), "DSK", "   ");
+    // for( int i=0; i<10; i++)
+    //     _lcd->outputTerminalLine( i, strs[i]);
+    for( int i=0; i<9; i++){
+        if( i>=_sd->_nItems){
+            _lcd->outputTerminalLine( i, "");
+            continue;
+        }
+        char *line = _sd->getItemString( i);
+        _lcd->outputTerminalLine( i, line);
+    }
+    _setCurrentReceiver( COMPONENT_RECEIVER_FILE_N);
     _lcd->undimScreen();
-    free(strs[0]);
 
     #ifdef __DEBUG
     TargetTime = millis() - TargetTime;
     Serial.print ("FILE display activated in ");
     Serial.print ( TargetTime);
     Serial.println (" ms");
-    delay( DEBUG_SHOW_DELAY);
     #endif
     return;
 }
 
 int Display_FILE::tick(){
-    delay( 10000);
-    return COMPONENT_DISPLAY_AUTO;
+    uint8_t scancode = _kbd->scan();
+    if( current_Receiver == NULL) return NO_CHANGE;
+    int newReceiver = current_Receiver->tick( scancode);
+    if( newReceiver < -1) return newReceiver;
+    switch( newReceiver){
+        case COMPONENT_DISPLAY_AUTO:
+        case COMPONENT_DISPLAY_PROG:
+        case COMPONENT_DISPLAY_DATA:
+            Serial.println("Display change requested");
+            return newReceiver;
+        case 0:
+        case -1:
+            break;
+        default:
+            Serial.println("Receiver change requested");
+            _setCurrentReceiver( newReceiver, 0, COMPONENT_RECEIVER_FILE_N);
+            break;
+    }
+    for( int i=0; i<9; i++){
+        if( i>=_sd->_nItems){
+            _lcd->updateTerminalLine( i, "");
+            continue;
+        }
+        char *line = _sd->getItemString( i);
+        _lcd->updateTerminalLine( i, line);
+    }
+    return NO_CHANGE;
 }

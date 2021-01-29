@@ -13,16 +13,17 @@
 
 using namespace MK52_Interpreter;
 
-unsigned long Receiver_AUTO_F::init( void *components[]) {
+unsigned long Receiver_FILE_F::init( void *components[]) {
     #ifdef __DEBUG
-    Serial.println( "Init AUTO_F");
+    Serial.println( "Init FILE_F");
     #endif
+    _tr = (Receiver_Text *)components[COMPONENT_RECEIVER_TEXT];
     return Receiver::init(components);
 }
 
-void Receiver_AUTO_F::activate( uint8_t scancode, int8_t parent){
+void Receiver_FILE_F::activate( uint8_t scancode, int8_t parent){
     #ifdef __DEBUG
-    Serial.println( "Activating receiver AUTO_F");
+    Serial.println( "Activating receiver FILE_F");
     #endif
     Receiver::activate( scancode, parent);
     _lcd->updateStatusFMODE( " F ");
@@ -31,19 +32,19 @@ void Receiver_AUTO_F::activate( uint8_t scancode, int8_t parent){
     tick(scancode);
 }
 
-int Receiver_AUTO_F::tick( uint8_t scancode){
-    int return_value = COMPONENT_RECEIVER_AUTO_N;
+int Receiver_FILE_F::tick( uint8_t scancode){
+    int return_value = COMPONENT_RECEIVER_FILE_N;
     switch( scancode){
         // Column 0
         case 2:
-            return_value = COMPONENT_RECEIVER_AUTO_K;
+            return_value = COMPONENT_RECEIVER_FILE_K;
             break;
         case 3:
-            return_value = COMPONENT_RECEIVER_AUTO_A;
+            return_value = COMPONENT_RECEIVER_FILE_A;
             break;
         case 4:
-            _rpnf->execute(FUNC_TOGGLE_DMOD);
-            _lcd->updateStatusDMODE(_rpnf->rpnStack->getDModeName());
+            //_rpnf->execute(FUNC_TOGGLE_DMOD);
+            //_lcd->updateStatusDMODE(_rpnf->rpnStack->getDModeName());
             return NO_CHANGE;
 
         // Column 1 does nothing
@@ -51,57 +52,58 @@ int Receiver_AUTO_F::tick( uint8_t scancode){
 
         // Column 3
         case 13:
-            _rpnf->execute( FUNC_SIN);
+            //_rpnf->execute( FUNC_SIN);
             break;
         case 14:
-            _rpnf->execute( FUNC_ARCSIN);
+            //_rpnf->execute( FUNC_ARCSIN);
             break;
         case 15:
-            _rpnf->execute( FUNC_EXP);
+            //_rpnf->execute( FUNC_EXP);
             break;
         case 16:
-            _rpnf->execute( FUNC_10X);
+            //_rpnf->execute( FUNC_10X);
             break;
 
         // Column 4
         case 17:
-            _rpnf->execute( FUNC_COS);
+            //_rpnf->execute( FUNC_COS);
             break;
         case 18:
-            _rpnf->execute( FUNC_ARCCOS);
+            //_rpnf->execute( FUNC_ARCCOS);
             break;
         case 19:
-            _rpnf->execute( FUNC_LG);
+            //_rpnf->execute( FUNC_LG);
             break;
         case 20:
-            _rpnf->execute( FUNC_ROT);
+            //_rpnf->execute( FUNC_ROT);
             break;
 
         // Column 5
         case 21:
-            _rpnf->execute( FUNC_TG);
+            //_rpnf->execute( FUNC_TG);
             break;
         case 22:
-            _rpnf->execute( FUNC_ARCTG);
+            //_rpnf->execute( FUNC_ARCTG);
             break;
         case 23:
-            _rpnf->execute( FUNC_LN);
+            //_rpnf->execute( FUNC_LN);
             break;
         case 24:
             #ifdef __DEBUG
-            Serial.println("AUTO display already activated");
+            Serial.println("Going to AUTO Display");
             #endif
+            return_value = COMPONENT_DISPLAY_AUTO;
             break;
 
         // Column 6
         case 25:
-            _rpnf->execute( FUNC_SQRT);
+            //_rpnf->execute( FUNC_SQRT);
             break;
         case 26:
-            _rpnf->execute( FUNC_PI);
+            //_rpnf->execute( FUNC_PI);
             break;
         case 27:
-            _rpnf->execute( FUNC_POW);
+            //_rpnf->execute( FUNC_POW);
             break;
         case 28:
             #ifdef __DEBUG
@@ -112,13 +114,13 @@ int Receiver_AUTO_F::tick( uint8_t scancode){
 
         // Column 7
         case 29:
-            _rpnf->execute( FUNC_1X);
+            //_rpnf->execute( FUNC_1X);
             break;
         case 30:
-            _rpnf->execute( FUNC_X2);
+            //_rpnf->execute( FUNC_X2);
             break;
         case 31:
-            _rpnf->execute( FUNC_BX);
+            //_rpnf->execute( FUNC_BX);
             break;
         case 32:
             break;

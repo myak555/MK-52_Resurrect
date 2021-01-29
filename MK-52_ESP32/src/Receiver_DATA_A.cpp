@@ -43,7 +43,7 @@ int Receiver_DATA_A::tick( uint8_t scancode){
             break;
         case 4:
             _rpnf->execute(FUNC_TOGGLE_DMOD);
-            _lcd->updateStatusDMODE(_rpnf->Stack->getDModeName());
+            _lcd->updateStatusDMODE(_rpnf->rpnStack->getDModeName());
             return NO_CHANGE;
 
         // Column 1 does nothing
@@ -53,15 +53,23 @@ int Receiver_DATA_A::tick( uint8_t scancode){
 
         // Column 5
         case 24:
-            return COMPONENT_DISPLAY_FILE;
+            #ifdef __DEBUG
+            Serial.println("Going to FILE Display");
+            #endif
+            return_value = COMPONENT_DISPLAY_FILE;
+            break;
 
         // Column 6
         case 28:
-            return COMPONENT_DISPLAY_DATA;
+            #ifdef __DEBUG
+            Serial.println("Already in DATA Display");
+            #endif
+            break;
 
         // Column 7
         case 32:
-            return SHUTDOWN_REQUESTED;
+            return_value = SHUTDOWN_REQUESTED;
+            break;
 
         default: // all other buttons do nothing - keep A-mode
            return NO_CHANGE;

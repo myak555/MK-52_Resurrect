@@ -23,7 +23,7 @@ unsigned long Receiver_PROG_K::init( void *components[]) {
 
 void Receiver_PROG_K::activate( uint8_t scancode, int8_t parent){
     #ifdef __DEBUG
-    Serial.println( "Activating receiver PROQ_K");
+    Serial.println( "Activating receiver PROG_K");
     #endif
     Receiver::activate( scancode, parent);
     _lcd->updateStatusFMODE( " K ");
@@ -33,7 +33,7 @@ void Receiver_PROG_K::activate( uint8_t scancode, int8_t parent){
 }
 
 int Receiver_PROG_K::tick( uint8_t scancode){
-    int return_value = COMPONENT_RECEIVER_AUTO_N;
+    int return_value = COMPONENT_RECEIVER_PROG_N;
     int r = _completeSubentry(scancode);
     if( r < NO_CHANGE) return return_value;
     if( r <= 0) return NO_CHANGE;
@@ -63,10 +63,10 @@ int Receiver_PROG_K::tick( uint8_t scancode){
             _rr->activate(0 , -3);
             return NO_CHANGE;
         case 11:
-            _rpnf->Stack->setStackLabel_P(0, PSTR("K-GOTO is bad for you!"));
+            _rpnf->rpnStack->setStackLabel_P(0, PSTR("K-GOTO is bad for you!"));
             break;
         case 12:
-            _rpnf->Stack->setStackLabel_P(0, PSTR("K-GOSUB is bad for you!"));
+            _rpnf->rpnStack->setStackLabel_P(0, PSTR("K-GOSUB is bad for you!"));
             break;
 
         // Column 3

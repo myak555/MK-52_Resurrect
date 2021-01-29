@@ -58,7 +58,7 @@ int Receiver_AUTO_N::tick( uint8_t scancode){
             break;
         case 4:
             _rpnf->execute(FUNC_TOGGLE_DMOD);
-            _lcd->updateStatusDMODE(_rpnf->Stack->getDModeName());
+            _lcd->updateStatusDMODE(_rpnf->rpnStack->getDModeName());
             break;
 
         // Column 1
@@ -124,7 +124,7 @@ int Receiver_AUTO_N::tick( uint8_t scancode){
             _rpnf->execute( FUNC_ENTER);
             break;
         case 32:
-            if(_rpnf->Stack->customStackLabels()) _rpnf->Stack->resetStackLabels();              
+            if(_rpnf->rpnStack->customStackLabels()) _rpnf->rpnStack->resetStackLabels();              
             else _rpnf->execute( FUNC_CLEAR_X);
             break;
 
@@ -157,7 +157,7 @@ int Receiver_AUTO_N::_completeSubentry( uint8_t scancode){
             _rpnf->execute( _nr->toTrimmedString());
             #ifdef __DEBUG
             Serial.print("Number in stack: ");
-            Serial.println( _rpnf->Stack->X->toReal());
+            Serial.println( _rpnf->rpnStack->X->toReal());
             Serial.print("Number updated, returning ");
             Serial.println(r);
             #endif 

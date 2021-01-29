@@ -26,8 +26,6 @@ namespace MK52_Interpreter{
         void **_components;
         MK52_Hardware::LCD_Manager *_lcd;
         MK52_Hardware::KBD_Manager *_kbd;
-        Program_Memory *_pmem;
-        Extended_Memory *_emem;
         RPN_Functions *_rpnf;
         void _setCurrentReceiver( uint8_t id, uint8_t scancode=0, int8_t parent=-1);
     };
@@ -38,7 +36,6 @@ namespace MK52_Interpreter{
         void activate();
         int tick();
       private:
-        RPN_Stack *_stack;
         Receiver_Number *_nr;
     };
 

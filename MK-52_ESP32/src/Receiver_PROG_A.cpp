@@ -33,13 +33,9 @@ void Receiver_PROG_A::activate( uint8_t scancode, int8_t parent){
 }
 
 int Receiver_PROG_A::tick( uint8_t scancode){
-    int return_value = COMPONENT_RECEIVER_AUTO_N;
+    int return_value = COMPONENT_RECEIVER_PROG_N;
     int r = _completeSubentry(scancode);
-    if( r < NO_CHANGE){
-        Serial.print("Leaving subentry, returning ");
-        Serial.println( return_value);
-        return return_value;
-    }
+    if( r < NO_CHANGE) return return_value;
     if( r <= 0) return NO_CHANGE;
     scancode = (uint8_t)r;
     switch( scancode){
@@ -83,8 +79,10 @@ int Receiver_PROG_A::tick( uint8_t scancode){
             _rpnf->execute( FUNC_MM2IN);
             break;
         case 24:
-            // present FILE display
-            return COMPONENT_DISPLAY_FILE;
+            #ifdef __DEBUG
+            Serial.println("Going to FILE Display");
+            #endif
+            return_value = COMPONENT_DISPLAY_FILE;
             break;
 
         // Column 6
@@ -98,8 +96,10 @@ int Receiver_PROG_A::tick( uint8_t scancode){
             _rpnf->execute( FUNC_IN2MM);
             break;
         case 28:
-            // present DATA display
-            return COMPONENT_DISPLAY_DATA;
+            #ifdef __DEBUG
+            Serial.println("Going to DATA Display");
+            #endif
+            return_value = COMPONENT_DISPLAY_DATA;
             break;
 
         // Column 7
@@ -113,14 +113,13 @@ int Receiver_PROG_A::tick( uint8_t scancode){
             _rpnf->execute( FUNC_SEED);
             break;
         case 32:
-            return SHUTDOWN_REQUESTED;
+            return_value = SHUTDOWN_REQUESTED;
+            break;
 
         default: // all other buttons do nothing - keep A-mode
-           //delay(KBD_IDLE_DELAY);
            return NO_CHANGE;
     }
     _mode = 0;
-    //delay(KBD_IDLE_DELAY);
     return return_value;
 }
 

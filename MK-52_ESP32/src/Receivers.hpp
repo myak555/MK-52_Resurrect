@@ -134,7 +134,6 @@ namespace MK52_Interpreter{
         Receiver_Address *_ar;
         Receiver_Register *_rr;
         Program_Memory *_pmem;
-        int _appendButton(uint8_t scancode);
         int _completeSubentry( uint8_t scancode);
     };
 
@@ -201,6 +200,46 @@ namespace MK52_Interpreter{
         unsigned long init( void *components[]);
         void activate( uint8_t scancode = 0, int8_t parent = NO_CHANGE);
         int tick( uint8_t scancode = 0);
+    };
+
+    class Receiver_FILE_N: public Receiver{
+      public:
+        unsigned long init( void *components[]);
+        void activate( uint8_t scancode = 0, int8_t parent = NO_CHANGE);
+        int tick( uint8_t scancode = 0);
+      private:
+        Receiver_Text *_tr;
+        int _completeSubentry( uint8_t scancode);
+    };
+
+    class Receiver_FILE_F: public Receiver{
+      public:
+        unsigned long init( void *components[]);
+        void activate( uint8_t scancode = 0, int8_t parent = NO_CHANGE);
+        int tick( uint8_t scancode = 0);
+      private:
+        Receiver_Text *_tr;
+        int _completeSubentry( uint8_t scancode);
+    };
+
+    class Receiver_FILE_K: public Receiver{
+      public:
+        unsigned long init( void *components[]);
+        void activate( uint8_t scancode = 0, int8_t parent = NO_CHANGE);
+        int tick( uint8_t scancode = 0);
+      private:
+        Receiver_Text *_tr;
+        int _completeSubentry( uint8_t scancode);
+    };
+
+    class Receiver_FILE_A: public Receiver{
+      public:
+        unsigned long init( void *components[]);
+        void activate( uint8_t scancode = 0, int8_t parent = NO_CHANGE);
+        int tick( uint8_t scancode = 0);
+      private:
+        Receiver_Text *_tr;
+        int _completeSubentry( uint8_t scancode);
     };
 };
 

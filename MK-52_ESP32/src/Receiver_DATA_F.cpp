@@ -43,7 +43,7 @@ int Receiver_DATA_F::tick( uint8_t scancode){
             break;
         case 4:
             _rpnf->execute(FUNC_TOGGLE_DMOD);
-            _lcd->updateStatusDMODE(_rpnf->Stack->getDModeName());
+            _lcd->updateStatusDMODE(_rpnf->rpnStack->getDModeName());
             return NO_CHANGE;
 
         // Column 1 does nothing
@@ -53,11 +53,19 @@ int Receiver_DATA_F::tick( uint8_t scancode){
 
         // Column 5
         case 24:
-            return COMPONENT_DISPLAY_AUTO;
+            #ifdef __DEBUG
+            Serial.println("Going to AUTO Display");
+            #endif
+            return_value = COMPONENT_DISPLAY_AUTO;
+            break;
 
         // Column 6
         case 28:
-            return COMPONENT_DISPLAY_PROG;
+            #ifdef __DEBUG
+            Serial.println("Going to PROG Display");
+            #endif
+            return_value = COMPONENT_DISPLAY_PROG;
+            break;
 
         // Column 7
         case 32:

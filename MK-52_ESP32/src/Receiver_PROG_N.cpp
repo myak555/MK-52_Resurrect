@@ -26,20 +26,17 @@ unsigned long Receiver_PROG_N::init( void *components[]) {
 }
 
 void Receiver_PROG_N::activate( uint8_t scancode, int8_t parent){
+    #ifdef __DEBUG
+    Serial.println( "Activating receiver PROG_N");
+    #endif
     Receiver::activate( scancode, parent);
     _lcd->updateStatusFMODE( "   ");
     _mode = 1;
     if(!scancode) return;
-    _appendButton(scancode);
+    tick(scancode);
 }
 
 int Receiver_PROG_N::tick( uint8_t scancode){
-    if(scancode == 0) scancode = _kbd->scan();
-    if( !scancode) return NO_CHANGE;
-    return _appendButton( scancode);
-}
-
-int Receiver_PROG_N::_appendButton(uint8_t scancode){
     int return_value = NO_CHANGE;
     // if( _nr->isActive()){
     //     if( _nr->tick( scancode) == NO_CHANGE) return NO_CHANGE;

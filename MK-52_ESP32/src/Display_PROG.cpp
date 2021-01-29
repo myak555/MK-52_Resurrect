@@ -39,10 +39,10 @@ void Display_PROG::activate(){
     #endif
     _lcd->dimScreen();
     _lcd->clearScreen( false);
-    char *buff = _lcd->getOutputBuffer();
-    _lcd->outputStatus( _pmem->getCounter(), _emem->getCounter(), _pmem->getEModeName(), "   ");
-    int32_t display_PC = (int32_t)_pmem->getCounter();
-    _pmem->getPreviousLines(_displayLines, SCREEN_ROWS-1);
+    char *buff = _rpnf->getOutputBuffer();
+    _lcd->outputStatus( _rpnf->progMem->getCounter(), _rpnf->extMem->getCounter(), _rpnf->progMem->getEModeName(), "   ");
+    int32_t display_PC = (int32_t)_rpnf->progMem->getCounter();
+    _rpnf->progMem->getPreviousLines(_displayLines, SCREEN_ROWS-1);
     for( int i=10, j=0; i>=0; i--, j++){
         _lcd->outputTerminalLine( i, _getTerminalLine( buff, display_PC--, _displayLines[j]));
     }
@@ -77,58 +77,43 @@ int Display_PROG::tick(){
     }
 
     unsigned long start = millis();
-    char *buff = _lcd->getOutputBuffer();
-    int32_t display_PC = (int32_t)_pmem->getCounter();
-    _pmem->getPreviousLines(_displayLines, SCREEN_ROWS-1);
+    char *buff = _rpnf->getOutputBuffer();
+    int32_t display_PC = (int32_t)_rpnf->progMem->getCounter();
+    _rpnf->progMem->getPreviousLines(_displayLines, SCREEN_ROWS-1);
     for( int i=10, j=0; i>=0; i--, j++){
         _lcd->updateTerminalLine( i, _getTerminalLine( buff, display_PC--, _displayLines[j]));
         if( millis()-start > KBD_IDLE_DELAY) break; // we can do the rest of redraw later!
     }
     return NO_CHANGE;
 
-    // unsigned long start = millis();
-    // char *buff = _lcd->getOutputBuffer();
-    // uint32_t prev_PC = _pmem->getCounter();
     // _printNumber();
     // _printOperatorWithAddress();
     // _printOperatorWithRegister();
     // _printOperator();
-    // buff[ SCREEN_COLS-1] = 0;
-    // _lcd->updateTerminalLine( 10, buff);
-    // for( int i=9; i>=0; i--){
-    //     if( !_pmem->decrementCounter()){
-    //         snprintf_P(buff, SCREEN_COLS-1, _programLineFormat, _pmem->getCounter() % 10000, _pmem->getCurrentLine());
-    //         buff[ SCREEN_COLS-1] = 0;
-    //         _lcd->updateTerminalLine( i, buff);
-    //     }
-    //     else
-    //         _lcd->eraseTerminalLine( i);
-    //     //if( millis()-start > KBD_IDLE_DELAY) break; // we can do the rest of redraw later!
-    // }
     // if( millis()-start < KBD_IDLE_DELAY) delay(KBD_IDLE_DELAY);
-    // _pmem->setCounter( prev_PC);
+    // _rpnf->progMem->setCounter( prev_PC);
     // return -1;
 }
 
 // void Display_PROG::_printNumber(){
 //     if( !_nr->isActive()) return;
 //     _printStatus();
-//     uint32_t pc = _pmem->getCounter();
+//     uint32_t pc = _rpnf->progMem->getCounter();
 //     snprintf_P(_lcd->getOutputBuffer(), SCREEN_COLS-1, _programLineEditFormat, pc % 10000, _nr->toString());
 // }
 
 // void Display_PROG::_printOperatorWithAddress(){
 //     if( !_ar->isActive()) return;
 //     _printStatus();
-//     uint32_t pc = _pmem->getCounter();
-//     snprintf_P(_lcd->getOutputBuffer(), SCREEN_COLS-1, _programLineEdit2Format, pc % 10000, _pmem->toString(), _ar->toString());
+//     uint32_t pc = _rpnf->progMem->getCounter();
+//     snprintf_P(_lcd->getOutputBuffer(), SCREEN_COLS-1, _programLineEdit2Format, pc % 10000, _rpnf->progMem->toString(), _ar->toString());
 // }
 
 // void Display_PROG::_printOperatorWithRegister(){
 //     if( !_rr->isActive()) return;
 //     _printStatus();
-//     uint32_t pc = _pmem->getCounter();
-//     snprintf_P(_lcd->getOutputBuffer(), SCREEN_COLS-1, _programLineEditFormat, pc % 10000, _pmem->toString());
+//     uint32_t pc = _rpnf->progMem->getCounter();
+//     snprintf_P(_lcd->getOutputBuffer(), SCREEN_COLS-1, _programLineEditFormat, pc % 10000, _rpnf->progMem->toString());
 // }
 
 // void Display_PROG::_printOperator(){
@@ -136,8 +121,8 @@ int Display_PROG::tick(){
 //     if( _ar->isActive()) return;
 //     if( _rr->isActive()) return;
 //     _printStatus();
-//     uint32_t pc = _pmem->getCounter();
-//     snprintf_P(_lcd->getOutputBuffer(), SCREEN_COLS-1, _programLineEditFormat, pc % 10000, _pmem->getCurrentLine());
+//     uint32_t pc = _rpnf->progMem->getCounter();
+//     snprintf_P(_lcd->getOutputBuffer(), SCREEN_COLS-1, _programLineEditFormat, pc % 10000, _rpnf->progMem->getCurrentLine());
 // }
 
 char *Display_PROG::_getTerminalLine( char *buff, int32_t lineNumber, char *text){
@@ -145,7 +130,7 @@ char *Display_PROG::_getTerminalLine( char *buff, int32_t lineNumber, char *text
     if( lineNumber < 0) return buff;
     uint32_t lNum = (uint32_t)lineNumber;
     snprintf_P( buff, 5, PSTR("%04u"), lNum);
-    buff[4] = (lNum == _pmem->getCounter())? '>': ' ';
+    buff[4] = (lNum == _rpnf->progMem->getCounter())? '>': ' ';
     buff[5] = ' ';
     buff[6] = 0;
     int limit = SCREEN_COLS-6;

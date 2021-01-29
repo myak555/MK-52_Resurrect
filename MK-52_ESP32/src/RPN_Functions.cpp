@@ -19,9 +19,19 @@ using namespace MK52_Interpreter;
 //
 unsigned long RPN_Functions::init( void *components[]) {
     _components = components;
-    Stack = (RPN_Stack *)components[COMPONENT_STACK];
+    rpnStack = (RPN_Stack *)components[COMPONENT_STACK];
     progMem = (Program_Memory *)components[COMPONENT_PROGRAM_MEMORY];
     extMem = (Extended_Memory *)components[COMPONENT_EXTENDED_MEMORY];
+    
+    _buffer = (char *)malloc( SCREEN_BUFFER_SIZE);
+    _text = (char*)malloc( 2*SCREEN_COLS+1);
+    memset( _buffer, 0, SCREEN_BUFFER_SIZE);
+    memset( _text, 0, 2*SCREEN_COLS+1);
+    char *ptr = _buffer;
+    for( uint8_t i=0; i<SCREEN_ROWS; i++){
+        _lines[i] = ptr;
+        ptr += SCREEN_COLS + 1;
+    }
     
     // #define FUNC_COMMENT            1
     _appendFunction( new Func_Comment());
@@ -218,10 +228,10 @@ void RPN_Functions::execute( char *command, bool pushNeeded){
     }
     // if the name is not found, it must be a number and should be placed to register X
     if( pushNeeded){
-        Stack->storeBx();
-        Stack->push();
+        rpnStack->storeBx();
+        rpnStack->push();
     }
-    Stack->X->fromString( command);
+    rpnStack->X->fromString( command);
 }
 
 //
@@ -240,7 +250,7 @@ void RPN_Functions::executeStep(){
     #endif
     execute( programLine, true);
     if( _atStop)
-        Stack->setStackLabel_P(0, PSTR("STOP Reached"));
+        rpnStack->setStackLabel_P(0, PSTR("STOP Reached"));
     else
         progMem->incrementCounter();
 }
