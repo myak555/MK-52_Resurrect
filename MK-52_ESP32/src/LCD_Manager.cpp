@@ -173,7 +173,7 @@ void LCD_Manager::_redrawCalcLabel( uint8_t row, char *line, char* text){
 void LCD_Manager::outputTerminalLine( uint8_t row, char *text){
     if( row > 10) return;
     char *line = _lines[ row+1];
-    if( strlen(text)==0) eraseTerminalLine( row);
+    if( text == NULL || strlen(text)==0) eraseTerminalLine( row);
     else{
         line[0] = 0;    
         _redrawTerminalLine( row, line, text);
@@ -199,7 +199,7 @@ void LCD_Manager::eraseTerminalLine( uint8_t row){
 }
 
 void LCD_Manager::_redrawTerminalLine( uint8_t row, char *line, char* text){
-    if( line[0] == 0 && text[0] ==0) return;
+    if( line[0] == 0 && text[0] == 0) return;
     if( strcmp(line, text) == 0) return; // strings identical
     #ifdef __DEBUG
     Serial.print("Update row ");

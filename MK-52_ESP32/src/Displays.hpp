@@ -73,6 +73,7 @@ namespace MK52_Interpreter{
         int tick();
       private:
         MK52_Hardware::SD_Manager *_sd;
+        Receiver_Text *_tr;
     };
 };
 

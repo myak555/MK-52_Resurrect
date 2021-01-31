@@ -183,6 +183,21 @@ unsigned long RPN_Functions::init( void *components[]) {
     _appendFunction( new Func_Toggle_EMOD());
     // #define FUNC_STOP               75
     _appendFunction( new Func_Stop());
+    // #define FUNC_MKDIR              76
+    _appendFunction( new Func_MkDir());
+    // #define FUNC_UPDIR              77
+    _appendFunction( new Func_UpDir());
+    // #define FUNC_NEXTFILE           78
+    _appendFunction( new Func_NextFile());
+    // #define FUNC_PREVFILE           79
+    _appendFunction( new Func_PrevFile());
+    // #define FUNC_REMOVE             80
+    _appendFunction( new Func_Remove());
+    // #define FUNC_STEPIN             81
+    _appendFunction( new Func_StepIn());
+    // #define FUNC_SAVE               82
+    // #define FUNC_SAVEAS             83
+    // #define FUNC_LOAD               84
 
     #ifdef __DEBUG
     Serial.print( _nfunctions);
@@ -255,49 +270,6 @@ void RPN_Functions::executeStep(){
         progMem->incrementCounter();
 }
 
-//
-// deal with a single NaN
-//
-RPN_Stack *RPN_Function::_dealWithClergy1(void *components[]){
-    RPN_Stack *s = (RPN_Stack *)components[COMPONENT_STACK];
-    if( s->X->isEmpty()) return NULL;
-    if( isnan(s->X->toReal())) return NULL;
-    return s; // the rest of ariphmetics
-}
-
-//
-// deal with a pair of NaNs
-//
-RPN_Stack *RPN_Function::_dealWithClergy2(void *components[]){
-    RPN_Stack *s = (RPN_Stack *)components[COMPONENT_STACK];
-    if( s->X->isEmpty() || s->Y->isEmpty()) return NULL;
-    double valueX = s->X->toReal();
-    double valueY = s->Y->toReal();
-
-    if( isnan(valueX) && isnan(valueY)){
-        s->pop(2); // remove Y, leave one NaN in X
-        return NULL;
-    }
-    if( isnan(valueX)){
-        s->pop(1); // remove X, leave Y
-        return NULL;
-    }
-    if( isnan(valueY)){
-        s->pop(2); // remove Y, leave X
-        return NULL;
-    }
-    return s; // the rest of ariphmetics
-}
-
-bool RPN_Function::_startsWith(char *name, const char *keyword){
-    int8_t ln = strlen_P( keyword);
-    for( int8_t i=0; i<ln; i++, name++){
-        if( !(*name)) return false;
-        if( (char)pgm_read_byte( keyword+i) != *name) return false;
-    }
-    return true; // all letters are the same
-}
-
 void RPN_Functions::_appendFunction( RPN_Function *f){
     if( _nfunctions >= MK52_NFUNCTIONS) return;
     _functions[ _nfunctions++] = f;
@@ -317,3 +289,4 @@ void RPN_Functions::_appendFunction( RPN_Function *f){
 #include "../functions/Func_Convert.h"
 #include "../functions/Func_Memory.h"
 #include "../functions/Func_Goto.h"
+#include "../functions/Func_File.h"

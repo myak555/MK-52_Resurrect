@@ -11,7 +11,9 @@
 #define __DEBUG
 
 const char _RT_DigitConversion[] PROGMEM =  "### #<=>!,;:?7410852.963--+^E/*##";
-const char _RT_LetterConversion[] PROGMEM = "### #AHOUBIPVCJQWDKRXELSYFMTZGN##";
+//const char _RT_LetterConversion[] PROGMEM = "### #AHOUBIPVCJQWDKRXELSYFMTZGN##";
+const char _RT_LetterConversion[] PROGMEM = "#AIQ#BJRXCKSYDLTZEMU.FNV_GOW HP##";
+
 const char _RT_StandardUnity[] PROGMEM = "1.0E+000";
 
 using namespace MK52_Interpreter;
@@ -39,123 +41,48 @@ void Receiver_Text::activate( uint8_t scancode, int8_t parent){
 }
 
 int Receiver_Text::tick( uint8_t scancode){
-    return NO_CHANGE;
-    // int ln = strlen(_text);
-    // char c = _convertButton( _RT_DigitConversion, scancode);
-    // int return_value = NO_CHANGE; 
-    // switch( c){
-    //     case 'e': // entry completed
-    //         scancode = 0;
-    //     case 'f':
-    //         _mode = 0;
-    //         #ifdef __DEBUG
-    //         Serial.println( "Receiver NUMBER ticked");
-    //         #endif
-    //         return (int)scancode;
-    //     case '0':
-    //     case '1':
-    //     case '2':
-    //     case '3':
-    //     case '4':
-    //     case '5':
-    //     case '6':
-    //     case '7':
-    //     case '8':
-    //     case '9':
-    //         #ifdef __DEBUG
-    //         Serial.print("Ticking digit: ");
-    //         Serial.println(_text);
-    //         #endif
-    //         if( ln == 2 && _text[1] == '0'){
-    //             _text[1] = c;
-    //             break;
-    //         }
-    //         if( _mode == 1 && ln>12) break;
-    //         if( _mode == 2 && ln>13) break;
-    //         if( _mode == 3){
-    //             _text[ln-3] = _text[ln-2]; 
-    //             _text[ln-2] = _text[ln-1]; 
-    //             _text[ln-1] = c; 
-    //             break;
-    //         }
-    //         _text[ln] = c;
-    //         _text[ln+1] = 0;
-    //         break;
-    //     case '-':
-    //         if( _mode == 3){
-    //             _swapSign( _text + ln - 4, '+');
-    //             break;
-    //         }
-    //         _swapSign( _text, ' ');
-    //         break;
-    //     case '.':
-    //         if( _mode >= 2) break;
-    //         _mode = 2;
-    //         if( ln == 1){
-    //             strcpy_P( _text+1, PSTR("0."));
-    //             break;
-    //         }
-    //         strcpy_P( _text+ln, PSTR("."));
-    //         break;
-    //     case 'E':
-    //         if( _mode == 3){
-    //             _text[ln-5] = 0;
-    //             _mode = 2;
-    //             break;
-    //         }
-    //         if( ln == 1 || strcmp_P(_text+1, PSTR("0.0")) == 0 || strcmp_P(_text+1, PSTR("0.")) == 0){
-    //             strcpy_P( _text+1, _RT_StandardUnity);
-    //             _mode = 3;
-    //             break;
-    //         }
-    //         if( ln == 2 && _text[1] == '0'){
-    //             strcpy_P( _text+1, _RT_StandardUnity);
-    //             _mode = 3;
-    //             break;
-    //         }
-    //         if( _mode == 1){
-    //             strcpy_P( _text+ln, _RT_StandardUnity+1);
-    //             _mode = 3;
-    //             break;
-    //         }
-    //         _mode = 3;
-    //         if( _text[ln-1] == '.'){
-    //             strcpy_P( _text+ln, _RT_StandardUnity+2);
-    //             break;
-    //         }
-    //         strcpy_P( _text+ln, _RT_StandardUnity+3);
-    //         break;
-    //     case 'c': // erase
-    //         if( _mode == 3){
-    //             _text[ln-1] = _text[ln-2];
-    //             _text[ln-2] = _text[ln-3];
-    //             _text[ln-3] = '0';
-    //             break;
-    //         }
-    //         if( _mode == 2 && _text[ln-1] == '.'){
-    //             _text[ln-1] = 0;
-    //             _mode = 1;
-    //             break;
-    //         }
-    //         if( ln>1){
-    //             _text[ln-1] = 0;
-    //             break;
-    //         }
-    //         strcpy_P( _text, PSTR(" 0"));
-    //         _mode = 0;
-    //         return_value = _parentReceiver;
-    //         break;
-    //     default:
-    //         break;
-    // }
-    // //delay(KBD_IDLE_DELAY);
-    // return return_value;
+    int ln = strlen(_text);
+    char c = _convertButton( (_mode==2)? _RT_LetterConversion: _RT_DigitConversion, scancode);
+    int return_value = NO_CHANGE; 
+    switch( scancode){
+        case 1:
+        case 2:
+            break;
+        case 4: // mode change
+            _setInputMode( (_mode == 2)? 3: 2);
+            break;
+        case 31: // enter
+            _mode = 0;
+            return_value = _parentReceiver;
+            break;
+        case 32: // Cx
+            if( ln>0) _text[ln--] = 0;
+            _mode = 0;
+            return_value = _parentReceiver;
+            break;
+        default: // any other symbol is added to string
+            if( ln<=PROGRAM_LINE_LENGTH){
+                _text[ln++] = c;
+                _text[ln] = 0;
+                break;
+            }
+            _mode = 0;
+            return_value = _parentReceiver;
+            break;
+    }
+    return return_value;
 }
 
 char *Receiver_Text::toTrimmedString(){
     char *ptr = _text;
-    while( *ptr == ' ')
-    return (*_text == ' ')? _text+1: _text;
+    while( *ptr == ' ') ptr++;
+    return ptr;
+}
+
+char *Receiver_Text::toScreenString(){
+    int ln = strlen( _text);
+    if( ln<SCREEN_COLS-1) return _text;
+    return _text + ln - SCREEN_COLS + 1;
 }
 
 //

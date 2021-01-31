@@ -54,16 +54,16 @@ int Receiver_FILE_N::tick( uint8_t scancode){
 
         // Column 1
         case 5:
-            // next line
+            _rpnf->execute( FUNC_NEXTFILE);            
             break;
         case 6:
-            // previous line
+            _rpnf->execute( FUNC_PREVFILE);            
             break;
         case 7:
-            // first line
+            _rpnf->execute( FUNC_UPDIR);
             break;
         case 8:
-            // load program at cursor and start
+            _rpnf->execute( FUNC_STEPIN);
             break;
 
         // Column 2
@@ -83,20 +83,34 @@ int Receiver_FILE_N::tick( uint8_t scancode){
         // Column 6
         case 28:
             // create folder
+            _mode = 2;
+            _tr->activate(0, -3);
+            _tr->_setInputMode( 2); // alpha mode by default;
             break;
 
         // Column 7
         case 31:
             // go into the folder
+            _rpnf->execute( FUNC_STEPIN);
             break;
         case 32:
             // delete program or dir
+            _lcd->outputTerminalLine( 10, "Confirm DELETE (\030)");
+            if( _getConfirmation( 31)) _rpnf->execute( FUNC_REMOVE);
             break;
 
         default: // all other buttons do nothing
             break;
     }
     return return_value;
+}
+
+//
+// Confirms file deletion or overwrite
+//
+bool Receiver_FILE_N::_getConfirmation( uint8_t confirmationButton){
+    while( _kbd->scan() == 0) delay(KBD_IDLE_DELAY);
+    return _kbd->lastScan == confirmationButton;
 }
 
 int Receiver_FILE_N::_completeSubentry( uint8_t scancode){
@@ -106,23 +120,14 @@ int Receiver_FILE_N::_completeSubentry( uint8_t scancode){
         case 1:
             return r;
         case 2:
-            // #ifdef __DEBUG
-            // Serial.print("Ticking to NUMBER... ");
-            // Serial.println(scancode);
-            // #endif 
-            // r = _nr->tick( scancode);
-            // if( r == NO_CHANGE) return NO_CHANGE;
-            // #ifdef __DEBUG
-            // Serial.print("Received number: ");
-            // Serial.println(_nr->toTrimmedString());
-            // #endif 
-            // _rpnf->execute( _nr->toTrimmedString());
-            // #ifdef __DEBUG
-            // Serial.print("Number in stack: ");
-            // Serial.println( _rpnf->rpnStack->X->toReal());
-            // Serial.print("Number updated, returning ");
-            // Serial.println(r);
-            // #endif 
+            r = _tr->tick( scancode);
+            if( r == NO_CHANGE) return NO_CHANGE;
+            #ifdef __DEBUG
+            Serial.print("Received name: ");
+            Serial.println(_tr->toTrimmedString());
+            #endif 
+            _rpnf->execute( FUNC_MKDIR, _tr->toTrimmedString());
+            _tr->_setInputMode( 0);
             break;
         case 3:
         case 4:

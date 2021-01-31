@@ -701,8 +701,7 @@ class Func_Stop: public RPN_Function{
         inline const char*IOName(){ return Name();};
         inline void execute( void *components[], char *command){
             RPN_Functions *fs = (RPN_Functions *)components[COMPONENT_FUNCTIONS];
-            fs->_atStop = true;
-        };
+            fs->_atStop = true;};
 };
 
 class Func_Toggle_EMOD: public RPN_Function{
@@ -713,6 +712,59 @@ class Func_Toggle_EMOD: public RPN_Function{
         inline const char*IOName(){ return (const char*)NULL;};
         inline void execute( void *components[], char *command){
             Program_Memory *pm = (Program_Memory *)components[COMPONENT_PROGRAM_MEMORY];
-            pm->toggleEditMode();
-        };
+            pm->toggleEditMode();};
+};
+
+class Func_MkDir: public RPN_Function{
+    public:
+        inline bool checkID( uint16_t id){ return id == FUNC_MKDIR;};
+        inline bool checkName(char *name){ return _startsWith( name, Name());};
+        inline const char*Name(){ return PSTR("MKDIR ");};
+        inline const char*IOName(){ return Name();};
+        void execute( void *components[], char *command);
+};
+
+class Func_UpDir: public RPN_Function{
+    public:
+        inline bool checkID( uint16_t id){ return id == FUNC_UPDIR;};
+        inline bool checkName(char *name){ return false;};
+        inline const char*Name(){ return NULL;};
+        inline const char*IOName(){ return NULL;};
+        void execute( void *components[], char *command);
+};
+
+class Func_NextFile: public RPN_Function{
+    public:
+        inline bool checkID( uint16_t id){ return id == FUNC_NEXTFILE;};
+        inline bool checkName(char *name){ return false;};
+        inline const char*Name(){ return NULL;};
+        inline const char*IOName(){ return NULL;};
+        void execute( void *components[], char *command);
+};
+
+class Func_PrevFile: public RPN_Function{
+    public:
+        inline bool checkID( uint16_t id){ return id == FUNC_PREVFILE;};
+        inline bool checkName(char *name){ return false;};
+        inline const char*Name(){ return NULL;};
+        inline const char*IOName(){ return NULL;};
+        void execute( void *components[], char *command);
+};
+
+class Func_Remove: public RPN_Function{
+    public:
+        inline bool checkID( uint16_t id){ return id == FUNC_REMOVE;};
+        inline bool checkName(char *name){ return false;};
+        inline const char*Name(){ return NULL;};
+        inline const char*IOName(){ return NULL;};
+        void execute( void *components[], char *command);
+};
+
+class Func_StepIn: public RPN_Function{
+    public:
+        inline bool checkID( uint16_t id){ return id == FUNC_STEPIN;};
+        inline bool checkName(char *name){ return false;};
+        inline const char*Name(){ return NULL;};
+        inline const char*IOName(){ return NULL;};
+        void execute( void *components[], char *command);
 };

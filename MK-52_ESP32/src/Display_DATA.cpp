@@ -76,7 +76,7 @@ int Display_DATA::tick(){
         _lcd->updateTerminalLine( 10, buff);
     }
     else{
-        _lcd->outputTerminalLine( 10, _rpnf->extMem->toString(buff, cnt));
+        _lcd->updateTerminalLine( 10, _rpnf->extMem->toString(buff, cnt));
     }
     for( int32_t i=9, j=cnt-1; i>=0; i--, j--){
         _lcd->updateTerminalLine( i, _rpnf->extMem->toString(buff, j));

@@ -73,3 +73,12 @@
 #define FUNC_MEXCLR             73
 #define FUNC_TOGGLE_EMOD        74
 #define FUNC_STOP               75
+#define FUNC_MKDIR              76
+#define FUNC_UPDIR              77
+#define FUNC_NEXTFILE           78
+#define FUNC_PREVFILE           79
+#define FUNC_REMOVE             80
+#define FUNC_STEPIN             81
+#define FUNC_SAVE               82
+#define FUNC_SAVEAS             83
+#define FUNC_LOAD               84

@@ -20,6 +20,7 @@ unsigned long Display_FILE::init( void *components[]) {
     Serial.println( "Init Display FILE");
     #endif
     _sd = (MK52_Hardware::SD_Manager *)components[COMPONENT_SD_MANAGER];
+    _tr = (Receiver_Text *)components[COMPONENT_RECEIVER_TEXT];
     return Display::init( components);
 }
 
@@ -29,19 +30,18 @@ void Display_FILE::activate(){
     #endif
     _lcd->dimScreen();
     _lcd->clearScreen( false);
-    //char **strs = _rpnf->getOutputLines();
-    //_sd->startFolderListing( strs, 10, SCREEN_COLS-1);
-
+    char **Lines = _rpnf->getOutputLines();
+    _sd->getFolderListing( Lines, 11, SCREEN_COLS-1);
     _lcd->outputStatus( _rpnf->progMem->getCounter(), _rpnf->extMem->getCounter(), "DSK", "   ");
-    // for( int i=0; i<10; i++)
-    //     _lcd->outputTerminalLine( i, strs[i]);
-    for( int i=0; i<9; i++){
-        if( i>=_sd->_nItems){
-            _lcd->outputTerminalLine( i, "");
-            continue;
-        }
-        char *line = _sd->getItemString( i);
-        _lcd->outputTerminalLine( i, line);
+    //_lcd->outputTerminalLine( 0, _sd->getFolderNameTruncated( SCREEN_COLS-1));
+    for( int i=0; i<11; i++){
+        _lcd->outputTerminalLine( i, Lines[i]);
+        // if( i>_sd->_nItems){
+        //     _lcd->outputTerminalLine( i, "");
+        //     continue;
+        // }
+        // char *line = _sd->getItemString( i-1);
+        // _lcd->outputTerminalLine( i, line);
     }
     _setCurrentReceiver( COMPONENT_RECEIVER_FILE_N);
     _lcd->undimScreen();
@@ -74,13 +74,25 @@ int Display_FILE::tick(){
             _setCurrentReceiver( newReceiver, 0, COMPONENT_RECEIVER_FILE_N);
             break;
     }
-    for( int i=0; i<9; i++){
-        if( i>=_sd->_nItems){
-            _lcd->updateTerminalLine( i, "");
-            continue;
-        }
-        char *line = _sd->getItemString( i);
-        _lcd->updateTerminalLine( i, line);
+    unsigned long start = millis();
+    char **Lines = _rpnf->getOutputLines();
+    _sd->getFolderListing( Lines, 11, SCREEN_COLS-1);
+    int nlines = 11;
+    if( _tr->isActive()){
+        _lcd->updateTerminalLine( 9, "> Name?");
+        _lcd->updateTerminalLine( 10, _tr->toScreenString());
+        nlines -= 2;
+    }
+    //_lcd->updateTerminalLine( 0, _sd->getFolderNameTruncated( SCREEN_COLS-1));
+    for( int i=0; i<nlines; i++){
+        _lcd->updateTerminalLine( i, Lines[i]);
+        // if( i>_sd->_nItems){
+        //     _lcd->updateTerminalLine( i, "");
+        //     continue;
+        // }
+        // char *line = _sd->getItemString( i-1);
+        // _lcd->updateTerminalLine( i, line);
+        if( millis()-start > KBD_IDLE_DELAY) break; // we can do the rest of redraw later!
     }
     return NO_CHANGE;
 }

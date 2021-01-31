@@ -182,7 +182,8 @@ unsigned long MK52_Host::init() {
     //delay(DEBUG_SHOW_DELAY);
     #endif
 
-    setDisplay( COMPONENT_DISPLAY_AUTO);
+    //setDisplay( COMPONENT_DISPLAY_AUTO);
+    setDisplay( COMPONENT_DISPLAY_FILE);
     return millis();
 }
 

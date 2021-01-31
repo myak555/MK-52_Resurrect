@@ -38,6 +38,11 @@ namespace MK52_Hardware{
         int16_t _nItems = 0;
 
         unsigned long init();
+        inline char *getFolderName(){ return _current_Dir_Name;};
+        char *getFolderNameTruncated( int8_t n);
+        void nextListingPosition();
+        void previousListingPosition();
+        char *getItemFromListing();
 
     //     size_t loadBinary( const char *name, byte *buff, size_t minSize, size_t maxSize);
     //     bool saveBinary( const char *name, byte *buff, size_t Size);
@@ -58,11 +63,15 @@ namespace MK52_Hardware{
         inline int16_t *getItemPtr( int16_t n){ return (int16_t*)(_buffer + n*SCREEN_COLS);};
         void setFolder( char *name);
         void setFolder_P( const char *name);
-        void readFolderItems();
+        void readFolderItems( char *location = NULL);
 
-        void startFolderListing( char *Lines[], uint8_t nLines, uint8_t lineLen, char *name=NULL);
-    //     bool deleteEntity( const char *name);
-    //     void createFolder( char *name);
+        void getFolderListing( char *Lines[], uint8_t nLines, uint8_t lineLen, char *name=NULL);
+        inline void setListingPosition( uint16_t pos){
+            listingPosition = ( pos>=_nItems)? _nItems-1: pos;};
+        bool deleteEntity( const char *name);
+        void createFolder( char *name);
+        void upFolder();
+        bool stepIn(char *name);
 
     //     bool openProgramFileRead( const char *name);
     //     bool openProgramFileWrite( const char *name);
@@ -84,13 +93,12 @@ namespace MK52_Hardware{
         char *_current_Dir_Name = NULL;
         char *_current_File_Name = NULL;
         char *_text = NULL;
-        void _resetRoot();
-        File _getCurrentDir();
         char *_buffer = NULL;
-        File _current_Dir;
-        bool _current_Dir_Open = false;
 
+        void _resetRoot();
+        File _getCurrentDir();        
         void _clearItems();
+        int16_t _locateAlphabetic(const char *name, bool isDir);
         bool _insertItem(const char *name, int16_t pos, int16_t slot);
 
     //    byte *_io_buffer;
@@ -102,15 +110,13 @@ namespace MK52_Hardware{
     //     ExpressionParser *_epar;
     //     File _currentFile;
 
-    //     void _checkSDPin();
-    //     bool _detectSDCard();
-
     //     bool _locateBASICFile( const char *name);
     //     bool _locateExistingFile( const char *name);
-    //     bool _cardCheckMantra();
+ 
         char *_stripFolders( const char *name);
         char *_formEntityName( File f);
         char *_appendFileSize( File f);
+        bool _startsWith(char *proposed, const char *actual);
 
     //     bool _nameLengthCheckMantra( size_t len);
     //     bool _lookForFileMantra1( char *tmpName);

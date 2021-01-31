@@ -49,6 +49,7 @@ namespace MK52_Interpreter{
         int tick( uint8_t scancode = 0);
         inline char *toString(){ return _text;};
         char *toTrimmedString();
+        char *toScreenString();
         void _setInputMode( uint8_t m, char *parentMode=NULL);
         char *appendText( char *text);
         char *appendText_P( const char *text);
@@ -210,6 +211,7 @@ namespace MK52_Interpreter{
       private:
         Receiver_Text *_tr;
         int _completeSubentry( uint8_t scancode);
+        bool _getConfirmation( uint8_t confirmationButton=31);
     };
 
     class Receiver_FILE_F: public Receiver{
