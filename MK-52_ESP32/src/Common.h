@@ -19,7 +19,7 @@
 #define SCREEN_COLS                 30 
 #define CALC_COLS                   20 
 #define SCREEN_ROWS                 12
-#define PROGRAM_LINE_LENGTH         64 
+#define PROGRAM_LINE_LENGTH         128 
 #define SCREEN_BUFFER_SIZE          372 
 
 // How long the system waits between the keyboard scans
@@ -60,8 +60,8 @@
 #define RETURN_STACK_SIZE           100
 #define DIRECTORY_LIST_SIZE         6000
 #define DIRECTORY_LIST_NITEMS       200
-#define CURRENT_DIR_LEN             256
-#define CURRENT_FILE_LEN            256
+#define CURRENT_DIR_LEN             250
+#define CURRENT_FILE_LEN            300
 
 #define NO_CHANGE                   -1
 #define SHUTDOWN_REQUESTED          -2

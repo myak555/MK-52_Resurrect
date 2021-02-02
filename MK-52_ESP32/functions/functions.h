@@ -82,3 +82,7 @@
 #define FUNC_SAVE               82
 #define FUNC_SAVEAS             83
 #define FUNC_LOAD               84
+#define FUNC_SAVEDATA           85
+#define FUNC_SAVEDATAAS         86
+#define FUNC_LOADDATA           87
+#define FUNC_GOMEM              88

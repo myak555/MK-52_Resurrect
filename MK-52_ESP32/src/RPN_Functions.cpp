@@ -22,16 +22,18 @@ unsigned long RPN_Functions::init( void *components[]) {
     rpnStack = (RPN_Stack *)components[COMPONENT_STACK];
     progMem = (Program_Memory *)components[COMPONENT_PROGRAM_MEMORY];
     extMem = (Extended_Memory *)components[COMPONENT_EXTENDED_MEMORY];
-    
+    _sd = (MK52_Hardware::SD_Manager *)components[COMPONENT_SD_MANAGER];
+
     _buffer = (char *)malloc( SCREEN_BUFFER_SIZE);
-    _text = (char*)malloc( 2*SCREEN_COLS+1);
+    _text = (char*)malloc( PROGRAM_LINE_LENGTH + 9);
     memset( _buffer, 0, SCREEN_BUFFER_SIZE);
-    memset( _text, 0, 2*SCREEN_COLS+1);
+    memset( _text, 0, PROGRAM_LINE_LENGTH + 9);
     char *ptr = _buffer;
     for( uint8_t i=0; i<SCREEN_ROWS; i++){
         _lines[i] = ptr;
         ptr += SCREEN_COLS + 1;
     }
+    _tmpuv = new UniversalValue( (uint8_t *)(_text + PROGRAM_LINE_LENGTH));
     
     // #define FUNC_COMMENT            1
     _appendFunction( new Func_Comment());
@@ -198,6 +200,13 @@ unsigned long RPN_Functions::init( void *components[]) {
     // #define FUNC_SAVE               82
     // #define FUNC_SAVEAS             83
     // #define FUNC_LOAD               84
+    // #define FUNC_SAVEDATA           85
+    // #define FUNC_SAVEDATAAS         86
+    _appendFunction( new Func_SaveDataAs());
+    // #define FUNC_LOADDATA           87
+    _appendFunction( new Func_LoadData());
+    // #define FUNC_GOMEM              88
+    _appendFunction( new Func_GOMEM());
 
     #ifdef __DEBUG
     Serial.print( _nfunctions);
@@ -273,6 +282,102 @@ void RPN_Functions::executeStep(){
 void RPN_Functions::_appendFunction( RPN_Function *f){
     if( _nfunctions >= MK52_NFUNCTIONS) return;
     _functions[ _nfunctions++] = f;
+}
+
+bool RPN_Functions::loadDataFile(){
+    #ifdef __DEBUG
+    Serial.println("Loading data file");
+    #endif
+    if( _sd->openFile(NULL)) return true;
+    bool result = _readDataFile( false, false, true);
+    _sd->closeFile();
+    return true;
+}
+
+bool RPN_Functions::saveDataFile(){
+    #ifdef __DEBUG
+    Serial.println("Saving data file");
+    #endif
+    if( _sd->openFile(NULL, true)) return true;
+    bool result = _writeDataFile(false, false, true);
+    _sd->closeFile();
+    return result;
+}
+
+bool RPN_Functions::saveDataFileAs( char * name){
+    #ifdef __DEBUG
+    Serial.print("Saving data file as ");
+    Serial.println( name);
+    #endif
+    if( _sd->openFile(name, true)) return true;
+    bool result = _writeDataFile(false, false, true);
+    _sd->closeFile();
+    _sd->readFolderItems();
+    return result;
+}
+
+bool RPN_Functions::_writeDataFile(bool writeStack, bool writeProg, bool writeMem){
+    if( _sd->println_P(PSTR("#"))) return true;
+    if( _sd->println_P(PSTR("# MK-52 data file"))) return true;
+    if(_sd->println_P(PSTR("#"))) return true;
+    if( writeMem){
+        sprintf_P( _text, PSTR("MC=%04u"), extMem->getCounter());
+        if(_sd->println(_text)) return true;    
+        for( uint32_t i=0; i<EXTENDED_MEMORY_NVALS; i++){
+            uint8_t *ptr = extMem->getLine( i);
+            if( *ptr==VALUE_TYPE_EMPTY) continue;
+            _tmpuv->fromLocation( ptr);
+            sprintf_P( _text, PSTR("M%04u "), i);
+            _tmpuv->toString(_text+6);
+            if(!_sd->println(_text)) continue;
+            return true;
+        }
+    }
+    return false;
+}
+
+bool RPN_Functions::_readDataFile(bool readStack, bool readProg, bool readMem){
+    uint32_t pmemctr = progMem->getCounter();
+    uint32_t ememctr = extMem->getCounter();
+    char *ptr = NULL;
+    while( true){
+        if( _sd->readln( _text, PROGRAM_LINE_LENGTH)) break;
+        Serial.println( _text);
+        if( _text[0] == 0 || _text[0] == '#') continue;
+        if( readProg && UniversalValue::_startsWith_P( _text, PSTR("PC="))){
+            execute( FUNC_GOTO, _text+3);
+            pmemctr = extMem->getCounter();
+            continue;
+        }
+        if( readProg && UniversalValue::_startsWith_P( _text, PSTR("P"))){
+            ptr = _text+1;
+            while( UniversalValue::_isDigit( *ptr)) ptr++;
+            if( *ptr == 0 || ptr[1] == 0) continue; // string too short or incorrectly formed
+            *ptr++ = 0;            
+            execute( FUNC_GOTO, _text+1);
+            //_tmpuv->fromString( ptr);
+            //if( _tmpuv->getType() > 0) _tmpuv->toLocation( extMem->getCurrentLine());
+            continue;
+        }
+        if( readMem && UniversalValue::_startsWith_P( _text, PSTR("MC="))){
+            execute( FUNC_GOMEM, _text+3);
+            ememctr = extMem->getCounter();
+            continue;
+        }
+        if( readMem && UniversalValue::_startsWith_P( _text, PSTR("M"))){
+            ptr = _text+1;
+            while( UniversalValue::_isDigit( *ptr)) ptr++;
+            if( *ptr == 0 || ptr[1] == 0) continue; // string too short or incorrectly formed
+            *ptr++ = 0;            
+            execute( FUNC_GOMEM, _text+1);
+            _tmpuv->fromString( ptr);
+            if( _tmpuv->getType() > 0) _tmpuv->toLocation( extMem->getCurrentLine());
+            continue;
+        }
+    }
+    progMem->setCounter( pmemctr);
+    extMem->setCounter( ememctr);
+    return false;
 }
 
 #include "../functions/Func_Divide.h"

@@ -25,7 +25,6 @@ namespace MK52_Interpreter{
         protected:
             RPN_Stack *_dealWithClergy1(void *components[]);
             RPN_Stack *_dealWithClergy2(void *components[]);
-            bool _startsWith(char *name, const char *keyword);
     };
 
     class RPN_Functions{
@@ -47,14 +46,25 @@ namespace MK52_Interpreter{
             void execute( char *command, bool pushNeeded=false);
             void executeStep();
 
+            bool loadDataFile();
+            bool saveDataFile();
+            bool saveDataFileAs( char * name);
+
+            inline char *formFileName(char *name){ return _sd->makeEntityName( name);};
+            bool fileExists(char *name){ return _sd->checkEntityExists((const char *)name);};
+
       private:
             void **_components;
+            MK52_Hardware::SD_Manager *_sd = NULL;
             uint16_t _nfunctions = 0;
             void *_functions[MK52_NFUNCTIONS];
             char *_text = NULL; // temporary output buffer
+            UniversalValue *_tmpuv; // temporary value for number conversion
             char *_buffer = NULL;
             char *_lines[SCREEN_ROWS];
             void _appendFunction( RPN_Function *f);
+            bool _writeDataFile(bool writeStack=false, bool writeProg=false, bool writeMem=false);
+            bool _readDataFile(bool readStack=false, bool readProg=false, bool readMem=false);
     };
 };
 

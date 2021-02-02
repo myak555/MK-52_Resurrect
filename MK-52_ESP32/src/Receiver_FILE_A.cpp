@@ -46,54 +46,13 @@ int Receiver_FILE_A::tick( uint8_t scancode){
         case 2:
             return_value = COMPONENT_RECEIVER_FILE_K;
             break;
-        case 4:
-            //_rpnf->execute(FUNC_TOGGLE_DMOD);
-            //_lcd->updateStatusDMODE(_rpnf->rpnStack->getDModeName());
-            return NO_CHANGE;
 
-        // Column 1 does nothing
-
-        // Column 2
-        case 9:
-            //_mode = 2;
-            //_ar->activate(0, -2);
-            //_lcd->updateStatusMC( _ar->toString());
-            return NO_CHANGE;
-        case 10:
-            //_mode = 3;
-            //_ar->activate(0, -3);
-            //_lcd->updateStatusMC( _ar->toString());
-            return NO_CHANGE;
-
-        // Column 3 does nothing
-        // Column 4 does nothing
-
-        // Column 5
-        case 21:
-            //_rpnf->execute( FUNC_TG);
-            break;
-        case 22:
-            //_rpnf->execute( FUNC_D2RAD);
-            break;
-        case 23:
-            //_rpnf->execute( FUNC_MM2IN);
-            break;
         case 24:
             #ifdef __DEBUG
             Serial.println("Already in FILE Display");
             #endif
             break;
 
-        // Column 6
-        case 25:
-            //_rpnf->execute( FUNC_COS);
-            break;
-        case 26:
-            //_rpnf->execute( FUNC_RAD2D);
-            break;
-        case 27:
-            //_rpnf->execute( FUNC_IN2MM);
-            break;
         case 28:
             #ifdef __DEBUG
             Serial.println("Going to DATA Display");
@@ -101,16 +60,6 @@ int Receiver_FILE_A::tick( uint8_t scancode){
             return_value = COMPONENT_DISPLAY_DATA;
             break;
 
-        // Column 7
-        case 29:
-            //_rpnf->execute( FUNC_COS);
-            break;
-        case 30:
-            //_rpnf->execute( FUNC_ARCCOS);
-            break;
-        case 31:
-            //_rpnf->execute( FUNC_SEED);
-            break;
         case 32:
             return_value = SHUTDOWN_REQUESTED;
             break;
@@ -124,27 +73,10 @@ int Receiver_FILE_A::tick( uint8_t scancode){
 
 int Receiver_FILE_A::_completeSubentry( uint8_t scancode){
     int8_t r = (int)scancode;
-    switch( _mode){
-        case 0:
-        case 1:
-            return r;
-        case 2:
-        case 3:
-            // r = _ar->tick( scancode);
-            // if( r == NO_CHANGE){
-            //     _lcd->updateStatusMC( _ar->toString());
-            //     return NO_CHANGE;
-            // }
-            // Serial.print("Accessing extended memory at ");
-            // Serial.println( _ar->toString());
-            // _rpnf->execute( (_mode==2)? FUNC_A_M2X : FUNC_A_X2M, _ar->toString());
-            // _lcd->updateStatusMC( _rpnf->extMem->getCounter());
-            // Serial.print("Memory setting done... returning ");
-            // Serial.println(r);
-            break;
-        default:
-            break;
-    }
+    // switch( _mode){
+    //     default:
+    //         break;
+    // }
     _mode = 0;
     return r;
 }

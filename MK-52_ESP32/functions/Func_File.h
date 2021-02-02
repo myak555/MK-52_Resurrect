@@ -30,3 +30,13 @@ void Func_StepIn::execute( void *components[], char *command){
     MK52_Hardware::SD_Manager *sd = (MK52_Hardware::SD_Manager *)components[COMPONENT_SD_MANAGER];
     sd->stepIn( sd->getItemFromListing());
 }
+
+void Func_SaveDataAs::execute( void *components[], char *command){
+    RPN_Functions *rpnf = (RPN_Functions *)components[COMPONENT_FUNCTIONS];
+    rpnf->saveDataFileAs( command);
+}
+
+void Func_LoadData::execute( void *components[], char *command){
+    RPN_Functions *rpnf = (RPN_Functions *)components[COMPONENT_FUNCTIONS];
+    rpnf->loadDataFile();
+}

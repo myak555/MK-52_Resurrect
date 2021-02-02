@@ -16,6 +16,8 @@ const char _standard_MinusInfinity[] PROGMEM = "-Inf";
 const char _standard_PlusInfinity[] PROGMEM = "+Inf";  
 const char _standard_Decimals[] PROGMEM = "0123456789";  
 
+//#define __DEBUG
+
 using namespace MK52_Interpreter;
 
 UniversalValue::UniversalValue( uint8_t *location){
@@ -247,7 +249,7 @@ double UniversalValue::_recoverDecimal(char *ptr){
     double tmp = 0.0;
     double frac = 0.1;
     while( *ptr){
-        if( !_isDecimal( *ptr)) return tmp;
+        if( !_isDigit( *ptr)) return tmp;
         tmp += (*ptr - '0') * frac;
         frac *= 0.1;
         if( frac < 1e-12) return tmp;
@@ -268,7 +270,7 @@ int64_t UniversalValue::_recoverInt64(char *ptr){
     if( *ptr == '+') ptr++;
     int64_t tmp = 0;
     while( *ptr){
-        if( !_isDecimal( *ptr)) return positive? tmp: -tmp;
+        if( !_isDigit( *ptr)) return positive? tmp: -tmp;
         tmp *= 10L;
         tmp += *ptr - '0';
         if( tmp > HUGE_POSITIVE_INTEGER) return positive? HUGE_POSITIVE_INTEGER: HUGE_NEGATIVE_INTEGER;
@@ -313,10 +315,70 @@ void UniversalValue::_checkRounding(double accuracy){
     fromInt( positive? (int64_t)fl: -(int64_t)fl);
 }
 
-bool UniversalValue::_isDecimal(char c){
-    const char *ptr = _standard_Decimals;
-    for( uint8_t i=0; i<10; i++)
-        if( c == (char)pgm_read_byte(ptr++)) return true;
-    return false;
+bool UniversalValue::_startsWith(char *text, char *keyword, int clip){
+    if( text==NULL || keyword==NULL) return false;
+    #ifdef __DEBUG
+    Serial.print("Compare ");
+    Serial.print(text);
+    Serial.print( " with ");
+    Serial.println(keyword);
+    #endif
+    int ln = strlen( text);
+    if( ln>clip) ln = clip;
+    for( int8_t i=0; i<ln; i++){
+        if( text[i] != keyword[i]) return false;
+    }
+    return true; // all letters are the same   
 }
 
+//
+// Empty keywords forbidden
+//
+bool UniversalValue::_startsWith_P(char *text, const char *keyword){
+    int ln = strlen_P( keyword);
+    for( int i=0; i<ln; i++, text++){
+        if( !(*text)) return false;
+        if( (char)pgm_read_byte( keyword+i) != *text) return false;
+    }
+    return true; // all letters are the same
+}
+
+//
+// Empty keywords forbidden
+//
+bool UniversalValue::_endsWith_P(char *text, const char *keyword){
+    int ln1 = strlen_P( keyword);
+    int ln2 = strlen( text);
+    if( ln2 < ln1) return false;
+    char *ptr = text+ln2-1;
+    for( int i=ln1-1; i>=0; i--, ptr--){
+        if( (char)pgm_read_byte( keyword+i) != *ptr) return false;
+    }
+    return true; // all letters are the same
+}
+
+//
+// Empty keywords forbidden
+//
+bool UniversalValue::_identicalTo_P(char *text, const char *keyword){
+    return strcmp_P( text, keyword) == 0;
+}
+
+//
+// Empty keywords forbidden
+//
+bool UniversalValue::_inString_P(char c, const char *keyword){
+    int ln = strlen_P( keyword);
+    for( int i=0; i<ln; i++){
+        if( (char)pgm_read_byte( keyword+i) == c) return true;
+    }
+    return false; // all letters are the same
+}
+
+bool UniversalValue::_isDigit(char c){
+    const char *ptr = _standard_Decimals;    
+    for( int8_t i=0; i<10; i++){
+        if( (char)pgm_read_byte( ptr++) == c) return true;
+    }
+    return false; // digit not found
+}

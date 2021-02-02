@@ -13,6 +13,11 @@ void Func_Reset_MC::execute( void *components[], char *command){
     extMem->resetCounter();
 }
 
+void Func_GOMEM::execute( void *components[], char *command){
+    Extended_Memory *extMem = (Extended_Memory *)components[COMPONENT_EXTENDED_MEMORY];
+    extMem->setCounter(command);
+}
+
 void Func_M2X::execute( void *components[], char *command){
     Register_Memory *rm = (Register_Memory *)components[COMPONENT_REGISTER_MEMORY];
     rm->MtoX(command);
@@ -46,7 +51,7 @@ void Func_A_X2M::execute( void *components[], char *command){
 void Func_MemSet::execute( void *components[], char *command){
     Extended_Memory *em = (Extended_Memory *)components[COMPONENT_EXTENDED_MEMORY];
     UniversalValue *uv = new UniversalValue(em->getCurrentLine());
-    Serial.print("Loading data");
+    Serial.print("Data to EM");
     Serial.print(command);
     uv->fromString( command);
     delete( uv);

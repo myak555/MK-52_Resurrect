@@ -34,13 +34,13 @@ namespace MK52_Interpreter{
         char *getNextLine();
         inline char *getBottom(){return (char*)(_buffer+_bottom);};
 
-        bool appendLine(char *line=NULL);
+        bool appendLine(char *line);
         bool appendLine_P(const char *line);
-        bool replaceLine(char *line=NULL);
+        bool replaceLine(char *line);
         bool replaceLine_P(const char *line);
-        bool insertLine(char *line=NULL);
+        bool insertLine(char *line);
         bool insertLine_P(const char *line);
-        bool updateLine(char *line=NULL);
+        bool updateLine(char *line);
         bool updateLine_P(const char *line);
         void deleteLine();
 

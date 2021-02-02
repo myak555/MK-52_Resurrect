@@ -29,3 +29,8 @@ char Receiver::_convertButton(const char *list, uint8_t scancode){
     if( c == '#') return 0;
     return c;
 }
+
+bool Receiver::_getConfirmation( uint8_t confirmationButton){
+    while( _kbd->scan() == 0) delay(KBD_IDLE_DELAY);
+    return _kbd->lastScan == confirmationButton;
+}

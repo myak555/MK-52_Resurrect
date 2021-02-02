@@ -61,10 +61,6 @@ int Receiver_Number::tick( uint8_t scancode){
         case '7':
         case '8':
         case '9':
-            #ifdef __DEBUG
-            Serial.print("Ticking digit: ");
-            Serial.println(_text);
-            #endif
             if( ln == 2 && _text[1] == '0'){
                 _text[1] = c;
                 break;
@@ -102,7 +98,8 @@ int Receiver_Number::tick( uint8_t scancode){
                 _mode = 2;
                 break;
             }
-            if( ln == 1 || strcmp_P(_text+1, PSTR("0.0")) == 0 || strcmp_P(_text+1, PSTR("0.")) == 0){
+            if( ln == 1 || UniversalValue::_identicalTo_P(_text+1, PSTR("0.0"))
+                || UniversalValue::_identicalTo_P(_text+1, PSTR("0."))){
                 strcpy_P( _text+1, _RN_StandardUnity);
                 _mode = 3;
                 break;

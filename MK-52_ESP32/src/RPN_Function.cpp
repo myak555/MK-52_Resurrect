@@ -44,12 +44,3 @@ RPN_Stack *RPN_Function::_dealWithClergy2(void *components[]){
     }
     return s; // the rest of ariphmetics
 }
-
-bool RPN_Function::_startsWith(char *name, const char *keyword){
-    int8_t ln = strlen_P( keyword);
-    for( int8_t i=0; i<ln; i++, name++){
-        if( !(*name)) return false;
-        if( (char)pgm_read_byte( keyword+i) != *name) return false;
-    }
-    return true; // all letters are the same
-}

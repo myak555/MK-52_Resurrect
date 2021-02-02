@@ -181,70 +181,71 @@ bool Program_Memory::returnFromSub(){
     return false;
 }
 
-// bool Program_Memory::replaceLine(char *line){
-//     if( line == NULL) line = _text;
-//     size_t toCopy = strlen(line) + 1;
-//     if( _pointer + toCopy >= _limit) return false; // no space
-//     if( _pointer >= _bottom){
-//         if( _pointer+toCopy >= _limit) return false;
-//         memcpy( _pointer, line, toCopy);
-//         _bottom = _pointer + toCopy;
-//         return true;
-//     }
-//     size_t toReplace = strlen(getCurrentLine()) + 1;
-//     if( toCopy == toReplace){
-//         memcpy( _pointer, line, toCopy);
-//         return true;
-//     }
-//     size_t toMove = 0;
-//     if( toCopy < toReplace){
-//         toMove = toReplace - toCopy;
-//         memcpy( _pointer, line, toCopy);
-//         memmove( _pointer+toCopy, _pointer+toReplace, toMove);
-//         memset( _bottom, 0, toMove);
-//         _bottom -= toMove;
-//         return true;
-//     }
-//     toMove = toCopy - toReplace;
-//     if( _bottom + toMove >= _limit) toMove = _limit - _bottom - 1;
-//     if( toMove > 0) memmove( _pointer + toMove, _pointer, toMove);
-//     _bottom += toMove;
-//     memcpy( _pointer, line, toCopy);
-//     *_bottom = 0;
-//     return true;
-// }
+bool Program_Memory::replaceLine(char *line){
+    size_t toCopy = strlen(line) + 1;
+    char *ptrC = getCurrentLine();
+    if( _current + toCopy >= PROGRAM_MEMORY_SIZE) return false; // no space
+    if( _current >= _bottom){
+        if( _current+toCopy >= PROGRAM_MEMORY_SIZE) return false;
+        memcpy( ptrC, line, toCopy);
+        _bottom = _current + toCopy;
+        return true;
+    }
+    size_t toReplace = strlen(ptrC) + 1;
+    if( toCopy == toReplace){
+        memcpy( ptrC, line, toCopy);
+        return true;
+    }
+    size_t toMove = 0;
+    if( toCopy < toReplace){
+        toMove = toReplace - toCopy;
+        memcpy( ptrC, line, toCopy);
+        memmove( ptrC+toCopy, ptrC+toReplace, toMove);
+        memset( getBottom(), 0, toMove);
+        _bottom -= toMove;
+        return true;
+    }
+    toMove = toCopy - toReplace;
+    if( _bottom + toMove >= PROGRAM_MEMORY_SIZE) toMove = PROGRAM_MEMORY_SIZE - _bottom - 1;
+    if( toMove > 0) memmove( ptrC + toMove, ptrC, toMove);
+    _bottom += toMove;
+    memcpy( ptrC, line, toCopy);
+    getBottom()[0] = 0;
+    return true;
+}
 
-// bool Program_Memory::replaceLine_P(const char *line){
-//     size_t toCopy = strlen_P(line) + 1;
-//     if( _pointer + toCopy >= _limit) return false; // no space
-//     if( _pointer >= _bottom){
-//         if( _pointer+toCopy >= _limit) return false;
-//         memcpy_P( _pointer, line, toCopy);
-//         _bottom = _pointer + toCopy;
-//         return true;
-//     }
-//     size_t toReplace = strlen(getCurrentLine()) + 1;
-//     if( toCopy == toReplace){
-//         memcpy_P( _pointer, line, toCopy);
-//         return true;
-//     }
-//     size_t toMove = 0;
-//     if( toCopy < toReplace){
-//         toMove = toReplace - toCopy;
-//         memcpy_P( _pointer, line, toCopy);
-//         memmove( _pointer+toCopy, _pointer+toReplace, toMove);
-//         memset( _bottom, 0, toMove);
-//         _bottom -= toMove;
-//         return true;
-//     }
-//     toMove = toCopy - toReplace;
-//     if( _bottom + toMove >= _limit) toMove = _limit - _bottom - 1;
-//     if( toMove > 0) memmove( _pointer + toMove, _pointer, toMove);
-//     _bottom += toMove;
-//     memcpy_P( _pointer, line, toCopy);
-//     *_bottom = 0;
-//     return true;
-// }
+bool Program_Memory::replaceLine_P(const char *line){
+    size_t toCopy = strlen_P(line) + 1;
+    char *ptrC = getCurrentLine();
+    if( _current + toCopy >= PROGRAM_MEMORY_SIZE) return false; // no space
+    if( _current >= _bottom){
+        if( _current+toCopy >= PROGRAM_MEMORY_SIZE) return false;
+        memcpy_P( ptrC, line, toCopy);
+        _bottom = _current + toCopy;
+        return true;
+    }
+    size_t toReplace = strlen(ptrC) + 1;
+    if( toCopy == toReplace){
+        memcpy_P( ptrC, line, toCopy);
+        return true;
+    }
+    size_t toMove = 0;
+    if( toCopy < toReplace){
+        toMove = toReplace - toCopy;
+        memcpy_P( ptrC, line, toCopy);
+        memmove( ptrC+toCopy, ptrC+toReplace, toMove);
+        memset( getBottom(), 0, toMove);
+        _bottom -= toMove;
+        return true;
+    }
+    toMove = toCopy - toReplace;
+    if( _bottom + toMove >= PROGRAM_MEMORY_SIZE) toMove = PROGRAM_MEMORY_SIZE - _bottom - 1;
+    if( toMove > 0) memmove( ptrC + toMove, ptrC, toMove);
+    _bottom += toMove;
+    memcpy_P( ptrC, line, toCopy);
+    getBottom()[0] = 0;
+    return true;
+}
 
 // bool Program_Memory::insertLine(char *line){
 //     if( line == NULL) line = _text;
@@ -259,7 +260,7 @@ bool Program_Memory::returnFromSub(){
 //     size_t toMove = _bottom - _pointer;
 //     memmove( _pointer+toCopy, _pointer, toMove+1);
 //     _bottom += toCopy;
-//     *_bottom = 0;
+//     getBottom()[0] = 0;
 //     memcpy( _pointer, line, toCopy);
 //     return true;
 // }
@@ -276,30 +277,32 @@ bool Program_Memory::returnFromSub(){
 //     size_t toMove = _bottom - _pointer;
 //     memmove( _pointer+toCopy, _pointer, toMove+1);
 //     _bottom += toCopy;
-//     *_bottom = 0;
+//     getBottom()[0] = 0;
 //     memcpy_P( _pointer, line, toCopy);
 //     return true;
 // }
 
 bool Program_Memory::updateLine(char *line){
-//     if( EditOverwrite) replaceLine(line);
-//     else insertLine(line);
+    replaceLine(line); // TODO
+    //if( EditOverwrite) replaceLine(line);
+    //else insertLine(line);
 }
 
 bool Program_Memory::updateLine_P(const char *line){
-//     if( EditOverwrite) replaceLine_P(line);
-//     else insertLine_P(line);
+    replaceLine_P(line); // TODO
+    //if( EditOverwrite) replaceLine_P(line);
+    //else insertLine_P(line);
 }
 
-
-// void Program_Memory::deleteLine(){
-//     if( _pointer >= _bottom) return;
-//     size_t toCopy = strlen(getCurrentLine()) + 1;
-//     uint8_t *source = _pointer + toCopy;
-//     memmove( _pointer, source, toCopy);
-//     memset( _bottom, 0, toCopy);
-//     _bottom -= toCopy;
-// }
+void Program_Memory::deleteLine(){
+    if( _current >= _bottom) return;
+    char *ptrC = getCurrentLine();
+    size_t toCopy = strlen(ptrC) + 1;
+    char *source = ptrC + toCopy;
+    memmove( ptrC, source, toCopy);
+    memset( getBottom(), 0, toCopy);
+    _bottom -= toCopy;
+}
 
 void Program_Memory::getPreviousLines( char *lines[], uint8_t n){
     lines[0] = getCurrentLine();

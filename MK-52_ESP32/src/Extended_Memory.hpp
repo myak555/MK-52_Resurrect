@@ -33,7 +33,6 @@ namespace MK52_Interpreter{
       private:
         uint32_t _counter = 0;
         uint8_t *_buffer = NULL;
-        char _text[PROGRAM_LINE_LENGTH]; // temporary input buffer
         inline uint8_t *_memoryAddress( int32_t index){
            return _buffer + index*9;};
     };

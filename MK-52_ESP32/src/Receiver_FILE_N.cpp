@@ -68,16 +68,20 @@ int Receiver_FILE_N::tick( uint8_t scancode){
 
         // Column 2
         case 9:
-            // load program
+            _rpnf->execute( FUNC_LOADDATA);
+            _lcd->updateStatusPC( _rpnf->progMem->getCounter());
+            _lcd->updateStatusMC( _rpnf->extMem->getCounter());
             break;
         case 10:
-            // save program
             break;
         case 11:
             // find program
             break;
         case 12:
             // save program as
+            _mode = 3;
+            _tr->activate(0, -3);
+            _tr->_setInputMode( 2); // alpha mode by default;
             break;
 
         // Column 6
@@ -105,15 +109,8 @@ int Receiver_FILE_N::tick( uint8_t scancode){
     return return_value;
 }
 
-//
-// Confirms file deletion or overwrite
-//
-bool Receiver_FILE_N::_getConfirmation( uint8_t confirmationButton){
-    while( _kbd->scan() == 0) delay(KBD_IDLE_DELAY);
-    return _kbd->lastScan == confirmationButton;
-}
-
 int Receiver_FILE_N::_completeSubentry( uint8_t scancode){
+    char *filename = NULL;
     int8_t r = (int)scancode;
     switch( _mode){
         case 0:
@@ -130,6 +127,22 @@ int Receiver_FILE_N::_completeSubentry( uint8_t scancode){
             _tr->_setInputMode( 0);
             break;
         case 3:
+            r = _tr->tick( scancode);
+            if( r == NO_CHANGE) return NO_CHANGE;
+            _tr->appendText_P(PSTR(".MK52"));
+            filename = _rpnf->formFileName( _tr->toTrimmedString());
+            _tr->_setInputMode( 0);
+            #ifdef __DEBUG
+            Serial.print("Received name: ");
+            Serial.println(filename);
+            #endif
+            if( !_rpnf->fileExists(filename)){
+                _rpnf->execute( FUNC_SAVEDATAAS, filename);
+                break;
+            }
+            _lcd->outputTerminalLine( 10, "Confirm OVERWRITE (\030)");
+            if( _getConfirmation( 31)) _rpnf->execute( FUNC_SAVEDATAAS, filename);
+            break;
         case 4:
             // r = _rr->tick( scancode);
             // if( r == NO_CHANGE) return NO_CHANGE;

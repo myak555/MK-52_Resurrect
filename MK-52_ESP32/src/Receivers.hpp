@@ -28,6 +28,7 @@ namespace MK52_Interpreter{
         MK52_Hardware::LCD_Manager *_lcd;
         RPN_Functions *_rpnf;
         char _convertButton(const char *list, uint8_t scancode);
+        bool _getConfirmation( uint8_t confirmationButton);
     };
 
     class Receiver_Number: public Receiver{
@@ -211,7 +212,6 @@ namespace MK52_Interpreter{
       private:
         Receiver_Text *_tr;
         int _completeSubentry( uint8_t scancode);
-        bool _getConfirmation( uint8_t confirmationButton=31);
     };
 
     class Receiver_FILE_F: public Receiver{

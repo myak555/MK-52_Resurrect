@@ -28,6 +28,9 @@
 #define SD_MISO            19
 #define SD_MOSI            23
 
+#define _LF_               10
+#define _CR_               13
+
 namespace MK52_Hardware{
     class SD_Manager{
       public:
@@ -36,12 +39,15 @@ namespace MK52_Hardware{
         int16_t listingPosition = -1;
         int16_t _nDirs = 0;
         int16_t _nItems = 0;
+        File _current_File;
+        bool _current_File_open = false;
 
         unsigned long init();
         inline char *getFolderName(){ return _current_Dir_Name;};
         char *getFolderNameTruncated( int8_t n);
         void nextListingPosition();
         void previousListingPosition();
+        inline bool isAtFolder(){ return listingPosition <_nDirs;};
         char *getItemFromListing();
 
     //     size_t loadBinary( const char *name, byte *buff, size_t minSize, size_t maxSize);
@@ -49,16 +55,10 @@ namespace MK52_Hardware{
 
     //     void readFile( const char * path);
     //     void writeFile( const char * path, const char * message);
-    //     const char *SD_Message();
-    //     void checkSDStatus();
-    //     bool setPrevMounted(){
-    //       if( SDPrevMounted == SDMounted) return true;
-    //       SDPrevMounted = SDMounted;
-    //       return false;
-    //     }
 
         void checkRootExists();
         bool checkEntityExists( const char *name);
+        char *makeEntityName( char *name);
         inline char *getItemString( int16_t n){return _buffer + n*SCREEN_COLS + 2;};
         inline int16_t *getItemPtr( int16_t n){ return (int16_t*)(_buffer + n*SCREEN_COLS);};
         void setFolder( char *name);
@@ -72,6 +72,15 @@ namespace MK52_Hardware{
         void createFolder( char *name);
         void upFolder();
         bool stepIn(char *name);
+
+        bool openFile( char *path=NULL, bool write=false);
+        void closeFile();
+        bool print( char * message);
+        bool print_P( const char * message);
+        bool println( char * message);
+        bool println_P( const char * message);
+        bool read( char *buffer, int32_t n);
+        bool readln( char *buffer, int32_t n);
 
     //     bool openProgramFileRead( const char *name);
     //     bool openProgramFileWrite( const char *name);
@@ -116,7 +125,6 @@ namespace MK52_Hardware{
         char *_stripFolders( const char *name);
         char *_formEntityName( File f);
         char *_appendFileSize( File f);
-        bool _startsWith(char *proposed, const char *actual);
 
     //     bool _nameLengthCheckMantra( size_t len);
     //     bool _lookForFileMantra1( char *tmpName);

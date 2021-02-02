@@ -40,6 +40,13 @@ namespace MK52_Interpreter{
             inline double *_asRealPtr(){return (double *)(_ptr+1);};
             void _checkRounding( double accuracy = __ROUNDING_ACCURACY);
 
+            static bool _startsWith(char *text, char *keyword, int clip=21);
+            static bool _startsWith_P(char *text, const char *keyword);
+            static bool _endsWith_P(char *text, const char *keyword);
+            static bool _identicalTo_P(char *text, const char *keyword);
+            static bool _inString_P(char c, const char *keyword);
+            static bool _isDigit(char c);
+
         private:
             uint8_t *_ptr = NULL;
             char *_composeDouble(char *text, double value); 
@@ -47,7 +54,6 @@ namespace MK52_Interpreter{
             char *_composeInt64(char *text, int64_t value);
             double _recoverDecimal(char *ptr);
             int64_t _recoverInt64(char *ptr);
-            bool _isDecimal(char c);
     };
 }
 

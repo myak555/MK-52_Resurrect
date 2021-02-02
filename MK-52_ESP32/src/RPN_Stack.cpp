@@ -54,10 +54,10 @@ void RPN_Stack::resetStackLabels(){
 }
 
 bool RPN_Stack::customStackLabels(){
-    if( strcmp_P( X_Label, _RPN_Stack_LabelX) != 0) return true;
-    if( strcmp_P( Y_Label, _RPN_Stack_LabelY) != 0) return true;
-    if( strcmp_P( Z_Label, _RPN_Stack_LabelZ) != 0) return true;
-    if( strcmp_P( T_Label, _RPN_Stack_LabelT) != 0) return true;
+    if( !UniversalValue::_identicalTo_P( X_Label, _RPN_Stack_LabelX)) return true;
+    if( !UniversalValue::_identicalTo_P( Y_Label, _RPN_Stack_LabelY)) return true;
+    if( !UniversalValue::_identicalTo_P( Z_Label, _RPN_Stack_LabelZ)) return true;
+    if( !UniversalValue::_identicalTo_P( T_Label, _RPN_Stack_LabelT)) return true;
     return false;
 }
 

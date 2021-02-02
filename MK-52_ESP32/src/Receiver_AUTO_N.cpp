@@ -144,10 +144,6 @@ int Receiver_AUTO_N::_completeSubentry( uint8_t scancode){
         case 1:
             return r;
         case 2:
-            #ifdef __DEBUG
-            Serial.print("Ticking to NUMBER... ");
-            Serial.println(scancode);
-            #endif 
             r = _nr->tick( scancode);
             if( r == NO_CHANGE) return NO_CHANGE;
             #ifdef __DEBUG

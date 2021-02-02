@@ -45,9 +45,9 @@ int Receiver_Text::tick( uint8_t scancode){
     char c = _convertButton( (_mode==2)? _RT_LetterConversion: _RT_DigitConversion, scancode);
     int return_value = NO_CHANGE; 
     switch( scancode){
-        case 1:
-        case 2:
-            break;
+        //case 1:
+        //case 2:
+        //    break;
         case 4: // mode change
             _setInputMode( (_mode == 2)? 3: 2);
             break;
@@ -56,9 +56,12 @@ int Receiver_Text::tick( uint8_t scancode){
             return_value = _parentReceiver;
             break;
         case 32: // Cx
-            if( ln>0) _text[ln--] = 0;
-            _mode = 0;
-            return_value = _parentReceiver;
+            if( ln<=0){
+                _mode = 0;
+                return_value = _parentReceiver;
+                break;
+            }
+            _text[--ln] = 0;
             break;
         default: // any other symbol is added to string
             if( ln<=PROGRAM_LINE_LENGTH){

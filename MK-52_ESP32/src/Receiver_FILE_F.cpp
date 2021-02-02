@@ -34,6 +34,10 @@ void Receiver_FILE_F::activate( uint8_t scancode, int8_t parent){
 
 int Receiver_FILE_F::tick( uint8_t scancode){
     int return_value = COMPONENT_RECEIVER_FILE_N;
+    int r = _completeSubentry(scancode);
+    if( r < NO_CHANGE) return return_value;
+    if( r <= 0) return NO_CHANGE;
+    scancode = (uint8_t)r;
     switch( scancode){
         // Column 0
         case 2:
@@ -42,52 +46,26 @@ int Receiver_FILE_F::tick( uint8_t scancode){
         case 3:
             return_value = COMPONENT_RECEIVER_FILE_A;
             break;
-        case 4:
-            //_rpnf->execute(FUNC_TOGGLE_DMOD);
-            //_lcd->updateStatusDMODE(_rpnf->rpnStack->getDModeName());
-            return NO_CHANGE;
 
-        // Column 1 does nothing
-        // Column 2 does nothing
-
-        // Column 3
-        case 13:
-            //_rpnf->execute( FUNC_SIN);
+        // Column 1
+        case 5:
+            for( int i=0; i<9; i++)
+                _rpnf->execute( FUNC_NEXTFILE);            
             break;
-        case 14:
-            //_rpnf->execute( FUNC_ARCSIN);
-            break;
-        case 15:
-            //_rpnf->execute( FUNC_EXP);
-            break;
-        case 16:
-            //_rpnf->execute( FUNC_10X);
+        case 6:
+            for( int i=0; i<9; i++)
+                _rpnf->execute( FUNC_PREVFILE);            
             break;
 
-        // Column 4
-        case 17:
-            //_rpnf->execute( FUNC_COS);
-            break;
-        case 18:
-            //_rpnf->execute( FUNC_ARCCOS);
-            break;
-        case 19:
-            //_rpnf->execute( FUNC_LG);
-            break;
-        case 20:
-            //_rpnf->execute( FUNC_ROT);
+        // Column 2
+        case 12:
+            // save data as
+            _mode = 2;
+            _tr->activate(0, -3);
+            _tr->_setInputMode( 2); // alpha mode by default;
             break;
 
         // Column 5
-        case 21:
-            //_rpnf->execute( FUNC_TG);
-            break;
-        case 22:
-            //_rpnf->execute( FUNC_ARCTG);
-            break;
-        case 23:
-            //_rpnf->execute( FUNC_LN);
-            break;
         case 24:
             #ifdef __DEBUG
             Serial.println("Going to AUTO Display");
@@ -96,15 +74,6 @@ int Receiver_FILE_F::tick( uint8_t scancode){
             break;
 
         // Column 6
-        case 25:
-            //_rpnf->execute( FUNC_SQRT);
-            break;
-        case 26:
-            //_rpnf->execute( FUNC_PI);
-            break;
-        case 27:
-            //_rpnf->execute( FUNC_POW);
-            break;
         case 28:
             #ifdef __DEBUG
             Serial.println("Going to PROG Display");
@@ -113,21 +82,44 @@ int Receiver_FILE_F::tick( uint8_t scancode){
             break;
 
         // Column 7
-        case 29:
-            //_rpnf->execute( FUNC_1X);
-            break;
-        case 30:
-            //_rpnf->execute( FUNC_X2);
-            break;
-        case 31:
-            //_rpnf->execute( FUNC_BX);
-            break;
         case 32:
+            // release F
             break;
 
         default: // all other buttons do nothing, keeping F-mode
-           return NO_CHANGE;
+            return NO_CHANGE;
     }
     _mode = 0;
     return return_value;
+}
+
+int Receiver_FILE_F::_completeSubentry( uint8_t scancode){
+    char *filename = NULL;
+    int8_t r = (int)scancode;
+    switch( _mode){
+        case 0:
+        case 1:
+            return r;
+        case 2:
+            r = _tr->tick( scancode);
+            if( r == NO_CHANGE) return NO_CHANGE;
+            _tr->appendText_P(PSTR(".DAT"));
+            filename = _rpnf->formFileName( _tr->toTrimmedString());
+            _tr->_setInputMode( 0);
+            #ifdef __DEBUG
+            Serial.print("Received name: ");
+            Serial.println(filename);
+            #endif
+            if( !_rpnf->fileExists(filename)){
+                _rpnf->execute( FUNC_SAVEDATAAS, filename);
+                break;
+            }
+            _lcd->outputTerminalLine( 10, "Confirm OVERWRITE (\030)");
+            if( _getConfirmation( 31)) _rpnf->execute( FUNC_SAVEDATAAS, filename);
+            break;
+        default:
+            break;
+    }
+    _mode = 0;
+    return r;
 }
