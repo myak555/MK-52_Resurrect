@@ -80,7 +80,14 @@ int Display_PROG::tick(){
     char *buff = _rpnf->getOutputBuffer();
     int32_t display_PC = (int32_t)_rpnf->progMem->getCounter();
     _rpnf->progMem->getPreviousLines(_displayLines, SCREEN_ROWS-1);
-    for( int i=10, j=0; i>=0; i--, j++){
+    if( _ar->isActive()){
+        _lcd->updateTerminalLine( 10, _rpnf->getOutputBuffer());
+        display_PC--;
+    }
+    else{
+        _lcd->updateTerminalLine( 10, _getTerminalLine( buff, display_PC--, _displayLines[0]));
+    }
+    for( int i=9, j=1; i>=0; i--, j++){
         _lcd->updateTerminalLine( i, _getTerminalLine( buff, display_PC--, _displayLines[j]));
         if( millis()-start > KBD_IDLE_DELAY) break; // we can do the rest of redraw later!
     }

@@ -57,6 +57,9 @@ int Display_AUTO::tick(){
     int newReceiver = current_Receiver->tick( scancode);
     if( newReceiver < -1) return newReceiver;
     switch( newReceiver){
+        case COMPONENT_DISPLAY_AUTO:
+            _setCurrentReceiver( COMPONENT_RECEIVER_AUTO_N);
+            break;
         case COMPONENT_DISPLAY_DATA:
         case COMPONENT_DISPLAY_FILE:
         case COMPONENT_DISPLAY_PROG:

@@ -50,6 +50,7 @@ namespace MK52_Interpreter{
         uint8_t toggleEditMode();
 
         void getPreviousLines( char *lines[], uint8_t n);
+        bool isAtStop();
 
       private:
         uint32_t _counter = 0;

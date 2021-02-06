@@ -12,9 +12,7 @@ class Func_Comment: public RPN_Function{
 class Func_Increment_PC: public RPN_Function{
     public:
         inline bool checkID( uint16_t id){ return id == FUNC_INCREMENT_PC;};
-        inline bool checkName(char *name){ return false;};
-        inline const char*Name(){ return (const char*)NULL;};
-        inline const char*IOName(){ return (const char*)NULL;};
+        inline bool advanceRequired(){return false;};
         inline void execute( void *components[], char *command){
             Program_Memory *progMem = (Program_Memory *)components[COMPONENT_PROGRAM_MEMORY];
             progMem->incrementCounter();
@@ -24,9 +22,7 @@ class Func_Increment_PC: public RPN_Function{
 class Func_Decrement_PC: public RPN_Function{
     public:
         inline bool checkID( uint16_t id){ return id == FUNC_DECREMENT_PC;};
-        inline bool checkName(char *name){ return false;};
-        inline const char*Name(){ return (const char*)NULL;};
-        inline const char*IOName(){ return (const char*)NULL;};
+        inline bool advanceRequired(){return false;};
         inline void execute( void *components[], char *command){
             Program_Memory *progMem = (Program_Memory *)components[COMPONENT_PROGRAM_MEMORY];
             progMem->decrementCounter();
@@ -36,27 +32,21 @@ class Func_Decrement_PC: public RPN_Function{
 class Func_Increment_MC: public RPN_Function{
     public:
         inline bool checkID( uint16_t id){ return id == FUNC_INCREMENT_MC;};
-        inline bool checkName(char *name){ return false;};
-        inline const char*Name(){ return (const char*)NULL;};
-        inline const char*IOName(){ return (const char*)NULL;};
+        inline bool advanceRequired(){return false;};
         void execute( void *components[], char *command);
 };
 
 class Func_Decrement_MC: public RPN_Function{
     public:
         inline bool checkID( uint16_t id){ return id == FUNC_DECREMENT_MC;};
-        inline bool checkName(char *name){ return false;};
-        inline const char*Name(){ return (const char*)NULL;};
-        inline const char*IOName(){ return (const char*)NULL;};
+        inline bool advanceRequired(){return false;};
         void execute( void *components[], char *command);
 };
 
 class Func_Reset_PC: public RPN_Function{
     public:
         inline bool checkID( uint16_t id){ return id == FUNC_RESET_PC;};
-        inline bool checkName(char *name){ return false;};
-        inline const char*Name(){ return (const char*)NULL;};
-        inline const char*IOName(){ return (const char*)NULL;};
+        inline bool advanceRequired(){return false;};
         inline void execute( void *components[], char *command){
             Program_Memory *progMem = (Program_Memory *)components[COMPONENT_PROGRAM_MEMORY];
             progMem->resetCounter();
@@ -66,18 +56,14 @@ class Func_Reset_PC: public RPN_Function{
 class Func_Reset_MC: public RPN_Function{
     public:
         inline bool checkID( uint16_t id){ return id == FUNC_RESET_MC;};
-        inline bool checkName(char *name){ return false;};
-        inline const char*Name(){ return (const char*)NULL;};
-        inline const char*IOName(){ return (const char*)NULL;};
+        inline bool advanceRequired(){return false;};
         void execute( void *components[], char *command);
 };
 
 class Func_Toggle_DMOD: public RPN_Function{
     public:
         inline bool checkID( uint16_t id){ return id == FUNC_TOGGLE_DMOD;};
-        inline bool checkName(char *name){ return false;};
-        inline const char*Name(){ return (const char*)NULL;};
-        inline const char*IOName(){ return (const char*)NULL;};
+        inline bool advanceRequired(){return false;};
         inline void execute( void *components[], char *command){
             RPN_Stack *_stack = (RPN_Stack *)components[COMPONENT_STACK];
             _stack->toggleAngleMode();
@@ -101,7 +87,6 @@ class Func_set_DMOD_RAD: public RPN_Function{
         inline bool checkID( uint16_t id){ return id == FUNC_SET_DMOD_RAD;};
         inline bool checkName(char *name){ return UniversalValue::_identicalTo_P( name, Name());};
         inline const char*Name(){ return PSTR("RAD");};
-        inline const char*IOName(){ return Name();};
         inline void execute( void *components[], char *command){
             RPN_Stack *_stack = (RPN_Stack *)components[COMPONENT_STACK];
             _stack->setDMode( DMODE_RADIANS);
@@ -672,6 +657,7 @@ class Func_GOTO: public RPN_Function{
         inline bool checkName(char *name){ return UniversalValue::_startsWith_P( name, Name());};
         inline const char*Name(){ return PSTR("GOTO ");};
         inline const char*IOName(){ return Name();};
+        inline bool advanceRequired(){return false;};
         void execute( void *components[], char *command);
 };
 
@@ -681,6 +667,7 @@ class Func_GOMEM: public RPN_Function{
         inline bool checkName(char *name){ return UniversalValue::_startsWith_P( name, Name());};
         inline const char*Name(){ return PSTR("GOMEM ");};
         inline const char*IOName(){ return Name();};
+        inline bool advanceRequired(){return false;};
         void execute( void *components[], char *command);
 };
 
@@ -690,6 +677,7 @@ class Func_GOSUB: public RPN_Function{
         inline bool checkName(char *name){ return UniversalValue::_startsWith_P( name, Name());};
         inline const char*Name(){ return PSTR("GOSUB ");};
         inline const char*IOName(){ return Name();};
+        inline bool advanceRequired(){return false;};
         void execute( void *components[], char *command);
 };
 
@@ -699,6 +687,7 @@ class Func_Return: public RPN_Function{
         inline bool checkName(char *name){ return UniversalValue::_identicalTo_P( name, Name());};
         inline const char*Name(){ return PSTR("RETURN");};
         inline const char*IOName(){ return Name();};
+        inline bool advanceRequired(){return false;};
         void execute( void *components[], char *command);
 };
 
@@ -708,6 +697,7 @@ class Func_Stop: public RPN_Function{
         inline bool checkName(char *name){ return UniversalValue::_identicalTo_P( name, Name());};
         inline const char*Name(){ return PSTR("STOP");};
         inline const char*IOName(){ return Name();};
+        inline bool advanceRequired(){return false;};
         inline void execute( void *components[], char *command){
             RPN_Functions *fs = (RPN_Functions *)components[COMPONENT_FUNCTIONS];
             fs->_atStop = true;};
@@ -719,6 +709,7 @@ class Func_Toggle_EMOD: public RPN_Function{
         inline bool checkName(char *name){ return false;};
         inline const char*Name(){ return (const char*)NULL;};
         inline const char*IOName(){ return (const char*)NULL;};
+        inline bool advanceRequired(){return false;};
         inline void execute( void *components[], char *command){
             Program_Memory *pm = (Program_Memory *)components[COMPONENT_PROGRAM_MEMORY];
             pm->toggleEditMode();};

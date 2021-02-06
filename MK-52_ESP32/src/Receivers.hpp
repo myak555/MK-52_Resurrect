@@ -148,7 +148,6 @@ namespace MK52_Interpreter{
         Receiver_Address *_ar;
         Receiver_Text *_tr;
         Program_Memory *_pmem;
-        int _completeSubentry( uint8_t scancode);
     };
 
     class Receiver_PROG_K: public Receiver{

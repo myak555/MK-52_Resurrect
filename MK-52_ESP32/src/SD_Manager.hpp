@@ -74,6 +74,7 @@ namespace MK52_Hardware{
         bool stepIn(char *name);
 
         bool openFile( char *path=NULL, bool write=false);
+        bool openFile_P( const char *path, bool write=false);
         void closeFile();
         bool print( char * message);
         bool print_P( const char * message);

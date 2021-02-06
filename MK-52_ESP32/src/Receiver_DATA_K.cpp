@@ -52,7 +52,11 @@ int Receiver_DATA_K::tick( uint8_t scancode){
         // Column 4 does nothing
         // Column 5 does nothing
         // Column 6 does nothing
-        // Column 7 does nothing
+        // Column 7
+        case 32:
+            // erase program memory
+            _lcd->outputTerminalLine( 10, "ERASE memory? (\030)");
+            if( _getConfirmation( 31)) _rpnf->extMem->clear();
 
         default: // all other buttons do nothing - keep K-mode
            return NO_CHANGE;

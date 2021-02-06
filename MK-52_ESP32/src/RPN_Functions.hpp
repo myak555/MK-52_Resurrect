@@ -17,11 +17,14 @@ namespace MK52_Interpreter{
 
     class RPN_Function{
         public:
-            virtual bool checkID( uint16_t id);
-            virtual bool checkName(char *name);
-            virtual const char*Name();
-            virtual const char*IOName();
+            virtual bool checkID( uint16_t id){return false;};
+            virtual bool checkName(char *name){return false;};
+            virtual const char*Name(){return NULL;};
+            virtual const char*IOName(){return Name();};
             virtual void execute(void *components[], char *command=NULL);
+            virtual bool addressRequiered(){return false;};
+            virtual bool registerRequired(){return false;};
+            virtual bool advanceRequired(){return true;};
         protected:
             RPN_Stack *_dealWithClergy1(void *components[]);
             RPN_Stack *_dealWithClergy2(void *components[]);
@@ -35,6 +38,10 @@ namespace MK52_Interpreter{
             Extended_Memory *extMem;
 
             inline char *getOutputBuffer(){return _text;};
+            char *setOutputBuffer(char *text);
+            char *appendOutputBuffer(char *text);
+            char *setOutputBuffer_P(const char *text);
+            char *appendOutputBuffer_P(const char *text);
             inline char *getOutputLine(int16_t n)
                 {return _buffer + (SCREEN_COLS+1)*n;};
             inline char **getOutputLines() {return _lines;};
@@ -42,9 +49,18 @@ namespace MK52_Interpreter{
             unsigned long init( void *components[]);
             RPN_Function *getFunctionByID(int16_t id);
             RPN_Function *getFunctionByName(char *command);
+            RPN_Function *getFunctionByIOName(char *command);
             void execute( int16_t id=-1, char *command=NULL);
             void execute( char *command, bool pushNeeded=false);
             void executeStep();
+            void executeRun();
+
+            bool loadStateFile();
+            bool saveStateFile();
+
+            bool loadProgramFile();
+            bool saveProgramFile();
+            bool saveProgramFileAs( char * name);
 
             bool loadDataFile();
             bool saveDataFile();

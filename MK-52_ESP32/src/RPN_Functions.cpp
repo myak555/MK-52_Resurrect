@@ -14,6 +14,10 @@ using namespace MK52_Interpreter;
 #include <math.h>
 #include "../functions/functions.hpp"
 
+const char SettingsFile[] PROGMEM = "/_MK52_Settings.txt";
+const char StatusFile[] PROGMEM = "/_MK52_Status.MK52";
+const char SD_DefaultExt[] PROGMEM = ".MK52";
+
 //
 // Inits the calculator program memory
 //
@@ -215,6 +219,35 @@ unsigned long RPN_Functions::init( void *components[]) {
     return millis();
 }
 
+char *RPN_Functions::setOutputBuffer(char *text){
+    strncpy( _text, text, PROGRAM_LINE_LENGTH);
+    _text[PROGRAM_LINE_LENGTH-1] = 0;
+    return _text;
+}
+
+char *RPN_Functions::appendOutputBuffer(char *text){
+    int ln = strlen( _text);
+    if( ln >= PROGRAM_LINE_LENGTH) return _text;
+    strncpy( _text+ln, text, PROGRAM_LINE_LENGTH-ln);
+    _text[PROGRAM_LINE_LENGTH-1] = 0;
+    return _text;
+}
+
+char *RPN_Functions::setOutputBuffer_P(const char *text){
+    strncpy_P( _text, text, PROGRAM_LINE_LENGTH);
+    _text[PROGRAM_LINE_LENGTH-1] = 0;
+    return _text;
+}
+
+char *RPN_Functions::appendOutputBuffer_P(const char *text){
+    int ln = strlen( _text);
+    if( ln >= PROGRAM_LINE_LENGTH) return _text;
+    strncpy_P( _text+ln, text, PROGRAM_LINE_LENGTH-ln);
+    _text[PROGRAM_LINE_LENGTH-1] = 0;
+    return _text;
+}
+
+
 RPN_Function *RPN_Functions::getFunctionByID(int16_t id){
     if( id<0) return NULL;
     for(int16_t i=0; i<_nfunctions; i++){
@@ -235,6 +268,16 @@ RPN_Function *RPN_Functions::getFunctionByName(char *command){
     return NULL;
 }
 
+RPN_Function *RPN_Functions::getFunctionByIOName(char *command){
+    if( strlen(command)<=0) return NULL;
+    for(int16_t i=0; i<_nfunctions; i++){
+        RPN_Function *pf = (RPN_Function *)_functions[i];
+        if( !UniversalValue::_startsWith_P( command, pf->IOName())) continue;
+        return pf;
+    }
+    return NULL;
+}
+
 void RPN_Functions::execute( int16_t id, char *command){
     RPN_Function *pf = getFunctionByID( id);
     if( pf==NULL) return;
@@ -243,11 +286,14 @@ void RPN_Functions::execute( int16_t id, char *command){
 
 void RPN_Functions::execute( char *command, bool pushNeeded){
     if( strlen(command)<=0) return;
+    Serial.println(command);
     for(int16_t i=0; i<_nfunctions; i++){
         RPN_Function *pf = (RPN_Function *)_functions[i];
         if( !pf->checkName( command)) continue;
         int operand = strlen_P( pf->Name());
         pf->execute( _components, command+operand);
+        Serial.println(pf->advanceRequired());
+        if( pf->advanceRequired()) progMem->incrementCounter();
         return;
     }
     // if the name is not found, it must be a number and should be placed to register X
@@ -256,6 +302,7 @@ void RPN_Functions::execute( char *command, bool pushNeeded){
         rpnStack->push();
     }
     rpnStack->X->fromString( command);
+    progMem->incrementCounter(); // after number is entered, advance!
 }
 
 //
@@ -263,25 +310,55 @@ void RPN_Functions::execute( char *command, bool pushNeeded){
 //
 void RPN_Functions::executeStep(){
     if(_atStop){
+        if( progMem->isAtStop()) progMem->incrementCounter();
         _atStop = false;
-        progMem->incrementCounter();
     }
+    executeRun();
+    if( _atStop)
+        rpnStack->setStackLabel_P(0, PSTR("STOP Reached"));
+}
+
+//
+// Executes one step during the run
+//
+void RPN_Functions::executeRun(){
     char *programLine = progMem->getCurrentLine();
     #ifdef __DEBUG
-    Serial.print( "Execute: [");
+    Serial.print( "Running: [");
     Serial.print( programLine);
     Serial.println( "]");
     #endif
     execute( programLine, true);
-    if( _atStop)
-        rpnStack->setStackLabel_P(0, PSTR("STOP Reached"));
-    else
-        progMem->incrementCounter();
 }
 
 void RPN_Functions::_appendFunction( RPN_Function *f){
     if( _nfunctions >= MK52_NFUNCTIONS) return;
     _functions[ _nfunctions++] = f;
+}
+
+bool RPN_Functions::loadStateFile(){
+    #ifdef __DEBUG
+    Serial.println("Loading state file");
+    #endif
+    if( _sd->openFile_P(NULL)) return true;
+    bool result = _readDataFile( false, false, true);
+    _sd->closeFile();
+    return result;
+}
+
+bool RPN_Functions::saveStateFile(){
+    return true;
+}
+
+bool RPN_Functions::loadProgramFile(){
+    return true;
+}
+
+bool RPN_Functions::saveProgramFile(){
+    return true;
+}
+bool RPN_Functions::saveProgramFileAs( char * name){
+    return true;
 }
 
 bool RPN_Functions::loadDataFile(){
@@ -291,7 +368,7 @@ bool RPN_Functions::loadDataFile(){
     if( _sd->openFile(NULL)) return true;
     bool result = _readDataFile( false, false, true);
     _sd->closeFile();
-    return true;
+    return result;
 }
 
 bool RPN_Functions::saveDataFile(){

@@ -35,10 +35,7 @@ const char SD_Error_NotMounted[] PROGMEM = "Error: Not mounted";
 //   SD_Message4
 //   };
 const char SD_root[] PROGMEM = "/";
-const char SD_uproot[] PROGMEM = "../";
-const char SettingsFile[] PROGMEM = "/MK52_Settings.dat";
-const char StatusFile[] PROGMEM = "/MK52_Status.dat";
-const char SD_DefaultExt[] PROGMEM = ".mk52";
+//const char SD_uproot[] PROGMEM = "../";
 
 using namespace MK52_Hardware;
 
@@ -222,6 +219,12 @@ bool SD_Manager::openFile( char *path, bool write){
     }
     #endif
     return false;
+}
+
+bool SD_Manager::openFile_P( const char *path, bool write){
+    strncpy_P( _current_File_Name, path, CURRENT_FILE_LEN);
+    _current_File_Name[CURRENT_FILE_LEN] = 0;
+    return openFile( _current_File_Name, write);
 }
 
 void SD_Manager::closeFile(){
