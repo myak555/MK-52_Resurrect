@@ -202,19 +202,68 @@ unsigned long RPN_Functions::init( void *components[]) {
     // #define FUNC_STEPIN             81
     _appendFunction( new Func_StepIn());
     // #define FUNC_SAVE               82
+    _appendFunction( new Func_Save());
     // #define FUNC_SAVEAS             83
+    _appendFunction( new Func_SaveAs());
     // #define FUNC_LOAD               84
-    // #define FUNC_SAVEDATA           85
-    // #define FUNC_SAVEDATAAS         86
+    _appendFunction( new Func_Load());
+    // #define FUNC_LOADFROM           85
+    _appendFunction( new Func_LoadFrom());
+    // #define FUNC_CHAIN              86
+    _appendFunction( new Func_Chain());
+    // #define FUNC_SAVEDATA           87
+    _appendFunction( new Func_SaveData());
+    // #define FUNC_SAVEDATAAS         88
     _appendFunction( new Func_SaveDataAs());
-    // #define FUNC_LOADDATA           87
+    // #define FUNC_LOADDATA           89
     _appendFunction( new Func_LoadData());
-    // #define FUNC_GOMEM              88
+    // #define FUNC_LOADDATAFROM       90
+    _appendFunction( new Func_LoadDataFrom());
+    // #define FUNC_GOMEM              91
     _appendFunction( new Func_GOMEM());
+    // #define FUNC_IFNOTLT0           92
+    _appendFunction( new Func_IfNotLT0());
+    // #define FUNC_IFNOTEQ0           93
+    _appendFunction( new Func_IfNotEQ0());
+    // #define FUNC_IFNOTGE0           94
+    _appendFunction( new Func_IfNotGE0());
+    // #define FUNC_IFNOTNE0           95
+    _appendFunction( new Func_IfNotNE0());
+    // #define FUNC_IFNOTLTY           96
+    _appendFunction( new Func_IfNotLTY());
+    // #define FUNC_IFNOTEQY           97
+    _appendFunction( new Func_IfNotEQY());
+    // #define FUNC_IFNOTGEY           98
+    _appendFunction( new Func_IfNotGEY());
+    // #define FUNC_IFNOTNEY           99
+    _appendFunction( new Func_IfNotNEY());
+    // #define FUNC_L0                 100
+    _appendFunction( new Func_L0());
+    // #define FUNC_L1                 101
+    _appendFunction( new Func_L1());
+    // #define FUNC_L2                 102
+    _appendFunction( new Func_L2());
+    // #define FUNC_L3                 103
+    _appendFunction( new Func_L3());
 
     #ifdef __DEBUG
     Serial.print( _nfunctions);
-    Serial.println(" functions defined");
+    Serial.println(" functions defined:");
+    for( int i=0; i<_nfunctions; i++){
+        Serial.print(i);
+        RPN_Function *funct = (RPN_Function *)_functions[i];
+        if( funct->Name() == NULL){
+            Serial.println( " - no name");
+            continue;
+        }
+        Serial.print( " - [");
+        sprintf_P( _text, funct->Name());
+        Serial.print( _text);
+        Serial.print( "] (");
+        sprintf_P( _text, funct->IOName());
+        Serial.print( _text);
+        Serial.println( ")");
+    }
     #endif
     return millis();
 }
@@ -340,116 +389,220 @@ bool RPN_Functions::loadStateFile(){
     #ifdef __DEBUG
     Serial.println("Loading state file");
     #endif
-    if( _sd->openFile_P(NULL)) return true;
-    bool result = _readDataFile( false, false, true);
+    if( !_sd->openFile_P(StatusFile)) return true;
+    bool result = _readFile( true, true, true);
     _sd->closeFile();
     return result;
 }
 
 bool RPN_Functions::saveStateFile(){
-    return true;
-}
-
-bool RPN_Functions::loadProgramFile(){
-    return true;
-}
-
-bool RPN_Functions::saveProgramFile(){
-    return true;
-}
-bool RPN_Functions::saveProgramFileAs( char * name){
-    return true;
-}
-
-bool RPN_Functions::loadDataFile(){
     #ifdef __DEBUG
-    Serial.println("Loading data file");
+    Serial.println("Saving state...");
     #endif
-    if( _sd->openFile(NULL)) return true;
-    bool result = _readDataFile( false, false, true);
+    if( _sd->openFile_P(StatusFile, true)) return true;
+    bool result = _writeStackFile();
+    if(!result) result = _writeProgramFile();
+    if(!result) result = _writeDataFile();
     _sd->closeFile();
     return result;
 }
 
-bool RPN_Functions::saveDataFile(){
+bool RPN_Functions::loadProgramFile(char *name){
     #ifdef __DEBUG
-    Serial.println("Saving data file");
+    Serial.println("Loading program file");
     #endif
-    if( _sd->openFile(NULL, true)) return true;
-    bool result = _writeDataFile(false, false, true);
+    if( _sd->openFile(name)) return true;
+    progMem->clear();
+    bool result = _readFile( false, true, false);
     _sd->closeFile();
     return result;
 }
 
-bool RPN_Functions::saveDataFileAs( char * name){
-    #ifdef __DEBUG
-    Serial.print("Saving data file as ");
-    Serial.println( name);
-    #endif
+bool RPN_Functions::saveProgramFile(char *name){
+    Serial.print("Saving program file");
+    if( name != NULL){
+        Serial.print(" as ");
+        Serial.println(name);
+    }
+    else{
+        Serial.println();
+    }
     if( _sd->openFile(name, true)) return true;
-    bool result = _writeDataFile(false, false, true);
+    bool result = _writeProgramFile();
     _sd->closeFile();
     _sd->readFolderItems();
     return result;
 }
 
-bool RPN_Functions::_writeDataFile(bool writeStack, bool writeProg, bool writeMem){
+bool RPN_Functions::loadDataFile(char *name){
+    #ifdef __DEBUG
+    Serial.println("Loading data file");
+    #endif
+    if( _sd->openFile(name)) return true;
+    bool result = _readFile( false, false, true);
+    _sd->closeFile();
+    return result;
+}
+
+bool RPN_Functions::saveDataFile(char *name){
+    #ifdef __DEBUG
+    Serial.print("Saving data file");
+    if( name != NULL){
+        Serial.print(" as ");
+        Serial.println(name);
+    }
+    else{
+        Serial.println();
+    }
+    #endif
+    if( _sd->openFile(name, true)) return true;
+    bool result = _writeDataFile();
+    _sd->closeFile();
+    _sd->readFolderItems();
+    return result;
+}
+
+bool RPN_Functions::_writeStackFile(){
     if( _sd->println_P(PSTR("#"))) return true;
-    if( _sd->println_P(PSTR("# MK-52 data file"))) return true;
-    if(_sd->println_P(PSTR("#"))) return true;
-    if( writeMem){
-        sprintf_P( _text, PSTR("MC=%04u"), extMem->getCounter());
-        if(_sd->println(_text)) return true;    
-        for( uint32_t i=0; i<EXTENDED_MEMORY_NVALS; i++){
-            uint8_t *ptr = extMem->getLine( i);
-            if( *ptr==VALUE_TYPE_EMPTY) continue;
-            _tmpuv->fromLocation( ptr);
-            sprintf_P( _text, PSTR("M%04u "), i);
-            _tmpuv->toString(_text+6);
-            if(!_sd->println(_text)) continue;
+    if( _sd->println_P(PSTR("# MK-52 stack"))) return true;
+    if( _sd->println_P(PSTR("#"))) return true;
+    sprintf_P( _text, PSTR("DMODE=%s"), rpnStack->getDModeName());
+    if(_sd->println(_text)) return true;
+    sprintf_P( _text, PSTR("Bx="));
+    rpnStack->Bx->toString(_text+3);
+    if(_sd->println(_text)) return true;
+    sprintf_P( _text, PSTR("X="));
+    rpnStack->X->toString(_text+2);
+    if(_sd->println(_text)) return true;
+    sprintf_P( _text, PSTR("Y="));
+    rpnStack->Y->toString(_text+2);
+    if(_sd->println(_text)) return true;
+    sprintf_P( _text, PSTR("Z="));
+    rpnStack->Z->toString(_text+2);
+    if(_sd->println(_text)) return true;
+    sprintf_P( _text, PSTR("T="));
+    rpnStack->Z->toString(_text+2);
+    if(_sd->println(_text)) return true;
+    return false;
+}
+
+bool RPN_Functions::_writeProgramFile(){
+    if( _sd->println_P(PSTR("#"))) return true;
+    if( _sd->println_P(PSTR("# MK-52 program"))) return true;
+    if( _sd->println_P(PSTR("#"))) return true;
+    uint32_t ctr = progMem->getCounter();
+    sprintf_P( _text, PSTR("PC=%04u"), ctr);
+    progMem->resetCounter();
+    if(_sd->println(_text)) return true;
+    while( !progMem->isAtEnd()){
+        char *ptr = progMem->getCurrentLine();
+        if( *ptr==0){ // empty lines ignored
+            progMem->incrementCounter();
+            continue;
+        }
+        snprintf_P( _text, PROGRAM_LINE_LENGTH, PSTR("P%04u: %s"), progMem->getCounter(), ptr);
+        _text[PROGRAM_LINE_LENGTH-1] = 0;
+        Serial.println(_text);
+        if(_sd->println(_text)){
+            progMem->setCounter(ctr);
             return true;
         }
+        progMem->incrementCounter();
+    }
+    progMem->setCounter(ctr);
+    return false;
+}
+
+bool RPN_Functions::_writeDataFile(){
+    if( _sd->println_P(PSTR("#"))) return true;
+    if( _sd->println_P(PSTR("# MK-52 data"))) return true;
+    if( _sd->println_P(PSTR("#"))) return true;
+    sprintf_P( _text, PSTR("MC=%04u"), extMem->getCounter());
+    if(_sd->println(_text)) return true;    
+    for( uint32_t i=0; i<EXTENDED_MEMORY_NVALS; i++){
+        uint8_t *ptr = extMem->getLine( i);
+        if( *ptr==VALUE_TYPE_EMPTY) continue;
+        _tmpuv->fromLocation( ptr);
+        sprintf_P( _text, PSTR("M%04u: "), i);
+        _tmpuv->toString(_text+7);
+        if(!_sd->println(_text)) continue;
+        return true;
     }
     return false;
 }
 
-bool RPN_Functions::_readDataFile(bool readStack, bool readProg, bool readMem){
+bool RPN_Functions::_readFile(bool readStack, bool readProg, bool readMem){
     uint32_t pmemctr = progMem->getCounter();
     uint32_t ememctr = extMem->getCounter();
     char *ptr = NULL;
     while( true){
         if( _sd->readln( _text, PROGRAM_LINE_LENGTH)) break;
-        Serial.println( _text);
         if( _text[0] == 0 || _text[0] == '#') continue;
-        if( readProg && UniversalValue::_startsWith_P( _text, PSTR("PC="))){
-            execute( FUNC_GOTO, _text+3);
-            pmemctr = extMem->getCounter();
-            continue;
+        if( readProg){
+            Serial.print( "Prog: ");
+            Serial.println( _text);
+            if( UniversalValue::_startsWith_P( _text, PSTR("PC="))){
+                execute( FUNC_GOTO, _text+3);
+                pmemctr = extMem->getCounter();
+                continue;
+            }
+            if( UniversalValue::_isProgramAddress(_text)){
+                ptr = UniversalValue::_selectAddress(_text);
+                while( *ptr==' ') ptr++;
+                if( *ptr == 0) continue; // string too short or incorrectly formed
+                execute( FUNC_GOTO, _text+1);
+                progMem->replaceLine( ptr); // TODO: name conversion
+                continue;
+            }
         }
-        if( readProg && UniversalValue::_startsWith_P( _text, PSTR("P"))){
-            ptr = _text+1;
-            while( UniversalValue::_isDigit( *ptr)) ptr++;
-            if( *ptr == 0 || ptr[1] == 0) continue; // string too short or incorrectly formed
-            *ptr++ = 0;            
-            execute( FUNC_GOTO, _text+1);
-            //_tmpuv->fromString( ptr);
-            //if( _tmpuv->getType() > 0) _tmpuv->toLocation( extMem->getCurrentLine());
-            continue;
+        if( readMem){
+            if( UniversalValue::_startsWith_P( _text, PSTR("MC="))){
+                execute( FUNC_GOMEM, _text+3);
+                ememctr = extMem->getCounter();
+                continue;
+            }
+            if( UniversalValue::_isMemoryAddress(_text)){
+                ptr = UniversalValue::_selectAddress(_text);
+                if( *ptr == 0) continue; // string too short or incorrectly formed
+                execute( FUNC_GOMEM, _text+1);
+                _tmpuv->fromString( ptr);
+                if( _tmpuv->getType() > 0) _tmpuv->toLocation( extMem->getCurrentLine());
+                continue;
+            }
         }
-        if( readMem && UniversalValue::_startsWith_P( _text, PSTR("MC="))){
-            execute( FUNC_GOMEM, _text+3);
-            ememctr = extMem->getCounter();
-            continue;
-        }
-        if( readMem && UniversalValue::_startsWith_P( _text, PSTR("M"))){
-            ptr = _text+1;
-            while( UniversalValue::_isDigit( *ptr)) ptr++;
-            if( *ptr == 0 || ptr[1] == 0) continue; // string too short or incorrectly formed
-            *ptr++ = 0;            
-            execute( FUNC_GOMEM, _text+1);
-            _tmpuv->fromString( ptr);
-            if( _tmpuv->getType() > 0) _tmpuv->toLocation( extMem->getCurrentLine());
-            continue;
+        if( readStack){
+            if( UniversalValue::_startsWith_P( _text, PSTR("X="))){
+                rpnStack->X->fromString( _text + 2);
+                continue;
+            }
+            if( UniversalValue::_startsWith_P( _text, PSTR("Y="))){
+                rpnStack->Y->fromString( _text + 2);
+                continue;
+            }
+            if( UniversalValue::_startsWith_P( _text, PSTR("Z="))){
+                rpnStack->Z->fromString( _text + 2);
+                continue;
+            }
+            if( UniversalValue::_startsWith_P( _text, PSTR("T="))){
+                rpnStack->T->fromString( _text + 2);
+                continue;
+            }
+            if( UniversalValue::_startsWith_P( _text, PSTR("Bx="))){
+                rpnStack->Bx->fromString( _text + 3);
+                continue;
+            }
+            if( UniversalValue::_startsWith_P( _text, PSTR("DMODE=DEG"))){
+                rpnStack->setDMode(0);
+                continue;
+            }
+            if( UniversalValue::_startsWith_P( _text, PSTR("DMODE=RAD"))){
+                rpnStack->setDMode(1);
+                continue;
+            }
+            if( UniversalValue::_startsWith_P( _text, PSTR("DMODE=GRD"))){
+                rpnStack->setDMode(1);
+                continue;
+            }
         }
     }
     progMem->setCounter( pmemctr);
@@ -472,3 +625,4 @@ bool RPN_Functions::_readDataFile(bool readStack, bool readProg, bool readMem){
 #include "../functions/Func_Memory.h"
 #include "../functions/Func_Goto.h"
 #include "../functions/Func_File.h"
+#include "../functions/Func_If.h"

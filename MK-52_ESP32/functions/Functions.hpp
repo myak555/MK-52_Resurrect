@@ -75,7 +75,6 @@ class Func_set_DMOD_DEG: public RPN_Function{
         inline bool checkID( uint16_t id){ return id == FUNC_SET_DMOD_DEG;};
         inline bool checkName(char *name){ return UniversalValue::_identicalTo_P( name, Name());};
         inline const char*Name(){ return PSTR("DEG");};
-        inline const char*IOName(){ return Name();};
         inline void execute( void *components[], char *command){
             RPN_Stack *_stack = (RPN_Stack *)components[COMPONENT_STACK];
             _stack->setDMode( DMODE_DEGREES);
@@ -98,7 +97,6 @@ class Func_set_DMOD_GRD: public RPN_Function{
         inline bool checkID( uint16_t id){ return id == FUNC_SET_DMOD_GRD;};
         inline bool checkName(char *name){ return UniversalValue::_identicalTo_P( name, Name());};
         inline const char*Name(){ return PSTR("GRD");};
-        inline const char*IOName(){ return Name();};
         inline void execute( void *components[], char *command){
             RPN_Stack *_stack = (RPN_Stack *)components[COMPONENT_STACK];
             _stack->setDMode( DMODE_GRADS);
@@ -110,7 +108,7 @@ class Func_Negate: public RPN_Function{
         inline bool checkID( uint16_t id){ return id == FUNC_NEGATE;};
         inline bool checkName(char *name){ return UniversalValue::_identicalTo_P( name, Name());};
         inline const char*Name(){ return PSTR("/-/");};
-        inline const char*IOName(){ return Name();};
+        inline const char*IOName(){ return PSTR("/-/");};
         void execute( void *components[], char *command);
 };
 
@@ -119,7 +117,7 @@ class Func_Enter: public RPN_Function{
         inline bool checkID( uint16_t id){ return id == FUNC_ENTER;};
         inline bool checkName(char *name){ return UniversalValue::_identicalTo_P( name, Name());};
         inline const char*Name(){ return PSTR("Enter");};
-        inline const char*IOName(){ return Name();};
+        inline const char*IOName(){ return PSTR("Enter");};
         inline void execute( void *components[], char *command){
             RPN_Stack *_stack = (RPN_Stack *)components[COMPONENT_STACK];
             _stack->push();
@@ -131,7 +129,7 @@ class Func_Swap: public RPN_Function{
         inline bool checkID( uint16_t id){ return id == FUNC_SWAP;};
         inline bool checkName(char *name){ return UniversalValue::_identicalTo_P( name, Name());};
         inline const char*Name(){ return PSTR("X<->Y");};
-        inline const char*IOName(){ return Name();};
+        inline const char*IOName(){ return PSTR("X<->Y");};
         inline void execute( void *components[], char *command){
             RPN_Stack *_stack = (RPN_Stack *)components[COMPONENT_STACK];
             _stack->swap();
@@ -769,22 +767,174 @@ class Func_StepIn: public RPN_Function{
         void execute( void *components[], char *command);
 };
 
-// Insert here! TODO
+class Func_Save: public RPN_Function{
+    public:
+        inline bool checkID( uint16_t id){ return id == FUNC_SAVE;};
+        void execute( void *components[], char *command);
+};
+
+class Func_SaveAs: public RPN_Function{
+    public:
+        inline bool checkID( uint16_t id){ return id == FUNC_SAVEAS;};
+        inline bool checkName(char *name){ return UniversalValue::_startsWith_P( name, Name());};
+        inline const char*Name(){ return PSTR("SAVE AS ");};
+        void execute( void *components[], char *command);
+};
+
+class Func_Load: public RPN_Function{
+    public:
+        inline bool checkID( uint16_t id){ return id == FUNC_LOAD;};
+        void execute( void *components[], char *command);
+};
+
+class Func_LoadFrom: public RPN_Function{
+    public:
+        inline bool checkID( uint16_t id){ return id == FUNC_LOADFROM;};
+        inline bool checkName(char *name){ return UniversalValue::_startsWith_P( name, Name());};
+        inline const char*Name(){ return PSTR("LOAD ");};
+        void execute( void *components[], char *command);
+};
+
+class Func_SaveData: public RPN_Function{
+    public:
+        inline bool checkID( uint16_t id){ return id == FUNC_SAVEDATA;};
+        void execute( void *components[], char *command);
+};
 
 class Func_SaveDataAs: public RPN_Function{
     public:
         inline bool checkID( uint16_t id){ return id == FUNC_SAVEDATAAS;};
         inline bool checkName(char *name){ return UniversalValue::_startsWith_P( name, Name());};
-        inline const char*Name(){ return PSTR("SAVEDATA ");};
-        inline const char*IOName(){ return Name();};
+        inline const char*Name(){ return PSTR("SAVE DATA AS ");};
         void execute( void *components[], char *command);
 };
 
 class Func_LoadData: public RPN_Function{
     public:
         inline bool checkID( uint16_t id){ return id == FUNC_LOADDATA;};
-        inline bool checkName(char *name){ return false;};
-        inline const char*Name(){ return NULL;};
-        inline const char*IOName(){ return NULL;};
+        void execute( void *components[], char *command);
+};
+
+class Func_LoadDataFrom: public RPN_Function{
+    public:
+        inline bool checkID( uint16_t id){ return id == FUNC_LOADDATAFROM;};
+        inline bool checkName(char *name){ return UniversalValue::_startsWith_P( name, Name());};
+        inline const char*Name(){ return PSTR("LOADDATA ");};
+        void execute( void *components[], char *command);
+};
+
+class Func_Chain: public RPN_Function{
+    public:
+        inline bool checkID( uint16_t id){ return id == FUNC_CHAIN;};
+        inline bool checkName(char *name){ return UniversalValue::_startsWith_P( name, Name());};
+        inline const char*Name(){ return PSTR("CHAIN ");};
+        void execute( void *components[], char *command);
+};
+
+class Func_IfNotLT0: public RPN_Function{
+    public:
+        inline bool checkID( uint16_t id){ return id == FUNC_IFNOTLT0;};
+        inline bool checkName(char *name){ return UniversalValue::_startsWith_P( name, Name());};
+        inline const char*Name(){ return PSTR("IFNOT X<0 GOTO ");};
+        inline bool advanceRequired(){return false;};
+        void execute( void *components[], char *command);
+};
+
+class Func_IfNotEQ0: public RPN_Function{
+    public:
+        inline bool checkID( uint16_t id){ return id == FUNC_IFNOTEQ0;};
+        inline bool checkName(char *name){ return UniversalValue::_startsWith_P( name, Name());};
+        inline const char*Name(){ return PSTR("IFNOT X=0 GOTO ");};
+        inline bool advanceRequired(){return false;};
+        void execute( void *components[], char *command);
+};
+
+class Func_IfNotGE0: public RPN_Function{
+    public:
+        inline bool checkID( uint16_t id){ return id == FUNC_IFNOTGE0;};
+        inline bool checkName(char *name){ return UniversalValue::_startsWith_P( name, Name());};
+        inline const char*Name(){ return PSTR("IFNOT X>=0 GOTO ");};
+        inline bool advanceRequired(){return false;};
+        void execute( void *components[], char *command);
+};
+
+class Func_IfNotNE0: public RPN_Function{
+    public:
+        inline bool checkID( uint16_t id){ return id == FUNC_IFNOTNE0;};
+        inline bool checkName(char *name){ return UniversalValue::_startsWith_P( name, Name());};
+        inline const char*Name(){ return PSTR("IFNOT X!=0 GOTO ");};
+        inline bool advanceRequired(){return false;};
+        void execute( void *components[], char *command);
+};
+
+class Func_IfNotLTY: public RPN_Function{
+    public:
+        inline bool checkID( uint16_t id){ return id == FUNC_IFNOTLTY;};
+        inline bool checkName(char *name){ return UniversalValue::_startsWith_P( name, Name());};
+        inline const char*Name(){ return PSTR("IFNOT X<Y GOTO ");};
+        inline bool advanceRequired(){return false;};
+        void execute( void *components[], char *command);
+};
+
+class Func_IfNotEQY: public RPN_Function{
+    public:
+        inline bool checkID( uint16_t id){ return id == FUNC_IFNOTEQY;};
+        inline bool checkName(char *name){ return UniversalValue::_startsWith_P( name, Name());};
+        inline const char*Name(){ return PSTR("IFNOT X=Y GOTO ");};
+        inline bool advanceRequired(){return false;};
+        void execute( void *components[], char *command);
+};
+
+class Func_IfNotGEY: public RPN_Function{
+    public:
+        inline bool checkID( uint16_t id){ return id == FUNC_IFNOTGEY;};
+        inline bool checkName(char *name){ return UniversalValue::_startsWith_P( name, Name());};
+        inline const char*Name(){ return PSTR("IFNOT X>=Y GOTO ");};
+        inline bool advanceRequired(){return false;};
+        void execute( void *components[], char *command);
+};
+
+class Func_IfNotNEY: public RPN_Function{
+    public:
+        inline bool checkID( uint16_t id){ return id == FUNC_IFNOTNEY;};
+        inline bool checkName(char *name){ return UniversalValue::_startsWith_P( name, Name());};
+        inline const char*Name(){ return PSTR("IFNOT X!=Y GOTO ");};
+        inline bool advanceRequired(){return false;};
+        void execute( void *components[], char *command);
+};
+
+class Func_L0: public RPN_Function{
+    public:
+        inline bool checkID( uint16_t id){ return id == FUNC_L0;};
+        inline bool checkName(char *name){ return UniversalValue::_startsWith_P( name, Name());};
+        inline const char*Name(){ return PSTR("WHILE L0>0 GOTO ");};
+        inline bool advanceRequired(){return false;};
+        void execute( void *components[], char *command);
+};
+
+class Func_L1: public RPN_Function{
+    public:
+        inline bool checkID( uint16_t id){ return id == FUNC_L1;};
+        inline bool checkName(char *name){ return UniversalValue::_startsWith_P( name, Name());};
+        inline const char*Name(){ return PSTR("WHILE L1>0 GOTO ");};
+        inline bool advanceRequired(){return false;};
+        void execute( void *components[], char *command);
+};
+
+class Func_L2: public RPN_Function{
+    public:
+        inline bool checkID( uint16_t id){ return id == FUNC_L2;};
+        inline bool checkName(char *name){ return UniversalValue::_startsWith_P( name, Name());};
+        inline const char*Name(){ return PSTR("WHILE L2>0 GOTO ");};
+        inline bool advanceRequired(){return false;};
+        void execute( void *components[], char *command);
+};
+
+class Func_L3: public RPN_Function{
+    public:
+        inline bool checkID( uint16_t id){ return id == FUNC_L3;};
+        inline bool checkName(char *name){ return UniversalValue::_startsWith_P( name, Name());};
+        inline const char*Name(){ return PSTR("WHILE L3>0 GOTO ");};
+        inline bool advanceRequired(){return false;};
         void execute( void *components[], char *command);
 };

@@ -58,6 +58,17 @@ int Receiver_FILE_F::tick( uint8_t scancode){
             break;
 
         // Column 2
+        case 9:
+            _rpnf->execute( FUNC_LOADDATA);
+            _lcd->updateStatusMC( _rpnf->extMem->getCounter());
+            _mode = 0;
+            return COMPONENT_DISPLAY_DATA;
+        case 10:
+            _rpnf->execute( FUNC_SAVEDATA);
+            break;
+        case 11:
+            // find program
+            break;
         case 12:
             // save data as
             _mode = 2;

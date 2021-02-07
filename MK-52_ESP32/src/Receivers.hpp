@@ -64,6 +64,7 @@ namespace MK52_Interpreter{
         void activate( uint8_t scancode = 0, int8_t parent = NO_CHANGE);
         int tick( uint8_t scancode = 0);
         inline char *toString(){ return _text;};
+        char *toTrimmedString();
       private:
         char _text[5]; // temporary input buffer
         int _completeEntry();
@@ -146,8 +147,8 @@ namespace MK52_Interpreter{
         int tick( uint8_t scancode = 0);
       private:
         Receiver_Address *_ar;
-        Receiver_Text *_tr;
-        Program_Memory *_pmem;
+        //Receiver_Text *_tr;
+        //Program_Memory *_pmem;
     };
 
     class Receiver_PROG_K: public Receiver{
@@ -167,7 +168,6 @@ namespace MK52_Interpreter{
         int tick( uint8_t scancode = 0);
       private:
         Receiver_Address *_ar;
-        int _completeSubentry( uint8_t scancode);
     };
 
     class Receiver_DATA_N: public Receiver{

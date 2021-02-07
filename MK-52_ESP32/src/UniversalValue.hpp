@@ -40,12 +40,16 @@ namespace MK52_Interpreter{
             inline double *_asRealPtr(){return (double *)(_ptr+1);};
             void _checkRounding( double accuracy = __ROUNDING_ACCURACY);
 
-            static bool _startsWith(char *text, char *keyword, int clip=21);
+            static bool _startsWith(char *text, char *keyword);
             static bool _startsWith_P(char *text, const char *keyword);
             static bool _endsWith_P(char *text, const char *keyword);
             static bool _identicalTo_P(char *text, const char *keyword);
             static bool _inString_P(char c, const char *keyword);
             static bool _isDigit(char c);
+            static bool _isProgramAddress(char *text);
+            static bool _isMemoryAddress(char *text);
+            static bool _isAddress(char *text);
+            static char *_selectAddress(char *text);
 
         private:
             uint8_t *_ptr = NULL;

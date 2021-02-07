@@ -22,7 +22,7 @@
 #define PROGRAM_LINE_LENGTH         128 
 #define SCREEN_BUFFER_SIZE          372 
 
-// How long the system waits between the keyboard scans
+// How long the system waits between the keyboard scansf
 #define KBD_IDLE_DELAY              30
 #define KBD_RUNNING_DELAY           300
 #define KBD_JITTER_DELAY            3
@@ -57,7 +57,7 @@
 #define EXTENDED_MEMORY_NVALS       4000
 #define REGISTER_MEMORY_SIZE        180
 #define REGISTER_MEMORY_NVALS       20
-#define MK52_NFUNCTIONS             100
+#define MK52_NFUNCTIONS             128
 #define RETURN_STACK_SIZE           100
 #define DIRECTORY_LIST_SIZE         6000
 #define DIRECTORY_LIST_NITEMS       200

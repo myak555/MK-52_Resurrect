@@ -211,6 +211,7 @@ bool SD_Manager::openFile( char *path, bool write){
         Serial.print( path);
         Serial.println( write? " for writing": " for reading");
         #endif
+        return false;
     }
     #ifdef __DEBUG
     else{
@@ -218,7 +219,7 @@ bool SD_Manager::openFile( char *path, bool write){
         Serial.println( path);
     }
     #endif
-    return false;
+    return true;
 }
 
 bool SD_Manager::openFile_P( const char *path, bool write){
@@ -267,22 +268,23 @@ bool SD_Manager::read( char *buffer, int32_t n){
         n--;
     }
     *buffer = 0; // safety zero
-    return  n>0; // noto all symbols read - file end
+    return n>0; // not all symbols read - file end
 }
 
 bool SD_Manager::readln( char *buffer, int32_t n){
     if( !SDMounted) return true;
     if( !_current_File_open) return true;
     uint8_t b = 0;
-    while( n>0 && _current_File.available()){
+    while( _current_File.available()){
         uint8_t b = _current_File.read();
-        if( b==_CR_) continue;
-        if( b==_LF_) break;
-        *(buffer++) = (char)b;
-        n--;
+        if( b ==_CR_) continue;
+        if( b ==_LF_) break;
+        if(n>0){
+            *(buffer++) = (char)b;
+            n--;
+        }
     }
     *buffer = 0; // safety zero
-    Serial.println( buffer);
     return  !_current_File.available();
 }
 
@@ -366,7 +368,7 @@ void SD_Manager::upFolder(){
     if( ln <= 1) return; // already at root
     while( ln>0 && _current_Dir_Name[ln] != '/') ln--;
     strcpy( _current_File_Name, _current_Dir_Name+ln+1);
-    _current_Dir_Name[ln+1] = 0;
+    _current_Dir_Name[ln] = 0;
     #ifdef __DEBUG
     Serial.print("Going up: ");
     Serial.println( _current_Dir_Name);
@@ -388,10 +390,8 @@ bool SD_Manager::stepIn(char *name){
         setFolder( name);
         return false;
     }
-
-    // TODO - put file loading here
     tmp.close();
-    return false;
+    return true;
 }
 
 // void SD_Manager::readFile(const char * path){
@@ -785,16 +785,23 @@ void SD_Manager::readFolderItems(char *location){
     int16_t pos2 = -1;
     while( file){
         char *name = (char *)_formEntityName( file);
-        if( MK52_Interpreter::UniversalValue::_startsWith( name, location, 21))
+        if( MK52_Interpreter::UniversalValue::_startsWith( name, location))
             pos2 = counter;
-        index = _locateAlphabetic( name, file.isDirectory());
-        if( _insertItem( name, counter++, index))
-            break; // too many items
+        bool isdir = file.isDirectory();
+        index = _locateAlphabetic( name, isdir);
+        #ifdef __DEBUG
+        Serial.print(name);
+        Serial.print(" is located at ");
+        Serial.println(index);
+        #endif
+        if( _insertItem( name, counter++, index, isdir)) break; // too many items
         file = current_Dir.openNextFile();
     }
     current_Dir.close();
     if( _nItems > 0) listingPosition = 0;
     if( location == NULL) return;
+    Serial.print("Looking for location: ");
+    Serial.println(location);
     for( int i=0; i<_nDirs; i++){
         if( *(getItemPtr(i)) != pos2) continue;
         listingPosition = i;
@@ -820,15 +827,17 @@ int16_t SD_Manager::_locateAlphabetic(const char *name, bool isDir){
     char *ptr = (char *)name;
     if( isDir){
         while( slot < _nDirs){
-            if( strcmp( ptr, getItemString(slot)) <= 0)
+            if( strncmp( ptr, getItemString(slot), 21) <= 0)
                 return slot;
             slot++;
         }
         return _nDirs;
     }
-    else slot = _nDirs;
+    else{
+        slot = _nDirs;
+    }
     while( slot < _nItems){
-        if( strcmp( ptr, getItemString(slot)) <= 0)
+        if( strncmp( ptr, getItemString(slot), 21) <= 0)
             return slot;
         slot++;
     }
@@ -838,7 +847,7 @@ int16_t SD_Manager::_locateAlphabetic(const char *name, bool isDir){
 //
 // Returns true if the maximum directory length is exceeded
 //
-bool SD_Manager::_insertItem(const char *name, int16_t pos, int16_t slot){
+bool SD_Manager::_insertItem(const char *name, int16_t pos, int16_t slot, bool isDir){
     if( slot>=DIRECTORY_LIST_NITEMS-1) return true;
     if( slot>=_nItems) slot = _nItems;
     int16_t toMove = _nItems - slot;
@@ -849,7 +858,7 @@ bool SD_Manager::_insertItem(const char *name, int16_t pos, int16_t slot){
     memcpy( ptr, &pos, 2);
     memset( ptr+2, 0, SCREEN_COLS-2);
     memcpy( ptr+2, name, toCopy);
-    if( slot<_nDirs)_nDirs++;
+    if( isDir) _nDirs++;
     _nItems++;
     return false;
 }

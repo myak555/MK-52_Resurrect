@@ -58,13 +58,11 @@ namespace MK52_Interpreter{
             bool loadStateFile();
             bool saveStateFile();
 
-            bool loadProgramFile();
-            bool saveProgramFile();
-            bool saveProgramFileAs( char * name);
+            bool loadProgramFile( char *name=NULL);
+            bool saveProgramFile( char *name=NULL);
 
-            bool loadDataFile();
-            bool saveDataFile();
-            bool saveDataFileAs( char * name);
+            bool loadDataFile( char *name=NULL);
+            bool saveDataFile( char *name=NULL);
 
             inline char *formFileName(char *name){ return _sd->makeEntityName( name);};
             bool fileExists(char *name){ return _sd->checkEntityExists((const char *)name);};
@@ -79,8 +77,10 @@ namespace MK52_Interpreter{
             char *_buffer = NULL;
             char *_lines[SCREEN_ROWS];
             void _appendFunction( RPN_Function *f);
-            bool _writeDataFile(bool writeStack=false, bool writeProg=false, bool writeMem=false);
-            bool _readDataFile(bool readStack=false, bool readProg=false, bool readMem=false);
+            bool _writeStackFile();
+            bool _writeProgramFile();
+            bool _writeDataFile();
+            bool _readFile(bool readStack=false, bool readProg=false, bool readMem=false);
     };
 };
 

@@ -32,37 +32,60 @@ void Receiver_PROG_A::activate( uint8_t scancode, int8_t parent){
     tick(scancode);
 }
 
-int Receiver_PROG_A::tick( uint8_t scancode){
-    int return_value = COMPONENT_RECEIVER_PROG_N;
-    int r = _completeSubentry(scancode);
-    if( r < NO_CHANGE) return return_value;
-    if( r <= 0) return NO_CHANGE;
-    scancode = (uint8_t)r;
+int Receiver_PROG_A::tick( uint8_t scancode){    int return_value = COMPONENT_RECEIVER_PROG_N;
+    if( _ar->isActive()){        
+        if( _ar->tick( scancode) == NO_CHANGE){
+            sprintf_P( _rpnf->getOutputBuffer(), PSTR("%04u> "), _rpnf->progMem->getCounter());
+            _rpnf->appendOutputBuffer( _rpnf->progMem->getCurrentLine());
+            _rpnf->appendOutputBuffer( _ar->toTrimmedString());
+            _lcd->updateTerminalLine( 10, _rpnf->getOutputBuffer());
+            return NO_CHANGE;
+        }
+        _rpnf->setOutputBuffer( _rpnf->progMem->getCurrentLine());
+        _rpnf->appendOutputBuffer( _ar->toString());
+        _rpnf->progMem->replaceLine( _rpnf->getOutputBuffer());
+        _rpnf->progMem->incrementCounter();
+        return return_value;
+    }
     switch( scancode){
         // Column 0
         case 1:
-            return_value = COMPONENT_RECEIVER_PROG_F;
-            break;
+            _mode = 0;
+            return COMPONENT_RECEIVER_PROG_F;
         case 2:
-            return_value = COMPONENT_RECEIVER_PROG_K;
-            break;
+            _mode = 0;
+            return COMPONENT_RECEIVER_PROG_K;
         case 4:
             _rpnf->execute(FUNC_TOGGLE_EMOD);
             _lcd->updateStatusDMODE(_rpnf->progMem->getEModeName());
             return NO_CHANGE;
 
-        // Column 1 does nothing
+        // Column 1
+        case 5:
+            _rpnf->progMem->updateLine_P( PSTR(_rpnf->getFunctionByID( FUNC_IFNOTLTY)->Name()));
+            _ar->activate( 0, COMPONENT_RECEIVER_PROG_N);
+            break;
+        case 6:
+            _rpnf->progMem->updateLine_P( PSTR(_rpnf->getFunctionByID( FUNC_IFNOTEQY)->Name()));
+            _ar->activate( 0, COMPONENT_RECEIVER_PROG_N);
+            break;
+        case 7:
+            _rpnf->progMem->updateLine_P( PSTR(_rpnf->getFunctionByID( FUNC_IFNOTGEY)->Name()));
+            _ar->activate( 0, COMPONENT_RECEIVER_PROG_N);
+            break;
+        case 8:
+            _rpnf->progMem->updateLine_P( PSTR(_rpnf->getFunctionByID( FUNC_IFNOTNEY)->Name()));
+            _ar->activate( 0, COMPONENT_RECEIVER_PROG_N);
+            break;
 
         // Column 2
         case 9:
-            _mode = 2;
-            _ar->activate(0, -2);
-            _lcd->updateStatusMC( _ar->toString());
+            _rpnf->progMem->updateLine_P( PSTR(_rpnf->getFunctionByID( FUNC_A_X2M)->Name()));
+            _ar->activate( 0, COMPONENT_RECEIVER_PROG_N);
             return NO_CHANGE;
         case 10:
-            _mode = 3;
-            _ar->activate(0, -3);
-            _lcd->updateStatusMC( _ar->toString());
+            _rpnf->progMem->updateLine_P( PSTR(_rpnf->getFunctionByID( FUNC_A_M2X)->Name()));
+            _ar->activate( 0, COMPONENT_RECEIVER_PROG_N);
             return NO_CHANGE;
 
         // Column 3 does nothing
@@ -70,82 +93,56 @@ int Receiver_PROG_A::tick( uint8_t scancode){
 
         // Column 5
         case 21:
-            //_rpnf->execute( FUNC_TG);
-            break;
+            // TODO
+            return NO_CHANGE;
         case 22:
-            _rpnf->execute( FUNC_D2RAD);
+            _rpnf->progMem->updateLine_P( PSTR(_rpnf->getFunctionByID( FUNC_D2RAD)->Name()));
             break;
         case 23:
-            _rpnf->execute( FUNC_MM2IN);
+            _rpnf->progMem->updateLine_P( PSTR(_rpnf->getFunctionByID( FUNC_MM2IN)->Name()));
             break;
         case 24:
             #ifdef __DEBUG
             Serial.println("Going to FILE Display");
             #endif
-            return_value = COMPONENT_DISPLAY_FILE;
-            break;
+            _mode = 0;
+            return COMPONENT_DISPLAY_FILE;
 
         // Column 6
         case 25:
-            //_rpnf->execute( FUNC_COS);
-            break;
+            // TODO
+            return NO_CHANGE;
         case 26:
-            _rpnf->execute( FUNC_RAD2D);
+            _rpnf->progMem->updateLine_P( PSTR(_rpnf->getFunctionByID( FUNC_RAD2D)->Name()));
             break;
         case 27:
-            _rpnf->execute( FUNC_IN2MM);
+            _rpnf->progMem->updateLine_P( PSTR(_rpnf->getFunctionByID( FUNC_IN2MM)->Name()));
             break;
         case 28:
             #ifdef __DEBUG
             Serial.println("Going to DATA Display");
             #endif
-            return_value = COMPONENT_DISPLAY_DATA;
-            break;
+            _mode = 0;
+            return COMPONENT_DISPLAY_DATA;
 
         // Column 7
         case 29:
-            //_rpnf->execute( FUNC_COS);
-            break;
+            // TODO
         case 30:
-            //_rpnf->execute( FUNC_ARCCOS);
-            break;
+            // TODO
+            return NO_CHANGE;
         case 31:
-            _rpnf->execute( FUNC_SEED);
+            _rpnf->progMem->updateLine_P( PSTR(_rpnf->getFunctionByID( FUNC_SEED)->Name()));
             break;
         case 32:
-            return_value = SHUTDOWN_REQUESTED;
-            break;
+            _mode = 0;
+            return SHUTDOWN_REQUESTED;
 
         default: // all other buttons do nothing - keep A-mode
            return NO_CHANGE;
     }
     _mode = 0;
+    _rpnf->progMem->incrementCounter();
+    _lcd->updateStatusPC( _rpnf->progMem->getCounter());
     return return_value;
-}
-
-int Receiver_PROG_A::_completeSubentry( uint8_t scancode){
-    int8_t r = (int)scancode;
-    switch( _mode){
-        case 0:
-        case 1:
-            return r;
-        case 2:
-        case 3:
-            r = _ar->tick( scancode);
-            if( r == NO_CHANGE){
-                _lcd->updateStatusMC( _ar->toString());
-                return NO_CHANGE;
-            }
-            Serial.print("Accessing extended memory at ");
-            Serial.println( _ar->toString());
-            _rpnf->execute( (_mode==2)? FUNC_A_M2X : FUNC_A_X2M, _ar->toString());
-            _lcd->updateStatusMC( _rpnf->extMem->getCounter());
-            Serial.print("Memory setting done... returning ");
-            Serial.println(r);
-            break;
-        default:
-            break;
-    }
-    _mode = 0;
-    return r;
 }

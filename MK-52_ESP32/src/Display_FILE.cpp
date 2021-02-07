@@ -33,15 +33,8 @@ void Display_FILE::activate(){
     char **Lines = _rpnf->getOutputLines();
     _sd->getFolderListing( Lines, 11, SCREEN_COLS-1);
     _lcd->outputStatus( _rpnf->progMem->getCounter(), _rpnf->extMem->getCounter(), "DSK", "   ");
-    //_lcd->outputTerminalLine( 0, _sd->getFolderNameTruncated( SCREEN_COLS-1));
     for( int i=0; i<11; i++){
         _lcd->outputTerminalLine( i, Lines[i]);
-        // if( i>_sd->_nItems){
-        //     _lcd->outputTerminalLine( i, "");
-        //     continue;
-        // }
-        // char *line = _sd->getItemString( i-1);
-        // _lcd->outputTerminalLine( i, line);
     }
     _setCurrentReceiver( COMPONENT_RECEIVER_FILE_N);
     _lcd->undimScreen();

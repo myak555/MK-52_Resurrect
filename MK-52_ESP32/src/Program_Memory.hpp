@@ -33,6 +33,7 @@ namespace MK52_Interpreter{
         inline char *currentChar(){return (char*)_buffer[_current];};
         char *getNextLine();
         inline char *getBottom(){return (char*)(_buffer+_bottom);};
+        inline bool isAtEnd(){return _current >= _bottom;};
 
         bool appendLine(char *line);
         bool appendLine_P(const char *line);

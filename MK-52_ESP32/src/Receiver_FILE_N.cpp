@@ -68,11 +68,15 @@ int Receiver_FILE_N::tick( uint8_t scancode){
 
         // Column 2
         case 9:
-            _rpnf->execute( FUNC_LOADDATA);
+            _rpnf->execute( FUNC_LOAD);
             _lcd->updateStatusPC( _rpnf->progMem->getCounter());
-            _lcd->updateStatusMC( _rpnf->extMem->getCounter());
-            break;
+            #ifdef __DEBUG
+            Serial.println("Going to AUTO Display");
+            #endif
+            _mode = 0;
+            return COMPONENT_DISPLAY_AUTO;
         case 10:
+            _rpnf->execute( FUNC_SAVE);
             break;
         case 11:
             // find program
@@ -137,7 +141,7 @@ int Receiver_FILE_N::_completeSubentry( uint8_t scancode){
             Serial.println(filename);
             #endif
             if( !_rpnf->fileExists(filename)){
-                _rpnf->execute( FUNC_SAVEDATAAS, filename);
+                _rpnf->execute( FUNC_SAVEAS, filename);
                 break;
             }
             _lcd->outputTerminalLine( 10, "Confirm OVERWRITE (\030)");

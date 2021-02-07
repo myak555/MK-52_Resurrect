@@ -241,7 +241,6 @@ char *UniversalValue::_composeInt64(char *text, int64_t value){
     return text;
 }
 
-
 //
 // Converts int
 //
@@ -315,17 +314,18 @@ void UniversalValue::_checkRounding(double accuracy){
     fromInt( positive? (int64_t)fl: -(int64_t)fl);
 }
 
-bool UniversalValue::_startsWith(char *text, char *keyword, int clip){
+//
+// keyword is usually shorter than text
+//
+bool UniversalValue::_startsWith(char *text, char *keyword){
     if( text==NULL || keyword==NULL) return false;
     #ifdef __DEBUG
-    Serial.print("Compare ");
-    Serial.print(text);
-    Serial.print( " with ");
+    Serial.print("Starts with compare ");
+    Serial.println(text);
     Serial.println(keyword);
     #endif
-    int ln = strlen( text);
-    if( ln>clip) ln = clip;
-    for( int8_t i=0; i<ln; i++){
+    int ln = strlen( keyword);
+    for( int i=0; i<ln; i++){
         if( text[i] != keyword[i]) return false;
     }
     return true; // all letters are the same   
@@ -381,4 +381,37 @@ bool UniversalValue::_isDigit(char c){
         if( (char)pgm_read_byte( ptr++) == c) return true;
     }
     return false; // digit not found
+}
+
+bool UniversalValue::_isProgramAddress(char *text){
+    if( *text != 'P') return false;
+    return _isAddress(text+1);
+}
+
+bool UniversalValue::_isMemoryAddress(char *text){
+    if( *text != 'M') return false;
+    return _isAddress(text+1);
+}
+
+bool UniversalValue::_isAddress(char *text){
+    for( int8_t i=0; i<4; i++){
+        if( !_isDigit(text[i])) return false;
+    }
+    return text[4] == ':' && text[5] == ' ';
+}
+
+//
+// Returns pointer to the content string
+//
+char *UniversalValue::_selectAddress(char *text){
+    text += 1;
+    for( int8_t i=0; i<5; i++, text++){
+        if( _isDigit(*text)) continue;
+        if( *text == ':'){
+            *text = 0;
+            text++;
+            break;
+        }
+    }
+    return text;
 }

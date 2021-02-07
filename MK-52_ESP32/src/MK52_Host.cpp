@@ -155,16 +155,20 @@ unsigned long MK52_Host::init() {
     _m_Display_PROG.init( _components);
     _m_Display_DATA.init( _components);
     _m_Display_FILE.init( _components);
+
+    bool result = _m_RPN_Functions.loadStateFile();
  
     #ifdef __DEBUG
+    Serial.print("SD card ");
+    Serial.println( _m_Hardware_SD.SDMounted? "mounted": "not found");
+    if( result) Serial.println("Status file not found");
+    else Serial.println("Status file loaded");
     Serial.println("Checks:");
     Serial.println( _m_RPN_Functions.progMem->getCounter());
     Serial.println( _m_RPN_Functions.extMem->getCounter());
     Serial.print( "[");
     Serial.print( _m_RPN_Functions.rpnStack->getDModeName());
     Serial.println( "]");
-    Serial.print("SD card ");
-    Serial.println( _m_Hardware_SD.SDMounted? "mounted": "not found");
     Serial.println("MK-52 Resurrect!");
     #endif
 
@@ -183,7 +187,6 @@ unsigned long MK52_Host::init() {
     #endif
 
     setDisplay( COMPONENT_DISPLAY_AUTO);
-    //setDisplay( COMPONENT_DISPLAY_FILE);
     return millis();
 }
 
@@ -207,6 +210,7 @@ void MK52_Host::setDisplay(int id){
 void MK52_Host::shutdown(){
     bool t = !(getKBD()->LEDOn);
     getKBD()->LEDOn = t;
+    _m_RPN_Functions.saveStateFile();
     digitalWrite( SYSTEM_POWER_HOLD, t);
 
     // after the power transistor is installed, this will not happen:

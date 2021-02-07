@@ -109,7 +109,7 @@ namespace MK52_Hardware{
         File _getCurrentDir();        
         void _clearItems();
         int16_t _locateAlphabetic(const char *name, bool isDir);
-        bool _insertItem(const char *name, int16_t pos, int16_t slot);
+        bool _insertItem(const char *name, int16_t pos, int16_t slot, bool isDir);
 
     //    byte *_io_buffer;
     //     IOManager *_iom;

@@ -27,16 +27,16 @@ unsigned long Program_Memory::init( void *components[]) {
     setEMode( EMODE_OWERWRITE);
 
     #ifdef __DEBUG
-    appendLine_P( PSTR("-1.2345678e-004"));
-    appendLine_P( PSTR("9"));
-    appendLine_P( PSTR("*"));
-    appendLine_P( PSTR("X->M A"));
-    appendLine_P( PSTR("X->M B"));
-    appendLine_P( PSTR("X->M C"));
-    appendLine_P( PSTR("Cx"));
-    appendLine_P( PSTR("M->X A"));
-    appendLine_P( PSTR("STOP"));
-    appendLine_P( PSTR("GOTO 0001"));
+    //appendLine_P( PSTR("-1.2345678e-004"));
+    //appendLine_P( PSTR("9"));
+    //appendLine_P( PSTR("*"));
+    //appendLine_P( PSTR("X->M A"));
+    //appendLine_P( PSTR("X->M B"));
+    //appendLine_P( PSTR("X->M C"));
+    //appendLine_P( PSTR("Cx"));
+    //appendLine_P( PSTR("M->X A"));
+    //appendLine_P( PSTR("STOP"));
+    //appendLine_P( PSTR("GOTO 0001"));
     Serial.print("Free program memory: ");
     Serial.println( getFree());
     Serial.print("ProgMem init with: ");

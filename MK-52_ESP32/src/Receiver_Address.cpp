@@ -35,6 +35,12 @@ void Receiver_Address::activate( uint8_t scancode, int8_t parent){
     _lcd->updateStatusFMODE( "ADR");
 }
 
+char *Receiver_Address::toTrimmedString(){
+    char *ptr = _text;
+    while( *ptr == ' ') ptr++;
+    return ptr;
+}
+
 int Receiver_Address::tick( uint8_t scancode){
     char c = _convertButton( _AR_ButtonConversion, scancode);
     switch( c){
@@ -63,24 +69,23 @@ int Receiver_Address::tick( uint8_t scancode){
             memmove( _text+1, _text, 3);
             _text[0] = ' ';
             if( _text[3] != ' ') break;
+            // fall-through for empty line
         case 'e': // entry completed
             return _completeEntry();
         default:
             break;
     }
-    //delay(KBD_IDLE_DELAY);
     return NO_CHANGE;
 }
 
 int Receiver_Address::_completeEntry(){
+    #ifdef __DEBUG
+    Serial.println( "Completing address entry...");
+    #endif
     _mode = 0;
     for( int8_t i=0; i<4; i++){
         if( _text[i] != ' ') break;
         _text[i] = '0';
     }
-    #ifdef __DEBUG
-    Serial.println( "Receiver ADDRESS ticked");
-    #endif
-    //delay(KBD_IDLE_DELAY);
     return _parentReceiver;
 }
