@@ -107,6 +107,7 @@ int Receiver_DATA_N::tick( uint8_t scancode){
             break;
         case 27:
             _rpnf->execute( FUNC_MEMSWP);
+            _rpnf->execute( FUNC_INCREMENT_MC);
             break;
 
         // Column 7
@@ -129,7 +130,6 @@ int Receiver_DATA_N::tick( uint8_t scancode){
             _nr->activate( scancode, COMPONENT_RECEIVER_DATA_N);
             break;
     }
-    //delay(KBD_IDLE_DELAY);
     return return_value;
 }
 
@@ -154,7 +154,7 @@ int Receiver_DATA_N::_completeSubentry( uint8_t scancode){
         case 4:
             r = _rr->tick( scancode);
             if( r == NO_CHANGE) return NO_CHANGE;
-            _rpnf->execute( (_mode==3)? FUNC_MEXTOR : FUNC_RTOMEX, _rr->toString());
+            _rpnf->execute( (_mode==4)? FUNC_MEXTOR : FUNC_RTOMEX, _rr->toString());
             #ifdef __DEBUG
             Serial.print("Registers updated, returning ");
             Serial.println(r);

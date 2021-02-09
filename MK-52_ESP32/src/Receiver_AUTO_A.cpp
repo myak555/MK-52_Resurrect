@@ -51,7 +51,19 @@ int Receiver_AUTO_A::tick( uint8_t scancode){
             _lcd->updateStatusDMODE(_rpnf->rpnStack->getDModeName());
             return NO_CHANGE;
 
-        // Column 1 does nothing
+        // Column 1
+        case 5:
+            _rpnf->execute( FUNC_INCREMENT_MC);
+            _lcd->updateStatusMC( _rpnf->extMem->getCounter());
+            break;
+        case 6:
+            _rpnf->execute( FUNC_DECREMENT_MC);
+            _lcd->updateStatusMC( _rpnf->extMem->getCounter());
+            break;
+        case 7:
+            _rpnf->execute( FUNC_RESET_MC);
+            _lcd->updateStatusMC( _rpnf->extMem->getCounter());
+            break;
 
         // Column 2
         case 9:

@@ -158,7 +158,7 @@ namespace MK52_Interpreter{
         int tick( uint8_t scancode = 0);
       private:
         Receiver_Register *_rr;
-        int _completeSubentry( uint8_t scancode);
+        //Receiver_Text *_tr;
     };
 
     class Receiver_PROG_A: public Receiver{

@@ -43,18 +43,13 @@ namespace MK52_Hardware{
         bool _current_File_open = false;
 
         unsigned long init();
+
         inline char *getFolderName(){ return _current_Dir_Name;};
         char *getFolderNameTruncated( int8_t n);
         void nextListingPosition();
         void previousListingPosition();
         inline bool isAtFolder(){ return listingPosition <_nDirs;};
         char *getItemFromListing();
-
-    //     size_t loadBinary( const char *name, byte *buff, size_t minSize, size_t maxSize);
-    //     bool saveBinary( const char *name, byte *buff, size_t Size);
-
-    //     void readFile( const char * path);
-    //     void writeFile( const char * path, const char * message);
 
         void checkRootExists();
         bool checkEntityExists( const char *name);
@@ -83,22 +78,6 @@ namespace MK52_Hardware{
         bool read( char *buffer, int32_t n);
         bool readln( char *buffer, int32_t n);
 
-    //     bool openProgramFileRead( const char *name);
-    //     bool openProgramFileWrite( const char *name);
-    //     bool openDataFileRead( const char *name);
-    //     bool openDataFileWrite( const char *name);
-    //     uint16_t readln( byte *buff);
-    //     uint16_t print( char *buff, bool cr=true);
-    //     inline void closeFile(){
-    //       _currentFile.close();
-    //     };
-    //     bool readDouble( double *v);
-    //     bool writeDouble( double v);
-    //     size_t readString( byte *buff, size_t limit);
-    //     bool writeString( byte *v);
-    //     bool writeSettingNumber( const char *title, double value);
-    //     bool writeSettingString( const char *title, byte *value);
-
       private:
         char *_current_Dir_Name = NULL;
         char *_current_File_Name = NULL;
@@ -109,29 +88,10 @@ namespace MK52_Hardware{
         File _getCurrentDir();        
         void _clearItems();
         int16_t _locateAlphabetic(const char *name, bool isDir);
-        bool _insertItem(const char *name, int16_t pos, int16_t slot, bool isDir);
-
-    //    byte *_io_buffer;
-    //     IOManager *_iom;
-    //     Keywords *_kwds;
-    //     Variables *_vars;
-    //     ProgramCode *_code;
-    //     MessageBox *_mbox;
-    //     ExpressionParser *_epar;
-    //     File _currentFile;
-
-    //     bool _locateBASICFile( const char *name);
-    //     bool _locateExistingFile( const char *name);
- 
+        bool _insertItem(const char *name, int16_t pos, int16_t slot, bool isDir); 
         char *_stripFolders( const char *name);
         char *_formEntityName( File f);
         char *_appendFileSize( File f);
-
-    //     bool _nameLengthCheckMantra( size_t len);
-    //     bool _lookForFileMantra1( char *tmpName);
-    //     bool _lookForFileMantra2( char *tmpName);
-    //     bool _formFileMantra( const char *name, char *dest);
-    //     bool _checkFolderStructure( char *name);
     };
 };
 

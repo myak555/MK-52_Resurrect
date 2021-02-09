@@ -48,6 +48,7 @@ namespace MK52_Interpreter{
             static bool _isDigit(char c);
             static bool _isProgramAddress(char *text);
             static bool _isMemoryAddress(char *text);
+            static uint8_t _isRegisterAddress(char *text);
             static bool _isAddress(char *text);
             static char *_selectAddress(char *text);
             static bool _containsChar(char *text, char c);

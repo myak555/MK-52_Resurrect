@@ -20,6 +20,7 @@ using namespace MK52_Interpreter;
 unsigned long RPN_Functions::init( void *components[]) {
     _components = components;
     rpnStack = (RPN_Stack*) components[COMPONENT_STACK];
+    regMem = (Register_Memory *)components[COMPONENT_REGISTER_MEMORY];
     progMem = (Program_Memory *)components[COMPONENT_PROGRAM_MEMORY];
     extMem = (Extended_Memory *)components[COMPONENT_EXTENDED_MEMORY];
     _sd = (MK52_Hardware::SD_Manager *)components[COMPONENT_SD_MANAGER];

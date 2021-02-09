@@ -41,8 +41,11 @@ namespace MK52_Interpreter{
         public:
             bool _atStop = false;
             RPN_Stack *rpnStack;
-            Program_Memory *progMem;
-            Extended_Memory *extMem;
+            Register_Memory *regMem = NULL;
+            Program_Memory *progMem = NULL;
+            Extended_Memory *extMem = NULL;
+
+            unsigned long init( void *components[]);
 
             inline char *getOutputBuffer(){return _text;};
             char *setOutputBuffer(char *text);
@@ -53,7 +56,6 @@ namespace MK52_Interpreter{
                 {return _buffer + (SCREEN_COLS+1)*n;};
             inline char **getOutputLines() {return _lines;};
 
-            unsigned long init( void *components[]);
             RPN_Function *getFunctionByID(int16_t id);
             RPN_Function *getFunctionByName(char *command);
             RPN_Function *getFunctionByIOName(char *command);
@@ -85,6 +87,7 @@ namespace MK52_Interpreter{
             char *_lines[SCREEN_ROWS];
             void _appendFunction( RPN_Function *f);
             bool _writeStackFile();
+            bool _writeRegisterFile();
             bool _writeProgramFile();
             bool _writeDataFile();
             bool _readFile(bool readStack=false, bool readProg=false, bool readMem=false);

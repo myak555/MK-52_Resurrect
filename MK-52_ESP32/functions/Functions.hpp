@@ -629,7 +629,6 @@ class Func_RToMex: public RPN_Function{
         inline bool checkID( uint16_t id){ return id == FUNC_RTOMEX;};
         inline bool checkName(char *name){ return UniversalValue::_startsWith_P( name, Name());};
         inline const char*Name(){ return PSTR("RToEx ");};
-        inline const char*IOName(){ return Name();};
         inline bool containsRegister(){return true;};
         void execute( void *components[], char *command);
 };
@@ -639,7 +638,6 @@ class Func_MexClr: public RPN_Function{
         inline bool checkID( uint16_t id){ return id == FUNC_MEXCLR;};
         inline bool checkName(char *name){ return UniversalValue::_startsWith_P( name, Name());};
         inline const char*Name(){ return PSTR("MexCx");};
-        inline const char*IOName(){ return Name();};
         void execute( void *components[], char *command);
 };
 
@@ -648,10 +646,10 @@ class Func_GOTO: public RPN_Function{
         inline bool checkID( uint16_t id){ return id == FUNC_GOTO;};
         inline bool checkName(char *name){ return UniversalValue::_startsWith_P( name, Name());};
         inline const char*Name(){ return PSTR("GOTO ");};
-        inline const char*IOName(){ return Name();};
         inline bool advanceRequired(){return false;};
         inline bool containsPC(){return true;};
-        void execute( void *components[], char *command);
+        void execute( void *components[], char *command){
+            _ProgMem( components)->setCounter(command);};
 };
 
 class Func_GOMEM: public RPN_Function{
@@ -659,7 +657,6 @@ class Func_GOMEM: public RPN_Function{
         inline bool checkID( uint16_t id){ return id == FUNC_GOMEM;};
         inline bool checkName(char *name){ return UniversalValue::_startsWith_P( name, Name());};
         inline const char*Name(){ return PSTR("GOMEM ");};
-        inline const char*IOName(){ return Name();};
         inline bool advanceRequired(){return false;};
         inline bool containsMC(){return true;};
         void execute( void *components[], char *command);
@@ -670,7 +667,6 @@ class Func_GOSUB: public RPN_Function{
         inline bool checkID( uint16_t id){ return id == FUNC_GOSUB;};
         inline bool checkName(char *name){ return UniversalValue::_startsWith_P( name, Name());};
         inline const char*Name(){ return PSTR("GOSUB ");};
-        inline const char*IOName(){ return Name();};
         inline bool advanceRequired(){return false;};
         inline bool containsPC(){return true;};
         void execute( void *components[], char *command);

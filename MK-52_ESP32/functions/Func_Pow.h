@@ -54,7 +54,7 @@ void Func_Pow::execute( void *components[], char *command){
     }
     int64_t p = s->Y->toInt();
     if( x==0.0 && p==0){
-        s->X->fromInt(0);
+        s->X->fromInt(1);
         return;
     }
     if( x==0.0 && p<0){

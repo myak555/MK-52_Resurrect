@@ -46,16 +46,13 @@ int Receiver_AUTO_N::tick( uint8_t scancode){
         // Column 0
         case 1:
             _mode = 0;
-            return_value = COMPONENT_RECEIVER_AUTO_F;
-            break;
+            return COMPONENT_RECEIVER_AUTO_F;
         case 2:
             _mode = 0;
-            return_value = COMPONENT_RECEIVER_AUTO_K;
-            break;
+            return COMPONENT_RECEIVER_AUTO_K;
         case 3:
             _mode = 0;
-            return_value = COMPONENT_RECEIVER_AUTO_A;
-            break;
+            return COMPONENT_RECEIVER_AUTO_A;
         case 4:
             _rpnf->execute(FUNC_TOGGLE_DMOD);
             _lcd->updateStatusDMODE(_rpnf->rpnStack->getDModeName());
@@ -76,6 +73,7 @@ int Receiver_AUTO_N::tick( uint8_t scancode){
             break;
         case 8:
             // no need to wait on keyboard
+            _mode = 0;
             return COMPONENT_RECEIVER_AUTO_R;
 
         // Column 2

@@ -66,77 +66,77 @@ int Receiver_PROG_F::tick( uint8_t scancode){
 
         // Column 1
         case 5:
-            _rpnf->progMem->updateLine_P( PSTR(_rpnf->getFunctionByID( FUNC_IFNOTLT0)->Name()));
+            _rpnf->progMem->updateLine_P( _rpnf->getFunctionByID( FUNC_IFNOTLT0)->Name());
             _ar->activate( 0, COMPONENT_RECEIVER_PROG_N);
             return NO_CHANGE;
         case 6:
-            _rpnf->progMem->updateLine_P( PSTR(_rpnf->getFunctionByID( FUNC_IFNOTEQ0)->Name()));
+            _rpnf->progMem->updateLine_P( _rpnf->getFunctionByID( FUNC_IFNOTEQ0)->Name());
             _ar->activate( 0, COMPONENT_RECEIVER_PROG_N);
             return NO_CHANGE;
         case 7:
-            _rpnf->progMem->updateLine_P( PSTR(_rpnf->getFunctionByID( FUNC_IFNOTGE0)->Name()));
+            _rpnf->progMem->updateLine_P( _rpnf->getFunctionByID( FUNC_IFNOTGE0)->Name());
             _ar->activate( 0, COMPONENT_RECEIVER_PROG_N);
             return NO_CHANGE;
         case 8:
-            _rpnf->progMem->updateLine_P( PSTR(_rpnf->getFunctionByID( FUNC_IFNOTNE0)->Name()));
+            _rpnf->progMem->updateLine_P( _rpnf->getFunctionByID( FUNC_IFNOTNE0)->Name());
             _ar->activate( 0, COMPONENT_RECEIVER_PROG_N);
             return NO_CHANGE;
 
         // Column 2
         case 9:
-            _rpnf->progMem->updateLine_P( PSTR(_rpnf->getFunctionByID( FUNC_L0)->Name()));
+            _rpnf->progMem->updateLine_P( _rpnf->getFunctionByID( FUNC_L0)->Name());
             _ar->activate( 0, COMPONENT_RECEIVER_PROG_N);
             return NO_CHANGE;
         case 10:
-            _rpnf->progMem->updateLine_P( PSTR(_rpnf->getFunctionByID( FUNC_L1)->Name()));
+            _rpnf->progMem->updateLine_P( _rpnf->getFunctionByID( FUNC_L1)->Name());
             _ar->activate( 0, COMPONENT_RECEIVER_PROG_N);
             return NO_CHANGE;
         case 11:
-            _rpnf->progMem->updateLine_P( PSTR(_rpnf->getFunctionByID( FUNC_L2)->Name()));
+            _rpnf->progMem->updateLine_P( _rpnf->getFunctionByID( FUNC_L2)->Name());
             _ar->activate( 0, COMPONENT_RECEIVER_PROG_N);
             return NO_CHANGE;
         case 12:
-            _rpnf->progMem->updateLine_P( PSTR(_rpnf->getFunctionByID( FUNC_L3)->Name()));
+            _rpnf->progMem->updateLine_P( _rpnf->getFunctionByID( FUNC_L3)->Name());
             _ar->activate( 0, COMPONENT_RECEIVER_PROG_N);
             return NO_CHANGE;
 
         // Column 3
         case 13:
-            _rpnf->progMem->updateLine_P( PSTR(_rpnf->getFunctionByID( FUNC_SIN)->Name()));
+            _rpnf->progMem->updateLine_P( _rpnf->getFunctionByID( FUNC_SIN)->Name());
             break;
         case 14:
-            _rpnf->progMem->updateLine_P( PSTR(_rpnf->getFunctionByID( FUNC_ARCSIN)->Name()));
+            _rpnf->progMem->updateLine_P( _rpnf->getFunctionByID( FUNC_ARCSIN)->Name());
             break;
         case 15:
-            _rpnf->progMem->updateLine_P( PSTR(_rpnf->getFunctionByID( FUNC_EXP)->Name()));
+            _rpnf->progMem->updateLine_P( _rpnf->getFunctionByID( FUNC_EXP)->Name());
             break;
         case 16:
-            _rpnf->progMem->updateLine_P( PSTR(_rpnf->getFunctionByID( FUNC_10X)->Name()));
+            _rpnf->progMem->updateLine_P( _rpnf->getFunctionByID( FUNC_10X)->Name());
             break;
 
         // Column 4
         case 17:
-            _rpnf->progMem->updateLine_P( PSTR(_rpnf->getFunctionByID( FUNC_COS)->Name()));
+            _rpnf->progMem->updateLine_P( _rpnf->getFunctionByID( FUNC_COS)->Name());
             break;
         case 18:
-            _rpnf->progMem->updateLine_P( PSTR(_rpnf->getFunctionByID( FUNC_ARCCOS)->Name()));
+            _rpnf->progMem->updateLine_P( _rpnf->getFunctionByID( FUNC_ARCCOS)->Name());
             break;
         case 19:
-            _rpnf->progMem->updateLine_P( PSTR(_rpnf->getFunctionByID( FUNC_LG)->Name()));
+            _rpnf->progMem->updateLine_P( _rpnf->getFunctionByID( FUNC_LG)->Name());
             break;
         case 20:
-            _rpnf->progMem->updateLine_P( PSTR(_rpnf->getFunctionByID( FUNC_ROT)->Name()));
+            _rpnf->progMem->updateLine_P( _rpnf->getFunctionByID( FUNC_ROT)->Name());
             break;
 
         // Column 5
         case 21:
-            _rpnf->progMem->updateLine_P( PSTR(_rpnf->getFunctionByID( FUNC_TG)->Name()));
+            _rpnf->progMem->updateLine_P( _rpnf->getFunctionByID( FUNC_TG)->Name());
             break;
         case 22:
-            _rpnf->progMem->updateLine_P( PSTR(_rpnf->getFunctionByID( FUNC_ARCTG)->Name()));
+            _rpnf->progMem->updateLine_P( _rpnf->getFunctionByID( FUNC_ARCTG)->Name());
             break;
         case 23:
-            _rpnf->progMem->updateLine_P( PSTR(_rpnf->getFunctionByID( FUNC_LN)->Name()));
+            _rpnf->progMem->updateLine_P( _rpnf->getFunctionByID( FUNC_LN)->Name());
             break;
         case 24:
             #ifdef __DEBUG
@@ -147,13 +147,13 @@ int Receiver_PROG_F::tick( uint8_t scancode){
 
         // Column 6
         case 25:
-            _rpnf->progMem->updateLine_P( PSTR(_rpnf->getFunctionByID( FUNC_SQRT)->Name()));
+            _rpnf->progMem->updateLine_P( _rpnf->getFunctionByID( FUNC_SQRT)->Name());
             break;
         case 26:
-            _rpnf->progMem->updateLine_P( PSTR(_rpnf->getFunctionByID( FUNC_PI)->Name()));
+            _rpnf->progMem->updateLine_P( _rpnf->getFunctionByID( FUNC_PI)->Name());
             break;
         case 27:
-            _rpnf->progMem->updateLine_P( PSTR(_rpnf->getFunctionByID( FUNC_POW)->Name()));
+            _rpnf->progMem->updateLine_P( _rpnf->getFunctionByID( FUNC_POW)->Name());
             break;
         case 28:
             #ifdef __DEBUG
@@ -163,13 +163,13 @@ int Receiver_PROG_F::tick( uint8_t scancode){
 
         // Column 7
         case 29:
-            _rpnf->progMem->updateLine_P( PSTR(_rpnf->getFunctionByID( FUNC_1X)->Name()));
+            _rpnf->progMem->updateLine_P( _rpnf->getFunctionByID( FUNC_1X)->Name());
             break;
         case 30:
-            _rpnf->progMem->updateLine_P( PSTR(_rpnf->getFunctionByID( FUNC_X2)->Name()));
+            _rpnf->progMem->updateLine_P( _rpnf->getFunctionByID( FUNC_X2)->Name());
             break;
         case 31:
-            _rpnf->progMem->updateLine_P( PSTR(_rpnf->getFunctionByID( FUNC_BX)->Name()));
+            _rpnf->progMem->updateLine_P( _rpnf->getFunctionByID( FUNC_BX)->Name());
             break;
         case 32:
             _mode = 0;

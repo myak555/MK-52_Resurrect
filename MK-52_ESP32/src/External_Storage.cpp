@@ -61,6 +61,7 @@ bool RPN_Functions::saveStateFile(){
     #endif
     if( _sd->openFile_P(StatusFile, true)) return true;
     bool result = _writeStackFile();
+    if(!result) result = _writeRegisterFile();
     if(!result) result = _writeProgramFile();
     if(!result) result = _writeDataFile();
     _sd->closeFile();
@@ -143,8 +144,35 @@ bool RPN_Functions::_writeStackFile(){
     sprintf_P( _text, PSTR("T="));
     rpnStack->T->toString(_text+2);
     if(_sd->println(_text)) return true;
+    if( rpnStack->customStackLabels()){
+        sprintf_P( _text, PSTR("LX=%s"), rpnStack->X_Label);
+        if(_sd->println(_text)) return true;
+        sprintf_P( _text, PSTR("LY=%s"), rpnStack->Y_Label);
+        if(_sd->println(_text)) return true;
+        sprintf_P( _text, PSTR("LZ=%s"), rpnStack->Z_Label);
+        if(_sd->println(_text)) return true;
+        sprintf_P( _text, PSTR("LT=%s"), rpnStack->T_Label);
+        if(_sd->println(_text)) return true;
+    }
     #ifdef __DEBUG
     Serial.println("Stack written");
+    #endif
+    return false;
+}
+
+bool RPN_Functions::_writeRegisterFile(){
+    if( _sd->println_P(PSTR("#"))) return true;
+    if( _sd->println_P(PSTR("# MK-52 registers"))) return true;
+    if( _sd->println_P(PSTR("#"))) return true;
+    for( uint8_t i=0; i<REGISTER_MEMORY_NVALS; i++){
+        _tmpuv->fromLocation(regMem->_registerAddress(i));
+        if( _tmpuv->isEmpty()) continue;
+        sprintf_P( _text, PSTR("R%02u="), i);
+        _tmpuv->toString( _text+4);
+        if(_sd->println(_text)) return true;
+    }
+    #ifdef __DEBUG
+    Serial.println("Registers written");
     #endif
     return false;
 }
@@ -212,6 +240,7 @@ bool RPN_Functions::_writeDataFile(){
 bool RPN_Functions::_readFile(bool readStack, bool readProg, bool readMem){
     uint32_t pmemctr = progMem->getCounter();
     uint32_t ememctr = extMem->getCounter();
+    uint8_t regAddress = 0;
     char *ptr = NULL;
     while( true){
         if( _sd->readln( _text, PROGRAM_LINE_LENGTH)) break;
@@ -283,6 +312,28 @@ bool RPN_Functions::_readFile(bool readStack, bool readProg, bool readMem){
             }
             if( UniversalValue::_startsWith_P( _text, PSTR("DMODE=GRD"))){
                 rpnStack->setDMode(1);
+                continue;
+            }
+            if( UniversalValue::_startsWith_P( _text, PSTR("LX="))){
+                rpnStack->setStackLabel( 0, _text+3);
+                continue;
+            }
+            if( UniversalValue::_startsWith_P( _text, PSTR("LY="))){
+                rpnStack->setStackLabel( 1, _text+3);
+                continue;
+            }
+            if( UniversalValue::_startsWith_P( _text, PSTR("LZ="))){
+                rpnStack->setStackLabel( 2, _text+3);
+                continue;
+            }
+            if( UniversalValue::_startsWith_P( _text, PSTR("LT="))){
+                rpnStack->setStackLabel( 3, _text+3);
+                continue;
+            }
+            regAddress = UniversalValue::_isRegisterAddress(_text);
+            if( regAddress < REGISTER_MEMORY_NVALS){
+                _tmpuv->fromLocation( regMem->_registerAddress(regAddress));
+                _tmpuv->fromString( _text+4);
                 continue;
             }
         }

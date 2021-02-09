@@ -218,13 +218,14 @@ char *UniversalValue::_composeFloat(char *text, double value){
     }
 
     // print with fractional part
+    if( fl == 0) *ptr++ = '0'; // for case < 1.0
     for( int i=0; i<decimals; i++) value *= 10.0;
     _composeInt64(ptr, (int64_t)round(value));
     ptr += strlen( ptr) - decimals;
     memmove( ptr+1, ptr, decimals+1); // includes trailing zero
     *ptr++ = '.';
 
-    // remove meaningless zeros
+    // remove meaningless zeros from the end
     char *ptrEnd = strchr( ptr, 0) - 1;
     while( ptrEnd>ptr && *ptrEnd == '0') *ptrEnd-- = 0;
     return text;
@@ -321,8 +322,8 @@ void UniversalValue::_checkRounding(double accuracy){
         return;
     }
     if( value >= accuracy) return; // should not convert
-    if( value < 0.99999999997) return; // whole part < 1. 
-    if( value < 1.00000000003){
+    if( value < 0.99999999999) return; // whole part < 1. 
+    if( value < 1.00000000001){
         fromInt( positive? 1: -1);
         return;
     }
@@ -418,6 +419,17 @@ bool UniversalValue::_isProgramAddress(char *text){
 bool UniversalValue::_isMemoryAddress(char *text){
     if( *text != 'M') return false;
     return _isAddress(text+1);
+}
+
+uint8_t UniversalValue::_isRegisterAddress(char *text){
+    if( *text++ != 'R') return REGISTER_MEMORY_NVALS;
+    if( !_isDigit(*text)) return REGISTER_MEMORY_NVALS;
+    uint8_t val = (uint8_t)text[0] - '0';
+    if( !_isDigit(text[1])) return REGISTER_MEMORY_NVALS;
+    val *= 10;
+    val += (uint8_t)text[1] - '0';
+    if( text[2] != '=') return REGISTER_MEMORY_NVALS;
+    return val;
 }
 
 bool UniversalValue::_isAddress(char *text){
