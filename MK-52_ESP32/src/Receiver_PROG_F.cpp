@@ -48,6 +48,7 @@ int Receiver_PROG_F::tick( uint8_t scancode){
         _rpnf->appendOutputBuffer( _ar->toString());
         _rpnf->progMem->replaceLine( _rpnf->getOutputBuffer());
         _rpnf->progMem->incrementCounter();
+        _lcd->updateStatusPC( _rpnf->progMem->getCounter());
         return return_value;
     }
     switch( scancode){

@@ -43,8 +43,8 @@ void UniversalValue::fromReal(double value){
 }
 
 uint8_t UniversalValue::fromString( char *text){
+    while( *text == ' ') text++;
     char *ptr = text;
-    while( *ptr == ' ') ptr++;
     bool positive = true;
     if( *ptr == '+') ptr++;
     if( *ptr == '-'){
@@ -60,20 +60,36 @@ uint8_t UniversalValue::fromString( char *text){
     if( ptrE == NULL) ptrE = strchr( text, 'e');
     char *ptrDecimal = strchr( text, '.');
     if( ptrE == NULL && ptrDecimal == NULL){ // no decimal or e - whole number
+        #ifdef __DEBUG
+        Serial.print("Recovering whole number: [");
+        Serial.print(text);
+        Serial.println("]");
+        #endif
         fromInt( _recoverInt64( text));        
         return getType();
     }
     double result = 0.0;
     int64_t exponent = 0;
     if( ptrE == NULL && ptrDecimal != NULL){ // has decimal, but no e
+        #ifdef __DEBUG
+        Serial.print("Recovering decimal number: [");
+        Serial.print(ptr);
+        Serial.println("]");
+        #endif
         result = (double)_recoverInt64( ptr);
         result += _recoverDecimal( ptrDecimal+1);
         fromReal( positive? result: -result);        
         return getType();
     }
     // has e
+    #ifdef __DEBUG
+    Serial.print("Recovering exponential number: [");
+    Serial.print(ptr);
+    Serial.println("]");
+    #endif
     result = (double)_recoverInt64( ptr);
-    if( ptrDecimal != NULL) result += _recoverDecimal(ptrDecimal+1); 
+    if( ptrDecimal != NULL)
+        result += _recoverDecimal(ptrDecimal+1);
     exponent = _recoverInt64( ptrE+1);
     if( exponent < -300){
         fromInt( 0);        
@@ -183,23 +199,34 @@ char *UniversalValue::_composeFloat(char *text, double value){
         *ptr++ = '-';
         value = -value;
     }
-    int exponent = 0;
-    while( value>=1.0){
-        value *= 0.1;
-        exponent++;
-    }
-    if( exponent==0){
+
+    // print whole part
+    double fl = floor( value);
+    _composeInt64(ptr, (int64_t)fl);
+
+    // how many digits should we have?
+    int ln = strlen( ptr);
+    int decimals = 12 - ln;
+    if( decimals <= 0){
+        fl = round( value);
+        _composeInt64(ptr, (int64_t)fl);
+        ptr += strlen(ptr);
+        *ptr++ = '.';
         *ptr++ = '0';
+        *ptr = 0;
+        return text;
     }
-    for( int i=0; i<12; i++){
-        if( i == exponent) *ptr++ = '.'; 
-        value *= 10.0;
-        double fl = floor(value);
-        value -= fl;
-        *ptr++ = '0' + (uint8_t)fl;
-    }
-    if( ptr[-1] == '.') *ptr++ = '0';
-    *ptr = 0;
+
+    // print with fractional part
+    for( int i=0; i<decimals; i++) value *= 10.0;
+    _composeInt64(ptr, (int64_t)round(value));
+    ptr += strlen( ptr) - decimals;
+    memmove( ptr+1, ptr, decimals+1); // includes trailing zero
+    *ptr++ = '.';
+
+    // remove meaningless zeros
+    char *ptrEnd = strchr( ptr, 0) - 1;
+    while( ptrEnd>ptr && *ptrEnd == '0') *ptrEnd-- = 0;
     return text;
 }
 
@@ -414,4 +441,11 @@ char *UniversalValue::_selectAddress(char *text){
         }
     }
     return text;
+}
+
+bool UniversalValue::_containsChar(char *text, char c){
+    while( *text){
+        if( *text++ == c) return true;
+    }
+    return false;
 }

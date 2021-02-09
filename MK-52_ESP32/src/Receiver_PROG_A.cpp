@@ -45,6 +45,7 @@ int Receiver_PROG_A::tick( uint8_t scancode){    int return_value = COMPONENT_RE
         _rpnf->appendOutputBuffer( _ar->toString());
         _rpnf->progMem->replaceLine( _rpnf->getOutputBuffer());
         _rpnf->progMem->incrementCounter();
+        _lcd->updateStatusPC( _rpnf->progMem->getCounter());
         return return_value;
     }
     switch( scancode){
@@ -64,19 +65,19 @@ int Receiver_PROG_A::tick( uint8_t scancode){    int return_value = COMPONENT_RE
         case 5:
             _rpnf->progMem->updateLine_P( PSTR(_rpnf->getFunctionByID( FUNC_IFNOTLTY)->Name()));
             _ar->activate( 0, COMPONENT_RECEIVER_PROG_N);
-            break;
+            return NO_CHANGE;
         case 6:
             _rpnf->progMem->updateLine_P( PSTR(_rpnf->getFunctionByID( FUNC_IFNOTEQY)->Name()));
             _ar->activate( 0, COMPONENT_RECEIVER_PROG_N);
-            break;
+            return NO_CHANGE;
         case 7:
             _rpnf->progMem->updateLine_P( PSTR(_rpnf->getFunctionByID( FUNC_IFNOTGEY)->Name()));
             _ar->activate( 0, COMPONENT_RECEIVER_PROG_N);
-            break;
+            return NO_CHANGE;
         case 8:
             _rpnf->progMem->updateLine_P( PSTR(_rpnf->getFunctionByID( FUNC_IFNOTNEY)->Name()));
             _ar->activate( 0, COMPONENT_RECEIVER_PROG_N);
-            break;
+            return NO_CHANGE;
 
         // Column 2
         case 9:

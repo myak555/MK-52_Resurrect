@@ -59,7 +59,7 @@ void Func_MemSet::execute( void *components[], char *command){
 
 void Func_MemSwp::execute( void *components[], char *command){
     Extended_Memory *em = (Extended_Memory *)components[COMPONENT_EXTENDED_MEMORY];
-    RPN_Stack *stk = (RPN_Stack *)components[COMPONENT_STACK];
+    RPN_Stack *stk = _Stack( components);
     uint8_t *ptr = em->getCurrentLine();
     if( *ptr == VALUE_TYPE_EMPTY){
         stk->X->toLocation(ptr);
@@ -74,7 +74,7 @@ void Func_MemSwp::execute( void *components[], char *command){
 
 void Func_MexToX::execute( void *components[], char *command){
     Extended_Memory *em = (Extended_Memory *)components[COMPONENT_EXTENDED_MEMORY];
-    RPN_Stack *stk = (RPN_Stack *)components[COMPONENT_STACK];
+    RPN_Stack *stk = _Stack( components);
     stk->storeBx();
     stk->push();
     uint8_t *ptr = em->getCurrentLine();
@@ -87,7 +87,7 @@ void Func_MexToX::execute( void *components[], char *command){
 
 void Func_XToMex::execute( void *components[], char *command){
     Extended_Memory *em = (Extended_Memory *)components[COMPONENT_EXTENDED_MEMORY];
-    RPN_Stack *stk = (RPN_Stack *)components[COMPONENT_STACK];
+    RPN_Stack *stk = _Stack( components);
     uint8_t *ptr = em->getCurrentLine();
     stk->X->toLocation( ptr);
 }

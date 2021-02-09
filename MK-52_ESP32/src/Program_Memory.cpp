@@ -84,6 +84,10 @@ bool Program_Memory::appendLine_P(const char *line){
 // Returns the counter actually set
 //
 uint32_t Program_Memory::setCounter(uint32_t address){
+    #ifdef __DEBUG
+    Serial.print( "PC setting to: ");
+    Serial.println( address);
+    #endif
     while( _counter < address ){
         if( incrementCounter()) break;
     }

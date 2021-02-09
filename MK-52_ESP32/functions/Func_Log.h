@@ -35,7 +35,7 @@ void Func_Log::execute( void *components[], char *command){
 }
 
 void Func_EE::execute( void *components[], char *command){
-    RPN_Stack *s = (RPN_Stack *)components[COMPONENT_STACK];
+    RPN_Stack *s = _Stack( components);
     s->storeBx();
     s->push();
     s->X->fromReal( __EE);

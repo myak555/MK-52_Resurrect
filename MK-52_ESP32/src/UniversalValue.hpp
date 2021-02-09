@@ -50,6 +50,7 @@ namespace MK52_Interpreter{
             static bool _isMemoryAddress(char *text);
             static bool _isAddress(char *text);
             static char *_selectAddress(char *text);
+            static bool _containsChar(char *text, char c);
 
         private:
             uint8_t *_ptr = NULL;

@@ -44,31 +44,31 @@ void Extended_Memory::resetCounter(){
 //
 // Returns the counter actually set
 //
-uint32_t Extended_Memory::setCounter(uint32_t c){
-    if( c >= EXTENDED_MEMORY_NVALS) c = EXTENDED_MEMORY_NVALS-1;
-    _counter = c;  
+uint32_t Extended_Memory::setCounter(uint32_t address){
+    if( address >= EXTENDED_MEMORY_NVALS) address = EXTENDED_MEMORY_NVALS-1;
+    _counter = address;  
     #ifdef __DEBUG
-    Serial.print( "Counter setting to: ");
+    Serial.print( "MC setting to: ");
     Serial.println( _counter);
     #endif
     return _counter;
 }
-uint32_t Extended_Memory::setCounter(char *s){
+uint32_t Extended_Memory::setCounter(char *text){
     #ifdef __DEBUG
     Serial.print( "Processing address: ");
-    Serial.println( s);
+    Serial.println( text);
     #endif
-    int ln = strlen(s);
+    int ln = strlen(text);
     if( ln <= 0) return _counter;
-    if( s[0]==' ') return _counter;
+    if( text[0]==' ') return _counter;
     uint32_t n = 0;
-    while( *s){
-        if( *s == ' '){
-            s++;
+    while( *text){
+        if( *text == ' '){
+            text++;
             continue;
         }
-        n = n*10 + *s - '0';
-        s++; 
+        n = n*10 + *text - '0';
+        text++;
     }
     return setCounter(n);
 }

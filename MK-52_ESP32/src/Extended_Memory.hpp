@@ -20,8 +20,8 @@ namespace MK52_Interpreter{
         void resetCounter();
 
         inline uint32_t getCounter(){ return _counter;};
-        uint32_t setCounter(uint32_t c);
-        uint32_t setCounter(char *s);
+        uint32_t setCounter(uint32_t address);
+        uint32_t setCounter(char *text);
         bool incrementCounter();
         bool decrementCounter();
 

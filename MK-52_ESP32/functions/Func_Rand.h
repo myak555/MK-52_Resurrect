@@ -1,5 +1,5 @@
 void Func_Rand::execute( void *components[], char *command){
-    RPN_Stack *s = (RPN_Stack *)components[COMPONENT_STACK];
+    RPN_Stack *s = _Stack( components);
     s->storeBx();
     s->push();
     double result = (double)rand();

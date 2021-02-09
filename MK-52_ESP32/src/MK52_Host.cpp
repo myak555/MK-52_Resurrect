@@ -25,6 +25,11 @@ static MK52_Interpreter::Receiver_Text _m_Receiver_Text;
 static MK52_Interpreter::Receiver_Address _m_Receiver_Address;
 static MK52_Interpreter::Receiver_Register _m_Receiver_Register;
 
+static MK52_Interpreter::Display_AUTO _m_Display_AUTO;
+static MK52_Interpreter::Display_PROG _m_Display_PROG;
+static MK52_Interpreter::Display_FILE _m_Display_FILE;
+static MK52_Interpreter::Display_DATA _m_Display_DATA;
+
 static MK52_Interpreter::Receiver_AUTO_N _m_Receiver_AUTO_N;
 static MK52_Interpreter::Receiver_AUTO_F _m_Receiver_AUTO_F;
 static MK52_Interpreter::Receiver_AUTO_K _m_Receiver_AUTO_K;
@@ -45,11 +50,6 @@ static MK52_Interpreter::Receiver_FILE_N _m_Receiver_FILE_N;
 static MK52_Interpreter::Receiver_FILE_F _m_Receiver_FILE_F;
 static MK52_Interpreter::Receiver_FILE_K _m_Receiver_FILE_K;
 static MK52_Interpreter::Receiver_FILE_A _m_Receiver_FILE_A;
-
-static MK52_Interpreter::Display_AUTO _m_Display_AUTO;
-static MK52_Interpreter::Display_PROG _m_Display_PROG;
-static MK52_Interpreter::Display_FILE _m_Display_FILE;
-static MK52_Interpreter::Display_DATA _m_Display_DATA;
 
 using namespace MK52_Interpreter;
 
@@ -159,16 +159,6 @@ unsigned long MK52_Host::init() {
     bool result = _m_RPN_Functions.loadStateFile();
  
     #ifdef __DEBUG
-    Serial.print("SD card ");
-    Serial.println( _m_Hardware_SD.SDMounted? "mounted": "not found");
-    if( result) Serial.println("Status file not found");
-    else Serial.println("Status file loaded");
-    Serial.println("Checks:");
-    Serial.println( _m_RPN_Functions.progMem->getCounter());
-    Serial.println( _m_RPN_Functions.extMem->getCounter());
-    Serial.print( "[");
-    Serial.print( _m_RPN_Functions.rpnStack->getDModeName());
-    Serial.println( "]");
     Serial.println("MK-52 Resurrect!");
     #endif
 

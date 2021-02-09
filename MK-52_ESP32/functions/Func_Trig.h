@@ -191,21 +191,21 @@ void Func_ArcTg::execute( void *components[], char *command){
 }
 
 void Func_PI::execute( void *components[], char *command){
-    RPN_Stack *s = (RPN_Stack *)components[COMPONENT_STACK];
+    RPN_Stack *s = _Stack( components);
     s->storeBx();
     s->push();
     s->X->fromReal( __PI);
 }
 
 void Func_Rad2D::execute( void *components[], char *command){
-    RPN_Stack *s = (RPN_Stack *)components[COMPONENT_STACK];
+    RPN_Stack *s = _Stack( components);
     s->storeBx();
     double x = s->X->toReal();
     s->X->fromReal( x * 57.29577951308232);
 }
 
 void Func_D2Rad::execute( void *components[], char *command){
-    RPN_Stack *s = (RPN_Stack *)components[COMPONENT_STACK];
+    RPN_Stack *s = _Stack( components);
     s->storeBx();
     double x = s->X->toReal();
     s->X->fromReal( x * 1.7453292519943295e-2);

@@ -57,6 +57,7 @@ int Receiver_DATA_K::tick( uint8_t scancode){
             // erase program memory
             _lcd->outputTerminalLine( 10, "ERASE memory? (\030)");
             if( _getConfirmation( 31)) _rpnf->extMem->clear();
+            break;
 
         default: // all other buttons do nothing - keep K-mode
            return NO_CHANGE;

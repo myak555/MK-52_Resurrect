@@ -22,12 +22,19 @@ namespace MK52_Interpreter{
             virtual const char*Name(){return NULL;};
             virtual const char*IOName(){return Name();};
             virtual void execute(void *components[], char *command=NULL);
-            virtual bool addressRequiered(){return false;};
-            virtual bool registerRequired(){return false;};
             virtual bool advanceRequired(){return true;};
+            virtual bool containsPC(){return false;};
+            virtual bool containsMC(){return false;};
+            virtual bool containRegister(){return false;};
         protected:
+            inline MK52_Hardware::SD_Manager *_SDM(void *components[]){ return (MK52_Hardware::SD_Manager *)components[COMPONENT_SD_MANAGER];};
+            inline RPN_Stack *_Stack(void *components[]){ return (RPN_Stack *)components[COMPONENT_STACK];};
+            inline Register_Memory *_RegMem(void *components[]){ return (Register_Memory *)components[COMPONENT_REGISTER_MEMORY];};
+            inline Program_Memory *_ProgMem(void *components[]){ return (Program_Memory *)components[COMPONENT_PROGRAM_MEMORY];};
+            inline Extended_Memory *_ExtMem(void *components[]){ return (Extended_Memory *)components[COMPONENT_EXTENDED_MEMORY];};
             RPN_Stack *_dealWithClergy1(void *components[]);
             RPN_Stack *_dealWithClergy2(void *components[]);
+            void _executeLoop(void *components[], char *command, uint8_t reg);
     };
 
     class RPN_Functions{

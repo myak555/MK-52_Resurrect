@@ -75,15 +75,19 @@ int Display_PROG::tick(){
             _setCurrentReceiver( newReceiver, 0, COMPONENT_RECEIVER_PROG_N);
             break;
     }
-
     unsigned long start = millis();
     char *buff = _rpnf->getOutputBuffer();
     int32_t display_PC = (int32_t)_rpnf->progMem->getCounter();
     _rpnf->progMem->getPreviousLines(_displayLines, SCREEN_ROWS-1);
-    if( !_ar->isActive())
-        _lcd->updateTerminalLine( 10, _getTerminalLine( buff, display_PC--, _displayLines[0]));
-    for( int i=9, j=1; i>=0; i--, j++){
-        _lcd->updateTerminalLine( i, _getTerminalLine( buff, display_PC--, _displayLines[j]));
+    int spos = 10;
+    int lineNumber = 0;
+    if( _ar->isActive()){
+        spos--;
+        display_PC--;
+        lineNumber++;
+    }
+    for( int i=spos; i>=0; i--){
+        _lcd->updateTerminalLine( i, _getTerminalLine( buff, display_PC--, _displayLines[lineNumber++]));
         if( millis()-start > KBD_IDLE_DELAY) break; // we can do the rest of redraw later!
     }
     return NO_CHANGE;
