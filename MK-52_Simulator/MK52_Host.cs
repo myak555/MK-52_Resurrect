@@ -4,7 +4,6 @@ using System.Text;
 using System.IO;
 using MK52Simulator.Functions;
 using MK52Simulator.Receivers;
-using MK52Simulator.Displays;
 
 namespace MK52Simulator
 {
@@ -16,6 +15,7 @@ namespace MK52Simulator
         // hardware emulators
         public KBD_Manager KBD = null;
         public LCD_Manager LCD = null;
+        public SD_Manager SD = new SD_Manager();
 
         // calculator memory
         public RPN_Stack CalcStack = null;
@@ -50,6 +50,7 @@ namespace MK52Simulator
         {
             KBD = kbd;
             LCD = lcd;
+            
             CalcStack = new RPN_Stack(this);
             Registers = new RPN_Registers(this);
             Program = new RPN_Program(this);
@@ -60,6 +61,12 @@ namespace MK52Simulator
             _stateFile = AppDomain.CurrentDomain.BaseDirectory + "_RPN_State_New.txt";
             //setDisplay("AUTO");
             //loadState();
+        }
+
+        public void init()
+        {
+            LCD.init();
+            SD.init();
         }
 
         public void SwapDegreeMode()

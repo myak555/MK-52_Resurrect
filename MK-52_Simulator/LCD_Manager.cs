@@ -609,7 +609,61 @@ namespace MK52Simulator
             InitializeComponent();
             m_CurrentGraphics = Graphics.FromImage(m_CurrentBitmap);
             clearScreen();
-            showSplash();
+        }
+
+        #region Dummies
+        /// <summary>
+        /// Dummy for C++ match
+        /// </summary>
+        public void init(){return;}
+
+        /// <summary>
+        /// Dummy for C++ match
+        /// </summary>
+        public void waitForEndSplash(ulong start, bool cls){ return;}
+
+        /// <summary>
+        /// Dummy for C++ match
+        /// </summary>
+        public void dimScreen(){return;}
+
+        /// <summary>
+        /// Dummy for C++ match
+        /// </summary>
+        public void undimScreen(){return; }
+        #endregion
+
+        #region Status Redraw
+        public void updateStatusPC(string pc)
+        {
+            _prevPC = _redrawStatusPosition(77, pc, _prevPC);
+        }
+
+        public void updateStatusPC(uint pc)
+        {
+            pc %= 10000;
+            updateStatusPC(pc.ToString("0000"));
+        }
+
+        public void updateStatusMC(string mc)
+        {
+            _prevMC = _redrawStatusPosition(167, mc, _prevMC);
+        }
+
+        public void updateStatusMC(uint mc)
+        {
+            mc %= 10000;
+            updateStatusMC(mc.ToString("0000"));
+        }
+
+        public void updateStatusDMODE( string dmode)
+        {
+            _prevDMODE = _redrawStatusPosition(231, dmode, _prevDMODE);
+        }
+
+        public void updateStatusFMODE(string fmode)
+        {
+            _prevFMODE = _redrawStatusPosition(279, fmode, _prevFMODE);
         }
 
         public void outputStatus( uint pc, uint mc, string dmode, string fmode){
@@ -623,45 +677,31 @@ namespace MK52Simulator
             updateStatus( pc, mc, dmode, fmode);
         }
 
-        public void updateStatus( uint pc, uint mc, string dmode, string fmode){
-            pc %= 10000;
-            mc %= 10000;
-            _prevPC = _redrawStatusPosition(77, pc.ToString("0000"), _prevPC);
-            _prevMC = _redrawStatusPosition(167, mc.ToString("0000"), _prevMC);
-            _prevDMODE = _redrawStatusPosition(231, dmode, _prevDMODE);
-            _prevFMODE = _redrawStatusPosition(279, fmode, _prevFMODE);
+        public void updateStatus( uint pc, uint mc, string dmode, string fmode)
+        {
+            updateStatusPC(pc);
+            updateStatusMC(mc);
+            updateStatusDMODE( dmode);
+            updateStatusFMODE( fmode);
         }
+        #endregion
 
-        public void outputCalcRegister( uint row, string text){
+        #region RPN Interface Redraw
+        //void outputCalcRegister( uint8_t row, char *text);
+        //void updateCalcRegister( uint8_t row, char *text);
+
+        public void outputCalcRegister( uint row, string text)
+        {
             if( row > 3) return;
             uint index = (row<<1) + 1;
             _lines[index] = _redrawCalcRegister( row, text, "NANA");
         }
 
-        public void outputCalcRegister( uint row, double value){
-            if( row > 3) return;
-            outputCalcRegister(row, _composeDouble(value));
-        }
-
-        public void outputCalcRegister( uint row, Int64 value){
-            if( row > 3) return;
-            outputCalcRegister( row, _composeInt64( value));
-        }
-
-        public void updateCalcRegister( uint row, string text){
+        public void updateCalcRegister( uint row, string text)
+        {
             if( row > 3) return;
             uint index = (row<<1) + 1;
             _lines[index] = _redrawCalcRegister( row, text, _lines[index]);
-        }
-
-        public void updateCalcRegister( uint row, double value){
-            if( row > 3) return;
-            updateCalcRegister( row, _composeDouble( value));
-        }
-
-        public void updateCalcRegister( uint row, Int64 value){
-            if( row > 3) return;
-            updateCalcRegister( row, _composeInt64( value));
         }
 
         public void outputCalcLabel(uint row, string text)
@@ -677,8 +717,10 @@ namespace MK52Simulator
             uint index = (row << 1) + 2;
             _lines[index] = _redrawCalcLabel(row, text, _lines[index]);
         }
+        #endregion
 
-        public void outputTerminalLine( uint row, string text){
+        public void outputTerminalLine( uint row, string text)
+        {
             if( row > 10) return;
             uint index = row + 1;
             if( text.Length == 0)
@@ -687,16 +729,18 @@ namespace MK52Simulator
                 _lines[index] = _redrawTerminalLine( row, text, _lines[index]);
         }
 
-        public void updateTerminalLine( uint row, string text){
+        public void updateTerminalLine( uint row, string text)
+        {
             if( row > 10) return;
             uint index = row + 1;
             _lines[index] = _redrawTerminalLine(row, text, _lines[index]);
         }
 
-        public void eraseTerminalLine( uint row){
-            if( row > 10) return;
+        public void eraseTerminalLine(uint row)
+        {
+            if (row > 10) return;
             _lines[row + 1] = "";
-            int y = Convert.ToInt32( 20*row + 20);
+            int y = Convert.ToInt32(20 * row + 20);
             drawBitmap(0, y, _m_Nixed_Font, 320, 20, bgcolor, bgcolor);
         }
 
@@ -733,14 +777,16 @@ namespace MK52Simulator
             }
         }
 
-        public void outputDigitString( int x, int y, string src, Color fg, Color bg){
+        public void outputDigitString( int x, int y, string src, Color fg, Color bg)
+        {
             for( int i=0; i<src.Length; i++){
                 outputDigit( x, y, src[i], fg, bg);
                 x+=16;
             }
         }
 
-        public void outputDigit( int x, int y, char d, Color fg, Color bg){
+        public void outputDigit( int x, int y, char d, Color fg, Color bg)
+        {
             int index = _calcCharacters.IndexOf( d);
             if( index < 0){
                 drawBitmap(x, y, _m_SevenSegment_Font, 16, 30, bg, bg);
@@ -777,13 +823,15 @@ namespace MK52Simulator
         #endregion
 
         #region Private Methods
-        string _redrawStatusPosition( int pos, string message, string compare){
+        private string _redrawStatusPosition( int pos, string message, string compare)
+        {
             if (message.Equals(compare)) return compare; 
             outputCharString( pos, 0, message, bgcolor, fgcolor);
             return message;
         }
 
-        private string _redrawCalcLabel( uint row, string line, string compare){
+        private string _redrawCalcLabel( uint row, string line, string compare)
+        {
             int[] _calcLabelLocations = {188,133,78,23};
             if (line.Equals(compare)) return compare; // strings identical
             int x = 4;
@@ -792,7 +840,8 @@ namespace MK52Simulator
             return line;
         }
 
-        private string _redrawCalcRegister( uint row, string line, string compare){
+        private string _redrawCalcRegister( uint row, string line, string compare)
+        {
             int[] _calcRegisterLocations = {210,155,100,45};
             if (line.Equals(compare)) return compare; // strings identical
             int x = 12;
@@ -802,76 +851,14 @@ namespace MK52Simulator
             return line;
         }
         
-        string _redrawTerminalLine( uint row, string line, string compare){
+        string _redrawTerminalLine( uint row, string line, string compare)
+        {
             if (line.Equals(compare)) return compare; // strings identical
             int x = 1;
             int y = (int)(20 * row + 20);
             drawBitmap(0, y, _m_SevenSegment_Font, 1, 20, bgcolor, bgcolor);
             outputCharString(x, y, line.PadLeft(SCREEN_COLS), fgcolor, bgcolor);
             return line;
-        }
-
-        string _composeDouble(double value){ 
-            if( Double.IsNaN( value)) return _standard_Error; 
-            if( Double.IsNegativeInfinity( value)) return _standard_MinusInfinity;
-            if (Double.IsPositiveInfinity(value)) return _standard_PlusInfinity;
-            bool negative = false;
-            if( value < 0.0)
-            {
-                negative = true;
-                value = -value;
-            } 
-            if( 0.1 <= value && value < 1.0e12)
-                return value.ToString();
-                //return value.ToString(_standard_DoubleFormat);
-            int exponent = 0;
-            while(value<1.0)
-            {
-              exponent--;
-              value *= 10.0;
-            }
-            while(value>=10.0)
-            {
-              exponent++;
-              value *= 0.1;
-            }
-            if (negative) value = -value;
-            StringBuilder sb = new StringBuilder(value.ToString(_standard_FullPrecision));
-            if (exponent >= 0)
-            {
-                sb.Append("E+");
-            }
-            else
-            {
-                sb.Append("E-");
-                exponent = -exponent;
-            }
-            sb.Append(exponent.ToString(_standard_ExponentFormat));
-            return sb.ToString();
-        }
-
-        string _composeInt64( Int64 value){
-            if (value < -9000000000000000000L) return _standard_MinusInfinity;
-            if (value > 9000000000000000000L) return _standard_PlusInfinity;
-            // my own version of lltoa
-            // return lltoa( value, text, 10);
-            if( value == 0L) return "0";
-            StringBuilder sb = new StringBuilder();
-            if( value < 0)
-            {
-                sb.Append('-');
-                value = -value;
-            }
-            Int64 mult = 1000000000000000000L;
-            while( mult != 0L && value / mult == 0L) mult /= 10L;
-            while( mult != 0L)
-            {
-                int tmp = Convert.ToInt32( value / mult);
-                sb.Append(_calcCharacters[tmp]);
-                value %= mult;
-                mult /= 10L;
-            }
-            return sb.ToString();
         }
         #endregion
 

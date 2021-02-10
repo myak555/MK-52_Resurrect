@@ -20,7 +20,9 @@ namespace MK52Simulator
             InitializeComponent();
             myRPN = new MK52_Host(KBD_Manager1, LCD_Manager1);
             myRPN.setDisplay("Splash");
+            myRPN.init();
             timer1.Enabled = true;
+            return;
         }
 
         private void timer1_Tick(object sender, EventArgs e)

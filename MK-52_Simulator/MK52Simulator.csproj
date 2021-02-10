@@ -202,12 +202,15 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="SD_Manager.cs" />
+    <Compile Include="UniversalValue.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Documents\Annoyances_Fixed.txt" />
     <Content Include="Documents\Additional_Functions.txt" />
     <Content Include="Images\Keyboard2.png" />
     <Content Include="Images\Keyboard3.png" />
+    <Content Include="Images\MK52.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
