@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace MK52Simulator.Displays
+namespace MK52Simulator
 {
     //
     // Implements the calculator display in auto mode

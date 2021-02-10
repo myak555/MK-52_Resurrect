@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using MK52Simulator;
 
-namespace MK52Simulator.Displays
+namespace MK52Simulator
 {
     //
     // Implements the calculator display in OFF mode

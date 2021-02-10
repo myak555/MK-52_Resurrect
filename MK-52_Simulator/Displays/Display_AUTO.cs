@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using MK52Simulator;
 
-namespace MK52Simulator.Displays
+namespace MK52Simulator
 {
     //
     // Implements the calculator display in auto mode
@@ -27,21 +26,21 @@ namespace MK52Simulator.Displays
             _parent.LCD.outputCalcLabel(1, _parent.CalcStack.Y_Label);
             _parent.LCD.outputCalcLabel(0, _parent.CalcStack.X_Label);
             if (_parent.CalcStack.T.isInt)
-                _parent.LCD.outputCalcRegister(3, _parent.CalcStack.T.asInt);
+                _parent.LCD.outputCalcRegister(3, UniversalValue._composeInt64( _parent.CalcStack.T.asInt));
             else
-                _parent.LCD.outputCalcRegister(3, _parent.CalcStack.T.asReal);
+                _parent.LCD.outputCalcRegister(3, UniversalValue._composeDouble(_parent.CalcStack.T.asReal));
             if (_parent.CalcStack.Z.isInt)
-                _parent.LCD.outputCalcRegister(2, _parent.CalcStack.Z.asInt);
+                _parent.LCD.outputCalcRegister(2, UniversalValue._composeInt64( _parent.CalcStack.Z.asInt));
             else
-                _parent.LCD.outputCalcRegister(2, _parent.CalcStack.Z.asReal);
+                _parent.LCD.outputCalcRegister(2, UniversalValue._composeDouble(_parent.CalcStack.Z.asReal));
             if (_parent.CalcStack.Y.isInt)
-                _parent.LCD.outputCalcRegister(1, _parent.CalcStack.Y.asInt);
+                _parent.LCD.outputCalcRegister(1, UniversalValue._composeInt64( _parent.CalcStack.Y.asInt));
             else
-                _parent.LCD.outputCalcRegister(1, _parent.CalcStack.Y.asReal);
+                _parent.LCD.outputCalcRegister(1, UniversalValue._composeDouble(_parent.CalcStack.Y.asReal));
             if (_parent.CalcStack.X.isInt)
-                _parent.LCD.outputCalcRegister(0, _parent.CalcStack.X.asInt);
+                _parent.LCD.outputCalcRegister(0, UniversalValue._composeInt64( _parent.CalcStack.X.asInt));
             else
-                _parent.LCD.outputCalcRegister(0, _parent.CalcStack.X.asReal);
+                _parent.LCD.outputCalcRegister(0, UniversalValue._composeDouble(_parent.CalcStack.X.asReal));
             _parent.LCD.Refresh();
             return "AUTO_N";
         }
@@ -54,17 +53,17 @@ namespace MK52Simulator.Displays
             _parent.LCD.updateCalcLabel(1, _parent.CalcStack.Y_Label);
             _parent.LCD.updateCalcLabel(0, _parent.CalcStack.X_Label);
             if (_parent.CalcStack.T.isInt)
-                _parent.LCD.updateCalcRegister(3, _parent.CalcStack.T.asInt);
+                _parent.LCD.updateCalcRegister(3, UniversalValue._composeInt64(_parent.CalcStack.T.asInt));
             else
-                _parent.LCD.updateCalcRegister(3, _parent.CalcStack.T.asReal);
+                _parent.LCD.updateCalcRegister(3, UniversalValue._composeDouble(_parent.CalcStack.T.asReal));
             if (_parent.CalcStack.Z.isInt)
-                _parent.LCD.updateCalcRegister(2, _parent.CalcStack.Z.asInt);
+                _parent.LCD.updateCalcRegister(2, UniversalValue._composeInt64(_parent.CalcStack.Z.asInt));
             else
-                _parent.LCD.updateCalcRegister(2, _parent.CalcStack.Z.asReal);
+                _parent.LCD.updateCalcRegister(2, UniversalValue._composeDouble(_parent.CalcStack.Z.asReal));
             if (_parent.CalcStack.Y.isInt)
-                _parent.LCD.updateCalcRegister(1, _parent.CalcStack.Y.asInt);
+                _parent.LCD.updateCalcRegister(1, UniversalValue._composeInt64(_parent.CalcStack.Y.asInt));
             else
-                _parent.LCD.updateCalcRegister(1, _parent.CalcStack.Y.asReal);
+                _parent.LCD.updateCalcRegister(1, UniversalValue._composeDouble(_parent.CalcStack.Y.asReal));
             if (_parent.CalcStack.isActive)
             {
                 _parent.LCD.updateCalcRegister(0, _parent.CalcStack.activeEntry);
@@ -72,9 +71,9 @@ namespace MK52Simulator.Displays
                 return;
             }
             if (_parent.CalcStack.X.isInt)
-                _parent.LCD.updateCalcRegister(0, _parent.CalcStack.X.asInt);
+                _parent.LCD.updateCalcRegister(0, UniversalValue._composeInt64(_parent.CalcStack.X.asInt));
             else
-                _parent.LCD.updateCalcRegister(0, _parent.CalcStack.X.asReal);
+                _parent.LCD.updateCalcRegister(0, UniversalValue._composeDouble(_parent.CalcStack.X.asReal));
             _parent.LCD.Refresh();
             return;
         }
@@ -87,17 +86,17 @@ namespace MK52Simulator.Displays
             target.outputCalcLabel(1, _parent.CalcStack.Y_Label);
             target.outputCalcLabel(0, _parent.CalcStack.X_Label);
             if( _parent.CalcStack.T.isInt)
-                target.outputCalcRegister(3, _parent.CalcStack.T.asInt);
+                target.outputCalcRegister(3, UniversalValue._composeInt64(_parent.CalcStack.T.asInt));
             else
-                target.outputCalcRegister(3, _parent.CalcStack.T.asReal);
+                target.outputCalcRegister(3, UniversalValue._composeDouble(_parent.CalcStack.T.asReal));
             if (_parent.CalcStack.Z.isInt)
-                target.outputCalcRegister(2, _parent.CalcStack.Z.asInt);
+                target.outputCalcRegister(2, UniversalValue._composeInt64(_parent.CalcStack.Z.asInt));
             else
-                target.outputCalcRegister(2, _parent.CalcStack.Z.asReal);
+                target.outputCalcRegister(2, UniversalValue._composeDouble(_parent.CalcStack.Z.asReal));
             if (_parent.CalcStack.Y.isInt)
-                target.outputCalcRegister(1, _parent.CalcStack.Y.asInt);
+                target.outputCalcRegister(1, UniversalValue._composeInt64(_parent.CalcStack.Y.asInt));
             else
-                target.outputCalcRegister(1, _parent.CalcStack.Y.asReal);
+                target.outputCalcRegister(1, UniversalValue._composeDouble(_parent.CalcStack.Y.asReal));
             //if( _parent.CalcStack
             //target.outputCalcRegister(0, _parent.CalcStack.XasInt);
             //else
