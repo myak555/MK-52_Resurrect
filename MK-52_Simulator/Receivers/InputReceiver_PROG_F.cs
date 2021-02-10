@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
-using MK52Simulator.Displays;
+using MK52Simulator;
 
 namespace MK52Simulator.Receivers
 {
