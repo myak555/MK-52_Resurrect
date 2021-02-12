@@ -34,7 +34,7 @@ namespace MK52_Interpreter{
             inline uint8_t *toBytes(){return (uint8_t *)_ptr;};
             inline uint8_t toLocation( uint8_t *location){
                 memcpy(location, _ptr, 9);
-                return *location;};                
+                return *location;};
             char *toString( char *text);
             inline uint64_t *_asIntPtr(){return (uint64_t *)(_ptr+1);};
             inline double *_asRealPtr(){return (double *)(_ptr+1);};
@@ -52,6 +52,7 @@ namespace MK52_Interpreter{
             static bool _isAddress(char *text);
             static char *_selectAddress(char *text);
             static bool _containsChar(char *text, char c);
+            static bool _looksLikeANumber(char *text);
 
         private:
             uint8_t *_ptr = NULL;

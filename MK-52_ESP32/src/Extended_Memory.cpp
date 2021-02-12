@@ -16,13 +16,14 @@ using namespace MK52_Interpreter;
 // Inits the calculator program memory
 //
 unsigned long Extended_Memory::init( void *components[]) {
-    _buffer = (uint8_t *)malloc( EXTENDED_MEMORY_SIZE);
+    _buffer = (uint8_t *)malloc( EXTENDED_MEMORY_SIZE + 9);
     #ifdef __DEBUG
     if( _buffer == NULL){
         Serial.println("Extended Memory malloc busted!");
         return millis();
     }
     #endif
+    _uv = new UniversalValue( _buffer + EXTENDED_MEMORY_SIZE);
     clear();
 
     #ifdef __DEBUG
@@ -35,6 +36,10 @@ unsigned long Extended_Memory::init( void *components[]) {
 void Extended_Memory::clear(){
     memset( _buffer, 0, EXTENDED_MEMORY_SIZE);
     resetCounter();
+}
+
+void Extended_Memory::clearCurrent(){
+    memset( getCurrentLine(), 0, 9);
 }
 
 void Extended_Memory::resetCounter(){
@@ -91,19 +96,35 @@ bool Extended_Memory::decrementCounter(){
     return false;
 }
 
-char *Extended_Memory::toString( char *buff, int32_t n){
-    memset( buff, 0, 2*SCREEN_COLS);
-    buff[0] = ' ';
-    if( n<0 || EXTENDED_MEMORY_NVALS<=n) return buff;
-    snprintf_P( buff, 5, PSTR("%04u"), (uint32_t)n);
-    buff[4] = (n == _counter)? '>': ' ';
-    buff[5] = ' ';
-    UniversalValue *uv = new UniversalValue( _memoryAddress(n));
-    if( uv->isEmpty()){
-         delete( uv);
-         return buff;
-    }
-    uv->toString(buff+6);
-    delete(uv);
-    return buff;
+char *Extended_Memory::toString( char *text, int32_t n){
+    memset( text, 0, 2*SCREEN_COLS);
+    text[0] = ' ';
+    if( n<0 || EXTENDED_MEMORY_NVALS<=n) return text;
+    snprintf_P( text, 5, PSTR("%04u"), (uint32_t)n);
+    text[4] = (n == _counter)? '>': ' ';
+    text[5] = ' ';
+    _uv->fromLocation( _memoryAddress(n));
+    if( _uv->isEmpty()) return text;
+    _uv->toString(text+6);
+    return text;
+}
+
+void Extended_Memory::fromString( char *text){
+    _uv->fromString( text);
+    _uv->toLocation( getCurrentLine());
+}
+
+void Extended_Memory::fromUV( UniversalValue *uv){ 
+    uv->toLocation(getCurrentLine());
+}
+
+void Extended_Memory::toUV( UniversalValue *uv){
+    uv->fromLocation(getCurrentLine());
+}
+
+void Extended_Memory::swapWithUV( UniversalValue *uv){
+    uint8_t *ptr = getCurrentLine();
+    _uv->fromLocation( uv->toBytes());
+    uv->fromLocation( ptr);
+    _uv->toLocation( ptr);
 }

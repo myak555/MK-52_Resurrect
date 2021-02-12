@@ -30,7 +30,7 @@ void Func_Log::execute( void *components[], char *command){
         s->X->fromReal( INFINITY);
         return;
     }
-    double result = log10(x) / log10(y);
+    double result = log10(y) / log10(x);
     s->X->fromReal( result);
 }
 

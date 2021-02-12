@@ -15,6 +15,7 @@ const char _standard_Error[] PROGMEM = "Error";
 const char _standard_MinusInfinity[] PROGMEM = "-Inf";  
 const char _standard_PlusInfinity[] PROGMEM = "+Inf";  
 const char _standard_Decimals[] PROGMEM = "0123456789";  
+const char _standard_NumberComponents[] PROGMEM = "0123456789+-Ee.";  
 
 //#define __DEBUG
 
@@ -44,6 +45,22 @@ void UniversalValue::fromReal(double value){
 
 uint8_t UniversalValue::fromString( char *text){
     while( *text == ' ') text++;
+    if( _identicalTo_P( text, _standard_Error))
+    {
+        fromReal( NAN);
+        return getType();
+    }
+    if (_startsWith_P( text, _standard_MinusInfinity))
+    {
+        fromReal(INFINITY);
+        return getType();
+    }
+    if (_startsWith_P( text, _standard_PlusInfinity))
+    {
+        fromReal(-INFINITY);
+        return getType();
+    }
+
     char *ptr = text;
     bool positive = true;
     if( *ptr == '+') ptr++;
@@ -321,7 +338,12 @@ void UniversalValue::_checkRounding(double accuracy){
         fromInt( 0);
         return;
     }
-    if( value >= accuracy) return; // should not convert
+    if( value >= HUGE_POSITIVE_AS_REAL) return; // should not convert
+    double rValue = round(value);
+    if( value > accuracy && abs( value - rValue) < accuracy / HUGE_POSITIVE_AS_REAL){
+        fromInt( (int64_t)rValue);
+        return; // This must be an int
+    }
     if( value < 0.99999999999) return; // whole part < 1. 
     if( value < 1.00000000001){
         fromInt( positive? 1: -1);
@@ -400,7 +422,7 @@ bool UniversalValue::_inString_P(char c, const char *keyword){
     for( int i=0; i<ln; i++){
         if( (char)pgm_read_byte( keyword+i) == c) return true;
     }
-    return false; // all letters are the same
+    return false;
 }
 
 bool UniversalValue::_isDigit(char c){
@@ -460,4 +482,14 @@ bool UniversalValue::_containsChar(char *text, char c){
         if( *text++ == c) return true;
     }
     return false;
+}
+
+bool UniversalValue::_looksLikeANumber(char *text){
+    if( _identicalTo_P( text, _standard_Error)) return true;
+    if( _identicalTo_P( text, _standard_MinusInfinity)) return true;
+    if( _identicalTo_P( text, _standard_PlusInfinity)) return true;
+    while( *text){
+        if( !_inString_P(*text++, _standard_NumberComponents)) return false;
+    }
+    return true;
 }

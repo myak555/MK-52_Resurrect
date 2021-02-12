@@ -101,3 +101,7 @@
 #define FUNC_L1                 101
 #define FUNC_L2                 102
 #define FUNC_L3                 103
+#define FUNC_LBX                104
+#define FUNC_LBY                105
+#define FUNC_LBZ                106
+#define FUNC_LBT                107

@@ -1,101 +1,69 @@
 void Func_Increment_MC::execute( void *components[], char *command){
-    Extended_Memory *extMem = (Extended_Memory *)components[COMPONENT_EXTENDED_MEMORY];
-    extMem->incrementCounter();
+    _ExtMem(components)->incrementCounter();
 }
 
 void Func_Decrement_MC::execute( void *components[], char *command){
-    Extended_Memory *extMem = (Extended_Memory *)components[COMPONENT_EXTENDED_MEMORY];
-    extMem->decrementCounter();
+    _ExtMem(components)->decrementCounter();
 }
 
 void Func_Reset_MC::execute( void *components[], char *command){
-    Extended_Memory *extMem = (Extended_Memory *)components[COMPONENT_EXTENDED_MEMORY];
-    extMem->resetCounter();
+    _ExtMem(components)->resetCounter();
 }
 
 void Func_GOMEM::execute( void *components[], char *command){
-    Extended_Memory *extMem = (Extended_Memory *)components[COMPONENT_EXTENDED_MEMORY];
-    extMem->setCounter(command);
+    _ExtMem(components)->setCounter(command);
 }
 
 void Func_M2X::execute( void *components[], char *command){
-    Register_Memory *rm = (Register_Memory *)components[COMPONENT_REGISTER_MEMORY];
-    rm->MtoX(command);
+    _RegMem(components)->MtoX(command);
 }
 
 void Func_X2M::execute( void *components[], char *command){
-    Register_Memory *rm = (Register_Memory *)components[COMPONENT_REGISTER_MEMORY];
-    rm->XtoM(command);
+    _RegMem(components)->XtoM(command);
 }
 
 void Func_K_M2X::execute( void *components[], char *command){
-    Register_Memory *rm = (Register_Memory *)components[COMPONENT_REGISTER_MEMORY];
-    rm->K_MtoX(command);
+    _RegMem(components)->K_MtoX(command);
 }
 
 void Func_K_X2M::execute( void *components[], char *command){
-    Register_Memory *rm = (Register_Memory *)components[COMPONENT_REGISTER_MEMORY];
-    rm->K_XtoM(command);
+    _RegMem(components)->K_XtoM(command);
 }
 
 void Func_A_M2X::execute( void *components[], char *command){
-    Register_Memory *rm = (Register_Memory *)components[COMPONENT_REGISTER_MEMORY];
-    rm->A_MtoX(command);
+    _RegMem(components)->A_MtoX(command);
 }
 
 void Func_A_X2M::execute( void *components[], char *command){
-    Register_Memory *rm = (Register_Memory *)components[COMPONENT_REGISTER_MEMORY];
-    rm->A_XtoM(command);
+    _RegMem(components)->A_XtoM(command);
 }
 
 void Func_MemSet::execute( void *components[], char *command){
-    Extended_Memory *em = (Extended_Memory *)components[COMPONENT_EXTENDED_MEMORY];
-    UniversalValue *uv = new UniversalValue(em->getCurrentLine());
-    Serial.print("Data to EM");
-    Serial.print(command);
-    uv->fromString( command);
-    delete( uv);
+    _ExtMem(components)->fromString( command);
 }
 
 void Func_MemSwp::execute( void *components[], char *command){
-    Extended_Memory *em = (Extended_Memory *)components[COMPONENT_EXTENDED_MEMORY];
-    RPN_Stack *stk = _Stack( components);
-    uint8_t *ptr = em->getCurrentLine();
-    if( *ptr == VALUE_TYPE_EMPTY){
-        stk->X->toLocation(ptr);
-        stk->X->fromInt(0);
-        return;
-    }
-    uint8_t tmp[9];
-    stk->X->toLocation( tmp);
-    stk->X->fromLocation( ptr);
-    memcpy( ptr, tmp, 9);
+    UniversalValue *X = _Stack( components)->X;
+    _ExtMem(components)->swapWithUV( X);
+    if( X->isEmpty()) X->fromInt(0);
 }
 
 void Func_MexToX::execute( void *components[], char *command){
-    Extended_Memory *em = (Extended_Memory *)components[COMPONENT_EXTENDED_MEMORY];
-    RPN_Stack *stk = _Stack( components);
-    stk->storeBx();
-    stk->push();
-    uint8_t *ptr = em->getCurrentLine();
-    if( *ptr == VALUE_TYPE_EMPTY){
-        stk->X->fromInt(0);
-        return;
-    }
-    stk->X->fromLocation( ptr);
+    RPN_Stack *s = _Stack( components);
+    s->storeBx();
+    s->push();
+    UniversalValue *X = s->X;
+    _ExtMem(components)->toUV( X);
+    if( X->isEmpty()) X->fromInt(0);
 }
 
 void Func_XToMex::execute( void *components[], char *command){
-    Extended_Memory *em = (Extended_Memory *)components[COMPONENT_EXTENDED_MEMORY];
-    RPN_Stack *stk = _Stack( components);
-    uint8_t *ptr = em->getCurrentLine();
-    stk->X->toLocation( ptr);
+    _ExtMem(components)->fromUV( _Stack( components)->X);
 }
 
 void Func_MexToR::execute( void *components[], char *command){
-    Extended_Memory *em = (Extended_Memory *)components[COMPONENT_EXTENDED_MEMORY];
-    Register_Memory *rm = (Register_Memory *)components[COMPONENT_REGISTER_MEMORY];
-    uint8_t *ptrE = em->getCurrentLine();
+    Register_Memory *rm = _RegMem(components);
+    uint8_t *ptrE = _ExtMem(components)->getCurrentLine();
     uint8_t *ptrR = rm->_registerAddress( rm->registerByName( command));
     if( *ptrE == VALUE_TYPE_EMPTY){
         *ptrR++ = VALUE_TYPE_INTEGER;
@@ -106,15 +74,12 @@ void Func_MexToR::execute( void *components[], char *command){
 }
 
 void Func_RToMex::execute( void *components[], char *command){
-    Extended_Memory *em = (Extended_Memory *)components[COMPONENT_EXTENDED_MEMORY];
-    Register_Memory *rm = (Register_Memory *)components[COMPONENT_REGISTER_MEMORY];
-    uint8_t *ptrE = em->getCurrentLine();
+    Register_Memory *rm = _RegMem(components);
+    uint8_t *ptrE = _ExtMem(components)->getCurrentLine();
     uint8_t *ptrR = rm->_registerAddress( rm->registerByName( command));
     memcpy( ptrE, ptrR, 9);
 }
 
 void Func_MexClr::execute( void *components[], char *command){
-    Extended_Memory *em = (Extended_Memory *)components[COMPONENT_EXTENDED_MEMORY];
-    uint8_t *ptr = em->getCurrentLine();
-    memset( ptr, 0, 9);
+    _ExtMem(components)->clearCurrent();
 }

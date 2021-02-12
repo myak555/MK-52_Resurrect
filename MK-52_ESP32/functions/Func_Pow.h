@@ -26,6 +26,15 @@ void Func_10x::execute( void *components[], char *command){
         s->X->fromInt( 0);
         return;
     }
+    if( 0<=p && p<=18){
+        int64_t r2 = 1L;
+        while( p>0){
+            r2 *= 10L;
+            p--;
+        }
+        s->X->fromInt( r2);
+        return;
+    }
     while( p>0){
         result *= 10.0;
         p--;
@@ -53,6 +62,9 @@ void Func_Pow::execute( void *components[], char *command){
         return;
     }
     int64_t p = s->Y->toInt();
+    int64_t p2 = p;
+
+    // Special point 0^0
     if( x==0.0 && p==0){
         s->X->fromInt(1);
         return;
@@ -70,7 +82,19 @@ void Func_Pow::execute( void *components[], char *command){
         result *= x;
         p++;
     }
-    s->X->fromReal( result);
+    if (p2 <= 0 || s->X->isReal() || abs(result) > HUGE_POSITIVE_AS_REAL){
+        s->X->fromReal(result);
+        return;
+    }
+    // Try to keep as integer
+    int64_t result2 = s->X->toInt();
+    int64_t mul = result2;
+    while (p2 > 1)
+    {
+        result2 *= mul;
+        p2--;
+    }
+    s->X->fromInt(result2);
 }
 
 void Func_X2::execute( void *components[], char *command){

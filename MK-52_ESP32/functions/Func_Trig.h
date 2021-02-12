@@ -134,7 +134,6 @@ void Func_Tg::execute( void *components[], char *command){
             s->X->fromInt( 1);
             return;
         case 2:
-            Serial.println();
             s->X->fromReal( INFINITY);
             return;
         case 3:

@@ -173,6 +173,7 @@ void RPN_Stack::OctantToX(int8_t value){
             break;
         default:
             X->fromReal( __PI4 * value);
+            break;
     }
 }
 

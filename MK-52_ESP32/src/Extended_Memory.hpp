@@ -17,6 +17,7 @@ namespace MK52_Interpreter{
       public:
         unsigned long init( void *components[]);
         void clear();
+        void clearCurrent();
         void resetCounter();
 
         inline uint32_t getCounter(){ return _counter;};
@@ -28,11 +29,17 @@ namespace MK52_Interpreter{
         inline uint8_t *getCurrentLine(){return _buffer + _counter * 9;};
         inline uint8_t *getLine( uint32_t n){return _buffer + n * 9;};
 
-        char *toString( char *buff, int32_t n);
+        char *toString( char *text, int32_t n);
+        void fromString( char *text);
+        inline UniversalValue *getTemporaryUV(){return _uv;};
+        void fromUV( UniversalValue *uv);
+        void toUV( UniversalValue *uv);
+        void swapWithUV( UniversalValue *uv);
 
       private:
         uint32_t _counter = 0;
         uint8_t *_buffer = NULL;
+        UniversalValue *_uv = NULL;
         inline uint8_t *_memoryAddress( int32_t index){
            return _buffer + index*9;};
     };

@@ -242,6 +242,14 @@ unsigned long RPN_Functions::init( void *components[]) {
     _appendFunction( new Func_L2());
     // #define FUNC_L3                 103
     _appendFunction( new Func_L3());
+    // #define FUNC_LBX                104
+    _appendFunction( new Func_LBX());
+    // #define FUNC_LBY                105
+    _appendFunction( new Func_LBY());
+    // #define FUNC_LBZ                106
+    _appendFunction( new Func_LBZ());
+    // #define FUNC_LBT                107
+    _appendFunction( new Func_LBT());
 
     #ifdef __DEBUG
     Serial.print( _nfunctions);
