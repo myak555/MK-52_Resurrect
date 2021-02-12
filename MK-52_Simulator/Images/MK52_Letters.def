@@ -1,0 +1,43 @@
+################################################
+#                                              #
+#  Chorded keyboard layout: ENGLISH NORMAL     #
+#                                              #
+################################################
+#
+slide (Keyboard4,560,266,png,FFFFFFFF)
+image (0,0,560,266,Keyboard3.png)
+labelover( 17,30,24,24,A,10,CCCCEE)
+	fType=Arial
+	lSize=0
+labelover( 82,30,24,24,B)
+labelover( 147,30,24,24,C)
+labelover( 211,30,24,24,D)
+labelover( 275,30,24,24,E)
+labelover( 340,30,24,24,F)
+labelover( 402,30,24,24,G)
+labelover( 466,30,24,24,H)
+
+labelover( 21,92,24,24,I)
+labelover( 85,92,24,24,J)
+labelover( 147,92,24,24,K)
+labelover( 211,92,24,24,L)
+labelover( 275,92,24,24,M)
+labelover( 340,92,24,24,N)
+labelover( 402,92,24,24,O)
+labelover( 466,92,24,24,P)
+
+labelover( 17,154,24,24,Q)
+labelover( 82,154,24,24,R)
+labelover( 147,154,24,24,S)
+labelover( 211,154,24,24,T)
+labelover( 275,154,24,24,U)
+labelover( 339,154,24,24,V)
+labelover( 398,154,24,24,W)
+
+labelover( 82,216,24,24,X)
+labelover( 147,216,24,24,Y)
+labelover( 211,216,24,24,Z)
+labelover( 337,216,24,24,_)
+
+labelover( 526,95,24,24,f)
+
