@@ -42,7 +42,7 @@ namespace MK52_Hardware{
         File _current_File;
         bool _current_File_open = false;
 
-        unsigned long init();
+        void init();
 
         inline char *getFolderName(){ return _current_Dir_Name;};
         char *getFolderNameTruncated( int8_t n);

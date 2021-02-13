@@ -15,12 +15,12 @@ using namespace MK52_Interpreter;
 //
 // Inits the calculator program memory
 //
-unsigned long Extended_Memory::init( void *components[]) {
+void Extended_Memory::init( void *components[]) {
     _buffer = (uint8_t *)malloc( EXTENDED_MEMORY_SIZE + 9);
     #ifdef __DEBUG
     if( _buffer == NULL){
         Serial.println("Extended Memory malloc busted!");
-        return millis();
+        return;
     }
     #endif
     _uv = new UniversalValue( _buffer + EXTENDED_MEMORY_SIZE);
@@ -30,7 +30,6 @@ unsigned long Extended_Memory::init( void *components[]) {
     Serial.print("Extended memory available: ");
     Serial.println( EXTENDED_MEMORY_SIZE);
     #endif
-    return millis();
 }
 
 void Extended_Memory::clear(){

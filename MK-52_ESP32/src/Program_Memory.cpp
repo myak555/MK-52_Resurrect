@@ -14,13 +14,12 @@ using namespace MK52_Interpreter;
 //
 // Inits the calculator program memory
 //
-unsigned long Program_Memory::init( void *components[]) {
+void Program_Memory::init( void *components[]) {
     _buffer = (uint8_t *)malloc( PROGRAM_MEMORY_SIZE);
     _returnStack = (uint32_t *)malloc( RETURN_STACK_SIZE * 8);
     #ifdef __DEBUG
     if( _buffer == NULL || _returnStack == NULL){
         Serial.println("Program Memory malloc busted!");
-        return millis();
     }
     #endif
     clear();
@@ -42,7 +41,6 @@ unsigned long Program_Memory::init( void *components[]) {
     Serial.print("ProgMem init with: ");
     Serial.println( getEModeName());
     #endif
-    return millis();
 }
 
 void Program_Memory::clear(){

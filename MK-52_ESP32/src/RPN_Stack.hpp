@@ -24,7 +24,7 @@ namespace MK52_Interpreter{
             char *Z_Label = NULL;
             char *T_Label = NULL;
 
-            unsigned long init( void *components[]);
+            void init( void *components[]);
             void clearStack();
             void resetStackLabels();
             bool customStackLabels();

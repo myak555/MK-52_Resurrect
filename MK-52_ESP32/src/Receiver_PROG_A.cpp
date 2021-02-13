@@ -63,29 +63,29 @@ int Receiver_PROG_A::tick( uint8_t scancode){    int return_value = COMPONENT_RE
 
         // Column 1
         case 5:
-            _rpnf->progMem->updateLine_P( PSTR(_rpnf->getFunctionByID( FUNC_IFNOTLTY)->Name()));
+            _rpnf->appendProgramLine_P(FUNC_IFNOTLTY);
             _ar->activate( 0, COMPONENT_RECEIVER_PROG_N);
             return NO_CHANGE;
         case 6:
-            _rpnf->progMem->updateLine_P( PSTR(_rpnf->getFunctionByID( FUNC_IFNOTEQY)->Name()));
+            _rpnf->appendProgramLine_P(FUNC_IFNOTEQY);
             _ar->activate( 0, COMPONENT_RECEIVER_PROG_N);
             return NO_CHANGE;
         case 7:
-            _rpnf->progMem->updateLine_P( PSTR(_rpnf->getFunctionByID( FUNC_IFNOTGEY)->Name()));
+            _rpnf->appendProgramLine_P(FUNC_IFNOTGEY);
             _ar->activate( 0, COMPONENT_RECEIVER_PROG_N);
             return NO_CHANGE;
         case 8:
-            _rpnf->progMem->updateLine_P( PSTR(_rpnf->getFunctionByID( FUNC_IFNOTNEY)->Name()));
+            _rpnf->appendProgramLine_P(FUNC_IFNOTNEY);
             _ar->activate( 0, COMPONENT_RECEIVER_PROG_N);
             return NO_CHANGE;
 
         // Column 2
         case 9:
-            _rpnf->progMem->updateLine_P( PSTR(_rpnf->getFunctionByID( FUNC_A_X2M)->Name()));
+            _rpnf->appendProgramLine_P(FUNC_A_X2M);
             _ar->activate( 0, COMPONENT_RECEIVER_PROG_N);
             return NO_CHANGE;
         case 10:
-            _rpnf->progMem->updateLine_P( PSTR(_rpnf->getFunctionByID( FUNC_A_M2X)->Name()));
+            _rpnf->appendProgramLine_P(FUNC_A_M2X);
             _ar->activate( 0, COMPONENT_RECEIVER_PROG_N);
             return NO_CHANGE;
 
@@ -97,10 +97,10 @@ int Receiver_PROG_A::tick( uint8_t scancode){    int return_value = COMPONENT_RE
             // TODO
             return NO_CHANGE;
         case 22:
-            _rpnf->progMem->updateLine_P( PSTR(_rpnf->getFunctionByID( FUNC_D2RAD)->Name()));
+            _rpnf->appendProgramLine_P(FUNC_D2RAD);
             break;
         case 23:
-            _rpnf->progMem->updateLine_P( PSTR(_rpnf->getFunctionByID( FUNC_MM2IN)->Name()));
+            _rpnf->appendProgramLine_P(FUNC_MM2IN);
             break;
         case 24:
             #ifdef __DEBUG
@@ -114,10 +114,10 @@ int Receiver_PROG_A::tick( uint8_t scancode){    int return_value = COMPONENT_RE
             // TODO
             return NO_CHANGE;
         case 26:
-            _rpnf->progMem->updateLine_P( PSTR(_rpnf->getFunctionByID( FUNC_RAD2D)->Name()));
+            _rpnf->appendProgramLine_P(FUNC_RAD2D);
             break;
         case 27:
-            _rpnf->progMem->updateLine_P( PSTR(_rpnf->getFunctionByID( FUNC_IN2MM)->Name()));
+            _rpnf->appendProgramLine_P(FUNC_IN2MM);
             break;
         case 28:
             #ifdef __DEBUG
@@ -133,7 +133,7 @@ int Receiver_PROG_A::tick( uint8_t scancode){    int return_value = COMPONENT_RE
             // TODO
             return NO_CHANGE;
         case 31:
-            _rpnf->progMem->updateLine_P( PSTR(_rpnf->getFunctionByID( FUNC_SEED)->Name()));
+            _rpnf->appendProgramLine_P(FUNC_SEED);
             break;
         case 32:
             _mode = 0;

@@ -15,7 +15,7 @@ namespace MK52_Interpreter{
 
     class Program_Memory{
       public:
-        unsigned long init( void *components[]);
+        void init( void *components[]);
         void clear();
         void resetCounter();
 

@@ -23,7 +23,7 @@ const char _RPN_Stack_ComplexRoot[] PROGMEM = "Warn: Complex";
 static double _DMODE_ConversionsToRadian[] = {1.7453292519943295e-2, 1.0, 1.5707963267948967e-2};
 static double _DMODE_ConversionsFromRadian[] = {57.29577951308232, 1.0, 63.66197723675813};
 
-unsigned long RPN_Stack::init( void *components[]){
+void RPN_Stack::init( void *components[]){
     Bx = new UniversalValue(_stackValues);
     X = new UniversalValue(_stackValues+9);
     Y = new UniversalValue(_stackValues+18);
@@ -43,7 +43,6 @@ unsigned long RPN_Stack::init( void *components[]){
     Serial.print("Labels are: ");
     Serial.println( customStackLabels()? "CUSTOM": "STANDARD");
     #endif
-    return millis();
 }
 
 void RPN_Stack::resetStackLabels(){

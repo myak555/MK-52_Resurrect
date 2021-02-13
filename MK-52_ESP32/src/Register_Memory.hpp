@@ -17,7 +17,7 @@ namespace MK52_Interpreter{
 
     class Register_Memory{
       public:
-        unsigned long init( void *components[]);
+        void init( void *components[]);
         void clear();
 
         void MtoX(int8_t n);

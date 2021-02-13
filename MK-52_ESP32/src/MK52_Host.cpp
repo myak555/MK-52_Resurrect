@@ -56,7 +56,7 @@ using namespace MK52_Interpreter;
 //
 // Inits all components in order
 //
-unsigned long MK52_Host::init() {
+void MK52_Host::init() {
 
     // Hold power
     pinMode( SYSTEM_POWER_HOLD, OUTPUT);
@@ -177,7 +177,7 @@ unsigned long MK52_Host::init() {
     #endif
 
     setDisplay( COMPONENT_DISPLAY_AUTO);
-    return millis();
+    return;
 }
 
 void MK52_Host::tick(){

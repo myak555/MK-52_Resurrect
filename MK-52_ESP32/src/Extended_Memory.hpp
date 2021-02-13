@@ -15,7 +15,7 @@ namespace MK52_Interpreter{
 
     class Extended_Memory{
       public:
-        unsigned long init( void *components[]);
+        void init( void *components[]);
         void clear();
         void clearCurrent();
         void resetCounter();

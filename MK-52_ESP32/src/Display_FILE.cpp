@@ -15,13 +15,13 @@ using namespace MK52_Interpreter;
 //
 // Inits FILE display
 //
-unsigned long Display_FILE::init( void *components[]) {
+void Display_FILE::init( void *components[]) {
     #ifdef __DEBUG
     Serial.println( "Init Display FILE");
     #endif
     _sd = (MK52_Hardware::SD_Manager *)components[COMPONENT_SD_MANAGER];
     _tr = (Receiver_Text *)components[COMPONENT_RECEIVER_TEXT];
-    return Display::init( components);
+    Display::init( components);
 }
 
 void Display_FILE::activate(){

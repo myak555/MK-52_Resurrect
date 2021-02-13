@@ -17,7 +17,7 @@ using namespace MK52_Interpreter;
 //
 // Inits the calculator program memory
 //
-unsigned long RPN_Functions::init( void *components[]) {
+void RPN_Functions::init( void *components[]) {
     _components = components;
     rpnStack = (RPN_Stack*) components[COMPONENT_STACK];
     regMem = (Register_Memory *)components[COMPONENT_REGISTER_MEMORY];
@@ -270,7 +270,7 @@ unsigned long RPN_Functions::init( void *components[]) {
         Serial.println( ")");
     }
     #endif
-    return millis();
+    return;
 }
 
 RPN_Function *RPN_Functions::getFunctionByID(int16_t id){

@@ -23,7 +23,7 @@ namespace MK52_Interpreter{
       public:
         Display *current_Display = NULL;
 
-        unsigned long init();
+        void init();
 
         inline MK52_Hardware::LCD_Manager *getLCD(){
           return (MK52_Hardware::LCD_Manager*)_components[COMPONENT_LCD_MANAGER];};

@@ -17,7 +17,7 @@ const char _RM_NameConversion[] PROGMEM = "0123456789ABCDEFL";
 //
 // Inits the calculator program memory
 //
-unsigned long Register_Memory::init( void *components[]) {
+void Register_Memory::init( void *components[]) {
     #ifdef __DEBUG
     Serial.println("Register memory init");
     #endif
@@ -27,11 +27,9 @@ unsigned long Register_Memory::init( void *components[]) {
     #ifdef __DEBUG
     if( _buffer == NULL){
         Serial.println("Register Memory malloc busted!");
-        return millis();
     }
     #endif
     clear();
-    return millis();
 }
 
 void Register_Memory::clear(){
@@ -42,7 +40,7 @@ void Register_Memory::clear(){
 void Register_Memory::MtoX(int8_t n){
     _rst->storeBx();
     _rst->push();
-    if( n<0 || n>=20){
+    if( n<0 || n>=REGISTER_MEMORY_NVALS){
         _rst->X->fromInt(0);
         return;
     }
@@ -56,7 +54,7 @@ void Register_Memory::XtoM(int8_t n){
         uv->fromLocation( _rst->X->toBytes());
     else
         uv->fromInt( _rst->X->toInt());
-    delete( uv);
+    delete uv;
 }
 
 void Register_Memory::K_MtoX(int8_t n){
@@ -65,33 +63,34 @@ void Register_Memory::K_MtoX(int8_t n){
     if( n<0 || n>=REGISTER_MEMORY_NVALS) return;
     UniversalValue *uv = new UniversalValue( _registerAddress(n));
     if( uv->isEmpty()){
-        delete(uv);
         _rst->X->fromInt(0);
+        delete uv;
         return;
     }
     int64_t index = uv->toInt();
     _autoIncrement( n, uv);
-    delete(uv);
     if( index<0 || index>=EXTENDED_MEMORY_NVALS){
         _rst->X->fromInt(0);
+        delete uv;
         return;
     }
     _emem->setCounter(index);
     uint8_t *ptr = _emem->getCurrentLine();
     if( *ptr == VALUE_TYPE_EMPTY) _rst->X->fromInt(0);
     else _rst->X->fromLocation( ptr);
+    delete uv;
 }
 
 void Register_Memory::K_XtoM(int8_t n){
     if( n<0 || n>=REGISTER_MEMORY_NVALS) return;
     UniversalValue *uv = new UniversalValue( _registerAddress(n));
     if( uv->isEmpty()){
-        delete(uv);
+        delete uv;
         return;
     }
     int64_t index = uv->toInt();
     _autoIncrement( n, uv);
-    delete(uv);
+    delete uv;
     A_XtoM( index);
 }
 
@@ -110,7 +109,7 @@ void Register_Memory::A_MtoX(int64_t index){
 
 void Register_Memory::A_XtoM(int64_t index){
     if( index<0 || index>=EXTENDED_MEMORY_NVALS){
-        _rst->setStackLabel(0, "No such address");
+        _rst->setStackLabel_P(0, "No such address");
         return;
     }
     _emem->setCounter(index);

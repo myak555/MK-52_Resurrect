@@ -60,11 +60,11 @@ int Receiver_PROG_K::tick( uint8_t scancode){
         
         // Column 2
         case 9:
-            _rpnf->progMem->updateLine_P( _rpnf->getFunctionByID( FUNC_K_M2X)->Name());
+            _rpnf->appendProgramLine_P(FUNC_K_M2X);
             _rr->activate(0, -2);
             return NO_CHANGE;
         case 10:
-            _rpnf->progMem->updateLine_P( _rpnf->getFunctionByID( FUNC_K_X2M)->Name());
+            _rpnf->appendProgramLine_P(FUNC_K_X2M);
             _rr->activate(0 , -3);
             return NO_CHANGE;
         case 11:
@@ -76,13 +76,13 @@ int Receiver_PROG_K::tick( uint8_t scancode){
 
         // Column 3
         case 13:
-            _rpnf->progMem->updateLine_P( _rpnf->getFunctionByID( FUNC_WHOLE)->Name());
+            _rpnf->appendProgramLine_P(FUNC_WHOLE);
             break;
         case 14:
-            _rpnf->progMem->updateLine_P( _rpnf->getFunctionByID( FUNC_ABS)->Name());
+            _rpnf->appendProgramLine_P(FUNC_ABS);
             break;
         case 15:
-            _rpnf->progMem->updateLine_P( _rpnf->getFunctionByID( FUNC_EE)->Name());
+            _rpnf->appendProgramLine_P(FUNC_EE);
             break;
         case 16:
             // NOP TODO
@@ -91,30 +91,30 @@ int Receiver_PROG_K::tick( uint8_t scancode){
 
         // Column 4
         case 17:
-            _rpnf->progMem->updateLine_P( _rpnf->getFunctionByID( FUNC_FRAC)->Name());
+            _rpnf->appendProgramLine_P(FUNC_FRAC);
             break;
         case 18:
-            _rpnf->progMem->updateLine_P( _rpnf->getFunctionByID( FUNC_SIGN)->Name());
+            _rpnf->appendProgramLine_P(FUNC_SIGN);
             break;
         case 19:
-            _rpnf->progMem->updateLine_P( _rpnf->getFunctionByID( FUNC_LOG)->Name());
+            _rpnf->appendProgramLine_P(FUNC_LOG);
             break;
         case 20:
-            _rpnf->progMem->updateLine_P( _rpnf->getFunctionByID( FUNC_AND)->Name());
+            _rpnf->appendProgramLine_P(FUNC_AND);
             break;
 
         // Column 5
         case 21:
-            _rpnf->progMem->updateLine_P( _rpnf->getFunctionByID( FUNC_MAX)->Name());
+            _rpnf->appendProgramLine_P(FUNC_MAX);
             break;
         case 22:
-            _rpnf->progMem->updateLine_P( _rpnf->getFunctionByID( FUNC_DM2D)->Name());
+            _rpnf->appendProgramLine_P(FUNC_DM2D);
             break;
         case 23:
-            _rpnf->progMem->updateLine_P( _rpnf->getFunctionByID( FUNC_DMS2D)->Name());
+            _rpnf->appendProgramLine_P(FUNC_DMS2D);
             break;
         case 24:
-            _rpnf->progMem->updateLine_P( _rpnf->getFunctionByID( FUNC_OR)->Name());
+            _rpnf->appendProgramLine_P(FUNC_OR);
             break;
 
         // Column 6
@@ -122,13 +122,13 @@ int Receiver_PROG_K::tick( uint8_t scancode){
             _rpnf->progMem->updateLine_P( PSTR("# K-SQRT"));
             break;
         case 26:
-            _rpnf->progMem->updateLine_P( _rpnf->getFunctionByID( FUNC_D2DM)->Name());
+            _rpnf->appendProgramLine_P(FUNC_D2DM);
             break;
         case 27:
-            _rpnf->progMem->updateLine_P( _rpnf->getFunctionByID( FUNC_D2DMS)->Name());
+            _rpnf->appendProgramLine_P(FUNC_D2DMS);
             break;
         case 28:
-            _rpnf->progMem->updateLine_P( _rpnf->getFunctionByID( FUNC_XOR)->Name());
+            _rpnf->appendProgramLine_P(FUNC_XOR);
             break;
 
         // Column 7
@@ -139,10 +139,10 @@ int Receiver_PROG_K::tick( uint8_t scancode){
             _rpnf->progMem->updateLine_P( PSTR("# K-X2"));
             break;
         case 31:
-            _rpnf->progMem->updateLine_P( _rpnf->getFunctionByID( FUNC_RAND)->Name());
+            _rpnf->appendProgramLine_P(FUNC_RAND);
             break;
         case 32:
-            _rpnf->progMem->updateLine_P( _rpnf->getFunctionByID( FUNC_NOT)->Name());
+            _rpnf->appendProgramLine_P(FUNC_NOT);
             break;
 
         default: // all other buttons do nothing - keep K-mode

@@ -21,7 +21,7 @@ using namespace MK52_Interpreter;
 //
 // Inits display for PROG mode
 //
-unsigned long Display_PROG::init( void *components[]) {
+void Display_PROG::init( void *components[]) {
     #ifdef __DEBUG
     Serial.println( "Init Display PROG");
     #endif
@@ -29,7 +29,7 @@ unsigned long Display_PROG::init( void *components[]) {
     _tr = (MK52_Interpreter::Receiver_Text *)components[COMPONENT_RECEIVER_TEXT];
     _ar = (MK52_Interpreter::Receiver_Address *)components[COMPONENT_RECEIVER_ADDRESS];
     _rr = (MK52_Interpreter::Receiver_Register *)components[COMPONENT_RECEIVER_REGISTER];
-    return Display::init( components);
+    Display::init( components);
 }
 
 void Display_PROG::activate(){

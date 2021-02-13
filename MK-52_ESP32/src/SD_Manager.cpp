@@ -27,14 +27,14 @@ using namespace MK52_Hardware;
 //
 // Init and status update
 //
-unsigned long SD_Manager::init(){
+void SD_Manager::init(){
     SDMounted = SD.begin();
     _buffer = (char *)malloc( DIRECTORY_LIST_SIZE);
     _current_Dir_Name = (char *)malloc( CURRENT_DIR_LEN + CURRENT_FILE_LEN * 2 + 3);
     #ifdef __DEBUG
     if( _buffer == NULL || _current_Dir_Name == NULL){
         Serial.println("File List malloc busted!");
-        return millis();
+        return;
     }
     #endif
     _clearItems();
@@ -42,7 +42,6 @@ unsigned long SD_Manager::init(){
     _current_File_Name = _current_Dir_Name + CURRENT_DIR_LEN + 1;
     _text = _current_File_Name + CURRENT_FILE_LEN + 1;
     setFolder_P(SD_root);
-    return millis(); 
 }
 
 void SD_Manager::checkRootExists(){

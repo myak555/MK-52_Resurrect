@@ -95,17 +95,17 @@ int Receiver_PROG_N::tick( uint8_t scancode){
             _lcd->updateStatusPC( _rpnf->progMem->getCounter());
             return NO_CHANGE;
         case 7:
-            _pmem->updateLine_P( PSTR("RETURN"));
+            _rpnf->appendProgramLine_P(FUNC_RETURN);
             _pmem->incrementCounter();
             return NO_CHANGE;
         case 8:
-            _pmem->updateLine_P( PSTR("STOP"));
+            _rpnf->appendProgramLine_P(FUNC_STOP);
             _pmem->incrementCounter();
             return NO_CHANGE;
 
         // Column 2
         case 9:
-            _tr->activate();
+            _tr->activate();            
             _tr->appendText_P( PSTR("M->X ") );
             _rr->activate(0, COMPONENT_RECEIVER_PROG_N);
             return NO_CHANGE;
@@ -127,39 +127,39 @@ int Receiver_PROG_N::tick( uint8_t scancode){
 
         // Column 5
         case 24:
-            _pmem->updateLine_P( PSTR("/-/"));
+            _rpnf->appendProgramLine_P(FUNC_NEGATE);
             _pmem->incrementCounter();
             return NO_CHANGE;
 
         // Column 6
         case 25:
-            _pmem->updateLine_P( PSTR("-"));
+            _rpnf->appendProgramLine_P(FUNC_MINUS);
             _pmem->incrementCounter();
             return NO_CHANGE;
         case 26:
-            _pmem->updateLine_P( PSTR("+"));
+            _rpnf->appendProgramLine_P(FUNC_PLUS);
             _pmem->incrementCounter();
             return NO_CHANGE;
         case 27:
-            _pmem->updateLine_P( PSTR("X<->Y"));
+            _rpnf->appendProgramLine_P(FUNC_SWAP);
             _pmem->incrementCounter();
             return NO_CHANGE;
 
         // Column 7
         case 29:
-            _pmem->updateLine_P( PSTR("/"));
+            _rpnf->appendProgramLine_P(FUNC_DIVIDE);
             _pmem->incrementCounter();
             return NO_CHANGE;
         case 30:
-            _pmem->updateLine_P( PSTR("*"));
+            _rpnf->appendProgramLine_P(FUNC_MULTIPLY);
             _pmem->incrementCounter();
             return NO_CHANGE;
         case 31:
-            _pmem->updateLine_P( PSTR("Enter"));
+            _rpnf->appendProgramLine_P(FUNC_ENTER);
             _pmem->incrementCounter();
             return NO_CHANGE;
         case 32:
-            _pmem->updateLine_P( PSTR("Cx"));
+            _rpnf->appendProgramLine_P(FUNC_CLEAR_X);
             _pmem->incrementCounter();
             return NO_CHANGE;
 

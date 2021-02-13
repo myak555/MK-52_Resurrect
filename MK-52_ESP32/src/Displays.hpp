@@ -16,7 +16,7 @@ namespace MK52_Interpreter{
     class Display{
       public:
         Receiver *current_Receiver = NULL;
-        virtual unsigned long init( void *components[]);
+        virtual void init( void *components[]);
         virtual void activate();
         virtual int tick();
         inline Receiver *getReceiver( int id){
@@ -32,7 +32,7 @@ namespace MK52_Interpreter{
 
     class Display_AUTO: public Display{
       public:
-        unsigned long init( void *components[]);
+        void init( void *components[]);
         void activate();
         int tick();
       private:
@@ -41,7 +41,7 @@ namespace MK52_Interpreter{
 
     class Display_PROG: public Display{
       public:
-        unsigned long init( void *components[]);
+        void init( void *components[]);
         void activate();
         int tick();
       private:
@@ -59,7 +59,7 @@ namespace MK52_Interpreter{
 
     class Display_DATA: public Display{
       public:
-        unsigned long init( void *components[]);
+        void init( void *components[]);
         void activate();
         int tick();
       private:
@@ -68,7 +68,7 @@ namespace MK52_Interpreter{
 
     class Display_FILE: public Display{
       public:
-        unsigned long init( void *components[]);
+        void init( void *components[]);
         void activate();
         int tick();
       private:

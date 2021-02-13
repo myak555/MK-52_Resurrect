@@ -45,7 +45,7 @@ namespace MK52_Interpreter{
             Program_Memory *progMem = NULL;
             Extended_Memory *extMem = NULL;
 
-            unsigned long init( void *components[]);
+            void init( void *components[]);
 
             inline char *getOutputBuffer(){return _text;};
             char *setOutputBuffer(char *text);
@@ -75,6 +75,11 @@ namespace MK52_Interpreter{
 
             inline char *formFileName(char *name){ return _sd->makeEntityName( name);};
             bool fileExists(char *name){ return _sd->checkEntityExists((const char *)name);};
+
+            inline void appendProgramLine_P( int16_t id){
+                progMem->updateLine_P( PSTR(getFunctionByID(id)->Name()));}
+
+//_rpnf->progMem->updateLine_P( _rpnf->getFunctionByID( 
 
       private:
             void **_components;
