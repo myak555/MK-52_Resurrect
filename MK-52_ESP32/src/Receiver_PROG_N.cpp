@@ -38,31 +38,40 @@ void Receiver_PROG_N::activate( uint8_t scancode, int8_t parent){
 
 int Receiver_PROG_N::tick( uint8_t scancode){
     int return_value = NO_CHANGE;
-    // if( _nr->isActive()){
-    //     if( _nr->tick( scancode) == NO_CHANGE) return NO_CHANGE;
-    //     _pmem->updateLine( _nr->toTrimmedString());
-    //     _pmem->incrementCounter();
-    //     return NO_CHANGE;
-    // }
-    // if( _ar->isActive()){
-    //     if( _ar->tick( scancode) == NO_CHANGE) return NO_CHANGE;
-    //     char *tmp = _ar->toString();
-    //     if( *tmp == 0){
-    //         //_pmem->deleteLine();
-    //         return NO_CHANGE;
-    //     }
-    //     _tr->appendText( tmp);
-    //     _pmem->updateLine();
-    //     _pmem->incrementCounter();
-    //     return NO_CHANGE;
-    // }
-    // if( _rr->isActive()){
-    //     if( _rr->tick( scancode) == NO_CHANGE) return NO_CHANGE;
-    //     _tr->appendText( _rr->toString());
-    //     _pmem->updateLine();
-    //     _pmem->incrementCounter();
-    //     return NO_CHANGE;
-    // }
+    if( _nr->isActive()){
+        if( _nr->tick( scancode) == NO_CHANGE){
+            _rpnf->progMem->updateLine( _nr->toTrimmedString());
+            return NO_CHANGE;
+        }
+        _rpnf->progMem->replaceLine( _nr->toTrimmedString());
+        _rpnf->progMem->incrementCounter();
+        _lcd->updateStatusPC( _rpnf->progMem->getCounter());
+        return NO_CHANGE;
+    }
+    if( _ar->isActive()){        
+        if( _ar->tick( scancode) == NO_CHANGE){
+            sprintf_P( _rpnf->getOutputBuffer(), PSTR("%04u> "), _rpnf->progMem->getCounter());
+            _rpnf->appendOutputBuffer( _rpnf->progMem->getCurrentLine());
+            _rpnf->appendOutputBuffer( _ar->toTrimmedString());
+            _lcd->updateTerminalLine( 10, _rpnf->getOutputBuffer());
+            return NO_CHANGE;
+        }
+        _rpnf->setOutputBuffer( _rpnf->progMem->getCurrentLine());
+        _rpnf->appendOutputBuffer( _ar->toString());
+        _rpnf->progMem->replaceLine( _rpnf->getOutputBuffer());
+        _rpnf->progMem->incrementCounter();
+        _lcd->updateStatusPC( _rpnf->progMem->getCounter());
+        return return_value;
+    }
+    if( _rr->isActive()){   
+        if( _rr->tick( scancode) == NO_CHANGE) return NO_CHANGE;
+        _rpnf->setOutputBuffer( _rpnf->progMem->getCurrentLine());
+        _rpnf->appendOutputBuffer( _rr->toString());
+        _rpnf->progMem->replaceLine( _rpnf->getOutputBuffer());
+        _rpnf->progMem->incrementCounter();
+        _lcd->updateStatusPC( _rpnf->progMem->getCounter());
+        return return_value;
+    }
     switch( scancode){
         case 0:
             break;
@@ -105,23 +114,19 @@ int Receiver_PROG_N::tick( uint8_t scancode){
 
         // Column 2
         case 9:
-            _tr->activate();            
-            _tr->appendText_P( PSTR("M->X ") );
-            _rr->activate(0, COMPONENT_RECEIVER_PROG_N);
+            _rpnf->appendProgramLine_P(FUNC_M2X);
+            _rr->activate(0, -2);
             return NO_CHANGE;
         case 10:
-            _tr->activate();
-            _tr->appendText_P( PSTR("X->M ") );
-            _rr->activate(0, COMPONENT_RECEIVER_PROG_N);
+            _rpnf->appendProgramLine_P(FUNC_X2M);
+            _rr->activate(0, -3);
             return NO_CHANGE;
         case 11:
-            _tr->activate();
-            _tr->appendText_P( PSTR("GOTO ") );
+            _rpnf->appendProgramLine_P(FUNC_GOTO);
             _ar->activate(0, COMPONENT_RECEIVER_PROG_N);
             return NO_CHANGE;
         case 12:
-            _tr->activate();
-            _tr->appendText_P( PSTR("GOSUB ") );
+            _rpnf->appendProgramLine_P(FUNC_GOSUB);
             _ar->activate(0, COMPONENT_RECEIVER_PROG_N);
             return NO_CHANGE;
 
@@ -164,7 +169,7 @@ int Receiver_PROG_N::tick( uint8_t scancode){
             return NO_CHANGE;
 
         default: // all other buttons activate number entry
-            _nr->activate(0, COMPONENT_RECEIVER_PROG_N);
+            _nr->activate(scancode, COMPONENT_RECEIVER_PROG_N);
             break;
     }
     return return_value;

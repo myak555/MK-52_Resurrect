@@ -68,10 +68,10 @@ int Receiver_PROG_K::tick( uint8_t scancode){
             _rr->activate(0 , -3);
             return NO_CHANGE;
         case 11:
-            _rpnf->progMem->updateLine_P( PSTR("# K-GOTO is bad for you!"));
+            _rpnf->progMem->updateLine_P( PSTR("# K-GOTO is bad!"));
             break;
         case 12:
-            _rpnf->progMem->updateLine_P( PSTR("# K-GOSUB is bad for you!"));
+            _rpnf->progMem->updateLine_P( PSTR("# K-GOSUB is bad!"));
             break;
 
         // Column 3
@@ -85,8 +85,7 @@ int Receiver_PROG_K::tick( uint8_t scancode){
             _rpnf->appendProgramLine_P(FUNC_EE);
             break;
         case 16:
-            // NOP TODO
-            _rpnf->progMem->updateLine_P( PSTR("# NOP"));
+            _rpnf->progMem->commentLine();
             break;
 
         // Column 4

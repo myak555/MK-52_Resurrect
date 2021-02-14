@@ -26,16 +26,6 @@ void Program_Memory::init( void *components[]) {
     setEMode( EMODE_OWERWRITE);
 
     #ifdef __DEBUG
-    //appendLine_P( PSTR("-1.2345678e-004"));
-    //appendLine_P( PSTR("9"));
-    //appendLine_P( PSTR("*"));
-    //appendLine_P( PSTR("X->M A"));
-    //appendLine_P( PSTR("X->M B"));
-    //appendLine_P( PSTR("X->M C"));
-    //appendLine_P( PSTR("Cx"));
-    //appendLine_P( PSTR("M->X A"));
-    //appendLine_P( PSTR("STOP"));
-    //appendLine_P( PSTR("GOTO 0001"));
     Serial.print("Free program memory: ");
     Serial.println( getFree());
     Serial.print("ProgMem init with: ");
@@ -45,7 +35,7 @@ void Program_Memory::init( void *components[]) {
 
 void Program_Memory::clear(){
     memset( _buffer, 0, PROGRAM_MEMORY_SIZE);
-    _bottom = 0;
+    _bottom = 1; // one empty line is at the top
     resetCounter();
 }
 
@@ -55,28 +45,10 @@ void Program_Memory::resetCounter(){
     _returnStackPtr = 0;
 }
 
-char *Program_Memory::getNextLine(){
-    char *ptr = getCurrentLine();
-    return ptr + strlen(ptr) + 1;
-}
-
-//
-// Returns true if not enough memory
-//
-bool Program_Memory::appendLine(char *line){
-    size_t ln = strlen( (line));
-    if( ln >= getFree()) return true;
-    strcpy( getBottom(), line);
-    _bottom += ln+1;
-    return false;
-}
-bool Program_Memory::appendLine_P(const char *line){
-    size_t ln = strlen_P( (line));
-    if( ln >= getFree()) return true;
-    strcpy_P( getBottom(), line);
-    _bottom += ln+1;
-    return false;
-}
+// char *Program_Memory::getNextLine(){
+//     char *ptr = getCurrentLine();
+//     return ptr + strlen(ptr) + 1;
+// }
 
 //
 // Returns the counter actually set
@@ -94,18 +66,18 @@ uint32_t Program_Memory::setCounter(uint32_t address){
     }
     return _counter;
 }
-uint32_t Program_Memory::setCounter(char *s){
-    int ln = strlen(s);
+uint32_t Program_Memory::setCounter(char *text){
+    int ln = strlen(text);
     if( ln <= 0) return _counter;
-    if( s[0]==' ') return _counter;
+    if( text[0]==' ') return _counter;
     uint32_t n = 0;
-    while( *s){
-        if( *s == ' '){
-            s++;
+    while( *text){
+        if( *text == ' '){
+            text++;
             continue;
         }
-        n = n*10 + *s - '0';
-        s++; 
+        n = n*10 + *text - '0';
+        text++; 
     }
     return setCounter(n);
 }
@@ -138,15 +110,17 @@ bool Program_Memory::decrementCounter(){
     int32_t tmp = (int32_t)_current;
     tmp--;
     if( tmp <= 0){ // top reached
-        resetCounter();
+        _counter = 0;
+        _current = 0;
         return false;
     }
 
     // Skip to beginning of previous line
     tmp--;
     while( tmp >= 0 && _buffer[tmp] != 0) tmp--;
-    if( tmp <= 0){ // top reached
-        resetCounter();
+    if( tmp < 0){ // top passed
+        _counter = 0;
+        _current = 0;
         return false;
     }
     _current = tmp+1;
@@ -164,12 +138,11 @@ bool Program_Memory::goSub( uint32_t address){
     setCounter( address);
     return false;
 }
-
-bool Program_Memory::goSub( char *s){
-    if( _returnStackPtr >= RETURN_STACK_SIZE) return true;
+bool Program_Memory::goSub( char *text){
+    if( _returnStackPtr >= RETURN_STACK_SIZE*2) return true;
     *_returnStack++ = _counter;
     *_returnStack++ = _current;
-    setCounter( s);
+    setCounter( text);
     return false;
 }
 
@@ -184,128 +157,85 @@ bool Program_Memory::returnFromSub(){
     return false;
 }
 
-bool Program_Memory::replaceLine(char *line){
-    size_t toCopy = strlen(line) + 1;
-    char *ptrC = getCurrentLine();
-    if( _current + toCopy >= PROGRAM_MEMORY_SIZE) return false; // no space
-    if( _current >= _bottom){
-        if( _current+toCopy >= PROGRAM_MEMORY_SIZE) return false;
-        memcpy( ptrC, line, toCopy);
-        _bottom = _current + toCopy;
-        return true;
-    }
-    size_t toReplace = strlen(ptrC) + 1;
-    if( toCopy == toReplace){
-        memcpy( ptrC, line, toCopy);
-        return true;
-    }
-    size_t toMove = 0;
-    if( toCopy < toReplace){
-        toMove = toReplace - toCopy;
-        memcpy( ptrC, line, toCopy);
-        memmove( ptrC+toCopy, ptrC+toReplace, toMove);
-        memset( getBottom(), 0, toMove);
-        _bottom -= toMove;
-        return true;
-    }
-    toMove = toCopy - toReplace;
-    if( _bottom + toMove >= PROGRAM_MEMORY_SIZE) toMove = PROGRAM_MEMORY_SIZE - _bottom - 1;
-    if( toMove > 0) memmove( ptrC + toMove, ptrC, toMove);
-    _bottom += toMove;
-    memcpy( ptrC, line, toCopy);
-    getBottom()[0] = 0;
-    return true;
+//
+// Returns true if not enough memory
+//
+bool Program_Memory::appendLine(char *line){
+    size_t toAppend = strlen( (line)) + 1;
+    if( _current + toAppend >= PROGRAM_MEMORY_SIZE) return true;
+    memcpy( getCurrentLine(), line, toAppend);
+    _bottom = _current + toAppend;
+    return false;
+}
+bool Program_Memory::appendLine_P(const char *line){
+    size_t toAppend = strlen_P( (line)) + 1;
+    if( _current + toAppend >= PROGRAM_MEMORY_SIZE) return true;
+    memcpy_P( getCurrentLine(), line, toAppend);
+    _bottom = _current + toAppend;
+    return false;
 }
 
-bool Program_Memory::replaceLine_P(const char *line){
-    size_t toCopy = strlen_P(line) + 1;
+//
+// Returns true if not enough memory
+//
+bool Program_Memory::replaceLine(char *line){
+    if (_current >= _bottom) return appendLine(line);
+    int toCopy = strlen(line) + 1;
     char *ptrC = getCurrentLine();
-    if( _current + toCopy >= PROGRAM_MEMORY_SIZE) return false; // no space
-    if( _current >= _bottom){
-        if( _current+toCopy >= PROGRAM_MEMORY_SIZE) return false;
-        memcpy_P( ptrC, line, toCopy);
-        _bottom = _current + toCopy;
-        return true;
-    }
-    size_t toReplace = strlen(ptrC) + 1;
-    if( toCopy == toReplace){
-        memcpy_P( ptrC, line, toCopy);
-        return true;
-    }
-    size_t toMove = 0;
-    if( toCopy < toReplace){
-        toMove = toReplace - toCopy;
-        memcpy_P( ptrC, line, toCopy);
-        memmove( ptrC+toCopy, ptrC+toReplace, toMove);
-        memset( getBottom(), 0, toMove);
-        _bottom -= toMove;
-        return true;
-    }
-    toMove = toCopy - toReplace;
-    if( _bottom + toMove >= PROGRAM_MEMORY_SIZE) toMove = PROGRAM_MEMORY_SIZE - _bottom - 1;
-    if( toMove > 0) memmove( ptrC + toMove, ptrC, toMove);
-    _bottom += toMove;
+    int toReplace = strlen(ptrC) + 1;
+    if( _moveStringsFromCurrent(toCopy - toReplace)) return true;
+    memcpy( ptrC, line, toCopy);
+    return false;
+}
+bool Program_Memory::replaceLine_P(const char *line){
+    if (_current >= _bottom) return appendLine_P(line);
+    int toCopy = strlen_P(line) + 1;
+    char *ptrC = getCurrentLine();
+    int toReplace = strlen(ptrC) + 1;
+    if(_moveStringsFromCurrent(toCopy - toReplace)) return true;
     memcpy_P( ptrC, line, toCopy);
-    getBottom()[0] = 0;
-    return true;
+    return false;
 }
 
 bool Program_Memory::insertLine(char *line){
-    size_t toCopy = strlen(line) + 1;
-    char *ptrC = getCurrentLine();
-    if( _current + toCopy >= PROGRAM_MEMORY_SIZE) return false; // no space
-    if( _current >= _bottom){
-        if( _current+toCopy >= PROGRAM_MEMORY_SIZE) return false;
-        memcpy( ptrC, line, toCopy);
-        _bottom = _current + toCopy;
-        return true;
-    }
-    size_t toMove = _bottom - _current;
-    if( _bottom + toCopy >= PROGRAM_MEMORY_SIZE) toMove = PROGRAM_MEMORY_SIZE - _bottom - 1;
-    if( toMove > 0) memmove( ptrC + toCopy, ptrC, toMove);
-    _bottom += toCopy;
-    memcpy( ptrC, line, toCopy);
-    getBottom()[0] = 0;
-    return true;
+    if (_current >= _bottom) return appendLine(line);
+    int toInsert = strlen( line) + 1;
+    if (_moveStringsFromCurrent(toInsert)) return true;
+    memcpy( getCurrentLine(), line, toInsert);
+    return false;
 }
 
 bool Program_Memory::insertLine_P(const char *line){
-    size_t toCopy = strlen(line) + 1;
-    char *ptrC = getCurrentLine();
-    if( _current + toCopy >= PROGRAM_MEMORY_SIZE) return false; // no space
-    if( _current >= _bottom){
-        if( _current+toCopy >= PROGRAM_MEMORY_SIZE) return false;
-        memcpy_P( ptrC, line, toCopy);
-        _bottom = _current + toCopy;
-        return true;
-    }
-    size_t toMove = _bottom - _current;
-    if( _bottom + toCopy >= PROGRAM_MEMORY_SIZE) toMove = PROGRAM_MEMORY_SIZE - _bottom - 1;
-    if( toMove > 0) memmove( ptrC + toCopy, ptrC, toMove);
-    _bottom += toCopy;
-    memcpy_P( ptrC, line, toCopy);
-    getBottom()[0] = 0;
-    return true;
+    if (_current >= _bottom) return appendLine_P(line);
+    int toInsert = strlen_P( line) + 1;
+    if (_moveStringsFromCurrent(toInsert)) return true;
+    memcpy_P( getCurrentLine(), line, toInsert);
+    return false;
 }
 
 bool Program_Memory::updateLine(char *line){
-    if( _eMode == EMODE_OWERWRITE) replaceLine(line);
-    else insertLine(line);
+    if( _eMode == EMODE_OWERWRITE) return replaceLine(line);
+    return insertLine(line);
 }
 
 bool Program_Memory::updateLine_P(const char *line){
-    if( _eMode == EMODE_OWERWRITE) replaceLine_P(line);
-    else insertLine_P(line);
+    if( _eMode == EMODE_OWERWRITE) return replaceLine_P(line);
+    return insertLine_P(line);
 }
 
 void Program_Memory::deleteLine(){
     if( _current >= _bottom) return;
+    int toDelete = strlen( getCurrentLine());
+    _moveStringsFromCurrent( -toDelete );
+}
+
+bool Program_Memory::commentLine(){
+    if( _current >= _bottom) return appendLine_P( PSTR("#"));
     char *ptrC = getCurrentLine();
-    size_t toCopy = strlen(ptrC) + 1;
-    char *source = ptrC + toCopy;
-    memmove( ptrC, source, toCopy);
-    memset( getBottom(), 0, toCopy);
-    _bottom -= toCopy;
+    if( *ptrC == '#') return _moveStringsFromCurrent( -1 );
+    if( _moveStringsFromCurrent( 1 )) return true;
+    *ptrC = '#';
+    return false;
 }
 
 void Program_Memory::getPreviousLines( char *lines[], uint8_t n){
@@ -329,7 +259,7 @@ void Program_Memory::getPreviousLines( char *lines[], uint8_t n){
 }
 
 bool Program_Memory::isAtStop(){
-    return UniversalValue::_startsWith_P( getCurrentLine(), PSTR("STOP"));
+    return UniversalValue::_identicalTo_P( getCurrentLine(), PSTR("STOP"));
 }
 
 void Program_Memory::setEMode(uint8_t m){
@@ -354,3 +284,37 @@ uint8_t Program_Memory::toggleEditMode(){
     setEMode( _eMode+1);
     return _eMode;
 } 
+
+bool Program_Memory::_moveStringsFromCurrent(int32_t shift)
+{
+    char *ptr = getCurrentLine();
+    int32_t toMove = (int32_t)(_bottom-_current);
+    if( toMove <= 0) return false;
+    if (shift > 0){
+        if (_bottom + (uint32_t)shift >= PROGRAM_MEMORY_SIZE) return true;
+        // Serial.print( "Moving");
+        // Serial.print( toMove);
+        // Serial.print( " positions, from [");
+        // Serial.print( ptr);
+        // Serial.print( "] to [");
+        // Serial.print( ptr+shift);
+        // Serial.println( "]");
+        memmove( ptr + shift, ptr, toMove);  
+        _bottom += shift;
+    }
+    if (shift < 0) {
+        toMove += shift;
+        if( toMove <= 0) return false;
+        // Serial.print( "Moving");
+        // Serial.print( toMove);
+        // Serial.print( " positions, from [");
+        // Serial.print( ptr-shift);
+        // Serial.print( "] to [");
+        // Serial.print( ptr);
+        // Serial.println( "]");
+        memmove( ptr, ptr-shift, toMove);
+        _bottom += shift;
+        memset( getBottom(), 0, -shift);
+    }
+    return false;
+}

@@ -25,10 +25,10 @@ void Display_PROG::init( void *components[]) {
     #ifdef __DEBUG
     Serial.println( "Init Display PROG");
     #endif
-    _nr = (MK52_Interpreter::Receiver_Number *)components[COMPONENT_RECEIVER_NUMBER];
-    _tr = (MK52_Interpreter::Receiver_Text *)components[COMPONENT_RECEIVER_TEXT];
-    _ar = (MK52_Interpreter::Receiver_Address *)components[COMPONENT_RECEIVER_ADDRESS];
-    _rr = (MK52_Interpreter::Receiver_Register *)components[COMPONENT_RECEIVER_REGISTER];
+    _nr = (Receiver_Number *)components[COMPONENT_RECEIVER_NUMBER];
+    _tr = (Receiver_Text *)components[COMPONENT_RECEIVER_TEXT];
+    _ar = (Receiver_Address *)components[COMPONENT_RECEIVER_ADDRESS];
+    _rr = (Receiver_Register *)components[COMPONENT_RECEIVER_REGISTER];
     Display::init( components);
 }
 
@@ -54,7 +54,6 @@ void Display_PROG::activate(){
     Serial.print ( TargetTime);
     Serial.println (" ms");
     #endif
-    return;
 }
 
 int Display_PROG::tick(){
