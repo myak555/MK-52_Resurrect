@@ -2,14 +2,14 @@ void Func_in2mm::execute( void *components[], char *command){
     RPN_Stack *s = _Stack( components);
     s->storeBx();
     double x = s->X->toReal();
-    s->X->fromReal( x * 24.5);
+    s->X->fromReal( x * 25.4);
 }
 
 void Func_mm2in::execute( void *components[], char *command){
     RPN_Stack *s = _Stack( components);
     s->storeBx();
     double x = s->X->toReal();
-    s->X->fromReal( x / 24.5);
+    s->X->fromReal( x / 25.4);
 }
 
 void Func_D2DM::execute( void *components[], char *command){

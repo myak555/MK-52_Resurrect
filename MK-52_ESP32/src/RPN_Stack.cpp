@@ -136,7 +136,12 @@ void RPN_Stack::rotate(){
 }
 
 double RPN_Stack::XtoRadian(){
-    return X->toReal() * _DMODE_ConversionsToRadian[_dMode];
+    double tmp = X->toReal();
+    if( X->isInt()){
+        if( _dMode == DMODE_DEGREES) tmp = (double)(X->toInt() % 360);
+        if( _dMode == DMODE_DEGREES) tmp = (double)(X->toInt() % 400);
+    }
+    return tmp * _DMODE_ConversionsToRadian[_dMode];
 }
 
 int8_t RPN_Stack::XtoOctant(){

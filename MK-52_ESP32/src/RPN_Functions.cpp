@@ -270,7 +270,6 @@ void RPN_Functions::init( void *components[]) {
         Serial.println( ")");
     }
     #endif
-    return;
 }
 
 RPN_Function *RPN_Functions::getFunctionByID(int16_t id){
@@ -311,13 +310,11 @@ void RPN_Functions::execute( int16_t id, char *command){
 
 void RPN_Functions::execute( char *command, bool pushNeeded){
     if( strlen(command)<=0) return;
-    Serial.println(command);
     for(int16_t i=0; i<_nfunctions; i++){
         RPN_Function *pf = (RPN_Function *)_functions[i];
         if( !pf->checkName( command)) continue;
         int operand = strlen_P( pf->Name());
         pf->execute( _components, command+operand);
-        Serial.println(pf->advanceRequired());
         if( pf->advanceRequired()) progMem->incrementCounter();
         return;
     }

@@ -40,7 +40,7 @@ namespace MK52_Interpreter{
     class RPN_Functions{
         public:
             bool _atStop = false;
-            RPN_Stack *rpnStack;
+            RPN_Stack *rpnStack = NULL;
             Register_Memory *regMem = NULL;
             Program_Memory *progMem = NULL;
             Extended_Memory *extMem = NULL;
@@ -52,8 +52,8 @@ namespace MK52_Interpreter{
             char *appendOutputBuffer(char *text);
             char *setOutputBuffer_P(const char *text);
             char *appendOutputBuffer_P(const char *text);
-            inline char *getOutputLine(int16_t n)
-                {return _buffer + (SCREEN_COLS+1)*n;};
+            inline char *getOutputLine(int16_t n){
+                return _buffer + (SCREEN_COLS+1)*n;};
             inline char **getOutputLines() {return _lines;};
 
             RPN_Function *getFunctionByID(int16_t id);
@@ -73,13 +73,13 @@ namespace MK52_Interpreter{
             bool loadDataFile( char *name=NULL);
             bool saveDataFile( char *name=NULL);
 
-            inline char *formFileName(char *name){ return _sd->makeEntityName( name);};
-            bool fileExists(char *name){ return _sd->checkEntityExists((const char *)name);};
+            inline char *formFileName(char *name){
+                return _sd->makeEntityName( name);};
+            bool fileExists(char *name){
+                return _sd->checkEntityExists((const char *)name);};
 
             inline void appendProgramLine_P( int16_t id){
-                progMem->updateLine_P( PSTR(getFunctionByID(id)->Name()));}
-
-//_rpnf->progMem->updateLine_P( _rpnf->getFunctionByID( 
+                progMem->updateLine_P( getFunctionByID(id)->Name());}
 
       private:
             void **_components;

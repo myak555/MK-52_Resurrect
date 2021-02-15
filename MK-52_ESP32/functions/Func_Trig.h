@@ -2,7 +2,8 @@ void Func_Sin::execute( void *components[], char *command){
     RPN_Stack *s = _dealWithClergy1(components);
     if( s == NULL) return;
     s->storeBx();
-    switch(s->XtoOctant()){
+    int8_t oct = s->XtoOctant();
+    switch(oct){
         case -1:
             break;
         case 0:
@@ -23,7 +24,7 @@ void Func_Sin::execute( void *components[], char *command){
         s->X->fromReal( NAN); 
         return;
     }
-    s->setTrigAccuracyWarning(result);
+    if( s->X->isReal()) s->setTrigAccuracyWarning(result);
     result = sin(result);
     s->X->fromReal( result);
 }
@@ -62,7 +63,8 @@ void Func_Cos::execute( void *components[], char *command){
     RPN_Stack *s = _dealWithClergy1(components);
     if( s == NULL) return;
     s->storeBx();
-    switch(s->XtoOctant()){
+    int8_t oct = s->XtoOctant();
+    switch(oct){
         case -1:
             break;
         case 0:
@@ -83,7 +85,7 @@ void Func_Cos::execute( void *components[], char *command){
         s->X->fromReal( NAN); 
         return;
     }
-    s->setTrigAccuracyWarning(result);
+    if( s->X->isReal()) s->setTrigAccuracyWarning(result);
     result = cos(result);
     s->X->fromReal( result);
 }
