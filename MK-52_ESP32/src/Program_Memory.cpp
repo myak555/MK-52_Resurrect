@@ -8,7 +8,7 @@
 
 #include "Program_Memory.hpp"
 
-#define __DEBUG
+//#define __DEBUG
 using namespace MK52_Interpreter;
 
 //
@@ -97,6 +97,12 @@ bool Program_Memory::incrementCounter(){
     }
     _current++; // next line
     _counter++;
+    #ifdef __DEBUG
+    Serial.print("Counter increment: ");
+    Serial.print(_counter);
+    Serial.print(" / ");
+    Serial.println(_current);
+    #endif
     return false;
 }
 
@@ -125,6 +131,12 @@ bool Program_Memory::decrementCounter(){
     }
     _current = tmp+1;
     _counter--;
+    #ifdef __DEBUG
+    Serial.print("Counter decrement: ");
+    Serial.print(_counter);
+    Serial.print(" / ");
+    Serial.println(_current);
+    #endif
     return false;
 }
 
@@ -132,17 +144,29 @@ bool Program_Memory::decrementCounter(){
 // Returns true if stack is busted
 //
 bool Program_Memory::goSub( uint32_t address){
-    if( _returnStackPtr >= RETURN_STACK_SIZE) return true;
-    *_returnStack++ = _counter;
-    *_returnStack++ = _current;
+    if( _returnStackPtr >= RETURN_STACK_SIZE*2) return true;
+    _returnStack[_returnStackPtr++] = _counter;
+    _returnStack[_returnStackPtr++] = _current;
     setCounter( address);
+    #ifdef __DEBUG
+    Serial.print("Gone to sub: ");
+    Serial.print(_returnStackPtr);
+    Serial.print(" / ");
+    Serial.println(_current);
+    #endif
     return false;
 }
 bool Program_Memory::goSub( char *text){
     if( _returnStackPtr >= RETURN_STACK_SIZE*2) return true;
-    *_returnStack++ = _counter;
-    *_returnStack++ = _current;
+    _returnStack[_returnStackPtr++] = _counter;
+    _returnStack[_returnStackPtr++] = _current;
     setCounter( text);
+    #ifdef __DEBUG
+    Serial.print("Gone to sub: ");
+    Serial.print(_returnStackPtr);
+    Serial.print(" / ");
+    Serial.println(_current);
+    #endif
     return false;
 }
 
@@ -151,8 +175,14 @@ bool Program_Memory::goSub( char *text){
 //
 bool Program_Memory::returnFromSub(){
     if( _returnStackPtr == 0) return true;
-    _current = *(--_returnStack);
-    _counter = *(--_returnStack);
+    _current = _returnStack[--_returnStackPtr];
+    _counter = _returnStack[--_returnStackPtr];
+    #ifdef __DEBUG
+    Serial.print("Returned from sub: ");
+    Serial.print(_returnStackPtr);
+    Serial.print(" / ");
+    Serial.println(_current);
+    #endif
     incrementCounter(); // go to the next line after call
     return false;
 }
@@ -165,6 +195,14 @@ bool Program_Memory::appendLine(char *line){
     if( _current + toAppend >= PROGRAM_MEMORY_SIZE) return true;
     memcpy( getCurrentLine(), line, toAppend);
     _bottom = _current + toAppend;
+    #ifdef __DEBUG
+    Serial.print("Appended: ");
+    Serial.print( line);
+    Serial.print(" / ");
+    Serial.print(getCurrentLine());
+    Serial.print(" / ");
+    Serial.println(_bottom);
+    #endif
     return false;
 }
 bool Program_Memory::appendLine_P(const char *line){
@@ -172,6 +210,14 @@ bool Program_Memory::appendLine_P(const char *line){
     if( _current + toAppend >= PROGRAM_MEMORY_SIZE) return true;
     memcpy_P( getCurrentLine(), line, toAppend);
     _bottom = _current + toAppend;
+    #ifdef __DEBUG
+    Serial.print("Appended: ");
+    Serial.print( line);
+    Serial.print(" / ");
+    Serial.print(getCurrentLine());
+    Serial.print(" / ");
+    Serial.println(_bottom);
+    #endif
     return false;
 }
 
@@ -185,6 +231,14 @@ bool Program_Memory::replaceLine(char *line){
     int toReplace = strlen(ptrC) + 1;
     if( _moveStringsFromCurrent(toCopy - toReplace)) return true;
     memcpy( ptrC, line, toCopy);
+    #ifdef __DEBUG
+    Serial.print("Replaced: ");
+    Serial.print( line);
+    Serial.print(" / ");
+    Serial.print(getCurrentLine());
+    Serial.print(" / ");
+    Serial.println(_bottom);
+    #endif
     return false;
 }
 bool Program_Memory::replaceLine_P(const char *line){
@@ -194,6 +248,14 @@ bool Program_Memory::replaceLine_P(const char *line){
     int toReplace = strlen(ptrC) + 1;
     if(_moveStringsFromCurrent(toCopy - toReplace)) return true;
     memcpy_P( ptrC, line, toCopy);
+    #ifdef __DEBUG
+    Serial.print("Replaced: ");
+    Serial.print( line);
+    Serial.print(" / ");
+    Serial.print(getCurrentLine());
+    Serial.print(" / ");
+    Serial.println(_bottom);
+    #endif
     return false;
 }
 
@@ -202,6 +264,14 @@ bool Program_Memory::insertLine(char *line){
     int toInsert = strlen( line) + 1;
     if (_moveStringsFromCurrent(toInsert)) return true;
     memcpy( getCurrentLine(), line, toInsert);
+    #ifdef __DEBUG
+    Serial.print("Inserted: ");
+    Serial.print( line);
+    Serial.print(" / ");
+    Serial.print(getCurrentLine());
+    Serial.print(" / ");
+    Serial.println(_bottom);
+    #endif
     return false;
 }
 
@@ -210,6 +280,14 @@ bool Program_Memory::insertLine_P(const char *line){
     int toInsert = strlen_P( line) + 1;
     if (_moveStringsFromCurrent(toInsert)) return true;
     memcpy_P( getCurrentLine(), line, toInsert);
+    #ifdef __DEBUG
+    Serial.print("Inserted: ");
+    Serial.print( line);
+    Serial.print(" / ");
+    Serial.print(getCurrentLine());
+    Serial.print(" / ");
+    Serial.println(_bottom);
+    #endif
     return false;
 }
 
@@ -225,7 +303,7 @@ bool Program_Memory::updateLine_P(const char *line){
 
 void Program_Memory::deleteLine(){
     if( _current >= _bottom) return;
-    int toDelete = strlen( getCurrentLine());
+    int toDelete = strlen( getCurrentLine()) + 1;
     _moveStringsFromCurrent( -toDelete );
 }
 
@@ -292,26 +370,12 @@ bool Program_Memory::_moveStringsFromCurrent(int32_t shift)
     if( toMove <= 0) return false;
     if (shift > 0){
         if (_bottom + (uint32_t)shift >= PROGRAM_MEMORY_SIZE) return true;
-        // Serial.print( "Moving");
-        // Serial.print( toMove);
-        // Serial.print( " positions, from [");
-        // Serial.print( ptr);
-        // Serial.print( "] to [");
-        // Serial.print( ptr+shift);
-        // Serial.println( "]");
         memmove( ptr + shift, ptr, toMove);  
         _bottom += shift;
     }
     if (shift < 0) {
         toMove += shift;
         if( toMove <= 0) return false;
-        // Serial.print( "Moving");
-        // Serial.print( toMove);
-        // Serial.print( " positions, from [");
-        // Serial.print( ptr-shift);
-        // Serial.print( "] to [");
-        // Serial.print( ptr);
-        // Serial.println( "]");
         memmove( ptr, ptr-shift, toMove);
         _bottom += shift;
         memset( getBottom(), 0, -shift);

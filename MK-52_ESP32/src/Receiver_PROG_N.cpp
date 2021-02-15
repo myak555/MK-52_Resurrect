@@ -40,7 +40,9 @@ int Receiver_PROG_N::tick( uint8_t scancode){
     int return_value = NO_CHANGE;
     if( _nr->isActive()){
         if( _nr->tick( scancode) == NO_CHANGE){
-            _rpnf->progMem->updateLine( _nr->toTrimmedString());
+            sprintf_P( _rpnf->getOutputBuffer(), PSTR("%04u> "), _rpnf->progMem->getCounter());
+            _rpnf->appendOutputBuffer( _nr->toTrimmedString());
+            _lcd->updateTerminalLine( 10, _rpnf->getOutputBuffer());
             return NO_CHANGE;
         }
         _rpnf->progMem->replaceLine( _nr->toTrimmedString());

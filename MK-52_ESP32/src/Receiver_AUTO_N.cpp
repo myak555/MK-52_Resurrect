@@ -91,6 +91,7 @@ int Receiver_AUTO_N::tick( uint8_t scancode){
             _lcd->updateStatusPC( _ar->toString());
             break;
         case 12:
+            Serial.println("Came to step...");
             _rpnf->executeStep();
             _lcd->updateStatusPC( _rpnf->progMem->getCounter());
             break;
@@ -147,8 +148,10 @@ int Receiver_AUTO_N::_completeSubentry( uint8_t scancode){
             #ifdef __DEBUG
             Serial.print("Received number: ");
             Serial.println(_nr->toTrimmedString());
-            #endif 
-            _rpnf->execute( _nr->toTrimmedString());
+            #endif
+            // execute not needed here, as it advances pc 
+            //_rpnf->execute( _nr->toTrimmedString());
+            _rpnf->rpnStack->X->fromString( _nr->toTrimmedString());
             #ifdef __DEBUG
             Serial.print("Number in stack: ");
             Serial.println( _rpnf->rpnStack->X->toReal());
