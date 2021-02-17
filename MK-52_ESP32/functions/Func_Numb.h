@@ -1,3 +1,10 @@
+void Func_Number::execute( void *components[], char *command){
+    RPN_Stack *s = _Stack(components);
+    s->storeBx();
+    s->push();
+    s->X->fromString( command);
+}
+
 void Func_Whole::execute( void *components[], char *command){
     RPN_Stack *s = _dealWithClergy1(components);
     if( s == NULL) return;

@@ -22,7 +22,7 @@ namespace MK52_Interpreter{
             virtual const char*Name(){return NULL;};
             virtual const char*IOName(){return Name();};
             virtual void execute(void *components[], char *command=NULL);
-            virtual bool advanceRequired(){return true;};
+            virtual void advancePC(void *components[]);
             virtual bool containsPC(){return false;};
             virtual bool containsMC(){return false;};
             virtual bool containsRegister(){return false;};
@@ -60,7 +60,7 @@ namespace MK52_Interpreter{
             RPN_Function *getFunctionByName(char *command);
             RPN_Function *getFunctionByIOName(char *command);
             void execute( int16_t id=-1, char *command=NULL);
-            void execute( char *command, bool pushNeeded=false);
+            void execute( char *command);
             void executeStep();
             void executeRun();
 

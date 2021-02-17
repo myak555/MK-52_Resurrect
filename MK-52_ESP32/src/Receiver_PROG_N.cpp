@@ -13,7 +13,7 @@
 
 using namespace MK52_Interpreter;
 
-unsigned long Receiver_PROG_N::init( void *components[]) {
+void Receiver_PROG_N::init( void *components[]) {
     #ifdef __DEBUG
     Serial.println( "Init PROG_N");
     #endif
@@ -22,7 +22,7 @@ unsigned long Receiver_PROG_N::init( void *components[]) {
     _ar = (Receiver_Address*)components[COMPONENT_RECEIVER_ADDRESS];
     _rr = (Receiver_Register*)components[COMPONENT_RECEIVER_REGISTER];
     _pmem = (Program_Memory*)components[COMPONENT_PROGRAM_MEMORY];
-    return Receiver::init(components);
+    Receiver::init(components);
 }
 
 void Receiver_PROG_N::activate( uint8_t scancode, int8_t parent){

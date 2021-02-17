@@ -13,11 +13,11 @@
 
 using namespace MK52_Interpreter;
 
-unsigned long Receiver_AUTO_F::init( void *components[]) {
+void Receiver_AUTO_F::init( void *components[]) {
     #ifdef __DEBUG
     Serial.println( "Init AUTO_F");
     #endif
-    return Receiver::init(components);
+    Receiver::init(components);
 }
 
 void Receiver_AUTO_F::activate( uint8_t scancode, int8_t parent){

@@ -21,12 +21,12 @@ using namespace MK52_Interpreter;
 //
 // Inits text entry
 //
-unsigned long Receiver_Text::init( void *components[]) {
+void Receiver_Text::init( void *components[]) {
     #ifdef __DEBUG
     Serial.println("Init text entry");
     #endif
     _text = (char *)malloc(PROGRAM_LINE_LENGTH+1);
-    return Receiver::init(components);
+    Receiver::init(components);
 }
 
 void Receiver_Text::activate( uint8_t scancode, int8_t parent){

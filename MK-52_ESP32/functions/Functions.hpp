@@ -1,5 +1,19 @@
 #include "functions.h"
 
+class Func_Empty: public RPN_Function{
+    public:
+        inline bool checkName(char *name){ return name[0]==0;};
+        inline const char*Name(){ return PSTR("");};
+        inline void execute( void *components[], char *command){};
+};
+
+class Func_Number: public RPN_Function{
+    public:
+        inline bool checkName(char *name){ return UniversalValue::_looksLikeANumber(name);};
+        inline const char*Name(){ return PSTR("");};
+        void execute( void *components[], char *command);
+};
+
 class Func_Comment: public RPN_Function{
     public:
         inline bool checkID( uint16_t id){ return id == FUNC_COMMENT;};
@@ -11,7 +25,7 @@ class Func_Comment: public RPN_Function{
 class Func_Increment_PC: public RPN_Function{
     public:
         inline bool checkID( uint16_t id){ return id == FUNC_INCREMENT_PC;};
-        inline bool advanceRequired(){return false;};
+        inline void advancePC(void *components[]){};
         inline void execute( void *components[], char *command){
             _ProgMem(components)->incrementCounter();};
 };
@@ -19,7 +33,7 @@ class Func_Increment_PC: public RPN_Function{
 class Func_Decrement_PC: public RPN_Function{
     public:
         inline bool checkID( uint16_t id){ return id == FUNC_DECREMENT_PC;};
-        inline bool advanceRequired(){return false;};
+        inline void advancePC(void *components[]){};
         inline void execute( void *components[], char *command){
             _ProgMem(components)->decrementCounter();};
 };
@@ -27,21 +41,21 @@ class Func_Decrement_PC: public RPN_Function{
 class Func_Increment_MC: public RPN_Function{
     public:
         inline bool checkID( uint16_t id){ return id == FUNC_INCREMENT_MC;};
-        inline bool advanceRequired(){return false;};
+        inline void advancePC(void *components[]){};
         void execute( void *components[], char *command);
 };
 
 class Func_Decrement_MC: public RPN_Function{
     public:
         inline bool checkID( uint16_t id){ return id == FUNC_DECREMENT_MC;};
-        inline bool advanceRequired(){return false;};
+        inline void advancePC(void *components[]){};
         void execute( void *components[], char *command);
 };
 
 class Func_Reset_PC: public RPN_Function{
     public:
         inline bool checkID( uint16_t id){ return id == FUNC_RESET_PC;};
-        inline bool advanceRequired(){return false;};
+        inline void advancePC(void *components[]){};
         inline void execute( void *components[], char *command){
             _ProgMem(components)->resetCounter();};
 };
@@ -49,14 +63,14 @@ class Func_Reset_PC: public RPN_Function{
 class Func_Reset_MC: public RPN_Function{
     public:
         inline bool checkID( uint16_t id){ return id == FUNC_RESET_MC;};
-        inline bool advanceRequired(){return false;};
+        inline void advancePC(void *components[]){};
         void execute( void *components[], char *command);
 };
 
 class Func_Toggle_DMOD: public RPN_Function{
     public:
         inline bool checkID( uint16_t id){ return id == FUNC_TOGGLE_DMOD;};
-        inline bool advanceRequired(){return false;};
+        inline void advancePC(void *components[]){};
         inline void execute( void *components[], char *command){
             _Stack( components)->toggleAngleMode();};
 };
@@ -627,7 +641,7 @@ class Func_GOTO: public RPN_Function{
         inline bool checkID( uint16_t id){ return id == FUNC_GOTO;};
         inline bool checkName(char *name){ return UniversalValue::_startsWith_P( name, Name());};
         inline const char*Name(){ return PSTR("GOTO ");};
-        inline bool advanceRequired(){return false;};
+        inline void advancePC(void *components[]){};
         inline bool containsPC(){return true;};
         void execute( void *components[], char *command){
             _ProgMem( components)->setCounter(command);};
@@ -647,7 +661,7 @@ class Func_GOSUB: public RPN_Function{
         inline bool checkID( uint16_t id){ return id == FUNC_GOSUB;};
         inline bool checkName(char *name){ return UniversalValue::_startsWith_P( name, Name());};
         inline const char*Name(){ return PSTR("GOSUB ");};
-        inline bool advanceRequired(){return false;};
+        inline void advancePC(void *components[]){};
         inline bool containsPC(){return true;};
         void execute( void *components[], char *command);
 };
@@ -657,7 +671,7 @@ class Func_Return: public RPN_Function{
         inline bool checkID( uint16_t id){ return id == FUNC_RETURN;};
         inline bool checkName(char *name){ return UniversalValue::_identicalTo_P( name, Name());};
         inline const char*Name(){ return PSTR("RETURN");};
-        inline bool advanceRequired(){return false;};
+        inline void advancePC(void *components[]){};
         void execute( void *components[], char *command);
 };
 
@@ -666,7 +680,7 @@ class Func_Stop: public RPN_Function{
         inline bool checkID( uint16_t id){ return id == FUNC_STOP;};
         inline bool checkName(char *name){ return UniversalValue::_identicalTo_P( name, Name());};
         inline const char*Name(){ return PSTR("STOP");};
-        inline bool advanceRequired(){return false;};
+        inline void advancePC(void *components[]){};
         inline void execute( void *components[], char *command){
             RPN_Functions *fs = (RPN_Functions *)components[COMPONENT_FUNCTIONS];
             fs->_atStop = true;};
@@ -675,7 +689,7 @@ class Func_Stop: public RPN_Function{
 class Func_Toggle_EMOD: public RPN_Function{
     public:
         inline bool checkID( uint16_t id){ return id == FUNC_TOGGLE_EMOD;};
-        inline bool advanceRequired(){return false;};
+        inline void advancePC(void *components[]){};
         inline void execute( void *components[], char *command){
             _ProgMem(components)->toggleEditMode();};
 };
@@ -792,7 +806,7 @@ class Func_IfNotLT0: public RPN_Function{
         inline bool checkID( uint16_t id){ return id == FUNC_IFNOTLT0;};
         inline bool checkName(char *name){ return UniversalValue::_startsWith_P( name, Name());};
         inline const char*Name(){ return PSTR("IFNOT X<0 GOTO ");};
-        inline bool advanceRequired(){return false;};
+        inline void advancePC(void *components[]){};
         inline bool containsPC(){return true;};
         void execute( void *components[], char *command);
 };
@@ -802,7 +816,7 @@ class Func_IfNotEQ0: public RPN_Function{
         inline bool checkID( uint16_t id){ return id == FUNC_IFNOTEQ0;};
         inline bool checkName(char *name){ return UniversalValue::_startsWith_P( name, Name());};
         inline const char*Name(){ return PSTR("IFNOT X=0 GOTO ");};
-        inline bool advanceRequired(){return false;};
+        inline void advancePC(void *components[]){};
         inline bool containsPC(){return true;};
         void execute( void *components[], char *command);
 };
@@ -812,7 +826,7 @@ class Func_IfNotGE0: public RPN_Function{
         inline bool checkID( uint16_t id){ return id == FUNC_IFNOTGE0;};
         inline bool checkName(char *name){ return UniversalValue::_startsWith_P( name, Name());};
         inline const char*Name(){ return PSTR("IFNOT X>=0 GOTO ");};
-        inline bool advanceRequired(){return false;};
+        inline void advancePC(void *components[]){};
         inline bool containsPC(){return true;};
         void execute( void *components[], char *command);
 };
@@ -822,7 +836,7 @@ class Func_IfNotNE0: public RPN_Function{
         inline bool checkID( uint16_t id){ return id == FUNC_IFNOTNE0;};
         inline bool checkName(char *name){ return UniversalValue::_startsWith_P( name, Name());};
         inline const char*Name(){ return PSTR("IFNOT X!=0 GOTO ");};
-        inline bool advanceRequired(){return false;};
+        inline void advancePC(void *components[]){};
         inline bool containsPC(){return true;};
         void execute( void *components[], char *command);
 };
@@ -832,7 +846,7 @@ class Func_IfNotLTY: public RPN_Function{
         inline bool checkID( uint16_t id){ return id == FUNC_IFNOTLTY;};
         inline bool checkName(char *name){ return UniversalValue::_startsWith_P( name, Name());};
         inline const char*Name(){ return PSTR("IFNOT X<Y GOTO ");};
-        inline bool advanceRequired(){return false;};
+        inline void advancePC(void *components[]){};
         inline bool containsPC(){return true;};
         void execute( void *components[], char *command);
 };
@@ -842,7 +856,7 @@ class Func_IfNotEQY: public RPN_Function{
         inline bool checkID( uint16_t id){ return id == FUNC_IFNOTEQY;};
         inline bool checkName(char *name){ return UniversalValue::_startsWith_P( name, Name());};
         inline const char*Name(){ return PSTR("IFNOT X=Y GOTO ");};
-        inline bool advanceRequired(){return false;};
+        inline void advancePC(void *components[]){};
         inline bool containsPC(){return true;};
         void execute( void *components[], char *command);
 };
@@ -852,7 +866,7 @@ class Func_IfNotGEY: public RPN_Function{
         inline bool checkID( uint16_t id){ return id == FUNC_IFNOTGEY;};
         inline bool checkName(char *name){ return UniversalValue::_startsWith_P( name, Name());};
         inline const char*Name(){ return PSTR("IFNOT X>=Y GOTO ");};
-        inline bool advanceRequired(){return false;};
+        inline void advancePC(void *components[]){};
         inline bool containsPC(){return true;};
         void execute( void *components[], char *command);
 };
@@ -862,7 +876,7 @@ class Func_IfNotNEY: public RPN_Function{
         inline bool checkID( uint16_t id){ return id == FUNC_IFNOTNEY;};
         inline bool checkName(char *name){ return UniversalValue::_startsWith_P( name, Name());};
         inline const char*Name(){ return PSTR("IFNOT X!=Y GOTO ");};
-        inline bool advanceRequired(){return false;};
+        inline void advancePC(void *components[]){};
         void execute( void *components[], char *command);
 };
 
@@ -871,7 +885,7 @@ class Func_L0: public RPN_Function{
         inline bool checkID( uint16_t id){ return id == FUNC_L0;};
         inline bool checkName(char *name){ return UniversalValue::_startsWith_P( name, Name());};
         inline const char*Name(){ return PSTR("WHILE L0>0 GOTO ");};
-        inline bool advanceRequired(){return false;};
+        inline void advancePC(void *components[]){};
         inline bool containsPC(){return true;};
         inline void execute( void *components[], char *command){
             _executeLoop( components, command, RPN_REGISTER_L0);};
@@ -882,7 +896,7 @@ class Func_L1: public RPN_Function{
         inline bool checkID( uint16_t id){ return id == FUNC_L1;};
         inline bool checkName(char *name){ return UniversalValue::_startsWith_P( name, Name());};
         inline const char*Name(){ return PSTR("WHILE L1>0 GOTO ");};
-        inline bool advanceRequired(){return false;};
+        inline void advancePC(void *components[]){};
         inline bool containsPC(){return true;};
         inline void execute( void *components[], char *command){
             _executeLoop( components, command, RPN_REGISTER_L1);};
@@ -893,7 +907,7 @@ class Func_L2: public RPN_Function{
         inline bool checkID( uint16_t id){ return id == FUNC_L2;};
         inline bool checkName(char *name){ return UniversalValue::_startsWith_P( name, Name());};
         inline const char*Name(){ return PSTR("WHILE L2>0 GOTO ");};
-        inline bool advanceRequired(){return false;};
+        inline void advancePC(void *components[]){};
         inline bool containsPC(){return true;};
         inline void execute( void *components[], char *command){
             _executeLoop( components, command, RPN_REGISTER_L2);};
@@ -904,7 +918,7 @@ class Func_L3: public RPN_Function{
         inline bool checkID( uint16_t id){ return id == FUNC_L3;};
         inline bool checkName(char *name){ return UniversalValue::_startsWith_P( name, Name());};
         inline const char*Name(){ return PSTR("WHILE L3>0 GOTO ");};
-        inline bool advanceRequired(){return false;};
+        inline void advancePC(void *components[]){};
         inline bool containsPC(){return true;};
         inline void execute( void *components[], char *command){
             _executeLoop( components, command, RPN_REGISTER_L3);};

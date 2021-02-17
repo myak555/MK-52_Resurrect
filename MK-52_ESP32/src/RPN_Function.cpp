@@ -11,6 +11,14 @@
 #define __DEBUG
 using namespace MK52_Interpreter;
 
+void RPN_Function::advancePC(void *components[]){
+    Program_Memory *pm = _ProgMem( components);
+    pm->incrementCounter();
+    while( !pm->isAtEnd() && pm->getCurrentLine()[0] == 0){
+        pm->incrementCounter();
+    }
+}
+
 //
 // deal with a single NaN
 //

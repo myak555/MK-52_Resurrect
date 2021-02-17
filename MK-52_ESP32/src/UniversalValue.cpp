@@ -485,11 +485,16 @@ bool UniversalValue::_containsChar(char *text, char c){
 }
 
 bool UniversalValue::_looksLikeANumber(char *text){
+    if( text[0] == 0) return false; // empty string is not a number
     if( _identicalTo_P( text, _standard_Error)) return true;
     if( _identicalTo_P( text, _standard_MinusInfinity)) return true;
     if( _identicalTo_P( text, _standard_PlusInfinity)) return true;
-    while( *text){
-        if( !_inString_P(*text++, _standard_NumberComponents)) return false;
+    char *ptr = text;
+    while( *ptr){
+        if( !_inString_P(*ptr++, _standard_NumberComponents)) return false;
     }
+    Serial.print( "[");
+    Serial.print( text);
+    Serial.println( "] is a number");
     return true;
 }

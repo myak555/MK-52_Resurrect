@@ -17,11 +17,11 @@ using namespace MK52_Interpreter;
 //
 // Inits memory or program address entry
 //
-unsigned long Receiver_Address::init( void *components[]) {
+void Receiver_Address::init( void *components[]) {
     #ifdef __DEBUG
     Serial.println("Init address entry");
     #endif
-    return Receiver::init(components);
+    Receiver::init(components);
 }
 
 void Receiver_Address::activate( uint8_t scancode, int8_t parent){

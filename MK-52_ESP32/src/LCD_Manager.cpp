@@ -219,6 +219,8 @@ void LCD_Manager::_redrawTerminalLine( uint8_t row, char *line, char* text){
 void LCD_Manager::clearScreen( bool dim){
     if( dim) _dimLED( ledBrightness, 0, 5); // dim before cleaning
     _MyTFT.fillScreen( bgcolor);
+    // TO CHECK
+    memset( _buffer, 0, SCREEN_BUFFER_SIZE);
     if( dim) _dimLED( 0, ledBrightness, 5);
 }
 

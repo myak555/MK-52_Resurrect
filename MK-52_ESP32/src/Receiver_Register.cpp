@@ -17,11 +17,11 @@ using namespace MK52_Interpreter;
 //
 // Inits register name entry
 //
-unsigned long Receiver_Register::init( void *components[]) {
+void Receiver_Register::init( void *components[]) {
     #ifdef __DEBUG
     Serial.println("Init register");
     #endif
-    return Receiver::init(components);
+    Receiver::init(components);
 }
 
 void Receiver_Register::activate( uint8_t scancode, int8_t parent){

@@ -13,12 +13,12 @@
 
 using namespace MK52_Interpreter;
 
-unsigned long Receiver_FILE_K::init( void *components[]) {
+void Receiver_FILE_K::init( void *components[]) {
     #ifdef __DEBUG
     Serial.println( "Init FILE_K");
     #endif
     _tr = (Receiver_Text *)components[COMPONENT_RECEIVER_TEXT];
-    return Receiver::init(components);
+    Receiver::init(components);
 }
 
 void Receiver_FILE_K::activate( uint8_t scancode, int8_t parent){

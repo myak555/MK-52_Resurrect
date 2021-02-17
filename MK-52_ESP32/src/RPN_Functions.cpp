@@ -36,6 +36,8 @@ void RPN_Functions::init( void *components[]) {
     }
     _tmpuv = new UniversalValue( (uint8_t *)(_text + PROGRAM_LINE_LENGTH+1));
     
+    // first check for empty program line
+    _appendFunction( new Func_Empty());
     // #define FUNC_COMMENT            1
     _appendFunction( new Func_Comment());
     // #define FUNC_INCREMENT_PC       2
@@ -250,6 +252,8 @@ void RPN_Functions::init( void *components[]) {
     _appendFunction( new Func_LBZ());
     // #define FUNC_LBT                107
     _appendFunction( new Func_LBT());
+    // if the name is not found, it must be a number and should be placed to register X
+    _appendFunction( new Func_Number());
 
     #ifdef __DEBUG
     Serial.print( _nfunctions);
@@ -308,23 +312,20 @@ void RPN_Functions::execute( int16_t id, char *command){
     pf->execute( _components, command);
 }
 
-void RPN_Functions::execute( char *command, bool pushNeeded){
-    if( strlen(command)<=0) return;
+void RPN_Functions::execute( char *command){
+    #ifdef __DEBUG
+    Serial.print( "Execute: [");
+    Serial.print( command);
+    Serial.println( "]");
+    #endif
     for(int16_t i=0; i<_nfunctions; i++){
         RPN_Function *pf = (RPN_Function *)_functions[i];
         if( !pf->checkName( command)) continue;
         int operand = strlen_P( pf->Name());
         pf->execute( _components, command+operand);
-        if( pf->advanceRequired()) progMem->incrementCounter();
+        pf->advancePC( _components);
         return;
     }
-    // if the name is not found, it must be a number and should be placed to register X
-    if( pushNeeded){
-        rpnStack->storeBx();
-        rpnStack->push();
-    }
-    rpnStack->X->fromString( command);
-    progMem->incrementCounter(); // after number is entered, advance!
 }
 
 //
@@ -345,12 +346,8 @@ void RPN_Functions::executeStep(){
 //
 void RPN_Functions::executeRun(){
     char *programLine = progMem->getCurrentLine();
-    #ifdef __DEBUG
-    Serial.print( "Running: [");
-    Serial.print( programLine);
-    Serial.println( "]");
-    #endif
-    execute( programLine, true);
+    execute( programLine);
+    if( progMem->isAtEnd()) _atStop = true;
 }
 
 void RPN_Functions::_appendFunction( RPN_Function *f){

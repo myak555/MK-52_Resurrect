@@ -17,7 +17,7 @@ namespace MK52_Interpreter{
 
     class Receiver{
       public:
-        virtual unsigned long init( void *components[]);
+        virtual void init( void *components[]);
         virtual void activate( uint8_t scancode = 0, int8_t parent = NO_CHANGE);
         virtual int tick( uint8_t scancode = 0);
         inline bool isActive(){ return _mode != 0;};
@@ -33,7 +33,7 @@ namespace MK52_Interpreter{
 
     class Receiver_Number: public Receiver{
       public:
-        unsigned long init( void *components[]);
+        void init( void *components[]);
         void activate( uint8_t scancode = 0, int8_t parent = NO_CHANGE);
         int tick( uint8_t scancode = 0);
         inline char *toString(){ return _text;};
@@ -45,7 +45,7 @@ namespace MK52_Interpreter{
 
     class Receiver_Text: public Receiver{
       public:
-        unsigned long init( void *components[]);
+        void init( void *components[]);
         void activate( uint8_t scancode = 0, int8_t parent = NO_CHANGE);
         int tick( uint8_t scancode = 0);
         inline char *toString(){ return _text;};
@@ -60,7 +60,7 @@ namespace MK52_Interpreter{
 
     class Receiver_Address: public Receiver{
       public:
-        unsigned long init( void *components[]);
+        void init( void *components[]);
         void activate( uint8_t scancode = 0, int8_t parent = NO_CHANGE);
         int tick( uint8_t scancode = 0);
         inline char *toString(){ return _text;};
@@ -72,7 +72,7 @@ namespace MK52_Interpreter{
 
     class Receiver_Register: public Receiver{
       public:
-        unsigned long init( void *components[]);
+        void init( void *components[]);
         void activate( uint8_t scancode = 0, int8_t parent = NO_CHANGE);
         int tick( uint8_t scancode = 0);
         inline char *toString(){ return _text;};
@@ -82,7 +82,7 @@ namespace MK52_Interpreter{
 
     class Receiver_AUTO_N: public Receiver{
       public:
-        unsigned long init( void *components[]);
+        void init( void *components[]);
         void activate( uint8_t scancode = 0, int8_t parent = NO_CHANGE);
         int tick( uint8_t scancode = 0);
       private:
@@ -94,14 +94,14 @@ namespace MK52_Interpreter{
 
     class Receiver_AUTO_F: public Receiver{
       public:
-        unsigned long init( void *components[]);
+        void init( void *components[]);
         void activate( uint8_t scancode = 0, int8_t parent = NO_CHANGE);
         int tick( uint8_t scancode = 0);
     };
 
     class Receiver_AUTO_K: public Receiver{
       public:
-        unsigned long init( void *components[]);
+        void init( void *components[]);
         void activate( uint8_t scancode = 0, int8_t parent = NO_CHANGE);
         int tick( uint8_t scancode = 0);
       private:
@@ -111,7 +111,7 @@ namespace MK52_Interpreter{
 
     class Receiver_AUTO_A: public Receiver{
       public:
-        unsigned long init( void *components[]);
+        void init( void *components[]);
         void activate( uint8_t scancode = 0, int8_t parent = NO_CHANGE);
         int tick( uint8_t scancode = 0);
       private:
@@ -121,14 +121,14 @@ namespace MK52_Interpreter{
 
     class Receiver_AUTO_R: public Receiver{
       public:
-        unsigned long init( void *components[]);
+        void init( void *components[]);
         void activate( uint8_t scancode = 0, int8_t parent = NO_CHANGE);
         int tick( uint8_t scancode = 0);
     };
 
     class Receiver_PROG_N: public Receiver{
       public:
-        unsigned long init( void *components[]);
+        void init( void *components[]);
         void activate( uint8_t scancode = 0, int8_t parent = NO_CHANGE);
         int tick( uint8_t scancode = 0);
       private:
@@ -142,7 +142,7 @@ namespace MK52_Interpreter{
 
     class Receiver_PROG_F: public Receiver{
       public:
-        unsigned long init( void *components[]);
+        void init( void *components[]);
         void activate( uint8_t scancode = 0, int8_t parent = NO_CHANGE);
         int tick( uint8_t scancode = 0);
       private:
@@ -153,7 +153,7 @@ namespace MK52_Interpreter{
 
     class Receiver_PROG_K: public Receiver{
       public:
-        unsigned long init( void *components[]);
+        void init( void *components[]);
         void activate( uint8_t scancode = 0, int8_t parent = NO_CHANGE);
         int tick( uint8_t scancode = 0);
       private:
@@ -163,7 +163,7 @@ namespace MK52_Interpreter{
 
     class Receiver_PROG_A: public Receiver{
       public:
-        unsigned long init( void *components[]);
+        void init( void *components[]);
         void activate( uint8_t scancode = 0, int8_t parent = NO_CHANGE);
         int tick( uint8_t scancode = 0);
       private:
@@ -172,7 +172,7 @@ namespace MK52_Interpreter{
 
     class Receiver_DATA_N: public Receiver{
       public:
-        unsigned long init( void *components[]);
+        void init( void *components[]);
         void activate( uint8_t scancode = 0, int8_t parent = NO_CHANGE);
         int tick( uint8_t scancode = 0);
       private:
@@ -184,28 +184,28 @@ namespace MK52_Interpreter{
 
     class Receiver_DATA_F: public Receiver{
       public:
-        unsigned long init( void *components[]);
+        void init( void *components[]);
         void activate( uint8_t scancode = 0, int8_t parent = NO_CHANGE);
         int tick( uint8_t scancode = 0);
     };
 
     class Receiver_DATA_K: public Receiver{
       public:
-        unsigned long init( void *components[]);
+        void init( void *components[]);
         void activate( uint8_t scancode = 0, int8_t parent = NO_CHANGE);
         int tick( uint8_t scancode = 0);
     };
 
     class Receiver_DATA_A: public Receiver{
       public:
-        unsigned long init( void *components[]);
+        void init( void *components[]);
         void activate( uint8_t scancode = 0, int8_t parent = NO_CHANGE);
         int tick( uint8_t scancode = 0);
     };
 
     class Receiver_FILE_N: public Receiver{
       public:
-        unsigned long init( void *components[]);
+        void init( void *components[]);
         void activate( uint8_t scancode = 0, int8_t parent = NO_CHANGE);
         int tick( uint8_t scancode = 0);
       private:
@@ -215,7 +215,7 @@ namespace MK52_Interpreter{
 
     class Receiver_FILE_F: public Receiver{
       public:
-        unsigned long init( void *components[]);
+        void init( void *components[]);
         void activate( uint8_t scancode = 0, int8_t parent = NO_CHANGE);
         int tick( uint8_t scancode = 0);
       private:
@@ -225,7 +225,7 @@ namespace MK52_Interpreter{
 
     class Receiver_FILE_K: public Receiver{
       public:
-        unsigned long init( void *components[]);
+        void init( void *components[]);
         void activate( uint8_t scancode = 0, int8_t parent = NO_CHANGE);
         int tick( uint8_t scancode = 0);
       private:
@@ -235,7 +235,7 @@ namespace MK52_Interpreter{
 
     class Receiver_FILE_A: public Receiver{
       public:
-        unsigned long init( void *components[]);
+        void init( void *components[]);
         void activate( uint8_t scancode = 0, int8_t parent = NO_CHANGE);
         int tick( uint8_t scancode = 0);
       private:

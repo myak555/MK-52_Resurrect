@@ -18,12 +18,12 @@ using namespace MK52_Interpreter;
 //
 // Inits number entry
 //
-unsigned long Receiver_Number::init( void *components[]) {
+void Receiver_Number::init( void *components[]) {
     #ifdef __DEBUG
     Serial.println("Init number entry");
     #endif
     _text = (char *)malloc(SCREEN_COLS+1);
-    return Receiver::init(components);
+    Receiver::init(components);
 }
 
 void Receiver_Number::activate( uint8_t scancode, int8_t parent){

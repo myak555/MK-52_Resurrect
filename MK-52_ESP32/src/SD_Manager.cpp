@@ -355,8 +355,10 @@ void SD_Manager::readFolderItems(char *location){
     current_Dir.close();
     if( _nItems > 0) listingPosition = 0;
     if( location == NULL) return;
+    #ifdef __DEBUG
     Serial.print("Looking for location: ");
     Serial.println(location);
+    #endif
     for( int i=0; i<_nDirs; i++){
         if( *(getItemPtr(i)) != pos2) continue;
         listingPosition = i;
