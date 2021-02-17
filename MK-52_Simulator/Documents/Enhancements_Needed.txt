@@ -1,0 +1,7 @@
+[Done] Increase the number of digits for integer entry
+[Done] Rework counter increment
+[Done] Rework RPN_fuctions for empty line and number as classes
+[Pending] Refactor receiver and display calls
+[Pending] Create a backup file on [x]
+[Pending] Rename a file on [<->]
+[Pending] Hexadecimal integer entry

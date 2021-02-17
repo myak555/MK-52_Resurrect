@@ -1,0 +1,131 @@
+#
+# MK-52 implemented functions 16-Feb-2021 15:35:29
+#
+000	slot empty
+001	#	Ignores the program line
+002	No name	Increments program counter (UI-only)
+003	No name	Decrements program counter (UI-only)
+004	No name	Increment MC counter (UI-only)
+005	No name	Decrement MC counter (UI-only)
+006	No name	Resets program counter and stack (UI-only)
+007	No name	Resets MC counter to 0000 (UI-only)
+008	No name	Toggles DEG-RAD-GRD mode
+009	DEG	Set trig mode to Degrees
+010	RAD	Set trig mode to Radians
+011	GRD	Set trig mode to Grads
+012	/-/	Sign change
+013	Enter	Enters value into the stack
+014	X<->Y	Swaps X and Y
+015	+	Add X and Y
+016	-	Subtract X from Y
+017	*	Multiply X and Y
+018	/	Divide Y by X
+019	Cx	Erases X register
+020	SIN	Computes sine
+021	ArcSIN	Computes arc-sine
+022	COS	Computes cosine
+023	ArcCOS	Computes arc-cosine
+024	TG	Computes tangent
+025	ArcTG	Computes arc-tangent
+026	EXP	Computes exponent
+027	10^x	Computes 10 power X
+028	LG	Computes logarithm base 10
+029	LN	Computes natural logarithm of X
+030	X^Y	Computes X power Y (leaves Y in stack)
+031	LOG	Computes log Y base X
+032	Rotate	Rotates stack (X to T)
+033	X^2	Computes X squared
+034	1/X	Computes inverse of X
+035	SQRT	Computes square root of X
+036	pi	Puts 3.14159... in stack
+037	e	Puts E in stack
+038	Bx	Recovers the previous value
+039	RAND	Computes a pseudo-random value from 0.0 to 1.0
+040	SEED	Sets seed value for the pseudo-random generator
+041	[X]	Computes the whole part
+042	{X}	Computes fractional part of X
+043	MAX	Swaps X and Y registers if Y>X
+044	|X|	Comutes absolute value of X-register
+045	SIGN	Computes sign (-1 for negative, 1 for positive)
+046	AND	Computes logical AND between X and Y (as integers)
+047	OR	Computes logical OR between X and Y (as integers)
+048	XOR	Computes logical XOR between X and Y (as integers)
+049	NOT	Computes logical inverse of X (as an integer)
+050	->DM	Converts DD.dddd into DD.MMmmm
+051	->DMS	Converts DD.dddd into DD.MMSS
+052	<-DM	Converts DD.MMmmm into DD.dddd
+053	<-DMS	Converts DD.MMSSss into DD.dddd
+054	DEG->RAD	Converts degrees into radian
+055	RAD->DEG	Converts radian into degrees
+056	->in	Converts mm into inches
+057	->MM	Converts inches into mm
+058	M->X 	Value from memory register into X
+059	X->M 	Value from X-register into memory
+060	K M->X 	Indirect value from memory via a register
+061	K X->M 	Puts value into memory by an address in register
+062	A M->X 	Puts value from extended memory into register X
+063	A X->M 	Put value from register X into extended memory
+064	GOTO 	Jumps to program line unconditonally
+065	GOSUB 	Calls a subroutine at given address
+066	RETURN	Returns from a subroutine
+067	MEMSET 	Sets current memory location from text
+068	MEMSWP 	Swaps data between X-register and memory
+069	ExToX 	Puts data from extended memory to X-register
+070	XToEx 	Puts data from X-register to the extended memory
+071	ExToR 	Puts data from the extended memory into a register
+072	RToEx 	Puts data from a register into the extended memory
+073	MexCx	Clears current memory location
+074	No name	Toggles program editing mode
+075	STOP	Stops a program
+076	MKDIR 	Creates a folder
+077	No name	Moves one directory up (UI-only)
+078	No name	Move pointer to the next file (UI-only)
+079	No name	Moves pointer to the previous file (UI-only)
+080	No name	Deletes a file or a folder
+081	No name	Steps into a folder
+082	No name	Saves a file (UI-only)
+083	SAVE AS 	Unknown empty function
+084	No name	Unknown empty function
+085	LOAD 	Unknown empty function
+086	CHAIN 	Unknown empty function
+087	No name	Unknown empty function
+088	SAVE DATA AS 	Unknown empty function
+089	No name	Unknown empty function
+090	LOADDATA 	Unknown empty function
+091	GOMEM 	Sets memory counter to specified address
+092	IFNOT X<0 GOTO 	Jumps to program line if X>=0
+093	IFNOT X=0 GOTO 	Jumps to program line if X!=0
+094	IFNOT X>=0 GOTO 	Jumps to program line if X<0
+095	IFNOT X!=0 GOTO 	Jumps to program line if X==0
+096	IFNOT X<Y GOTO 	Jumps to program line if X>=Y
+097	IFNOT X=Y GOTO 	Jumps to program line if X==Y
+098	IFNOT X>=Y GOTO 	Jumps to program line if X<Y
+099	IFNOT X!=Y GOTO 	Jumps to program line if X==Y
+100	WHILE L0>0 GOTO 	Register L0 loop
+101	WHILE L1>0 GOTO 	Register L1 loop
+102	WHILE L2>0 GOTO 	Register L2 loop
+103	WHILE L3>0 GOTO 	Register L3 loop
+104	LBX> 	Puts value into X Label
+105	LBY> 	Puts value into Y Label
+106	LBZ> 	Puts value into Z Label
+107	LBT> 	Puts value into T Label
+108	slot empty
+109	slot empty
+110	slot empty
+111	slot empty
+112	slot empty
+113	slot empty
+114	slot empty
+115	slot empty
+116	slot empty
+117	slot empty
+118	slot empty
+119	slot empty
+120	slot empty
+121	slot empty
+122	slot empty
+123	slot empty
+124	slot empty
+125	slot empty
+126	slot empty
+127	slot empty
