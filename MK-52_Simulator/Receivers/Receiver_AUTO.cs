@@ -48,7 +48,7 @@ namespace MK52Simulator
             lm.outputCalcLabel(2, st.Z_Label);
             lm.outputCalcRegister(3, st.T.toString());
             lm.outputCalcLabel(3, st.T_Label);
-            lm.Refresh();
+            lm.forcePaint();
         }
 
         public override byte tick(byte scancode)
@@ -66,88 +66,8 @@ namespace MK52Simulator
             lm.updateCalcLabel(2, st.Z_Label);
             lm.updateCalcRegister(3, st.T.toString());
             lm.updateCalcLabel(3, st.T_Label);
-            lm.Refresh();
+            lm.forcePaint();
             return 0;
         }
-
-        //public override string tick(MK52_Button button)
-        //{
-        //    //if (_parent._m_Program_Memory.Counter.isActive)
-        //    //{
-        //    //    _parent._m_Program_Memory.Counter.onButton(button, true);
-        //    //    return "Nothing";
-        //    //}
-        //    //if (_parent.Registers.isActive)
-        //    //{
-        //    //    _parent.Registers.onButton(button);
-        //    //    return "Nothing";
-        //    //}
-        //    switch (button.Moniker)
-        //    {
-        //        // Column 0
-        //        case "Func F":
-        //            return "AUTO_F";
-        //        case "Func K":
-        //            return "AUTO_K";
-        //        case "Func A":
-        //            return "AUTO_A";
-        //        case "Mode":
-        //            _parent._m_RPN_Stack.toggleAngleMode();
-        //            return "Nothing";
-
-        //        // Column 1
-        //        case "->":
-        //            //_parent._m_Program_Memory.Counter.Increment();
-        //            return "Nothing";
-        //        case "<-":
-        //            //_parent._m_Program_Memory.Counter.Decrement();
-        //            return "Nothing";
-        //        case "B/O":
-        //            //_parent._m_Program_Memory.Counter.Set(0);
-        //            //_parent.CallStack.Clear();
-        //            return "Nothing";
-        //        case "S/P":
-        //            //if (_parent._m_Program_Memory.isAtStop)
-        //            //    _parent._m_Program_Memory.Counter.Increment();
-        //            _parent.setReceiver("AUTO_R");
-        //            return "Nothing";
-
-        //        // Column 2
-        //        case "M->X":
-        //            //_parent.Registers.ActivateEntry( Register_Memory.RegisterToStack);
-        //            return "Nothing";
-        //        case "X->M":
-        //            //_parent.Registers.ActivateEntry(Register_Memory.StackToRegister);
-        //            return "Nothing";
-        //        case "GOTO":
-        //            //_parent._m_Program_Memory.Counter.ActivateEntry();
-        //            return "Nothing";
-        //        case "GOSUB":
-        //            //if (_parent._m_Program_Memory.isAtStop && _parent._m_RPN_Stack.X_Label.StartsWith("STOP"))
-        //            //{
-        //            //    //_parent.CalcStack.X_Label = "X:";
-        //            //    _parent._m_Program_Memory.Counter.Increment();
-        //            //    return "Nothing";
-        //            //}
-        //            //_parent._m_Program_Memory.ExecuteCurrentLine();
-        //            //if (_parent.Program.isAtStop)
-        //                //_parent.CalcStack.X_Label = "STOP reached";
-        //            return "Nothing";
-        //        default:
-        //            //_parent.CalcStack.onButton(button);
-        //            return "Nothing";
-        //    }                
-        //}
-
-        //public override string DisplayName
-        //{
-        //    get
-        //    {
-        //        //if (_parent.CalcStack.isActive) return "NUM";
-        //        //if (_parent.Program.Counter.isActive) return "PC?";
-        //        //if (_parent.Registers.isActive) return "RG?";
-        //        return _displayName;
-        //    }
-        //}
     }
 }

@@ -387,7 +387,7 @@ namespace MK52Simulator
             //saveState();
             //setDisplay("OFF");
             _m_Hardware_LCD.clearScreen();
-            _m_Hardware_LCD.Refresh();
+            _m_Hardware_LCD.forcePaint();
         }
 
         #region Implemented Functions

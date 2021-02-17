@@ -29,7 +29,7 @@ namespace MK52Simulator
             base.activate(prevReceiver);
             LCD_Manager lm = _parent.getLCD();
             lm.updateStatusFMODE(" F ");
-            lm.Refresh();
+            lm.forcePaint();
         }
 
         public override byte tick(byte scancode)

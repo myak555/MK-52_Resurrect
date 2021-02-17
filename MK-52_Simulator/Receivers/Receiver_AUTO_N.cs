@@ -54,15 +54,12 @@ namespace MK52Simulator
                 // Column 1
                 case 5:
                     _rpnf.execute(RPN_Functions.FUNC_INCREMENT_PC);
-                    //_lcd->updateStatusPC(_rpnf->progMem->getCounter());
                     break;
                 case 6:
                     _rpnf.execute(RPN_Functions.FUNC_DECREMENT_PC);
-                    //_lcd->updateStatusPC(_rpnf->progMem->getCounter());
                     break;
                 case 7:
                     _rpnf.execute(RPN_Functions.FUNC_RESET_PC);
-                    //_lcd->updateStatusPC(_rpnf->progMem->getCounter());
                     break;
                 case 8:
                     _parent.setReceiver("AUTO_R");
@@ -82,127 +79,50 @@ namespace MK52Simulator
                 //    _ar->activate(0, 0);
                 //    _lcd->updateStatusPC( _ar->toString());
                 //    break;
-                //case 12:
-                //    _rpnf->executeStep();
-                //    _lcd->updateStatusPC( _rpnf->progMem->getCounter());
-                //    break;
+                case 12:
+                    _rpnf.executeStep();
+                    //_lcd->updateStatusPC( _rpnf->progMem->getCounter());
+                    break;
 
-                //// Column 5
-                //case 24:
-                //    _rpnf->execute( FUNC_NEGATE);
-                //    break;
+                // Column 5
+                case 24:
+                    _rpnf.execute(RPN_Functions.FUNC_NEGATE);
+                    break;
 
-                //// Column 6
-                //case 25:
-                //    _rpnf->execute( FUNC_MINUS);
-                //    break;
-                //case 26:
-                //    _rpnf->execute( FUNC_PLUS);
-                //    break;
-                //case 27:
-                //    _rpnf->execute( FUNC_SWAP);
-                //    break;
+                // Column 6
+                case 25:
+                    _rpnf.execute(RPN_Functions.FUNC_MINUS);
+                    break;
+                case 26:
+                    _rpnf.execute(RPN_Functions.FUNC_PLUS);
+                    break;
+                case 27:
+                    _rpnf.execute(RPN_Functions.FUNC_SWAP);
+                    break;
 
-                //// Column 7
-                //case 29:
-                //    _rpnf->execute( FUNC_DIVIDE);
-                //    break;
-                //case 30:
-                //    _rpnf->execute( FUNC_MULTIPLY);
-                //    break;
-                //case 31:
-                //    _rpnf->execute( FUNC_ENTER);
-                //    break;
-                //case 32:
-                //    if(_rpnf->rpnStack->customStackLabels()) _rpnf->rpnStack->resetStackLabels();              
-                //    else _rpnf->execute( FUNC_CLEAR_X);
-                //    break;
+                // Column 7
+                case 29:
+                    _rpnf.execute(RPN_Functions.FUNC_DIVIDE);
+                    break;
+                case 30:
+                    _rpnf.execute(RPN_Functions.FUNC_MULTIPLY);
+                    break;
+                case 31:
+                    _rpnf.execute(RPN_Functions.FUNC_ENTER);
+                    break;
+                case 32:
+                    if (_parent._m_RPN_Stack.customStackLabels())
+                        _parent._m_RPN_Stack.resetStackLabels();
+                    else _rpnf.execute(RPN_Functions.FUNC_CLEAR_X);
+                    break;
 
                 default: // all other buttons activate number entry
+                    _rpnf.execute(RPN_Functions.FUNC_ENTER);
+                    base.tick(0); // redraw stack movement
                     _parent.setReceiver("NUMBER");
                     return scancode;
             }
             return base.tick(0);
         }
-
-        //public override string tick(MK52_Button button)
-        //{
-        //    //if (_parent._m_Program_Memory.Counter.isActive)
-        //    //{
-        //    //    _parent._m_Program_Memory.Counter.onButton(button, true);
-        //    //    return "Nothing";
-        //    //}
-        //    //if (_parent.Registers.isActive)
-        //    //{
-        //    //    _parent.Registers.onButton(button);
-        //    //    return "Nothing";
-        //    //}
-        //    switch (button.Moniker)
-        //    {
-        //        // Column 0
-        //        case "Func F":
-        //            return "AUTO_F";
-        //        case "Func K":
-        //            return "AUTO_K";
-        //        case "Func A":
-        //            return "AUTO_A";
-        //        case "Mode":
-        //            _parent._m_RPN_Stack.toggleAngleMode();
-        //            return "Nothing";
-
-        //        // Column 1
-        //        case "->":
-        //            //_parent._m_Program_Memory.Counter.Increment();
-        //            return "Nothing";
-        //        case "<-":
-        //            //_parent._m_Program_Memory.Counter.Decrement();
-        //            return "Nothing";
-        //        case "B/O":
-        //            //_parent._m_Program_Memory.Counter.Set(0);
-        //            //_parent.CallStack.Clear();
-        //            return "Nothing";
-        //        case "S/P":
-        //            //if (_parent._m_Program_Memory.isAtStop)
-        //            //    _parent._m_Program_Memory.Counter.Increment();
-        //            _parent.setReceiver("AUTO_R");
-        //            return "Nothing";
-
-        //        // Column 2
-        //        case "M->X":
-        //            //_parent.Registers.ActivateEntry( Register_Memory.RegisterToStack);
-        //            return "Nothing";
-        //        case "X->M":
-        //            //_parent.Registers.ActivateEntry(Register_Memory.StackToRegister);
-        //            return "Nothing";
-        //        case "GOTO":
-        //            //_parent._m_Program_Memory.Counter.ActivateEntry();
-        //            return "Nothing";
-        //        case "GOSUB":
-        //            //if (_parent._m_Program_Memory.isAtStop && _parent._m_RPN_Stack.X_Label.StartsWith("STOP"))
-        //            //{
-        //            //    //_parent.CalcStack.X_Label = "X:";
-        //            //    _parent._m_Program_Memory.Counter.Increment();
-        //            //    return "Nothing";
-        //            //}
-        //            //_parent._m_Program_Memory.ExecuteCurrentLine();
-        //            //if (_parent.Program.isAtStop)
-        //                //_parent.CalcStack.X_Label = "STOP reached";
-        //            return "Nothing";
-        //        default:
-        //            //_parent.CalcStack.onButton(button);
-        //            return "Nothing";
-        //    }                
-        //}
-
-        //public override string DisplayName
-        //{
-        //    get
-        //    {
-        //        //if (_parent.CalcStack.isActive) return "NUM";
-        //        //if (_parent.Program.Counter.isActive) return "PC?";
-        //        //if (_parent.Registers.isActive) return "RG?";
-        //        return _displayName;
-        //    }
-        //}
     }
 }

@@ -99,13 +99,14 @@ namespace MK52Simulator
             T.fromInt(0L);
         }
 
-        void resetStackLabels()
+        public void resetStackLabels()
         {
             for( int i=0; i<4; i++)
                 _stackLabels[i] = _standardLabels[i];
         }
 
-        bool customStackLabels(){
+        public bool customStackLabels()
+        {
             for( int i=0; i<4; i++)
             {
                 if( _stackLabels[i] != _standardLabels[i]) return true;

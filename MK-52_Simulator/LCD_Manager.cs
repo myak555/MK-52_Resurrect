@@ -12,6 +12,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Data;
 using System.Text;
+using System.Reflection;
 using System.Windows.Forms;
 
 namespace MK52Simulator
@@ -616,6 +617,12 @@ namespace MK52Simulator
         public LCD_Manager()
         {
             InitializeComponent();
+
+            // forcing panel1 to double-buffered output (apparently OK without)
+            //typeof(Panel).InvokeMember("DoubleBuffered", BindingFlags.SetProperty
+            //| BindingFlags.Instance | BindingFlags.NonPublic, null,
+            //panel1, new object[] { true });
+
             m_CurrentGraphics = Graphics.FromImage(m_CurrentBitmap);
             clearScreen();
         }
@@ -874,11 +881,21 @@ namespace MK52Simulator
         }
         #endregion
 
+        private bool _isPainting = true;
+
         private void panel1_Paint(object sender, PaintEventArgs e)
         {
+            if (_isPainting) return;
+            forcePaint();
+        }
+        
+        public void forcePaint()
+        {
+            _isPainting = true;
             Graphics g = panel1.CreateGraphics();
             g.DrawImage(m_CurrentBitmap, 0, 0);
             g.Dispose();
-        }        
+            _isPainting = false;
+        }            
     }
 }
