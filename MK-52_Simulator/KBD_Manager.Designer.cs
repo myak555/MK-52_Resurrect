@@ -31,13 +31,13 @@ namespace MK52Simulator
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(KBD_Manager));
             this.SuspendLayout();
             // 
-            // KeyboardControl
+            // KBD_Manager
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.Name = "KeyboardControl";
+            this.Name = "KBD_Manager";
             this.Size = new System.Drawing.Size(560, 275);
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.KeyboardControl_MouseDown);
             this.ResumeLayout(false);

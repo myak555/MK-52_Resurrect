@@ -1,3 +1,11 @@
+//////////////////////////////////////////////////////////
+//
+//  MK-52 RESURRECT
+//  Copyright (c) 2020 Mike Yakimov.  All rights reserved.
+//  See main file for the license
+//
+//////////////////////////////////////////////////////////
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -588,6 +596,7 @@ namespace MK52Simulator
         public Color bgcolor = Color.Black;
         public const int SCREEN_ROWS = 12;
         public const int SCREEN_COLS = 30;
+        public const int CALC_COLS = 20;
 
         private Bitmap m_CurrentBitmap = new Bitmap(320, 240);
         private Graphics m_CurrentGraphics = null;
@@ -687,8 +696,6 @@ namespace MK52Simulator
         #endregion
 
         #region RPN Interface Redraw
-        //void outputCalcRegister( uint8_t row, char *text);
-        //void updateCalcRegister( uint8_t row, char *text);
 
         public void outputCalcRegister( uint row, string text)
         {
@@ -748,6 +755,11 @@ namespace MK52Simulator
         public void clearScreen()
         {
             m_CurrentGraphics.Clear(bgcolor);
+            for (int i = 0; i < _lines.Length; i++) _lines[i] = "";
+            _prevPC = "NANA"; // in C++ this is via malloc'ed memory! 
+            _prevMC = "NANA";
+            _prevDMODE = "NAN";
+            _prevFMODE = "NAN";
         }
 
         public void showSplash()
@@ -857,7 +869,7 @@ namespace MK52Simulator
             int x = 1;
             int y = (int)(20 * row + 20);
             drawBitmap(0, y, _m_SevenSegment_Font, 1, 20, bgcolor, bgcolor);
-            outputCharString(x, y, line.PadLeft(SCREEN_COLS), fgcolor, bgcolor);
+            outputCharString(x, y, line.PadRight(SCREEN_COLS), fgcolor, bgcolor);
             return line;
         }
         #endregion

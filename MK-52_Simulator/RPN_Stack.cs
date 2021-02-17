@@ -1,9 +1,15 @@
+//////////////////////////////////////////////////////////
+//
+//  MK-52 RESURRECT
+//  Copyright (c) 2020 Mike Yakimov.  All rights reserved.
+//  See main file for the license
+//
+//////////////////////////////////////////////////////////
+
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
-using MK52Simulator.Functions;
-using MK52Simulator.Receivers;
 
 namespace MK52Simulator
 {
@@ -12,433 +18,237 @@ namespace MK52Simulator
     //
     public class RPN_Stack
     {
-        public const int StackSize = 4;
+        private const string _RPN_Stack_TrigAccuracy = "Warn: Trig Accuracy";
+        private const string _RPN_Stack_ComplexRoot = "Warn: Complex";
+        public const int RPN_STACK_SIZE = 4;
+        public const int DMODE_DEGREES = 0;
+        public const int DMODE_RADIANS = 1;
+        public const int DMODE_GRADS = 2;
 
-        private MK52_Host _parent = null;
+        private static double[] _DMODE_ConversionsToRadian = {1.7453292519943295e-2, 1.0, 1.5707963267948967e-2};
+        private static double[] _DMODE_ConversionsFromRadian = {57.29577951308232, 1.0, 63.66197723675813};
+
         private string[] _standardLabels = { "X:", "Y:", "Z:", "T:" };
+        private string[] _dmodeLabels = { "DEG", "RAD", "GRD" };
+        private int _dMode = DMODE_DEGREES;
+        private string[] _stackLabels = new string[RPN_STACK_SIZE];
+        private List<UniversalValue> _stackValues = new List<UniversalValue>();
 
-        // stack data
-        public List<RPN_Value> StackValues = new List<RPN_Value>();
-        public RPN_Value PreviousValue = new RPN_Value();
-        public string X_Label = "";
-        public string Y_Label = "";
-        public string Z_Label = "";
-        public string T_Label = "";
-
-        private InputReceiver_Value _numberEntry = null;
-
-        public RPN_Stack(MK52_Host parent)
+        public void init( MK52_Host parent)
         {
-            _parent = parent;
-            _numberEntry = new InputReceiver_Value(parent);
-            for (int i = 0; i < StackSize; i++)
-                StackValues.Add(new RPN_Value());
-            ClearLabels();
+            for (int i = 0; i <= RPN_STACK_SIZE; i++)
+                _stackValues.Add(new UniversalValue());
+            clearStack();
+            resetStackLabels();
+            setDMode( DMODE_DEGREES);
         }
 
-        public bool isActive
+        #region Fake Variables
+        public UniversalValue Bx
         {
-            get
-            {
-                return _numberEntry.isActive;
-            }
+            get{ return _stackValues[0];}
         }
 
-        public string activeEntry
+        public UniversalValue X
         {
-            get
-            {
-                return _numberEntry.ToString();
-            }
+            get{ return _stackValues[1];}
         }
 
-        public void ClearStack()
+        public UniversalValue Y
         {
-            foreach (RPN_Value v in StackValues) v.Clear();
+            get{ return _stackValues[2];}
         }
 
-        public RPN_Value X
+        public UniversalValue Z
         {
-            get
-            {
-                CompleteEntry();
-                return StackValues[0];
-            }
-            set
-            {
-                StackValues[0].FromRPNValue(value);
-            }
+            get{ return _stackValues[3];}
         }
 
-        public RPN_Value Y
+        public UniversalValue T
         {
-            get
-            {
-                return StackValues[1];
-            }
-            set
-            {
-                StackValues[1].FromRPNValue(value);
-            }
+            get{ return _stackValues[4];}
         }
 
-        public RPN_Value Z
+        public string X_Label
         {
-            get
-            {
-                return StackValues[2];
-            }
-            set
-            {
-                StackValues[2].FromRPNValue(value);
-            }
+            get{ return _stackLabels[0];}
         }
 
-        public RPN_Value T
+        public string Y_Label
         {
-            get
-            {
-                return StackValues[3];
-            }
-            set
-            {
-                StackValues[3].FromRPNValue(value);
-            }
+            get{ return _stackLabels[1];}
         }
 
-        public void CompleteEntry()
+        public string Z_Label
         {
-            if (_numberEntry.isActive)
-                _numberEntry.ToValue(StackValues[0]);
+            get{ return _stackLabels[2];}
         }
 
-        public void StorePreviousValue()
+        public string T_Label
         {
-            PreviousValue.FromRPNValue(StackValues[0]);
-        }
-
-        public void RecoverPreviousValue()
-        {
-            RPN_Value tmp = new RPN_Value(X);
-            StorePreviousValue();
-            Push(1);
-            X.FromRPNValue(tmp);
-        }
-
-        public void Pop()
-        {
-            Pop(1);
-        }
-        
-        public void Pop(int start)
-        {
-            for (int i = start; i < StackSize; i++)
-                StackValues[i - 1].FromRPNValue(StackValues[i]);
-        }
-
-        public void Push()
-        {
-            Push(1);
-        }
-
-        public void Push( double v)
-        {
-            CompleteEntry();
-            StorePreviousValue();
-            Push(1);
-            X.asReal = v;
-        }
-
-        public void Push(int start)
-        {
-            for (int i = StackSize - 1; i >= start; i--)
-                StackValues[i].FromRPNValue(StackValues[i - 1]);
-        }
-
-        public void Replace(double v)
-        {
-            StorePreviousValue();
-            X.asReal = v;
-        }
-
-        public void Rotate()
-        {
-            CompleteEntry();
-            RPN_Value tmp = new RPN_Value(X);
-            StorePreviousValue();
-            Pop(1);
-            StackValues[StackValues.Count-1].FromRPNValue(tmp);
-        }
-
-        public void Swap()
-        {
-            CompleteEntry();
-            RPN_Value tmp = new RPN_Value(X);
-            StorePreviousValue();
-            X.FromRPNValue(Y);
-            Y.FromRPNValue(tmp);
-        }
-
-        public void Enter()
-        {
-            StorePreviousValue();
-            if (!_numberEntry.isActive)
-            {
-                Push(1);
-                return;
-            }
-            _numberEntry.ToValue(StackValues[0]);
-        }
-
-        public void Plus()
-        {
-            RPN_Value operand1 = X;
-            RPN_Value operand2 = new RPN_Value( Y);
-            operand2.Add(operand1);
-            if (Double.IsInfinity(operand2.asReal))
-            {
-                setOverflow();
-                return;
-            }
-            StorePreviousValue();
-            Y.FromRPNValue( operand2);
-            Pop(1);
-        }
-
-        public void Minus()
-        {
-            RPN_Value operand1 = X;
-            RPN_Value operand2 = new RPN_Value(Y);
-            operand2.Subtract(operand1);
-            if (Double.IsInfinity(operand2.asReal))
-            {
-                setOverflow();
-                return;
-            }
-            StorePreviousValue();
-            Y.FromRPNValue(operand2);
-            Pop(1);
-        }
-
-        public void Multiply()
-        {
-            RPN_Value operand1 = X;
-            RPN_Value operand2 = new RPN_Value(Y);
-            operand2.Multiply(operand1);
-            if (Double.IsInfinity(operand2.asReal))
-            {
-                setOverflow();
-                return;
-            }
-            StorePreviousValue();
-            Y.FromRPNValue(operand2);
-            Pop(1);
-        }
-
-        public void Divide()
-        {
-            RPN_Value operand1 = X;
-            if (operand1.asReal == 0.0)
-            {
-                _parent.CalcStack.setInfinityError();
-                return;
-            }
-            RPN_Value operand2 = new RPN_Value(Y);
-            operand2.Divide(operand1);
-            if (Double.IsInfinity(operand2.asReal))
-            {
-                setOverflow();
-                return;
-            }
-            StorePreviousValue();
-            Y.FromRPNValue(operand2);
-            Pop(1);
-        }
-
-        public void onButton(RPN_Button button)
-        {
-            switch (button.Moniker)
-            {
-                case "0":
-                case "1":
-                case "2":
-                case "3":
-                case "4":
-                case "5":
-                case "6":
-                case "7":
-                case "8":
-                case "9":
-                case ".":
-                    if (!_numberEntry.isActive) Push(1);
-                    _numberEntry.tick(button);
-                    return;
-                case "/-/":
-                    if (_numberEntry.isActive) _numberEntry.tick(button);
-                    else StackValues[0].Negate();
-                    return;
-                case "+":
-                    Plus();
-                    return;
-                case "-":
-                    Minus();
-                    return;
-                case "Swap":
-                    Swap();
-                    return;
-                case "/":
-                    Divide();
-                    return;
-                case "*":
-                    Multiply();
-                    return;
-                case "EE":
-                    if (!_numberEntry.isActive)
-                        _numberEntry.FromValue(StackValues[0]);
-                    else
-                        _numberEntry.tick(button);
-                    return;
-                case "Enter":
-                    Enter();
-                    return;
-                case "Cx":
-                    if (isCustomLabels())
-                    {
-                        ClearLabels();
-                        return;
-                    }
-                    if (_numberEntry.isActive) _numberEntry.tick(button);
-                    else StackValues[0].Clear();
-                    return;
-                default:
-                    return;
-            }
-        }
-
-        public void ClearLabels()
-        {
-            X_Label = _standardLabels[0];
-            Y_Label = _standardLabels[1];
-            Z_Label = _standardLabels[2];
-            T_Label = _standardLabels[3];
-        }
-
-        public bool isCustomLabels()
-        {
-            if (X_Label != _standardLabels[0]) return true;
-            if (Y_Label != _standardLabels[1]) return true;
-            if (Z_Label != _standardLabels[2]) return true;
-            if (T_Label != _standardLabels[3]) return true;
-            return false;
-        }
-
-        public void ToStrings( string[] inp){
-            inp[1] = T_Label;
-            inp[2] = StackValues[3].ToString();
-            inp[3] = Z_Label;
-            inp[4] = StackValues[2].ToString();
-            inp[5] = Y_Label;
-            inp[6] = StackValues[1].ToString();
-            inp[7] = X_Label;
-            inp[8] = ( _numberEntry.isActive)?
-                "> " + _numberEntry.ToString():
-                StackValues[0].ToString();
-        }
-
-        public void setOverflow()
-        {
-            X_Label = "Error: Overflow";
-        }
-        
-        public void setTrigWarning(double v)
-        {
-            if (Math.Abs(v) < 1.0e12) return;
-            X_Label = "Warning: Trig Accuracy";
-        }
-
-        public double setImaginaryWarning(double v)
-        {
-            if (v >= 0.0) return v;
-            X_Label = "Warning: Imaginary";
-            return -v;
-        }
-
-        public bool setInvTrigError(double v)
-        {
-            if (Math.Abs(v) <= 1.0) return false;
-            X_Label = "Error: Inverse Trig";
-            return true;
-        }
-
-        public void setArgumentError()
-        {
-            X_Label = "Error: Argument";
-        }
-
-        public void setInfinityError()
-        {
-            X_Label = "Error: Infinity";
-        }
-
-        public void setDegError()
-        {
-            X_Label = "Error: Deg Format";
-        }
-
-        #region Load / Save
-        public bool LoadLine(string s)
-        {
-            if (StringLoadHelper(s, "XLabel", ref X_Label)) return true;
-            if (StringLoadHelper(s, "YLabel", ref Y_Label)) return true;
-            if (StringLoadHelper(s, "ZLabel", ref Z_Label)) return true;
-            if (StringLoadHelper(s, "TLabel", ref T_Label)) return true;
-            if (StackLoadHelper(s, "X", 0)) return true;
-            if (StackLoadHelper(s, "Y", 1)) return true;
-            if (StackLoadHelper(s, "Z", 2)) return true;
-            if (StackLoadHelper(s, "T", 3)) return true;
-            if (ValueLoadHelper(s, "Bx", ref PreviousValue)) return true;
-            return false;
-        }
-
-        public void Save(StreamWriter sw)
-        {
-            sw.Write("#\n");
-            sw.Write("# Stack registers:\n");
-            sw.Write("#\n");
-            if (T_Label != _standardLabels[3]) sw.Write("TLabel = " + T_Label.Trim() + "\n");
-            sw.Write("T = " + StackValues[3].ToString() + "\n");
-            if (Z_Label != _standardLabels[2]) sw.Write("ZLabel = " + Z_Label.Trim() + "\n");
-            sw.Write("Z = " + StackValues[2].ToString() + "\n");
-            if (Y_Label != _standardLabels[1]) sw.Write("YLabel = " + Y_Label.Trim() + "\n");
-            sw.Write("Y = " + StackValues[1].ToString() + "\n");
-            if (X_Label != _standardLabels[0]) sw.Write("XLabel = " + X_Label.Trim() + "\n");
-            sw.Write("X = " + StackValues[0].ToString() + "\n");
-            sw.Write("Bx = " + PreviousValue.ToString() + "\n");
-        }
-
-        private bool StringLoadHelper(string s, string varName, ref string inp)
-        {
-            varName += " = ";
-            if (!s.StartsWith(varName)) return false;
-            inp = s.Substring(varName.Length).Trim();
-            return true;
-        }
-
-        private bool ValueLoadHelper(string s, string varName, ref RPN_Value inp)
-        {
-            varName += " = ";
-            if (!s.StartsWith(varName)) return false;
-            inp.FromString(s.Substring(varName.Length));
-            return true;
-        }
-
-        private bool StackLoadHelper(string s, string varName, int index)
-        {
-            varName += " = ";
-            if (!s.StartsWith(varName)) return false;
-            StackValues[index].FromString(s.Substring(varName.Length));
-            return true;
+            get{ return _stackLabels[3];}
         }
         #endregion
+
+        public void clearStack()
+        {
+            Bx.fromInt(0L);
+            X.fromInt(0L);
+            Y.fromInt(0L);
+            Z.fromInt(0L);
+            T.fromInt(0L);
+        }
+
+        void resetStackLabels()
+        {
+            for( int i=0; i<4; i++)
+                _stackLabels[i] = _standardLabels[i];
+        }
+
+        bool customStackLabels(){
+            for( int i=0; i<4; i++)
+            {
+                if( _stackLabels[i] != _standardLabels[i]) return true;
+            }
+            return false;
+        }
+
+        public void setStackLabel(int n, string text)
+        {
+            setStackLabel_P(n, text);
+        }
+
+        public void setStackLabel_P(int n, string text)
+        {
+            if( n < 0 || 3 < n) return;
+            _stackLabels[n] = text.Substring(0, LCD_Manager.SCREEN_COLS);
+        }
+
+        public int getDMode()
+        {
+            return _dMode;
+        }
+
+        public string getDModeName()
+        {
+            return _dmodeLabels[_dMode];
+        } 
+
+        public void setDMode(int m)
+        {
+            if( m > DMODE_GRADS) m = DMODE_DEGREES;
+            _dMode = m;
+        } 
+
+        public int toggleAngleMode()
+        {
+            setDMode( _dMode+1);
+            return _dMode;
+        } 
+
+        public void push()
+        {
+            push(1);
+        }
+
+        public void push( uint start)
+        {
+            for( int i=RPN_STACK_SIZE; i>start; i--)
+                _stackValues[i].fromLocation( _stackValues[i-1]);
+        }
+
+        public void pop()
+        {
+            pop(1);
+        }
+
+        public void pop( uint start)
+        {
+            for( int i=(int)start; i<RPN_STACK_SIZE; i++)
+                _stackValues[i].fromLocation( _stackValues[i+1]);
+        }
+
+        public void storeBx()
+        {
+            Bx.fromLocation( X); 
+        }
+
+        public void swap()
+        {
+            Bx.fromLocation( X);
+            X.fromLocation( Y);
+            Y.fromLocation( Bx);
+        }
+
+        public void rotate()
+        {
+            pop( 0);
+            T.fromLocation( Bx); 
+        }
+
+        public double XtoRadian()
+        {
+            double tmp = X.toReal();
+            // prevents precision loss for angles such as 36000000000045
+            if (X.isInt())
+            {
+                if (_dMode == DMODE_DEGREES) tmp = (double)(X.toInt() % 360);
+                if (_dMode == DMODE_DEGREES) tmp = (double)(X.toInt() % 400);
+            }
+            return tmp * _DMODE_ConversionsToRadian[_dMode];
+        }
+
+        public int XtoOctant()
+        {
+            if( _dMode == DMODE_RADIANS) return -1;
+            if( X.isEmpty()) return -1;
+            if( X.isReal()) return -1;
+            Int64 octant = (_dMode==DMODE_GRADS)? 50L: 45L;
+            Int64 result = X.toInt();
+            if( result % octant != 0) return -1;
+            result /= octant;
+            result %= 8;
+            if( result < 0L) result += 8L;
+            return (int)result;
+        }
+
+        public void RadianToX(double value)
+        {
+            X.fromReal( value * _DMODE_ConversionsFromRadian[_dMode]);
+            // in case of degrees and grads, need to round-up higher, to account for the Radian conversion
+            if( _dMode != DMODE_RADIANS) X._checkRounding( UniversalValue.__ROUNDING_ACCURACY * 0.01);
+        }
+
+        public void OctantToX(int value)
+        {
+            switch( _dMode){
+                case DMODE_DEGREES:
+                    X.fromInt( value * 45);
+                    break;
+                case DMODE_GRADS:
+                    X.fromInt( value * 50);
+                    break;
+                default:
+                    X.fromReal( UniversalValue.__PI4 * value);
+                    break;
+            }
+        }
+
+        //
+        // value in radians
+        // if outside of -1e12 to 1e12 range, perioodic functions lose precision
+        //
+        public void setTrigAccuracyWarning(double value)
+        {
+            if( -1e12 <= value && value <= 1e12) return;
+            setStackLabel_P(0, _RPN_Stack_TrigAccuracy);
+        }
+
+        public bool setNegativeRootWarning(double value)
+        {
+            if( value >= 0) return false;
+            setStackLabel_P(0, _RPN_Stack_ComplexRoot);
+            return true;
+        }
     }
 }

@@ -21,23 +21,23 @@ namespace MK52Simulator
         private const string _standard_MinusInfinity = "-Inf";  
         private const string _standard_PlusInfinity = "+Inf";  
         private const string _standard_Decimals = "0123456789";
+        private const string _standard_NumberComponents = "0123456789.+-eE";
 
-        private const Int64 HUGE_POSITIVE_INTEGER = 9000000000000000000L;
-        private const Int64 HUGE_NEGATIVE_INTEGER = -9000000000000000000L;
-        private const double HUGE_POSITIVE_AS_REAL = 9e18;
-        private const double HUGE_NEGATIVE_AS_REAL = -9e18;
-        private const double __PI = 3.141592653589793;
-        private const double __PI4 = 0.017453292519943295;
-        private const double __EE = 2.718281828459045;
-        private const double __ROUNDING_ACCURACY = 1e11;
+        public const Int64 HUGE_POSITIVE_INTEGER = 9000000000000000000L;
+        public const Int64 HUGE_NEGATIVE_INTEGER = -9000000000000000000L;
+        public const double HUGE_POSITIVE_AS_REAL = 9e18;
+        public const double HUGE_NEGATIVE_AS_REAL = -9e18;
+        public const double __PI = 3.141592653589793;
+        public const double __PI4 = 0.017453292519943295;
+        public const double __EE = 2.718281828459045;
+        public const double __ROUNDING_ACCURACY = 1e11;
+        public const byte VALUE_TYPE_EMPTY = 0;
+        public const byte VALUE_TYPE_INTEGER = 1;
+        public const byte VALUE_TYPE_DOUBLE = 2;
 
         private byte _m_Type;
         private double _m_dVal;
         private Int64 _m_iVal;
-
-        public const byte VALUE_TYPE_EMPTY = 0;
-        public const byte VALUE_TYPE_INTEGER = 1;
-        public const byte VALUE_TYPE_DOUBLE = 2;
 
         /// <summary>
         /// Deliberately simulates C++ for ESP32 porting
@@ -101,6 +101,21 @@ namespace MK52Simulator
         public byte fromString( string text)
         {
             text = text.TrimStart();
+            if( text.StartsWith( "Error"))
+            {
+                fromReal( double.NaN);
+                return getType();
+            }
+            if (text.StartsWith("+Inf"))
+            {
+                fromReal(double.PositiveInfinity);
+                return getType();
+            }
+            if (text.StartsWith("-Inf"))
+            {
+                fromReal(double.NegativeInfinity);
+                return getType();
+            }
             string ptr = text;
             bool positive = true;
             if( ptr.StartsWith( "+")) ptr = ptr.Substring(1);
@@ -246,6 +261,14 @@ namespace MK52Simulator
                 fromInt( 0);
                 return;
             }
+            if (value >= HUGE_POSITIVE_AS_REAL) return; // should not convert
+            double rValue = Math.Round(value);
+            if (value > accuracy && Math.Abs(value - rValue) < accuracy / HUGE_POSITIVE_AS_REAL)
+            {
+                fromInt((Int64)rValue);
+                return; // This must be an int
+            }
+
             if( value >= accuracy) return; // should not convert
             if( value < 0.99999999999) return; // whole part < 1. 
             if( value < 1.00000000001)
@@ -315,6 +338,22 @@ namespace MK52Simulator
         public static bool _isDigit(char c)
         {
             return _inString_P(c, _standard_Decimals);
+        }
+
+        /// <summary>
+        /// Alias for C++ implementation
+        /// </summary>
+        public static bool _looksLikeANumber(string text)
+        {
+            if (text.Length == 0) return false;
+            if( text == "Error") return true;
+            if( text == "+Inf") return true;
+            if( text == "-Inf") return true;
+            for( int i=0; i<text.Length; i++)
+            {
+                if( !_inString_P(text[i], _standard_NumberComponents)) return false;
+            }
+            return true;
         }
 
         /// <summary>

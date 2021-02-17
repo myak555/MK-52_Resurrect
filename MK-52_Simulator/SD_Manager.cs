@@ -15,13 +15,18 @@ namespace MK52Simulator
 {
     public class SD_Manager
     {
-        private List<string> _directoryListing = new List<string>();
+        private Dictionary<string, DirectoryInfo> _directoryListing
+            = new Dictionary<string, DirectoryInfo>();
+        private Dictionary<string, FileInfo> _fileListing
+            = new Dictionary<string, FileInfo>();
+        private List<string> _itemListing = new List<string>();
+        private string _current_Dir_Name = "C:/";
+        private DateTime _lastDirectoryRead = DateTime.MinValue;
 
         public const byte _LF_ = 10;
         public const byte _CR_ = 13;
 
         public bool SDMounted = false; // fake for simulator only
-        public string UserFolder = "";
         public UInt64 cardSize = 0L;
         public int listingPosition = -1;
         public int _nDirs = 0;
@@ -32,36 +37,40 @@ namespace MK52Simulator
         public void init()
         {
             _clearItems();
-            UserFolder = Directory.GetParent(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)).FullName;
+            _current_Dir_Name = Directory.GetParent(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)).FullName;
             //if ( Environment.OSVersion.Version.Major >= 6 )
-            //    UserFolder = Directory.GetParent(UserFolder).ToString();
-            SDMounted = Directory.Exists( UserFolder);
+            //    _current_Dir_Name = Directory.GetParent(_current_Dir_Name).ToString();
+            SDMounted = Directory.Exists(_current_Dir_Name);
             if (!SDMounted) return;
-            UserFolder += "\\MK52Simulator";
-            if (!Directory.Exists(UserFolder))
-                Directory.CreateDirectory(UserFolder);
-            SDMounted = Directory.Exists(UserFolder);
-            
-            //_buffer = (char *)malloc( DIRECTORY_LIST_SIZE);
-            //_current_Dir_Name = (char *)malloc( CURRENT_DIR_LEN + CURRENT_FILE_LEN * 2 + 3);
-            //#ifdef __DEBUG
-            //if( _buffer == NULL || _current_Dir_Name == NULL){
-            //    Serial.println("File List malloc busted!");
-            //    return millis();
-            //}
-            //#endif
-            //memset( _current_Dir_Name, 0, CURRENT_DIR_LEN + CURRENT_FILE_LEN * 2 + 3);
-            //_current_File_Name = _current_Dir_Name + CURRENT_DIR_LEN + 1;
-            //_text = _current_File_Name + CURRENT_FILE_LEN + 1;
-            //setFolder_P(SD_root);
+            _current_Dir_Name += "\\MK52Simulator";
+            if (!Directory.Exists(_current_Dir_Name))
+                Directory.CreateDirectory(_current_Dir_Name);
+            SDMounted = Directory.Exists(_current_Dir_Name);
+            _current_Dir_Name = _current_Dir_Name.Replace('\\', '/');
+            setFolder_P(_current_Dir_Name);
         }
 
-        //public string getFolderName()
-        //{
-        //    return _current_Dir_Name;
-        //}
+        public string getFolderName()
+        {
+            return _current_Dir_Name;
+        }
 
-        //abstract public string getFolderNameTruncated( int n);
+        public string getWindowsFolderName()
+        {
+            return _current_Dir_Name.Replace('/', '\\');
+        }
+
+        public string getFolderNameTruncated( int n)
+        {
+            int ln = _current_Dir_Name.Length;
+            if( ln >= n-1)
+            {
+                return _current_Dir_Name.Substring(ln - n + 1) + "/";
+            }
+            return _current_Dir_Name + "/";
+        }
+
+
         //abstract public void nextListingPosition();
         //abstract public void previousListingPosition();
         
@@ -73,35 +82,127 @@ namespace MK52Simulator
         //abstract public string getItemFromListing();
 
         //abstract public void checkRootExists();
+
+        public bool checkEntityExists(string name)
+        {
+            name = name.Replace( '/', '\\');
+            return File.Exists(name) || Directory.Exists(name);
+        }
         
-        //abstract public bool checkEntityExists(  string name);
-        
-        //abstract public string makeEntityName( string name);
-        
-        //public string getItemString( int n)
-        //{
-        //    return _buffer + n*SCREEN_COLS + 2;
-        //}
+        public string makeEntityName( string name)
+        {
+            StringBuilder sb = new StringBuilder();
+            if (name.Length <= 0) return sb.ToString(); // no name given
+            sb.Append(_current_Dir_Name);
+            sb.Append('/');
+            sb.Append(name);
+            return sb.ToString();
+        }
+
+        public string getItemString(int n)
+        {
+            if (n >= _itemListing.Count) return "";
+            return _itemListing[n];
+        }
 
         //public int getItemPtr( int n)
         //{
-        //    return (_buffer + n*SCREEN_COLS);
+        //    return (_buffer + n*LCD_Manager.SCREEN_COLS);
         //}
 
-        //abstract public void setFolder( string name);
-        //abstract public void setFolder_P(  string name);
-        //public void readFolderItems( )
-        //{
-        //    readFolderItems( null);
-        //}
-        //abstract public void readFolderItems( string location);
+        public void setFolder(string name)
+        {
+            setFolder_P(name);
+        }
 
-        //public void getFolderListing( string[] Lines, int nLines, int lineLen)
-        //{
-        //    getFolderListing( Lines, nLines, lineLen, null);
-        //}
+        public void setFolder_P(string name)
+        {
+            _current_Dir_Name = name.Replace('\\', '/');
+            readFolderItems();
+        }
 
-        //abstract public void getFolderListing( string[] Lines, int nLines, int lineLen, string name);
+        public void readFolderItems()
+        {
+            readFolderItems("");
+        }
+
+        public void readFolderItems(string location)
+        {
+            if( !SDMounted) return;
+            _clearItems();
+            if( !checkEntityExists(_current_Dir_Name)) return;
+            string wdn = getWindowsFolderName();
+            if (!Directory.Exists(wdn)) return;
+            DirectoryInfo root = new DirectoryInfo(wdn);
+            DirectoryInfo[] dis = root.GetDirectories();
+            foreach (DirectoryInfo di in dis)
+            {
+                string en = _formEntityName(di);
+                if( _directoryListing.ContainsKey( en)) continue;
+                _directoryListing[en] = di;
+            }
+            FileInfo[] fis = root.GetFiles();
+            foreach (FileInfo fi in fis)
+            {
+                string en = _formEntityName(fi);
+                if (_fileListing.ContainsKey(en)) continue;
+                _fileListing[en] = fi;
+            }
+            List<string> tmp = new List<string>();
+            foreach (string s in _directoryListing.Keys) tmp.Add(s);
+            tmp.Sort();
+            foreach (string s in tmp) _itemListing.Add(s);
+            _nDirs = _itemListing.Count;
+            tmp.Clear();
+            foreach (string s in _fileListing.Keys) tmp.Add(s);
+            tmp.Sort();
+            foreach (string s in tmp) _itemListing.Add(s);
+            _nItems = _itemListing.Count;
+            if (location.Length == 0)
+            {
+                if (listingPosition < 0 && _nItems > 0) listingPosition = 0;
+                if (listingPosition >= _nItems) listingPosition = _nItems - 1; 
+                return;
+            }
+            for (int i = 0; i < _nDirs; i++)
+            {
+                if (!_itemListing[i].StartsWith(location)) continue;
+                listingPosition = i;
+                break;
+            }
+        }
+
+        public string[] getFolderListing(string[] Lines, int nLines, int lineLen)
+        {
+            if (DateTime.Now - _lastDirectoryRead > TimeSpan.FromSeconds(10.0))
+            {
+                // TODO
+                readFolderItems("");
+                _lastDirectoryRead = DateTime.Now;
+            }
+            return getFolderListing( Lines, nLines, lineLen, null);
+        }
+
+        public string[] getFolderListing(string[] Lines, int nLines, int lineLen, string name)
+        {
+            if( SDMounted)
+                Lines[0] = getFolderNameTruncated( LCD_Manager.SCREEN_COLS-1);
+            else
+                Lines[0] = "Insert SD card and reboot";
+            int startLine = 0;
+            int stopLine = nLines - 2;
+            if (listingPosition > stopLine)
+            {
+                startLine = listingPosition - stopLine;
+                stopLine += startLine;
+            }
+            for ( int i = 1; i < nLines; i++, startLine++)
+            {
+                Lines[i] = (startLine == listingPosition) ? "\u00ac ": "  ";
+                Lines[i] += getItemString(startLine);
+            }
+            return Lines;
+        }
 
         //public void setListingPosition( uint pos)
         //{
@@ -136,26 +237,85 @@ namespace MK52Simulator
             _nDirs = 0;
             _nItems = 0;
             listingPosition = -1;
-            _directoryListing.Clear();
+            _directoryListing .Clear();
+            _fileListing.Clear();
+            _itemListing.Clear();
         }
+
+        /// <summary>
+        /// C++ dummy
+        /// </summary>
+        private int _locateAlphabetic(string name, bool isDir)
+        {
+            return 0;
+        }
+
+        /// <summary>
+        /// C++ dummy
+        /// </summary>
+        private bool _insertItem(string name, int pos, int slot, bool isDir)
+        {
+            return true;
+        } 
         
-        //private int _locateAlphabetic( string name, bool isDir);
-        //private bool _insertItem( string name, int pos, int slot, bool isDir); 
         //private string _stripFolders(  string name);
-        //private string _formEntityName( File f);
-        //private string _appendFileSize( File f);
+
+        private string _formEntityName(DirectoryInfo f)
+        {
+            StringBuilder sb = new StringBuilder();
+            string name = f.Name;
+            int nameLen = name.Length;
+            if( nameLen > LCD_Manager.SCREEN_COLS - 9) nameLen = LCD_Manager.SCREEN_COLS - 9;
+            sb.Append( name.Substring( 0, nameLen));
+            while( sb.Length < LCD_Manager.SCREEN_COLS - 9) sb.Append(' ');
+            sb.Append( " [DIR]");
+            return sb.ToString();
+        }
+
+        private string _formEntityName(FileInfo f)
+        {
+            StringBuilder sb = new StringBuilder();
+            string name = f.Name;
+            int nameLen = name.Length;
+            if (nameLen > LCD_Manager.SCREEN_COLS - 9) nameLen = LCD_Manager.SCREEN_COLS - 9;
+            sb.Append(name.Substring(0, nameLen));
+            while (sb.Length < LCD_Manager.SCREEN_COLS - 9) sb.Append(' ');
+            sb.Append(_appendFileSize(f));
+            return sb.ToString();
+        }
+
+        private string _appendFileSize(FileInfo f)
+        {
+            long size = f.Length;
+            StringBuilder sb = new StringBuilder();
+            sb.Append(' ');
+            if (size < 8192L)
+            {
+                sb.Append( size.ToString("0000"));
+                sb.Append('b');
+                return sb.ToString();
+            }
+            size >>= 10;
+            if (size < 8192L)
+            {
+                sb.Append(size.ToString("0000"));
+                sb.Append('k');
+                return sb.ToString();
+            }
+            size >>= 10;
+            if (size < 8192L)
+            {
+                sb.Append(size.ToString("0000"));
+                sb.Append('M');
+                return sb.ToString();
+            }
+            size >>= 10;
+            sb.Append(size.ToString("0000"));
+            sb.Append('G');
+            return sb.ToString();
+        }
     }
 }
-
-//////////////////////////////////////////////////////////
-//
-//  MK-52 RESURRECT
-//  Copyright (c) 2020 Mike Yakimov.  All rights reserved.
-//  See main file for the license
-//
-//////////////////////////////////////////////////////////
-
-
 
 //void SD_Manager::checkRootExists(){
 //    if(!SDMounted) return;
@@ -191,29 +351,6 @@ namespace MK52Simulator
 //    if(listingPosition<0) listingPosition=0;
 //}
 
-////
-//// Lists directory and displays selector
-////
-//void SD_Manager::getFolderListing( char *Lines[], uint8_t nLines, uint8_t lineLen, char *name){
-//    if( SDMounted)
-//        strcpy( Lines[0], getFolderNameTruncated( SCREEN_COLS-1));
-//    else
-//        strcpy_P( Lines[0], PSTR("Insert SD card and reboot"));
-//    int startLine = 0;
-//    int stopLine = nLines-2;
-//    if( listingPosition > stopLine){
-//        startLine = listingPosition-stopLine;
-//        stopLine += startLine;
-//    }
-//    for( uint8_t i=1; i<nLines; i++, startLine++){
-//        char *Ln = Lines[i]; 
-//        memset( Ln+1, 0, lineLen);
-//        if( startLine > stopLine) continue;
-//        Ln[ 0] = (startLine == listingPosition)? (char)172 : ' ';
-//        Ln[ 1] = ' ';
-//        strncpy( Ln+2, getItemString(startLine), lineLen-2);
-//    }
-//}
 
 ////
 //// gets an item from selector
@@ -416,67 +553,6 @@ namespace MK52Simulator
 //    return true;
 //}
 
-//void SD_Manager::setFolder( char *name){
-//    strncpy( _current_Dir_Name, name, CURRENT_DIR_LEN-1);
-//    _current_Dir_Name[CURRENT_DIR_LEN-1] = 0;
-//    readFolderItems();
-//}
-
-//void SD_Manager::setFolder_P( const char *name){
-//    strncpy_P( _current_Dir_Name, name, CURRENT_DIR_LEN-1);
-//    _current_Dir_Name[CURRENT_DIR_LEN-1] = 0;
-//    readFolderItems();
-//}
-
-//char *SD_Manager::getFolderNameTruncated( int8_t n){
-//    int ln = strlen(_current_Dir_Name);
-//    if( ln > n-1) ln = ln - n + 1;
-//    else ln = 0;
-//    strcpy( _text, _current_Dir_Name+ln);
-//    ln = strlen(_text);
-//    if( ln>1){
-//        _text[ln++] = '/';
-//        _text[ln] = 0;
-//    }
-//    return _text;
-//}
-
-//void SD_Manager::readFolderItems(char *location){
-//    if( !SDMounted) return;
-//    _clearItems();
-//    if( !checkEntityExists(_current_Dir_Name)) return;
-//    File current_Dir = _getCurrentDir();
-//    if(!current_Dir) return;
-//    File file = current_Dir.openNextFile();
-//    int16_t counter = 0;
-//    int16_t index = 0;
-//    int16_t pos2 = -1;
-//    while( file){
-//        char *name = (char *)_formEntityName( file);
-//        if( MK52_Interpreter::UniversalValue::_startsWith( name, location))
-//            pos2 = counter;
-//        bool isdir = file.isDirectory();
-//        index = _locateAlphabetic( name, isdir);
-//        #ifdef __DEBUG
-//        Serial.print(name);
-//        Serial.print(" is located at ");
-//        Serial.println(index);
-//        #endif
-//        if( _insertItem( name, counter++, index, isdir)) break; // too many items
-//        file = current_Dir.openNextFile();
-//    }
-//    current_Dir.close();
-//    if( _nItems > 0) listingPosition = 0;
-//    if( location == NULL) return;
-//    Serial.print("Looking for location: ");
-//    Serial.println(location);
-//    for( int i=0; i<_nDirs; i++){
-//        if( *(getItemPtr(i)) != pos2) continue;
-//        listingPosition = i;
-//        break;
-//    }
-//}
-
 //void SD_Manager::_resetRoot(){
 //    #ifdef __DEBUG
 //    Serial.println("Reset to root");
@@ -531,12 +607,12 @@ namespace MK52Simulator
 //    if( slot>=DIRECTORY_LIST_NITEMS-1) return true;
 //    if( slot>=_nItems) slot = _nItems;
 //    int16_t toMove = _nItems - slot;
-//    char *ptr = _buffer + slot * SCREEN_COLS;
-//    if( toMove > 0) memmove( ptr+SCREEN_COLS, ptr, toMove*SCREEN_COLS);
+//    char *ptr = _buffer + slot * LCD_Manager.SCREEN_COLS;
+//    if( toMove > 0) memmove( ptr+LCD_Manager.SCREEN_COLS, ptr, toMove*LCD_Manager.SCREEN_COLS);
 //    int16_t toCopy = strlen( name);
-//    if( toCopy > SCREEN_COLS-3) toCopy = SCREEN_COLS-3;
+//    if( toCopy > LCD_Manager.SCREEN_COLS-3) toCopy = LCD_Manager.SCREEN_COLS-3;
 //    memcpy( ptr, &pos, 2);
-//    memset( ptr+2, 0, SCREEN_COLS-2);
+//    memset( ptr+2, 0, LCD_Manager.SCREEN_COLS-2);
 //    memcpy( ptr+2, name, toCopy);
 //    if( isDir) _nDirs++;
 //    _nItems++;
@@ -547,41 +623,5 @@ namespace MK52Simulator
 //  int16_t lastHash = strlen( (char*) name) - 1;
 //  while( lastHash>0 && name[lastHash] != '/') lastHash--;
 //  return (char *)name+lastHash+1; 
-//}
-
-//char *SD_Manager::_formEntityName( File f){
-//    memset( _text, 0, SCREEN_COLS-3);
-//    const char *name = f.name();
-//    char *namePtr = _stripFolders( name);
-//    uint8_t nameLen = strlen( namePtr);
-//    if( nameLen > SCREEN_COLS - 9) nameLen = SCREEN_COLS - 9;
-//    if( nameLen>0) memcpy( _text, namePtr, nameLen);
-//    for( uint16_t i=strlen(_text); i<SCREEN_COLS-9; i++) _text[i] = ' ';
-//    return _appendFileSize(f);
-//}
-
-//char *SD_Manager::_appendFileSize( File f){
-//    char *str = _text + SCREEN_COLS - 9;
-//    if( f.isDirectory()){
-//        strcpy_P( str, PSTR(" [DIR]"));
-//        return _text;
-//    }
-//    size_t size = f.size();
-//    if( size < 8192){
-//        sprintf_P( str, PSTR(" %04db"), (int)size);
-//        return _text;
-//    }
-//    size >>= 10;
-//    if( size < 8192){
-//        sprintf_P( str, PSTR(" %04dk"), (int)size);
-//        return _text;
-//    }
-//    size >>= 10;
-//    if( size < 8192){
-//        sprintf_P( str, PSTR(" %04dM"), (int)size);
-//        return _text;
-//    }
-//    size >>= 10;
-//    sprintf_P( str, PSTR(" %04dG"), (int)size);
 //}
 

@@ -1,3 +1,11 @@
+//////////////////////////////////////////////////////////
+//
+//  MK-52 RESURRECT
+//  Copyright (c) 2020 Mike Yakimov.  All rights reserved.
+//  See main file for the license
+//
+//////////////////////////////////////////////////////////
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -10,8 +18,12 @@ namespace MK52Simulator
 {
     public partial class KBD_Manager : UserControl
     {
-        private List<RPN_Button> m_Buttons = new List<RPN_Button>();
-        private Queue<RPN_Button> m_ButtonsPressed = new Queue<RPN_Button>();
+        private List<MK52_Button> m_Buttons = new List<MK52_Button>();
+        private Queue<byte> m_ButtonsPressed = new Queue<byte>();
+
+        public byte lastScan = 0;
+        public DateTime lastScanTime = new DateTime(0);
+        public bool LEDOn = true;
 
         public KBD_Manager()
         {
@@ -19,65 +31,72 @@ namespace MK52Simulator
 
             // Buttons by columns:
 
-            m_Buttons.Add(new RPN_Button(40,  30, "Func F")); // Modal F button
-            m_Buttons.Add(new RPN_Button(40,  97, "Func K")); // Modal K button
-            m_Buttons.Add(new RPN_Button(40, 160, "Func A")); // Modal A button
-            m_Buttons.Add(new RPN_Button(40, 223, "Mode")); // Modal "‚‚" button (degs-rads-grads and code/text/addr)
+            m_Buttons.Add(new MK52_Button(40,  30, 1, "F"));
+            m_Buttons.Add(new MK52_Button(40,  97, 2, "K"));
+            m_Buttons.Add(new MK52_Button(40, 160, 3, "A"));
+            m_Buttons.Add(new MK52_Button(40, 223, 4, "\u2191\u2193"));
 
-            m_Buttons.Add(new RPN_Button(105,  30, "->", "A")); // "->", "IF x<0 GOTO "
-            m_Buttons.Add(new RPN_Button(105,  97, "<-", "H")); // "<-", "IF x=0 GOTO "
-            m_Buttons.Add(new RPN_Button(105, 160, "B/O", "O")); // "B/O", "IF x>=0 GOTO "
-            m_Buttons.Add(new RPN_Button(105, 223, "S/P", "U")); // "S/P", "IF x!=0 GOTO "
+            m_Buttons.Add(new MK52_Button(105, 30, 5, "ÿ√\u2192"));
+            m_Buttons.Add(new MK52_Button(105, 97, 6, "ÿ√\u2190"));
+            m_Buttons.Add(new MK52_Button(105, 160, 7, "B/O"));
+            m_Buttons.Add(new MK52_Button(105, 223, 8, "—/œ"));
 
-            m_Buttons.Add(new RPN_Button(165,  30, "M->X", "B", "L0")); // "M->X", "L0"
-            m_Buttons.Add(new RPN_Button(165,  97, "X->M", "I", "L1")); // "X->M", "L1"
-            m_Buttons.Add(new RPN_Button(165, 160, "GOTO", "P", "L2")); // "GOTO", "L2"
-            m_Buttons.Add(new RPN_Button(165, 223, "GOSUB", "V", "L3")); // "GOSUB", "L3"
+            m_Buttons.Add(new MK52_Button(165, 30, 9, "M\u2192X"));
+            m_Buttons.Add(new MK52_Button(165, 97, 10, "X\u2192M"));
+            m_Buttons.Add(new MK52_Button(165, 160, 11, "¡œ"));
+            m_Buttons.Add(new MK52_Button(165, 223, 12, "œœ"));
 
-            m_Buttons.Add(new RPN_Button(230,  30, "7", "C", "7")); // "7", "SIN", "[X]"
-            m_Buttons.Add(new RPN_Button(230,  97, "4", "J", "4")); // "4", "arcSIN", "|X|"
-            m_Buttons.Add(new RPN_Button(230, 160, "1", "Q", "1")); // "1", "EXP", "e"
-            m_Buttons.Add(new RPN_Button(230, 223, "0", "W", "0")); // "0", "10^X", "NOP"
+            m_Buttons.Add(new MK52_Button(230, 30, 13, "7"));
+            m_Buttons.Add(new MK52_Button(230, 97, 14, "4"));
+            m_Buttons.Add(new MK52_Button(230, 160, 15, "1"));
+            m_Buttons.Add(new MK52_Button(230, 223, 16, "0"));
 
-            m_Buttons.Add(new RPN_Button(295,  30, "8", "D", "8")); // "8", "COS", "{X}"
-            m_Buttons.Add(new RPN_Button(295,  97, "5", "K", "5")); // "5", "arcCOS", "SIGN";
-            m_Buttons.Add(new RPN_Button(295, 160, "2", "R", "2")); // "2", "LG", "LOG"
-            m_Buttons.Add(new RPN_Button(295, 223, ".", "X", "A")); // ".", "Rotate", "AND"
+            m_Buttons.Add(new MK52_Button(295, 30, 17, "8"));
+            m_Buttons.Add(new MK52_Button(295, 97, 18, "5"));
+            m_Buttons.Add(new MK52_Button(295, 160, 19, "2"));
+            m_Buttons.Add(new MK52_Button(295, 223, 20, "."));
 
-            m_Buttons.Add(new RPN_Button(360,  30, "9", "E", "9")); // "9", "TG", "MAX"
-            m_Buttons.Add(new RPN_Button(360,  97, "6", "L", "6")); // "6", "arcTG", "<-DM", "<-RAD"
-            m_Buttons.Add(new RPN_Button(360, 160, "3", "S", "3"));// "3", "LN", "<-DMS", "<-IN"
-            m_Buttons.Add(new RPN_Button(360, 223, "/-/", "Y", "B")); // "/-/", "¿¬“", "OR"
+            m_Buttons.Add(new MK52_Button(360, 30, 21, "9"));
+            m_Buttons.Add(new MK52_Button(360, 97, 22, "6"));
+            m_Buttons.Add(new MK52_Button(360, 160, 23, "3"));
+            m_Buttons.Add(new MK52_Button(360, 223, 24, "/-/"));
 
-            m_Buttons.Add(new RPN_Button(420,  30, "-", "F")); // "SQRT"
-            m_Buttons.Add(new RPN_Button(420,  97, "+", "M")); // "pi", "DM->", "RAD->"
-            m_Buttons.Add(new RPN_Button(420, 160, "Swap", "T")); // "X^Y", "DMS->", "IN->"
-            m_Buttons.Add(new RPN_Button(420, 223, "EE", "Z", "C")); // "¬œ", "œ–√", "XOR", "LIST"
+            m_Buttons.Add(new MK52_Button(420, 30, 25, "-"));
+            m_Buttons.Add(new MK52_Button(420, 97, 26, "+"));
+            m_Buttons.Add(new MK52_Button(420, 160, 27, "\u2194"));
+            m_Buttons.Add(new MK52_Button(420, 223, 28, "¬œ"));
 
-            m_Buttons.Add(new RPN_Button(485,  30, "/", "G")); // "/", "1/X"
-            m_Buttons.Add(new RPN_Button(485,  97, "*", "N", "F")); // "X^2"
-            m_Buttons.Add(new RPN_Button(485, 160, "Enter", "", "E")); //  "Bx", "RAND", "SEED"
-            m_Buttons.Add(new RPN_Button(485, 223, "Cx", "", "D")); // "Cx", "Cf", "NOT"
+            m_Buttons.Add(new MK52_Button(485, 30, 29, "/"));
+            m_Buttons.Add(new MK52_Button(485, 97, 30, "*"));
+            m_Buttons.Add(new MK52_Button(485, 160, 31, "¬\u2191"));
+            m_Buttons.Add(new MK52_Button(485, 223, 32, "Cx"));
         }
 
-        public bool Available()
+        public void init()
         {
-            return m_ButtonsPressed.Count > 0;
         }
 
-        public RPN_Button GetButton()
+        public byte scan()
         {
-            if( m_ButtonsPressed.Count < 1) return null;
-            return m_ButtonsPressed.Dequeue();
+            if( m_ButtonsPressed.Count <= 0) return 0;
+            lastScan = m_ButtonsPressed.Dequeue();
+            lastScanTime = DateTime.Now;
+            return lastScan;
+        }
+
+        public byte scanImmediate()
+        {
+            while( m_ButtonsPressed.Count > 1) m_ButtonsPressed.Dequeue();
+            return scan();
         }
 
         private void KeyboardControl_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button != MouseButtons.Left) return;
-            foreach (RPN_Button rpb in m_Buttons)
+            foreach (MK52_Button rpb in m_Buttons)
             {
                 if (!rpb.isPressed(e.X, e.Y)) continue;
-                m_ButtonsPressed.Enqueue(rpb);
+                m_ButtonsPressed.Enqueue((byte)rpb.Scancode);
                 return;
             }
         }

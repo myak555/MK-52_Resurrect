@@ -1,9 +1,15 @@
+//////////////////////////////////////////////////////////
+//
+//  MK-52 RESURRECT
+//  Copyright (c) 2020 Mike Yakimov.  All rights reserved.
+//  See main file for the license
+//
+//////////////////////////////////////////////////////////
+
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
-using MK52Simulator.Functions;
-using MK52Simulator.Receivers;
 
 namespace MK52Simulator
 {
@@ -13,49 +19,32 @@ namespace MK52Simulator
     public class MK52_Host
     {
         // hardware emulators
-        public KBD_Manager KBD = null;
-        public LCD_Manager LCD = null;
-        public SD_Manager SD = new SD_Manager();
+        public LCD_Manager _m_Hardware_LCD = null;
+        public KBD_Manager _m_Hardware_KBD = null;
+        public SD_Manager _m_Hardware_SD = new SD_Manager();
 
-        // calculator memory
-        public RPN_Stack CalcStack = null;
-        public RPN_Registers Registers = null;
-        public RPN_Program Program = null;
-        public RPN_Memory Memory = null;
-        public Stack<int> CallStack = new Stack<int>();
+        // calculator state engine
+        public RPN_Stack _m_RPN_Stack = new RPN_Stack();
+        public Program_Memory _m_Program_Memory = new Program_Memory();
+        public Extended_Memory _m_Extended_Memory = new Extended_Memory();
+        public Register_Memory _m_Register_Memory = new Register_Memory();
+        public RPN_Functions _m_RPN_Functions = new RPN_Functions();
 
-        // degrees/radian/gradian mode
-        public const int dMode_Degrees = 0;
-        public const int dMode_Radian = 1;
-        public const int dMode_Gradian = 2;
-        public int dMode = dMode_Degrees;
-
-        // random number remembered
-        public Random myRNG = new Random();
-
-        // functions, receivers and displays
-        public Dictionary<string, RPN_Function> Functions =
-            new Dictionary<string, RPN_Function>();
+        // receivers and displays
         public Dictionary<string, Display> Displays =
             new Dictionary<string, Display>();
-        public Dictionary<string, RPN_InputReceiver> Receivers =
-            new Dictionary<string, RPN_InputReceiver>();
+        public Dictionary<string, Receiver> Receivers =
+            new Dictionary<string, Receiver>();
 
         public Display current_Display = null;
-        public RPN_InputReceiver current_Receiver = null;
+        public Receiver current_Receiver = null;
 
         private string _stateFile = "";
 
         public MK52_Host( KBD_Manager kbd, LCD_Manager lcd)
         {
-            KBD = kbd;
-            LCD = lcd;
-            
-            CalcStack = new RPN_Stack(this);
-            Registers = new RPN_Registers(this);
-            Program = new RPN_Program(this);
-            Memory = new RPN_Memory(this);
-            addFunctions();
+            _m_Hardware_KBD = kbd;
+            _m_Hardware_LCD = lcd;
             addDisplays();
             addReceivers();
             _stateFile = AppDomain.CurrentDomain.BaseDirectory + "_RPN_State_New.txt";
@@ -65,25 +54,126 @@ namespace MK52Simulator
 
         public void init()
         {
-            LCD.init();
-            SD.init();
+            _m_Hardware_LCD.init();
+            _m_Hardware_SD.init();
+
+            _m_Program_Memory.init(this);
+            _m_Extended_Memory.init(this);
+            _m_Register_Memory.init(this);
+            _m_RPN_Stack.init(this);
+            _m_RPN_Functions.init(this);
+
+            //TODO
+            _m_Extended_Memory.setCounter(8);
+            foreach (Display d in Displays.Values) d.init(this);
         }
 
-        public void SwapDegreeMode()
+        /// <summary>
+        /// Fake functon for C++ emulation 
+        /// </summary>
+        public LCD_Manager getLCD()
         {
-            dMode++;
-            if (dMode > dMode_Gradian) dMode = dMode_Degrees;
+            return _m_Hardware_LCD;
+        }
+
+        /// <summary>
+        /// Fake functon for C++ emulation 
+        /// </summary>
+        public KBD_Manager getKBD()
+        {
+            return _m_Hardware_KBD;
+        }
+
+        /// <summary>
+        /// Fake functon for C++ emulation 
+        /// </summary>
+        public SD_Manager getSD()
+        {
+            return _m_Hardware_SD;
         }
 
         public void tick()
         {
-            //if (rpb.Moniker == "Dummy" && current_Receiver.Moniker != "AUTO_R") return;
-            //current_Receiver.tick(rpb);
-            if (!KBD.Available()) return; 
-            RPN_Button rpb = KBD.GetButton();
-            string newReceiver = current_Receiver.tick( rpb);
-            setReceiver(newReceiver);
-            current_Display.tick();
+            byte b = _m_Hardware_KBD.scan();
+            while (b > 0)
+                b = current_Receiver.tick(b);
+
+            //if (b == 0) return;
+            //if( current_Receiver.tick(b) == "NO_CHANGE") return;
+            //switch (b)
+            //{
+            //    case 1:
+            //        setReceiver("AUTO_A", 0);
+            //        break;
+            //    case 2:
+            //        setReceiver("AUTO_F", 0);
+            //        break;
+            //    case 3:
+            //        setReceiver("AUTO_K", 0);
+            //        break;
+            //    case 4:
+            //        setReceiver("AUTO_N", 0);
+            //        break;
+            //    case 5:
+            //        setReceiver("AUTO_R", 0);
+            //        break;
+            //    case 13:
+            //    case 14:
+            //    case 15:
+            //    case 16:
+            //    case 17:
+            //    case 18:
+            //    case 19:
+            //    case 20:
+            //    case 21:
+            //    case 22:
+            //    case 23:
+            //    case 24:
+            //    case 28:
+            //        setReceiver("NUMBER", (uint)b);
+            //        break;
+            //    default:
+            //        break;
+            //}
+
+            //switch (b)
+            //{
+            //    case 1:
+            //        setDisplay("Splash");
+            //        break;
+            //    case 2:
+            //        setDisplay("AUTO");
+            //        break;
+            //    case 3:
+            //        setDisplay("DATA");
+            //        break;
+            //    case 4:
+            //        setDisplay("FILE");
+            //        break;
+            //    case 5:
+            //        setDisplay("OFF");
+            //        break;
+            //    case 6:
+            //        setDisplay("PROG");
+            //        break;
+            //    case 7:
+            //        setDisplay("RUN");
+            //        break;
+            //    case 8:
+            //        setDisplay("Font Test");
+            //        break;
+            //    default:
+            //        break;
+            //}
+            //string newReceiver = current_Receiver.tick( rpb);
+            //setReceiver(newReceiver);
+            //current_Display.tick();
+        }
+
+        public Display getDisplay(string name)
+        {
+            if (!Displays.ContainsKey(name)) return null;
+            return Displays[name];
         }
 
         /// <summary>
@@ -95,16 +185,15 @@ namespace MK52Simulator
         {
             if (!Displays.ContainsKey(name)) return true;
             Display dis = Displays[name];
-            string receiver_name = dis.activate();
+            dis.activate(current_Display.Moniker);
             current_Display = dis;
-            setReceiver(receiver_name);
             return false;
         }
 
-        public Display getDisplay(string name)
+        public Receiver getReceiver(string name)
         {
-            if (!Displays.ContainsKey(name)) return null;
-            return Displays[name];
+            if (!Receivers.ContainsKey(name)) return null;
+            return Receivers[name];
         }
 
         /// <summary>
@@ -114,24 +203,11 @@ namespace MK52Simulator
         /// <returns>true if receiver is not available</returns>
         public bool setReceiver(string name)
         {
-            if (!Receivers.ContainsKey(name)) return true;
-            RPN_InputReceiver ri = Receivers[name];
-            ri.activate();
+            Receiver ri = getReceiver( name);
+            if (ri == null) return true;
+            ri.activate( current_Receiver.Moniker);
             current_Receiver = ri;
             return false;
-        }
-
-        public RPN_InputReceiver getReceiver(string name)
-        {
-            if (!Receivers.ContainsKey(name)) return null;
-            return Receivers[name];
-        }
-
-        public void executeFunction(string name)
-        {
-            if (!Functions.ContainsKey(name)) return;
-            RPN_Function f = Functions[name];
-            f.execute( name);
         }
 
         #region Load and Save
@@ -139,7 +215,7 @@ namespace MK52Simulator
         {
             if( !File.Exists( _stateFile))
             {
-                CalcStack.X_Label = "File not found";
+                //CalcStack.X_Label = "File not found";
                 return;
             }
             FileStream fs = null;
@@ -148,24 +224,24 @@ namespace MK52Simulator
             {
                 fs = File.Open( _stateFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
                 sr = new StreamReader(fs);
-                CallStack.Clear();
+                //CallStack.Clear();
                 while (!sr.EndOfStream)
                 {
                     string s = sr.ReadLine().Trim();
                     if (s.Length <= 0) continue;
                     if (s.StartsWith("#")) continue;
                     if (StatusLoadHelper(s)) continue;
-                    if (IntLoadHelper(s, "dMode", ref dMode)) continue;
-                    if (CalcStack.LoadLine(s)) continue;
-                    if (Registers.LoadLine(s)) continue;
-                    if (Memory.LoadLine(s)) continue;
-                    if (Program.LoadLine(s)) continue;
-                    if (CallStackLoadHelper(s)) continue;
+                    //if (IntLoadHelper(s, "dMode", ref dMode)) continue;
+                    //if (CalcStack.LoadLine(s)) continue;
+                    //if (Registers.LoadLine(s)) continue;
+                    //if (Memory.LoadLine(s)) continue;
+                    //if (_m_Program_Memory.LoadLine(s)) continue;
+                    //if (CallStackLoadHelper(s)) continue;
                 }
             }
             catch
             {
-                CalcStack.X_Label = "Error: file load";
+                //CalcStack.X_Label = "Error: file load";
             }
             finally
             {
@@ -176,7 +252,7 @@ namespace MK52Simulator
 
         public void saveState()
         {
-            CalcStack.CompleteEntry();
+            //CalcStack.CompleteEntry();
             FileStream fs = null;
             StreamWriter sw = null;
             try
@@ -191,25 +267,25 @@ namespace MK52Simulator
                 string stat = current_Receiver.Moniker;
                 if (stat == "OFF") stat = "AUTO"; // Upon the switch-off, always start in auto mode
                 sw.Write("Status = " + stat.Substring(0, 4) + "\n");
-                if (dMode > 0) sw.Write("dMode = " + dMode.ToString() + "\n");
+                //if (dMode > 0) sw.Write("dMode = " + dMode.ToString() + "\n");
 
-                CalcStack.Save(sw);
-                Registers.Save(sw);
-                Program.Save(sw);
-                Memory.Save(sw);
-                if (CallStack.Count > 0)
-                {
-                    sw.Write("#\n");
-                    sw.Write("# Call stack:");
-                    sw.Write("#\n");
-                    int[] cs = CallStack.ToArray();
-                    for (int i = 0; i < cs.Length; i++)
-                        sw.Write(cs[i].ToString("CS000\n"));
-                }
+                //CalcStack.Save(sw);
+                //Registers.Save(sw);
+                //_m_Program_Memory.Save(sw);
+                //Memory.Save(sw);
+                //if (CallStack.Count > 0)
+                //{
+                //    sw.Write("#\n");
+                //    sw.Write("# Call stack:");
+                //    sw.Write("#\n");
+                //    int[] cs = CallStack.ToArray();
+                //    for (int i = 0; i < cs.Length; i++)
+                //        sw.Write(cs[i].ToString("CS000\n"));
+                //}
             }
             catch
             {
-                CalcStack.X_Label = "Error: file save";
+                //CalcStack.X_Label = "Error: file save";
             }
             finally
             {
@@ -222,7 +298,7 @@ namespace MK52Simulator
         {
             if (!File.Exists(name))
             {
-                CalcStack.X_Label = "File not found";
+                //CalcStack.X_Label = "File not found";
                 return;
             }
             FileStream fs = null;
@@ -231,19 +307,19 @@ namespace MK52Simulator
             {
                 fs = File.Open( name, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
                 sr = new StreamReader(fs);
-                Program.Clear();
+                //_m_Program_Memory.Clear();
                 while (!sr.EndOfStream)
                 {
                     string s = sr.ReadLine().Trim();
                     if (s.Length <= 0) continue;
                     if (s.StartsWith("#")) continue;
-                    if (IntLoadHelper(s, "dMode", ref dMode)) continue;
-                    Program.LoadLine(s);
+                    //if (IntLoadHelper(s, "dMode", ref dMode)) continue;
+                    //_m_Program_Memory.LoadLine(s);
                 }
             }
             catch
             {
-                CalcStack.X_Label = "Error: file load";
+                //CalcStack.X_Label = "Error: file load";
             }
             finally
             {
@@ -254,7 +330,7 @@ namespace MK52Simulator
 
         public void saveProgram(string filename)
         {
-            CalcStack.CompleteEntry();
+            //CalcStack.CompleteEntry();
             FileStream fs = null;
             StreamWriter sw = null;
             try
@@ -266,12 +342,12 @@ namespace MK52Simulator
                 sw.Write("# MK-52 program file " + DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss\n"));
                 sw.Write("#\n");
 
-                if (dMode > 0) sw.Write("dMode = " + dMode.ToString() + "\n");
-                Program.Save(sw);
+                //if (dMode > 0) sw.Write("dMode = " + dMode.ToString() + "\n");
+                //_m_Program_Memory.Save(sw);
             }
             catch
             {
-                CalcStack.X_Label = "Error: file save";
+                //CalcStack.X_Label = "Error: file save";
             }
             finally
             {
@@ -282,11 +358,11 @@ namespace MK52Simulator
 
         private bool StatusLoadHelper(string s)
         {
-            string varName = "Status = ";
-            if (!s.StartsWith(varName)) return false;
-            string name = s.Substring(varName.Length).Trim();
-            if (name == "OFF") name = "AUTO_N"; // cold restart
-            setReceiver(name + "_N");
+            //string varName = "Status = ";
+            //if (!s.StartsWith(varName)) return false;
+            //string name = s.Substring(varName.Length).Trim();
+            //if (name == "OFF") name = "AUTO_N"; // cold restart
+            //setReceiver(name + "_N");
             return true;
         }
 
@@ -298,113 +374,103 @@ namespace MK52Simulator
             return true;
         }
 
-        private bool CallStackLoadHelper(string s)
-        {
-            if (!s.StartsWith("CS")) return false;
-            CallStack.Push( Convert.ToInt32(s.Substring(2)));
-            return true;
-        }
+        //private bool CallStackLoadHelper(string s)
+        //{
+        //    if (!s.StartsWith("CS")) return false;
+        //    CallStack.Push( Convert.ToInt32(s.Substring(2)));
+        //    return true;
+        //}
         #endregion
 
-        public void Shutdown()
+        public void shutdown()
         {
-            saveState();
-            setDisplay("OFF");
-            LCD.clearScreen();
-            LCD.Refresh();
+            //saveState();
+            //setDisplay("OFF");
+            _m_Hardware_LCD.clearScreen();
+            _m_Hardware_LCD.Refresh();
         }
 
         #region Implemented Functions
-        //
-        // Function adding helper
-        // 
-        private void addFunction(RPN_Function f)
-        {
-            Functions.Add(f.Keyword, f);
-        }
-        private void addFunctions()
-        {
-            addFunction(new RPN_Function_Empty(this)); // These three must be checked first
-            addFunction(new RPN_Function_Comment(this));
-            addFunction(new RPN_Function_Number(this));
-
-            addFunction(new RPN_Function_10x(this));
-            addFunction(new RPN_Function_1x(this));
-            addFunction(new RPN_Function_ABS(this));
-            addFunction(new RPN_Function_AND(this));
-            addFunction(new RPN_Function_AMtoX(this));
-            addFunction(new RPN_Function_arcCOS(this));
-            addFunction(new RPN_Function_arcSIN(this));
-            addFunction(new RPN_Function_arcTG(this));
-            addFunction(new RPN_Function_AXtoM(this));
-            addFunction(new RPN_Function_COS(this));
-            addFunction(new RPN_Function_Cx(this));
-            addFunction(new RPN_Function_DEG(this));
-            addFunction(new RPN_Function_Divide(this));
-            addFunction(new RPN_Function_e(this));
-            addFunction(new RPN_Function_Enter(this));
-            addFunction(new RPN_Function_EXP(this));
-            addFunction(new RPN_Function_FRAC(this));
-            addFunction(new RPN_Function_FromDM(this));
-            addFunction(new RPN_Function_FromDMS(this));
-            addFunction(new RPN_Function_FromIN(this));
-            addFunction(new RPN_Function_FromRAD(this));
-            addFunction(new RPN_Function_GOTO(this));
-            addFunction(new RPN_Function_GOSUB(this));
-            addFunction(new RPN_Function_GRAD(this));
-            addFunction(new RPN_Function_IF0(this));
-            addFunction(new RPN_Function_IF0a(this));
-            addFunction(new RPN_Function_IF1(this));
-            addFunction(new RPN_Function_IF1a(this));
-            addFunction(new RPN_Function_IF2(this));
-            addFunction(new RPN_Function_IF2a(this));
-            addFunction(new RPN_Function_IF3(this));
-            addFunction(new RPN_Function_IF3a(this));
-            addFunction(new RPN_Function_INT(this));
-            addFunction(new RPN_Function_KMtoX(this));
-            addFunction(new RPN_Function_KXtoM(this));
-            addFunction(new RPN_Function_LblT(this));
-            addFunction(new RPN_Function_LblX(this));
-            addFunction(new RPN_Function_LblY(this));
-            addFunction(new RPN_Function_LblZ(this));
-            addFunction(new RPN_Function_LG(this));
-            addFunction(new RPN_Function_LN(this));
-            addFunction(new RPN_Function_LOG(this));
-            addFunction(new RPN_Function_LOOP0(this));
-            addFunction(new RPN_Function_LOOP1(this));
-            addFunction(new RPN_Function_LOOP2(this));
-            addFunction(new RPN_Function_LOOP3(this));
-            addFunction(new RPN_Function_MAX(this));
-            addFunction(new RPN_Function_Minus(this));
-            addFunction(new RPN_Function_MtoX(this));
-            addFunction(new RPN_Function_Mult(this));
-            addFunction(new RPN_Function_Neg(this));
-            addFunction(new RPN_Function_NOP(this));
-            addFunction(new RPN_Function_NOT(this));
-            addFunction(new RPN_Function_OR(this));
-            addFunction(new RPN_Function_pi(this));
-            addFunction(new RPN_Function_Plus(this));
-            addFunction(new RPN_Function_Prev(this));
-            addFunction(new RPN_Function_RAD(this));
-            addFunction(new RPN_Function_RAND(this));
-            addFunction(new RPN_Function_RETURN(this));
-            addFunction(new RPN_Function_Rotate(this));
-            addFunction(new RPN_Function_SEED(this));
-            addFunction(new RPN_Function_SIGN(this));
-            addFunction(new RPN_Function_SIN(this));
-            addFunction(new RPN_Function_SQRT(this));
-            addFunction(new RPN_Function_STOP(this));
-            addFunction(new RPN_Function_Swap(this));
-            addFunction(new RPN_Function_TG(this));
-            addFunction(new RPN_Function_ToDM(this));
-            addFunction(new RPN_Function_ToDMS(this));
-            addFunction(new RPN_Function_ToIN(this));
-            addFunction(new RPN_Function_ToRAD(this));
-            addFunction(new RPN_Function_x2(this));
-            addFunction(new RPN_Function_XOR(this));
-            addFunction(new RPN_Function_XpY(this));
-            addFunction(new RPN_Function_XtoM(this));
-        }
+        //private void addFunctions()
+        //{
+            //addFunction(new Func_10x());
+            //addFunction(new Func_1X());
+            //addFunction(new Func_Abs());
+            //addFunction(new Func_And());
+            //addFunction(new Func_A_M2X());
+            //addFunction(new Func_ArcCos());
+            //addFunction(new Func_ArcSin());
+            //addFunction(new Func_ArcTg());
+            //addFunction(new Func_A_X2M());
+            //addFunction(new Func_Cos());
+            //addFunction(new Func_Clear_X());
+            //addFunction(new Func_set_DMOD_DEG());
+            //addFunction(new Func_Divide());
+            //addFunction(new Func_EE());
+            //addFunction(new Func_Enter());
+            //addFunction(new Func_Exp());
+            //addFunction(new Func_Frac());
+            //addFunction(new Func_DM2D());
+            //addFunction(new Func_DMS2D());
+            //addFunction(new Func_in2mm());
+            //addFunction(new Func_Rad2D());
+            //addFunction(new Func_GOTO());
+            //addFunction(new Func_GOSUB());
+            //addFunction(new Func_set_DMOD_GRD());
+            //addFunction(new Func_IfNotLT0());
+            //addFunction(new Func_IfNotEQ0());
+            //addFunction(new Func_IfNotGE0());
+            //addFunction(new Func_IfNotNE0());
+            //addFunction(new Func_IfNotLTY());
+            //addFunction(new Func_IfNotEQY());
+            //addFunction(new Func_IfNotGEY());
+            //addFunction(new Func_IfNotNEY());
+            //addFunction(new Func_Whole());
+            //addFunction(new Func_K_M2X());
+            //addFunction(new Func_K_X2M());
+            //addFunction(new Func_LBT());
+            //addFunction(new Func_LBX());
+            //addFunction(new Func_LBY());
+            //addFunction(new Func_LBZ());
+            //addFunction(new Func_Lg());
+            //addFunction(new Func_Ln());
+            //addFunction(new Func_Log());
+            //addFunction(new Func_L0());
+            //addFunction(new Func_L1());
+            //addFunction(new Func_L2());
+            //addFunction(new Func_L3());
+            //addFunction(new Func_Max());
+            //addFunction(new Func_Minus());
+            //addFunction(new Func_M2X());
+            //addFunction(new Func_Multiply());
+            //addFunction(new Func_Negate());
+            //addFunction(new Func_NOP());
+            //addFunction(new Func_Not());
+            //addFunction(new Func_Or());
+            //addFunction(new Func_PI());
+            //addFunction(new Func_Plus());
+            //addFunction(new Func_PrevFile());
+            //addFunction(new Func_set_DMOD_RAD());
+            //addFunction(new Func_Rand());
+            //addFunction(new Func_Return());
+            //addFunction(new Func_Rot());
+            //addFunction(new Func_Seed());
+            //addFunction(new Func_Sign());
+            //addFunction(new Func_Sin());
+            //addFunction(new Func_SQRT());
+            //addFunction(new Func_Stop());
+            //addFunction(new Func_Swap());
+            //addFunction(new Func_Tg());
+            //addFunction(new Func_D2DM());
+            //addFunction(new Func_D2DMS());
+            //addFunction(new Func_mm2in());
+            //addFunction(new Func_D2Rad());
+            //addFunction(new Func_X2());
+            //addFunction(new Func_Xor());
+            //addFunction(new Func_Pow());
+            //addFunction(new Func_X2M());
+            //addFunction(new Func_Toggle_DMOD());
+        //}
         public void listFunctions(string filename)
         {
             FileStream fs = null;
@@ -417,9 +483,18 @@ namespace MK52Simulator
                 sw.Write("#\n");
                 sw.Write("# MK-52 implemented functions " + DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss\n"));
                 sw.Write("#\n");
-                foreach (RPN_Function f in Functions.Values)
+                for( int i = 0; i<RPN_Functions.MK52_NFUNCTIONS; i++)           
                 {
-                    sw.Write(f.Keyword.PadRight(20));
+                    sw.Write( i.ToString("000"));
+                    sw.Write("\t");
+                    RPN_Function f = _m_RPN_Functions.getFunctionByID( (uint)i);
+                    if( f==null)
+                    {
+                        sw.Write("slot empty\n");
+                        continue;
+                    }
+                    if( f.IOName() == null || f.IOName().Length == 0) sw.Write("No name");
+                    else sw.Write(f.IOName());
                     sw.Write("\t");
                     sw.Write(f.Description);
                     sw.Write("\n");
@@ -427,7 +502,7 @@ namespace MK52Simulator
             }
             catch
             {
-                CalcStack.X_Label = "Error: file save";
+                this._m_RPN_Stack.setStackLabel_P( 0, "Error: file save");
             }
             finally
             {
@@ -448,13 +523,14 @@ namespace MK52Simulator
         }
         private void addDisplays()
         {
-            addDisplay(new Display_Splash(this));
-            addDisplay(new Display_OFF(this));
-            addDisplay(new Display_RUN(this));
-            addDisplay(new Display_AUTO(this));
-            addDisplay(new Display_PROG(this));
-            addDisplay(new Display_DATA(this));
-            addDisplay(new Display_FILE(this));
+            current_Display = addDisplay(new Display_Splash());
+            addDisplay(new Display_OFF());
+            addDisplay(new Display_RUN());
+            addDisplay(new Display_AUTO());
+            addDisplay(new Display_PROG());
+            addDisplay(new Display_DATA());
+            addDisplay(new Display_FILE());
+            addDisplay(new Display_FontTest());
         }
         #endregion
 
@@ -462,30 +538,31 @@ namespace MK52Simulator
         //
         // Receiver adding helper
         // 
-        private RPN_InputReceiver addReceiver(RPN_InputReceiver r)
+        private Receiver addReceiver(Receiver r)
         {
             Receivers.Add(r.Moniker, r);
             return r;
         }
         private void addReceivers()
         {
-            current_Receiver = addReceiver(new InputReceiver_AUTO_N(this));
-            addReceiver(new InputReceiver_AUTO_F(this));
-            addReceiver(new InputReceiver_AUTO_K(this));
-            addReceiver(new InputReceiver_AUTO_A(this));
-            addReceiver(new InputReceiver_RUN(this)); // Running in AUTO mode
+            current_Receiver = addReceiver(new Receiver_OFF(this));
+            addReceiver(new Receiver_AUTO_N(this));
+            addReceiver(new Receiver_AUTO_F(this));
+            addReceiver(new Receiver_AUTO_K(this));
+            addReceiver(new Receiver_AUTO_A(this));
+            addReceiver(new Receiver_AUTO_R(this)); // Running in AUTO mode
 
-            addReceiver(new InputReceiver_PROG_N(this));
-            addReceiver(new InputReceiver_PROG_F(this));
-            addReceiver(new InputReceiver_PROG_K(this));
-            addReceiver(new InputReceiver_PROG_A(this));
+            addReceiver(new Receiver_Number(this));
 
-            addReceiver(new InputReceiver_DATA_N(this));
-            addReceiver(new InputReceiver_DATA_F(this));
-            addReceiver(new InputReceiver_DATA_K(this));
-            addReceiver(new InputReceiver_DATA_A(this));
+            //addReceiver(new InputReceiver_PROG_N(this));
+            //addReceiver(new InputReceiver_PROG_F(this));
+            //addReceiver(new InputReceiver_PROG_K(this));
+            //addReceiver(new InputReceiver_PROG_A(this));
 
-            addReceiver(new InputReceiver_OFF(this));
+            //addReceiver(new InputReceiver_DATA_N(this));
+            //addReceiver(new InputReceiver_DATA_F(this));
+            //addReceiver(new InputReceiver_DATA_K(this));
+            //addReceiver(new InputReceiver_DATA_A(this));
         }
         #endregion
     }
