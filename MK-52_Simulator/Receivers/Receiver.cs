@@ -41,6 +41,30 @@ namespace MK52Simulator
             return (byte)0;
         }
 
+        public virtual string toString()
+        {
+            return _text.ToString();
+        }
+
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append("Receiver [");
+            sb.Append(Moniker);
+            sb.Append("]: ");
+            sb.Append(_text.ToString());
+            return sb.ToString();
+        }
+
+        public virtual string toTrimmedString()
+        {
+            return _text.ToString().TrimStart();
+        }
+
+        public uint getMode() { return _mode; }
+
+        public virtual void setMode( uint mode) {} // empty on purpose!
+
         protected char _convertButton( string list, uint scancode)
         {
             if (scancode >= list.Length) return (char)0;

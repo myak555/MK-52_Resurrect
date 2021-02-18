@@ -20,10 +20,10 @@ namespace MK52Simulator
         private const string _RN_ButtonConversion = "#ffffffffffff7410852.963-fffEffec";
         private const string _RN_StandardUnity = "1.0E+000";
 
-        private const int _Off = 0;
-        private const int _Whole = 1;
-        private const int _Decimal = 2;
-        private const int _Exponent = 3;
+        public const uint _Off = 0;
+        public const uint _Whole = 1;
+        public const uint _Decimal = 2;
+        public const uint _Exponent = 3;
         
         /// <summary>
         /// Constructor
@@ -55,7 +55,7 @@ namespace MK52Simulator
                 case 'f': // entry completed, action needed
                     _mode = _Off;
                     completeEntry( toTrimmedString());
-                    _parent.setReceiver( _return_to);
+                    _parent.getFunctions().requestNextReceiver(_return_to);
                     return (c=='e')? (byte)0: scancode;
                 case '0':
                 case '1':
@@ -111,21 +111,6 @@ namespace MK52Simulator
             LCD_Manager lm = _parent.getLCD(); 
             lm.updateCalcRegister(0, toString());
             lm.forcePaint();
-        }
-
-        public string toString()
-        {
-            return _text.ToString();
-        }
-
-        public override string ToString()
-        {
-            return _text.ToString();
-        }
-
-        public string toTrimmedString()
-        {
-            return _text.ToString().TrimStart();
         }
 
         private void processDigit(int ln, char c)
@@ -220,7 +205,7 @@ namespace MK52Simulator
             }
             _mode = _Off;
             completeEntry("0");
-            _parent.setReceiver(_return_to);
+            _parent.getFunctions().requestNextReceiver(_return_to);
             return true;
         }
 

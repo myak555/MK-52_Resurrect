@@ -131,6 +131,9 @@ namespace MK52Simulator
         private SD_Manager _sd = null;
         private List<RPN_Function> _functions = new List<RPN_Function>();
         private UniversalValue _tmpuv = new UniversalValue(); // temporary value for number conversion
+        private string _receiverRequested = "None";
+        private string _receiverReturnRequested = "None";
+        private uint _receiverModeRequested = 0;
 
         // random number remembered (emulator-only)
         public Random myRNG = new Random();
@@ -156,9 +159,6 @@ namespace MK52Simulator
             extMem = components._m_Extended_Memory;
             _sd = components._m_Hardware_SD;
             for( int i=0; i<_lines.Length; i++) _lines[i] = "";
-
-            //addFunction(new Func_Empty()); // These two must be checked first TODO
-            //addFunction(new Func_Number());
 
             // first check for empty program line
             _appendFunction( new Func_Empty());
@@ -378,9 +378,9 @@ namespace MK52Simulator
             _appendFunction( new Func_LBT());
             // if the name is not found, it must be a number and should be placed to register X
             _appendFunction( new Func_Number());
-
         }
- 
+
+        #region IO Buffer
         public string getOutputBuffer()
         {
             return _text;
@@ -419,7 +419,9 @@ namespace MK52Simulator
         {
             return _lines;
         }
+        #endregion
 
+        #region Execute
         public RPN_Function getFunctionByID(uint id)
         {
             // TODO
@@ -435,7 +437,6 @@ namespace MK52Simulator
 
         public RPN_Function getFunctionByName(string command)
         {
-            if (command.Length <= 0) return null;
             for (int i = 0; i < _functions.Count; i++)
             {
                 RPN_Function pf = _functions[i];
@@ -500,7 +501,9 @@ namespace MK52Simulator
             string programLine = progMem.getCurrentLine();
             execute( programLine);
         }
+        #endregion
 
+        #region File Operations (TODO)
         public bool loadStateFile()
         {
             return true;
@@ -560,12 +563,46 @@ namespace MK52Simulator
         {
             return _sd.checkEntityExists(name);
         }
+        #endregion
+
+
+        public void requestNextReceiver(string name)
+        {
+            requestNextReceiver(name, "None", 0);
+        }
+
+        public void requestNextReceiver(string name, string exitTo, uint mode)
+        {
+            _receiverRequested = name;
+            _receiverReturnRequested = exitTo;
+            _receiverModeRequested = mode;
+        }
+
+        public string getRequestedReceiver()
+        {
+            string tmp = _receiverRequested;
+            _receiverRequested = "None";
+            return tmp;
+        }
+
+        public string getRequestedReturnReceiver()
+        {
+            string tmp = _receiverReturnRequested;
+            _receiverReturnRequested = "None";
+            return tmp;
+        }
+
+        public uint getRequestedReceiverMode()
+        {
+            return _receiverModeRequested;
+        }
 
         public void appendProgramLine_P( uint id)
         {
             progMem.updateLine_P( getFunctionByID(id).Name());
         }
 
+        #region Private Functions
         private void _appendFunction( RPN_Function f)
         {
             if (_functions.Count >= MK52_NFUNCTIONS) return;
@@ -596,5 +633,6 @@ namespace MK52Simulator
         {
             return true;
         }
+        #endregion
     }
 }

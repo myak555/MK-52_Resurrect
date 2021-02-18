@@ -34,99 +34,111 @@ namespace MK52Simulator
 
         public override byte tick(byte scancode)
         {
-            if (scancode == 0) return 0;
-            _parent.setReceiver("AUTO_N");
+            RPN_Functions _rpnf = _parent.getFunctions();
+            switch (scancode)
+            {
+                case 0: // keyboard inactive
+                    return 0;
+
+                // Column 0
+                case 2:
+                    _rpnf.requestNextReceiver("AUTO_K");
+                    return 0;
+                case 3:
+                    _rpnf.requestNextReceiver("AUTO_A");
+                    return 0;
+                case 4:
+                    _rpnf.execute(RPN_Functions.FUNC_TOGGLE_DMOD, "");
+                    base.tick(0);
+                    return 0;
+
+                // Column 1 does nothing (for now)
+                case 5:
+                case 6:
+                case 7:
+                case 8:
+
+                // Column 2 does nothing (for now)
+                case 9:
+                case 10:
+                case 11:
+                case 12:
+                    return 0;
+
+                // Column 3
+                case 13:
+                    _rpnf.execute(RPN_Functions.FUNC_SIN);
+                    break;
+                case 14:
+                    _rpnf.execute(RPN_Functions.FUNC_ARCSIN);
+                    break;
+                case 15:
+                    _rpnf.execute(RPN_Functions.FUNC_EXP);
+                    break;
+                case 16:
+                    _rpnf.execute(RPN_Functions.FUNC_10X);
+                    break;
+
+                // Column 4
+                case 17:
+                    _rpnf.execute(RPN_Functions.FUNC_COS);
+                    break;
+                case 18:
+                    _rpnf.execute(RPN_Functions.FUNC_ARCCOS);
+                    break;
+                case 19:
+                    _rpnf.execute(RPN_Functions.FUNC_LG);
+                    break;
+                case 20:
+                    _rpnf.execute(RPN_Functions.FUNC_ROT);
+                    break;
+
+                // Column 5
+                case 21:
+                    _rpnf.execute(RPN_Functions.FUNC_TG);
+                    break;
+                case 22:
+                    _rpnf.execute(RPN_Functions.FUNC_ARCTG);
+                    break;
+                case 23:
+                    _rpnf.execute(RPN_Functions.FUNC_LN);
+                    break;
+                case 24:
+                    // AUTO is already on
+                    break;
+
+                // Column 6
+                case 25:
+                    _rpnf.execute(RPN_Functions.FUNC_SQRT);
+                    break;
+                case 26:
+                    _rpnf.execute(RPN_Functions.FUNC_PI);
+                    break;
+                case 27:
+                    _rpnf.execute(RPN_Functions.FUNC_POW);
+                    break;
+                case 28:
+                    _rpnf.requestNextReceiver("PROG_N");
+                    return 0;
+
+                // Column 7
+                case 29:
+                    _rpnf.execute(RPN_Functions.FUNC_1X);
+                    break;
+                case 30:
+                    _rpnf.execute(RPN_Functions.FUNC_X2);
+                    break;
+                case 31:
+                    _rpnf.execute(RPN_Functions.FUNC_BX);
+                    break;
+                case 32:
+                    // Clear F mode
+                    break;
+                default: // all other buttons do nothing, keeping F-mode
+                    return 0;
+            }
+            _rpnf.requestNextReceiver("AUTO_N");
             return 0;
         }
-
-        //public override string tick(MK52_Button button)
-        //{
-        //    switch (button.Moniker)
-        //    {
-        //        // Column 0
-        //        case "Func K":
-        //            return "AUTO_K";
-        //        case "Func A":
-        //            return "AUTO_A";
-        //        case "Mode":
-        //            _parent._m_RPN_Stack.toggleAngleMode();
-        //            return "Nothing";
-
-        //        // Column 1
-        //        // Does nothing
-
-        //        // Column 2
-        //        // Does nothing
-
-        //        // Column 3
-        //        case "7":
-        //            //_parent.executeFunction("SIN");
-        //            return "AUTO_N";
-        //        case "4":
-        //            //_parent.executeFunction("arcSIN");
-        //            return "AUTO_N";
-        //        case "1":
-        //            //_parent.executeFunction("EXP");
-        //            return "AUTO_N";
-        //        case "0":
-        //            //_parent.executeFunction("10^X");
-        //            return "AUTO_N";
-
-        //        // Column 4
-        //        case "8":
-        //            //_parent.executeFunction("COS");
-        //            return "AUTO_N";
-        //        case "5":
-        //            //_parent.executeFunction("arcCOS");
-        //            return "AUTO_N";
-        //        case "2":
-        //            //_parent.executeFunction("LG");
-        //            return "AUTO_N";
-        //        case ".":
-        //            //_parent.executeFunction("Rotate");
-        //            return "AUTO_N";
-
-        //        // Column 5
-        //        case "9":
-        //            //_parent.executeFunction("TG");
-        //            return "AUTO_N";
-        //        case "6":
-        //            //_parent.executeFunction("arcTG");
-        //            return "AUTO_N";
-        //        case "3":
-        //            //_parent.executeFunction("LN");
-        //            return "AUTO_N";
-        //        case "/-/":
-        //            return "AUTO_N";
-
-        //        // Column 6
-        //        case "-":
-        //            //_parent.executeFunction("SQRT");
-        //            return "AUTO_N";
-        //        case "+":
-        //            //_parent.executeFunction("pi");
-        //            return "AUTO_N";
-        //        case "Swap":
-        //            //_parent.executeFunction("X^Y");
-        //            return "AUTO_N";
-        //        case "EE":
-        //            return "PROG_N";
-
-        //        // Column 7
-        //        case "/":
-        //            //_parent.executeFunction("1/X");
-        //            return "AUTO_N";
-        //        case "*":
-        //            //_parent.executeFunction("X^2");
-        //            return "AUTO_N";
-        //        case "Enter":
-        //            //_parent.executeFunction("Bx");
-        //            return "AUTO_N";
-        //        case "Cx":
-        //            return "AUTO_N";
-        //        default:
-        //            return "Nothing";
-        //    }                
-        //}
     }
 }

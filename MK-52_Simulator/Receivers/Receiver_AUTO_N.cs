@@ -24,14 +24,9 @@ namespace MK52Simulator
             Moniker = "AUTO_N";
         }
 
-        public override void activate(string prevReceiver)
-        {
-            base.activate(prevReceiver);
-        }
-
         public override byte tick(byte scancode)
         {
-            RPN_Functions _rpnf = _parent._m_RPN_Functions;
+            RPN_Functions _rpnf = _parent.getFunctions();
             switch( scancode)
             {
                 case 0: // keyboard inactive
@@ -39,13 +34,13 @@ namespace MK52Simulator
 
                 // Column 0
                 case 1:
-                    _parent.setReceiver("AUTO_F");
+                    _rpnf.requestNextReceiver("AUTO_F");
                     return 0;
                 case 2:
-                    _parent.setReceiver("AUTO_K");
+                    _rpnf.requestNextReceiver("AUTO_K");
                     return 0;
                 case 3:
-                    _parent.setReceiver("AUTO_A");
+                    _rpnf.requestNextReceiver("AUTO_A");
                     return 0;
                 case 4:
                     _rpnf.execute(RPN_Functions.FUNC_TOGGLE_DMOD, "");
@@ -62,26 +57,21 @@ namespace MK52Simulator
                     _rpnf.execute(RPN_Functions.FUNC_RESET_PC);
                     break;
                 case 8:
-                    _parent.setReceiver("AUTO_R");
+                    _rpnf.requestNextReceiver("AUTO_R");
                     return 0;
 
-                //// Column 2
-                //case 9:
-                //    _mode = 3;
-                //    _rr->activate(0, 0);
-                //    break;
-                //case 10:
-                //    _mode = 4;
-                //    _rr->activate(0, 0);
-                //    break;
-                //case 11:
-                //    _mode = 5;
-                //    _ar->activate(0, 0);
-                //    _lcd->updateStatusPC( _ar->toString());
-                //    break;
+                // Column 2
+                case 9:
+                    _rpnf.requestNextReceiver("REGISTER_A", "AUTO_N", Receiver_Register_A._MX);
+                    return 0;
+                case 10:
+                    _rpnf.requestNextReceiver("REGISTER_A", "AUTO_N", Receiver_Register_A._XM);
+                    return 0;
+                case 11:
+                    _rpnf.requestNextReceiver("ADDRESS_PC");
+                    return 0;
                 case 12:
                     _rpnf.executeStep();
-                    //_lcd->updateStatusPC( _rpnf->progMem->getCounter());
                     break;
 
                 // Column 5
@@ -119,7 +109,7 @@ namespace MK52Simulator
                 default: // all other buttons activate number entry
                     _rpnf.execute(RPN_Functions.FUNC_ENTER);
                     base.tick(0); // redraw stack movement
-                    _parent.setReceiver("NUMBER");
+                    _rpnf.requestNextReceiver("NUMBER");
                     return scancode;
             }
             return base.tick(0);

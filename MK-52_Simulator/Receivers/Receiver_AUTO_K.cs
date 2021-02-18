@@ -34,119 +34,126 @@ namespace MK52Simulator
 
         public override byte tick(byte scancode)
         {
-            if (scancode == 0) return 0;
-            _parent.setReceiver("AUTO_N");
+            RPN_Functions _rpnf = _parent.getFunctions();
+            switch (scancode)
+            {
+                case 0: // keyboard inactive - must return to AUTO_N (this happens after KM ops)
+                    _rpnf.requestNextReceiver("AUTO_N");
+                    return 0;
+
+                // Column 0
+                case 1:
+                    _rpnf.requestNextReceiver("AUTO_F");
+                    return 0;
+                case 3:
+                    _rpnf.requestNextReceiver("AUTO_A");
+                    return 0;
+                case 4:
+                    _rpnf.execute(RPN_Functions.FUNC_TOGGLE_DMOD, "");
+                    base.tick(0);
+                    return 0;
+
+                // Column 1 does nothing (for now)
+                case 5:
+                case 6:
+                case 7:
+                case 8:
+                    return 0;
+
+                // Column 2
+                case 9:
+                    _rpnf.requestNextReceiver("REGISTER_A", "AUTO_N", Receiver_Register_A._KMX);
+                    return 0;
+                case 10:
+                    _rpnf.requestNextReceiver("REGISTER_A", "AUTO_N", Receiver_Register_A._KXM);
+                    return 0;
+                case 11:
+                    _parent._m_RPN_Stack.setStackLabel_P(0, "K-GOTO is bad for you!");
+                    break;
+                case 12:
+                    _parent._m_RPN_Stack.setStackLabel_P(0, "K-GOSUB is bad for you!");
+                    break;
+
+                // Column 3
+                case 13:
+                    _rpnf.execute(RPN_Functions.FUNC_WHOLE);
+                    break;
+                case 14:
+                    _rpnf.execute(RPN_Functions.FUNC_ABS);
+                    break;
+                case 15:
+                    _rpnf.execute(RPN_Functions.FUNC_EE);
+                    break;
+                case 16:
+                    // NOP
+                    break;
+
+                // Column 4
+                case 17:
+                    _rpnf.execute(RPN_Functions.FUNC_FRAC);
+                    break;
+                case 18:
+                    _rpnf.execute(RPN_Functions.FUNC_SIGN);
+                    break;
+                case 19:
+                    _rpnf.execute(RPN_Functions.FUNC_LOG);
+                    break;
+                case 20:
+                    _rpnf.execute(RPN_Functions.FUNC_AND);
+                    break;
+
+                // Column 5
+                case 21:
+                    _rpnf.execute(RPN_Functions.FUNC_MAX);
+                    break;
+                case 22:
+                    _rpnf.execute(RPN_Functions.FUNC_DM2D);
+                    break;
+                case 23:
+                    _rpnf.execute(RPN_Functions.FUNC_DMS2D);
+                    break;
+                case 24:
+                    _rpnf.execute(RPN_Functions.FUNC_OR);
+                    break;
+
+                // Column 6
+                case 25:
+                    // TODO
+                    //_rpnf.execute(RPN_Functions.FUNC_SQRT);
+                    _parent._m_RPN_Stack.setStackLabel_P(0, "K-SQRT is available!");
+                    break;
+                case 26:
+                    _rpnf.execute(RPN_Functions.FUNC_D2DM);
+                    break;
+                case 27:
+                    _rpnf.execute(RPN_Functions.FUNC_D2DMS);
+                    break;
+                case 28:
+                    _rpnf.execute(RPN_Functions.FUNC_XOR);
+                    return 0;
+
+                // Column 7
+                case 29:
+                    // TODO
+                    //_rpnf.execute(RPN_Functions.FUNC_1X);
+                    _parent._m_RPN_Stack.setStackLabel_P(0, "K-1/X is available!");
+                    break;
+                case 30:
+                    // TODO
+                    //_rpnf.execute(RPN_Functions.FUNC_X2);
+                    _parent._m_RPN_Stack.setStackLabel_P(0, "K-X2 is available!");
+                    break;
+                case 31:
+                    _rpnf.execute(RPN_Functions.FUNC_RAND);
+                    break;
+                case 32:
+                    _rpnf.execute(RPN_Functions.FUNC_NOT);
+                    break;
+                default: // all other buttons do nothing, keeping F-mode
+                    return 0;
+            }
+            _rpnf.requestNextReceiver("AUTO_N");
             return 0;
         }
-
-        //public override string tick(MK52_Button button)
-        //{
-        //    //if (_parent.Registers.isActive)
-        //    //{
-        //    //    _parent.Registers.onButton(button);
-        //    //    return "Nothing";
-        //    //}
-        //    switch (button.Moniker)
-        //    {
-        //        // Column 1
-        //        case "Func F":
-        //            return "AUTO_F";
-        //        case "Func A":
-        //            return "AUTO_A";
-        //        case "Mode":
-        //            _parent._m_RPN_Stack.toggleAngleMode();
-        //            return "Nothing";
-
-        //        // Column 1
-        //        case "->":
-        //            //_parent.Memory.Counter.Increment();
-        //            return "AUTO_N";
-        //        case "<-":
-        //            //_parent.Memory.Counter.Decrement();
-        //            return "AUTO_N";
-        //        case "B/O":
-        //            //_parent.Memory.Counter.Set(0);
-        //            return "AUTO_N";
-
-        //        // Column 2
-        //        case "M->X":
-        //            //_parent.Registers.ActivateEntry(Register_Memory.ExtendedToStack);
-        //            return "Nothing";
-        //        case "X->M":
-        //            //_parent.Registers.ActivateEntry(Register_Memory.StackToExtended);
-        //            return "Nothing";
-
-        //        // Column 3
-        //        case "7":
-        //            //_parent.executeFunction("[X]");
-        //            return "AUTO_N";
-        //        case "4":
-        //            //_parent.executeFunction("|X|");
-        //            return "AUTO_N";
-        //        case "1":
-        //            //_parent.executeFunction("e");
-        //            return "AUTO_N";
-        //        case "0":
-        //            return "AUTO_N"; // NOP
-
-        //        // Column 4
-        //        case "8":
-        //            //_parent.executeFunction("{X}");
-        //            return "AUTO_N";
-        //        case "5":
-        //            //_parent.executeFunction("SIGN");
-        //            return "AUTO_N";
-        //        case "2":
-        //            //_parent.executeFunction("LOG");
-        //            return "AUTO_N";
-        //        case ".":
-        //            //_parent.executeFunction("AND");
-        //            return "AUTO_N";
-
-        //        // Column 5
-        //        case "9":
-        //            //_parent.executeFunction("MAX");
-        //            return "AUTO_N";
-        //        case "6":
-        //            //_parent.executeFunction("<-DM");
-        //            return "AUTO_N";
-        //        case "3":
-        //            //_parent.executeFunction("<-DMS");
-        //            return "AUTO_N";
-        //        case "/-/":
-        //            //_parent.executeFunction("OR");
-        //            return "AUTO_N";
-
-        //        // Column 6
-        //        case "-":
-        //            // TODO: root
-        //            return "AUTO_N";
-        //        case "+":
-        //            //_parent.executeFunction("DM->");
-        //            return "AUTO_N";
-        //        case "Swap":
-        //            //_parent.executeFunction("DMS->");
-        //            return "AUTO_N";
-        //        case "EE":
-        //            //_parent.executeFunction("XOR");
-        //            return "AUTO_N";
-
-        //        // Column 7
-        //        case "/":
-        //            //TODO;
-        //            return "AUTO_N";
-        //        case "*":
-        //            //TODO Quadratic
-        //            return "AUTO_N";
-        //        case "Enter":
-        //            //_parent.executeFunction("RAND");
-        //            return "AUTO_N";
-        //        case "Cx":
-        //            //_parent.executeFunction( "NOT");
-        //            return "AUTO_N";
-        //        default:
-        //            return "Nothing";
-        //    }                
-        //}
     }
 }

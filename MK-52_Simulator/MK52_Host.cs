@@ -92,104 +92,27 @@ namespace MK52Simulator
             return _m_Hardware_SD;
         }
 
+        /// <summary>
+        /// Fake functon for C++ emulation 
+        /// </summary>
+        public RPN_Functions getFunctions()
+        {
+            return _m_RPN_Functions;
+        }
+
         public void tick()
         {
             byte b = _m_Hardware_KBD.scan();
             while (b > 0)
+            {
                 b = current_Receiver.tick(b);
-
-            //if (b == 0) return;
-            //if( current_Receiver.tick(b) == "NO_CHANGE") return;
-            //switch (b)
-            //{
-            //    case 1:
-            //        setReceiver("AUTO_A", 0);
-            //        break;
-            //    case 2:
-            //        setReceiver("AUTO_F", 0);
-            //        break;
-            //    case 3:
-            //        setReceiver("AUTO_K", 0);
-            //        break;
-            //    case 4:
-            //        setReceiver("AUTO_N", 0);
-            //        break;
-            //    case 5:
-            //        setReceiver("AUTO_R", 0);
-            //        break;
-            //    case 13:
-            //    case 14:
-            //    case 15:
-            //    case 16:
-            //    case 17:
-            //    case 18:
-            //    case 19:
-            //    case 20:
-            //    case 21:
-            //    case 22:
-            //    case 23:
-            //    case 24:
-            //    case 28:
-            //        setReceiver("NUMBER", (uint)b);
-            //        break;
-            //    default:
-            //        break;
-            //}
-
-            //switch (b)
-            //{
-            //    case 1:
-            //        setDisplay("Splash");
-            //        break;
-            //    case 2:
-            //        setDisplay("AUTO");
-            //        break;
-            //    case 3:
-            //        setDisplay("DATA");
-            //        break;
-            //    case 4:
-            //        setDisplay("FILE");
-            //        break;
-            //    case 5:
-            //        setDisplay("OFF");
-            //        break;
-            //    case 6:
-            //        setDisplay("PROG");
-            //        break;
-            //    case 7:
-            //        setDisplay("RUN");
-            //        break;
-            //    case 8:
-            //        setDisplay("Font Test");
-            //        break;
-            //    default:
-            //        break;
-            //}
-            //string newReceiver = current_Receiver.tick( rpb);
-            //setReceiver(newReceiver);
-            //current_Display.tick();
-        }
-
-        public Display getDisplay(string name)
-        {
-            if (!Displays.ContainsKey(name)) return null;
-            return Displays[name];
+                if( setRequestedReceiver()) break;
+            }
         }
 
         /// <summary>
-        /// Sets display
+        /// Returns the receiver by name
         /// </summary>
-        /// <param name="name">Display moniker</param>
-        /// <returns>true if display is not available</returns>
-        public bool setDisplay(string name)
-        {
-            if (!Displays.ContainsKey(name)) return true;
-            Display dis = Displays[name];
-            dis.activate(current_Display.Moniker);
-            current_Display = dis;
-            return false;
-        }
-
         public Receiver getReceiver(string name)
         {
             if (!Receivers.ContainsKey(name)) return null;
@@ -206,6 +129,23 @@ namespace MK52Simulator
             Receiver ri = getReceiver( name);
             if (ri == null) return true;
             ri.activate( current_Receiver.Moniker);
+            current_Receiver = ri;
+            return false;
+        }
+
+        /// <summary>
+        /// Sets receiver
+        /// </summary>
+        /// <param name="name">Receiver moniker</param>
+        /// <returns>true if receiver change is not requested</returns>
+        public bool setRequestedReceiver()
+        {
+            Receiver ri = getReceiver(_m_RPN_Functions.getRequestedReceiver());
+            if (ri == null) return true;
+            string return_to = _m_RPN_Functions.getRequestedReturnReceiver();
+            if (return_to == "None") return_to = current_Receiver.Moniker;
+            ri.activate(return_to);
+            ri.setMode(_m_RPN_Functions.getRequestedReceiverMode());
             current_Receiver = ri;
             return false;
         }
@@ -546,13 +486,19 @@ namespace MK52Simulator
         private void addReceivers()
         {
             current_Receiver = addReceiver(new Receiver_OFF(this));
+
             addReceiver(new Receiver_AUTO_N(this));
             addReceiver(new Receiver_AUTO_F(this));
             addReceiver(new Receiver_AUTO_K(this));
             addReceiver(new Receiver_AUTO_A(this));
             addReceiver(new Receiver_AUTO_R(this)); // Running in AUTO mode
 
+            addReceiver(new Receiver_Address(this));
+            addReceiver(new Receiver_Address_PC(this));
+            addReceiver(new Receiver_Address_MC(this));
             addReceiver(new Receiver_Number(this));
+            addReceiver(new Receiver_Register(this));
+            addReceiver(new Receiver_Register_A(this));
 
             //addReceiver(new InputReceiver_PROG_N(this));
             //addReceiver(new InputReceiver_PROG_F(this));
