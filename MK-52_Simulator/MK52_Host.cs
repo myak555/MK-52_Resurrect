@@ -103,11 +103,13 @@ namespace MK52Simulator
         public void tick()
         {
             byte b = _m_Hardware_KBD.scan();
-            while (b > 0)
+            // must be done once for display delayed update
+            do
             {
                 b = current_Receiver.tick(b);
-                if( setRequestedReceiver()) break;
+                if (setRequestedReceiver()) break;
             }
+            while (b > 0);
         }
 
         /// <summary>
@@ -464,9 +466,6 @@ namespace MK52Simulator
         private void addDisplays()
         {
             current_Display = addDisplay(new Display_Splash());
-            addDisplay(new Display_OFF());
-            addDisplay(new Display_RUN());
-            addDisplay(new Display_AUTO());
             addDisplay(new Display_PROG());
             addDisplay(new Display_DATA());
             addDisplay(new Display_FILE());
@@ -493,9 +492,13 @@ namespace MK52Simulator
             addReceiver(new Receiver_AUTO_A(this));
             addReceiver(new Receiver_AUTO_R(this)); // Running in AUTO mode
 
+            addReceiver(new Receiver_DATA(this));
+
             addReceiver(new Receiver_Address(this));
             addReceiver(new Receiver_Address_PC(this));
             addReceiver(new Receiver_Address_MC(this));
+            addReceiver(new Receiver_Address_AMX(this));
+            addReceiver(new Receiver_Address_AXM(this));
             addReceiver(new Receiver_Number(this));
             addReceiver(new Receiver_Register(this));
             addReceiver(new Receiver_Register_A(this));

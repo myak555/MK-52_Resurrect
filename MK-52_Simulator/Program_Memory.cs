@@ -247,6 +247,7 @@ namespace MK52Simulator
 
         public bool replaceLine_P(string line)
         {
+            if (_current >= _bottom) return appendLine_P(line);
             int toCopy = line.Length + 1;
             string ptrC = getCurrentLine();
             int toReplace = ptrC.Length + 1;
@@ -261,6 +262,7 @@ namespace MK52Simulator
 
         public bool insertLine_P( string line)
         {
+            if (_current >= _bottom) return appendLine_P(line);
             int toInsert = line.Length + 1;
             if (__moveStringsFromCurrent(toInsert)) return true;
             return __copyStringToCurrent(line);
@@ -273,7 +275,6 @@ namespace MK52Simulator
 
         public bool updateLine_P( string line)
         {
-            if (_current >= _bottom) return appendLine_P(line);
             if (_eMode == EMODE_OWERWRITE) return replaceLine_P(line);
             else return insertLine_P(line);
         }

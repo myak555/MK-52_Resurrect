@@ -1,3 +1,11 @@
+//////////////////////////////////////////////////////////
+//
+//  MK-52 RESURRECT
+//  Copyright (c) 2020 Mike Yakimov.  All rights reserved.
+//  See main file for the license
+//
+//////////////////////////////////////////////////////////
+
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -11,40 +19,52 @@ namespace MK52Simulator
     {
         public string Moniker = "Undefined";
         protected MK52_Host _parent = null;
-        protected string[] dModeLabels = { "DEG", "RAD", "GRD" };
-        protected uint _mode = 0;
 
-        public Display(MK52_Host parent)
+        public virtual void init( MK52_Host parent)
         {
             _parent = parent;
         }
 
-        public virtual string activate()
+        public virtual void activate( string prevDisplay)
         {
-            return "Unchanged";
+            _parent._m_Hardware_LCD.outputStatus(
+                _parent._m_Program_Memory.getCounter(),
+                _parent._m_Extended_Memory.getCounter(),
+                _parent._m_RPN_Stack.getDModeName(),
+                "   ");
+        }
+        
+        public virtual void updateStatusPC( uint pc)
+        {
+            _parent._m_Hardware_LCD.updateStatusPC(pc);
         }
 
-        public virtual void tick()
+        public virtual void updateStatusPC(string pc)
+        {
+            _parent._m_Hardware_LCD.updateStatusPC(pc);
+        }
+
+        public virtual void updateStatusMC(uint mc)
+        {
+            _parent._m_Hardware_LCD.updateStatusMC(mc);
+        }
+
+        public virtual void updateStatusMC(string mc)
+        {
+            _parent._m_Hardware_LCD.updateStatusPC(mc);
+        }
+
+        public virtual void updateStatusFunc(string func)
+        {
+            _parent._m_Hardware_LCD.updateStatusFMODE(func);
+        }
+
+        public virtual void updateBody()
         {
         }
 
-        public bool isActive
+        public virtual void updateLastLine()
         {
-            get { return _mode != 0;}
-        }
-
-        protected void _outputGenericStatus()
-        {
-            uint pc = Convert.ToUInt32(_parent.Program.Counter.V);
-            uint mc = Convert.ToUInt32(_parent.Memory.Counter.V);
-            _parent.LCD.outputStatus(pc, mc, dModeLabels[_parent.dMode], _parent.current_Receiver.DisplayName);
-        }
-
-        protected void _updateGenericStatus()
-        {
-            uint pc = Convert.ToUInt32(_parent.Program.Counter.V);
-            uint mc = Convert.ToUInt32(_parent.Memory.Counter.V);
-            _parent.LCD.updateStatus(pc, mc, dModeLabels[_parent.dMode], _parent.current_Receiver.DisplayName);
         }
     }
  }

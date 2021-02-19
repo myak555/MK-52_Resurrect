@@ -34,87 +34,102 @@ namespace MK52Simulator
 
         public override byte tick(byte scancode)
         {
-            if (scancode == 0) return 0;
-            _parent.getFunctions().requestNextReceiver("AUTO_N");
+            RPN_Functions _rpnf = _parent.getFunctions();
+            switch (scancode)
+            {
+                case 0: // keyboard inactive
+                    return 0;
+
+                // Column 0
+                case 1:
+                    _rpnf.requestNextReceiver("AUTO_F");
+                    return 0;
+                case 2:
+                    _rpnf.requestNextReceiver("AUTO_K");
+                    return 0;
+                case 4:
+                    _rpnf.execute(RPN_Functions.FUNC_TOGGLE_DMOD, "");
+                    base.tick(0);
+                    return 0;
+
+                // Column 1
+                case 5:
+                    _rpnf.execute(RPN_Functions.FUNC_INCREMENT_MC);
+                    break;
+                case 6:
+                    _rpnf.execute(RPN_Functions.FUNC_DECREMENT_MC);
+                    break;
+                case 7:
+                    _rpnf.execute(RPN_Functions.FUNC_RESET_MC);
+                    break;
+                case 8:
+                    return 0;
+
+                // Column 2
+                case 9:
+                    _rpnf.requestNextReceiver("ADDRESS_AMX");
+                    return 0;
+                case 10:
+                    _rpnf.requestNextReceiver("ADDRESS_AXM");
+                    return 0;
+                case 11:
+                    _rpnf.requestNextReceiver("ADDRESS_MC", "AUTO_N", 0);
+                    return 0;
+                case 12:
+                    _rpnf.execute(RPN_Functions.FUNC_A_M2X);
+                    _rpnf.execute(RPN_Functions.FUNC_INCREMENT_MC);
+                    break;
+
+                // Column 3 does nothing
+                // Column 4 does nothing
+
+                // Column 5
+                case 22:
+                    _rpnf.execute(RPN_Functions.FUNC_D2RAD);
+                    break;
+                case 23:
+                    _rpnf.execute(RPN_Functions.FUNC_MM2IN);
+                    break;
+                case 24:
+                    _rpnf.requestNextReceiver("FILE_N");
+                    return 0;
+
+                // Column 6
+                case 25:
+                    // TODO
+                    _parent._m_RPN_Stack.setStackLabel_P(0, "A-SQRT is available!");
+                    break;
+                case 26:
+                    _rpnf.execute(RPN_Functions.FUNC_RAD2D);
+                    break;
+                case 27:
+                    _rpnf.execute(RPN_Functions.FUNC_IN2MM);
+                    break;
+                case 28:
+                    // TODO
+                    _rpnf.requestNextReceiver("DATA");
+                    return 0;
+
+                // Column 7
+                case 29:
+                    // TODO
+                    _parent._m_RPN_Stack.setStackLabel_P(0, "A-1/X is available!");
+                    break;
+                case 30:
+                    // TODO
+                    _parent._m_RPN_Stack.setStackLabel_P(0, "A-X2 is available!");
+                    break;
+                case 31:
+                    _rpnf.execute(RPN_Functions.FUNC_SEED);
+                    break;
+                case 32:
+                    _rpnf.requestNextReceiver("OFF");
+                    return 0;
+                default: // all other buttons do nothing, keeping A-mode
+                    return 0;
+            }
+            _rpnf.requestNextReceiver("AUTO_N");
             return 0;
         }
-
-        //public override string tick(MK52_Button button)
-        //{
-        //    //if (_parent.Memory.Counter.isActive)
-        //    //{
-        //    //    _parent.Memory.onButton(button);
-        //    //    return "Nothing";
-        //    //}
-        //    switch (button.Moniker)
-        //    {
-        //        // Column 0
-        //        case "Func F":
-        //            return "AUTO_F";
-        //        case "Func K":
-        //            return "AUTO_K";
-        //        case "Mode":
-        //            _parent._m_RPN_Stack.toggleAngleMode();
-        //            return "Nothing";
-
-        //        // Column 1
-        //        case "->":
-        //            //_parent.Memory.Counter.Increment();
-        //            return "Nothing";
-        //        case "<-":
-        //            //_parent.Memory.Counter.Decrement();
-        //            return "Nothing";
-        //        case "B/O":
-        //            //_parent.Memory.Counter.Set(0);
-        //            return "Nothing";
-
-        //        // Column 2
-        //        case "M->X":
-        //            //_parent.Memory.ActivateEntry( Extended_Memory.MemoryToStack);
-        //            return "Nothing";
-        //        case "X->M":
-        //            //_parent.Memory.ActivateEntry(Extended_Memory.StackToMemory);
-        //            return "Nothing";
-        //        case "GOTO":
-        //            //_parent.Memory.Counter.ActivateEntry();
-        //            return "Nothing";
-
-        //        // Column 3
-        //        // Does nothing
-
-        //        // Column 4
-        //        // Does nothing
-
-        //        // Column 5
-        //        case "6":
-        //            //_parent.executeFunction("<-RAD");
-        //            return "AUTO_N";
-        //        case "3":
-        //            //_parent.executeFunction("<-IN");
-        //            return "AUTO_N";
-
-        //        // Column 6
-        //        case "+":
-        //            //_parent.executeFunction("RAD->");
-        //            return "AUTO_N";
-        //        case "Swap":
-        //            //_parent.executeFunction("IN->");
-        //            return "AUTO_N";
-        //        case "EE":
-        //            return "DATA_N";
-
-        //        // Column 7
-        //        case "Enter":
-        //            //_parent.executeFunction("SEED");
-        //            return "AUTO_N";
-        //        case "Cx":
-        //            //_parent.CalcStack.CompleteEntry();
-        //            _parent.setReceiver("AUTO_N");
-        //            _parent.Shutdown();
-        //            return "OFF";
-        //        default:
-        //            return "Nothing";
-        //    }                
-        //}
     }
 }

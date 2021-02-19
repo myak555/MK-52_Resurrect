@@ -38,7 +38,6 @@
   <ItemGroup>
     <Compile Include="Displays\Display_FontTest.cs" />
     <Compile Include="Displays\Display_Splash.cs" />
-    <Compile Include="Displays\Display_RUN.cs" />
     <Compile Include="Displays\Display_FILE.cs" />
     <Compile Include="LCD_Manager.cs">
       <SubType>UserControl</SubType>
@@ -46,6 +45,9 @@
     <Compile Include="LCD_Manager.Designer.cs">
       <DependentUpon>LCD_Manager.cs</DependentUpon>
     </Compile>
+    <Compile Include="Receivers\Receiver_DATA.cs" />
+    <Compile Include="Receivers\Receiver_Address_AXM.cs" />
+    <Compile Include="Receivers\Receiver_Address_AMX.cs" />
     <Compile Include="Receivers\Receiver_Register_A.cs" />
     <Compile Include="Receivers\Receiver_Register.cs" />
     <Compile Include="Receivers\Receiver_Address_MC.cs" />
@@ -63,7 +65,6 @@
     <Compile Include="Program_Memory.cs" />
     <Compile Include="Functions\Func_Comment.cs" />
     <Compile Include="MK52_Button.cs" />
-    <Compile Include="Displays\Display_OFF.cs" />
     <Compile Include="Receivers\Receiver_AUTO_R.cs" />
     <Compile Include="Receivers\InputReceiver_DATA_K.cs" />
     <Compile Include="Receivers\InputReceiver_DATA_F.cs" />
@@ -81,7 +82,6 @@
     <Compile Include="Receivers\Receiver.cs" />
     <Compile Include="Displays\Display.cs" />
     <Compile Include="Displays\Display_DATA.cs" />
-    <Compile Include="Displays\Display_AUTO.cs" />
     <Compile Include="Displays\Display_PROG.cs" />
     <Compile Include="Receivers\Receiver_Number.cs" />
     <Compile Include="Functions\Func_Stack.cs" />

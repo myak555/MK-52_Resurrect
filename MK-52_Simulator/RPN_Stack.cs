@@ -122,7 +122,10 @@ namespace MK52Simulator
         public void setStackLabel_P(int n, string text)
         {
             if( n < 0 || 3 < n) return;
-            _stackLabels[n] = text.Substring(0, LCD_Manager.SCREEN_COLS);
+            if (text.Length < LCD_Manager.SCREEN_COLS - 1)
+                _stackLabels[n] = text;
+            else
+                _stackLabels[n] = text.Substring(0, LCD_Manager.SCREEN_COLS-1);
         }
 
         public int getDMode()

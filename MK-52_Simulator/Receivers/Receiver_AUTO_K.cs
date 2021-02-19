@@ -37,8 +37,7 @@ namespace MK52Simulator
             RPN_Functions _rpnf = _parent.getFunctions();
             switch (scancode)
             {
-                case 0: // keyboard inactive - must return to AUTO_N (this happens after KM ops)
-                    _rpnf.requestNextReceiver("AUTO_N");
+                case 0: // keyboard inactive
                     return 0;
 
                 // Column 0
@@ -149,7 +148,7 @@ namespace MK52Simulator
                 case 32:
                     _rpnf.execute(RPN_Functions.FUNC_NOT);
                     break;
-                default: // all other buttons do nothing, keeping F-mode
+                default: // all other buttons do nothing, keeping K-mode
                     return 0;
             }
             _rpnf.requestNextReceiver("AUTO_N");

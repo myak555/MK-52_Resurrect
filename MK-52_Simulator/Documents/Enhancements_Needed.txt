@@ -5,3 +5,6 @@
 [Pending] Create a backup file on [x]
 [Pending] Rename a file on [<->]
 [Pending] Hexadecimal integer entry
+[Pending] Y^X
+[Pending] RADIUS
+[Pending] Hex display for logical ops

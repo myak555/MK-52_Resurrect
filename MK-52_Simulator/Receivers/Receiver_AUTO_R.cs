@@ -18,6 +18,9 @@ namespace MK52Simulator
     //
     public class Receiver_AUTO_R : Receiver_AUTO
     {
+        public const int KBD_RUNNING_DELAY = 300; // ms
+        private DateTime _lastUIUpdate = DateTime.MinValue;
+
         public Receiver_AUTO_R(MK52_Host parent)
             : base( parent)
         {
@@ -26,35 +29,37 @@ namespace MK52Simulator
 
         public override void activate(string prevReceiver)
         {
-            base.activate(prevReceiver);
-            if (prevReceiver == Moniker)
-            {
-                return;
-            }
+            base.activate("AUTO_N");
             LCD_Manager lm = _parent.getLCD();
             lm.updateStatusFMODE("RUN");
             lm.forcePaint();
+            _lastUIUpdate = DateTime.Now;
         }
 
         public override byte tick(byte scancode)
         {
-            if (scancode != 8) return 0;
-            _parent.getFunctions().requestNextReceiver("AUTO_N");
+            RPN_Functions _rpnf = _parent.getFunctions();
+            LCD_Manager lm = _parent.getLCD();
+            while (true)
+            {
+                TimeSpan ts = DateTime.Now.Subtract(_lastUIUpdate);
+                bool update_required = ts.TotalMilliseconds > KBD_RUNNING_DELAY;
+                _rpnf.executeRun();
+                if (_rpnf._atStop) break;
+                if (update_required)
+                {
+                    if (_parent.getKBD().scanImmediate() == 8) break;
+                    lm.updateStatusPC(_rpnf.progMem.getCounter());
+                    lm.updateStatusMC(_rpnf.extMem.getCounter());
+                    lm.updateCalcRegister(0, _rpnf.rpnStack.X.toString());
+                    lm.forcePaint();
+                }
+            }
+            _rpnf.requestNextReceiver("AUTO_N");
+            //lm.outputStatus(fns.progMem.getCounter(), fns.extMem.getCounter(),
+            //                  fns.rpnStack.getDModeName(), "   ");
+            //lm.forcePaint();
             return 0;
         }
-
-        //public override string tick(MK52_Button button)
-        //{
-        //    switch (button.Moniker)
-        //    {
-        //        // Column 1
-        //        case "S/P":
-        //            _parent.setReceiver("AUTO_N");
-        //            return "Nothing";
-        //        default:
-        //            //_parent._m_Program_Memory.ExecuteCurrentLine();
-        //            return "Nothing";
-        //    }                
-        //}
     }
 }

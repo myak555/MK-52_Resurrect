@@ -482,6 +482,8 @@ namespace MK52Simulator
                 pf.advancePC( _parent);
                 return;
             }
+            rpnStack.setStackLabel(0, command);
+            progMem.incrementCounter();
         }
 
         public void executeStep()
@@ -492,7 +494,7 @@ namespace MK52Simulator
                 _atStop = false;
             }
             executeRun();
-            if (_atStop)
+            if (_atStop && progMem.isAtStop()) 
                 rpnStack.setStackLabel_P(0, "STOP Reached");
         }
 
@@ -500,6 +502,7 @@ namespace MK52Simulator
         {
             string programLine = progMem.getCurrentLine();
             execute( programLine);
+            if (progMem.isAtEnd()) _atStop = true;
         }
         #endregion
 

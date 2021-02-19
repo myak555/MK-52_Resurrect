@@ -7,18 +7,23 @@ namespace MK52Simulator
     //
     // Implements the calculator display in Splash mode
     //
-    public class Display_Splash : Display
+    public class Display_FontTest : Display
     {
-        public Display_Splash()
+        public Display_FontTest()
         {
-            Moniker = "Splash";
+            Moniker = "Font Test";
         }
 
         public override void activate(string prevDisplay)
         {
             LCD_Manager lm = _parent._m_Hardware_LCD;
             lm.clearScreen();
-            lm.showSplash();
+            for (int i = 0; i < 256; i++)
+            {
+                int x = (i % 29) * 11;
+                int y = (i / 29) * 20;
+                lm.outputChar(x, y, (byte)i, System.Drawing.Color.Orange, System.Drawing.Color.Black);
+            }
             lm.Refresh();
         }
     }
