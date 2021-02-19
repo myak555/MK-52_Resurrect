@@ -61,10 +61,10 @@ namespace MK52Simulator
 
                 // Column 2
                 case 9:
-                    _rpnf.requestNextReceiver("REGISTER_A", "AUTO_N", Receiver_Register_A._KMX);
+                    _rpnf.requestNextReceiver("REGISTER_KMX");
                     return 0;
                 case 10:
-                    _rpnf.requestNextReceiver("REGISTER_A", "AUTO_N", Receiver_Register_A._KXM);
+                    _rpnf.requestNextReceiver("REGISTER_KXM");
                     return 0;
                 case 11:
                     _parent._m_RPN_Stack.setStackLabel_P(0, "K-GOTO is bad for you!");
@@ -148,6 +148,11 @@ namespace MK52Simulator
                 case 32:
                     _rpnf.execute(RPN_Functions.FUNC_NOT);
                     break;
+
+                case 33:
+                    // Shutdown signal
+                    _rpnf.requestNextReceiver("AUTO_N");
+                    return 33;
                 default: // all other buttons do nothing, keeping K-mode
                     return 0;
             }

@@ -106,8 +106,7 @@ namespace MK52Simulator
                     _rpnf.execute(RPN_Functions.FUNC_IN2MM);
                     break;
                 case 28:
-                    // TODO
-                    _rpnf.requestNextReceiver("DATA");
+                    _rpnf.requestNextReceiver("DATA_N");
                     return 0;
 
                 // Column 7
@@ -123,8 +122,9 @@ namespace MK52Simulator
                     _rpnf.execute(RPN_Functions.FUNC_SEED);
                     break;
                 case 32:
-                    _rpnf.requestNextReceiver("OFF");
-                    return 0;
+                case 33:
+                    _rpnf.requestNextReceiver("AUTO_N");
+                    return 33;
                 default: // all other buttons do nothing, keeping A-mode
                     return 0;
             }

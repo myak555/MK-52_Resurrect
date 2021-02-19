@@ -134,6 +134,10 @@ namespace MK52Simulator
                 case 32:
                     // Clear F mode
                     break;
+                case 33:
+                    // Shutdown signal
+                    _rpnf.requestNextReceiver("AUTO_N");
+                    return 33;
                 default: // all other buttons do nothing, keeping F-mode
                     return 0;
             }

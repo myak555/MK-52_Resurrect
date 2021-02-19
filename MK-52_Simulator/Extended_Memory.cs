@@ -29,7 +29,6 @@ namespace MK52Simulator
         public void init( MK52_Host components)
         {
             _parent = components;
-            //clear();
         }
 
         public void clear()
@@ -90,7 +89,7 @@ namespace MK52Simulator
 
         public UniversalValue getLine( uint n)
 		{
-            if (_buffer.ContainsKey(_counter)) return _buffer[_counter];
+            if (_buffer.ContainsKey(n)) return _buffer[n];
             return new UniversalValue();
         }
 
@@ -151,129 +150,6 @@ namespace MK52Simulator
 		{
            return getLine((uint)index);
 		}
-
-        //public void ToStrings(string[] inp)
-        //{
-        ////    for (int i = -7, j = 1; j <= 8; i++, j++)
-        ////    {
-        ////        int dl = Counter.V + i;
-        ////        inp[j] = "";
-        ////        if (dl < 0) continue;
-        ////        if (dl >= ProgramSize) continue;
-        ////        StringBuilder sb = new StringBuilder();
-        ////        sb.Append(dl.ToString("000"));
-        ////        sb.Append((i == 0) ? "> " : "  ");
-        ////        if (j < 8)
-        ////        {
-        ////            sb.Append(GetLine(dl));
-        ////            inp[j] = sb.ToString();
-        ////            continue;
-        ////        }
-        ////        if (Number.isActive)
-        ////        {
-        ////            sb.Append(Number.ToString());
-        ////            inp[j] = sb.ToString();
-        ////            continue;
-        ////        }
-        ////        if (Counter.isActive)
-        ////        {
-        ////            sb.Append(GetLine(dl));
-        ////            sb.Append(Counter.ActiveEntry);
-        ////            inp[j] = sb.ToString();
-        ////            continue;
-        ////        }
-        ////        sb.Append(GetLine(dl));
-        ////        inp[j] = sb.ToString();
-        ////    }
-        //}
-
-        ////public bool isAddressEntry
-        ////{
-        ////    get
-        ////    {
-        ////        return Counter.isActive;
-        ////    }
-        ////}
-
-        //public void ActivateEntry( int mode)
-        //{
-        //    _addressMode = mode;
-        //    Counter.ActivateEntry();
-        //}
-
-        //public void onButton(MK52_Button button)
-        //{
-        //    if (!Counter.onButton( button, false)) return;
-        //    switch (_addressMode)
-        //    {
-        //        case MemoryToStack:
-        //            if (Counter.isNewAddress)
-        //            {
-        //                Counter.resetAddress();
-        //                ToStack( Counter.V);
-        //                return;
-        //            }
-        //            Counter.Decrement();
-        //            ToStack(Counter.V);
-        //            return;
-        //        case StackToMemory:
-        //            if (Counter.isNewAddress)
-        //            {
-        //                Counter.resetAddress();
-        //                FromStack(Counter.V);
-        //                return;
-        //            }
-        //            FromStack(Counter.V);
-        //            Counter.Increment();
-        //            return;
-        //        default:
-        //            Counter.Set(Counter.entryResult);
-        //            return;
-        //    }
-        //}
-
-        //public RPN_Value GetCurrentLine()
-        //{
-        //    return GetLine( Counter.V);
-        //}
-
-        //public RPN_Value GetLine(int address)
-        //{
-        //    if (!ExtendedMemory.ContainsKey(address)) return new RPN_Value(); // empty object
-        //    return ExtendedMemory[address];
-        //}
-
-        //public void SetLine(int address, RPN_Value v)
-        //{
-        //    if (v.isEmpty)
-        //    {
-        //        if (ExtendedMemory.ContainsKey(address))
-        //            ExtendedMemory.Remove(address);
-        //        return;
-        //    }
-        //    if (!ExtendedMemory.ContainsKey(address))
-        //    {
-        //        ExtendedMemory.Add(address, v);
-        //        return;
-        //    }
-        //    ExtendedMemory[address].FromRPNValue( v);
-        //}
-
-        //public void FromStack( int address)
-        //{
-        //    RPN_Value dest = GetLine(address);
-        //    //dest.FromRPNValue(_parent.CalcStack.X);
-        //    SetLine(address, dest);
-        //}
-
-        //public void ToStack(int address)
-        //{
-        //    //RPN_Value src = GetLine(address);
-        //    //RPN_Value dest = _parent.CalcStack.X;
-        //    //_parent.CalcStack.StorePreviousValue();
-        //    //_parent.CalcStack.Push(1);
-        //    //dest.FromRPNValue(src);
-        //}
         
         //public bool LoadLine(string s)
         //{

@@ -56,9 +56,6 @@ namespace MK52Simulator
                 }
             }
             _rpnf.requestNextReceiver("AUTO_N");
-            //lm.outputStatus(fns.progMem.getCounter(), fns.extMem.getCounter(),
-            //                  fns.rpnStack.getDModeName(), "   ");
-            //lm.forcePaint();
             return 0;
         }
     }

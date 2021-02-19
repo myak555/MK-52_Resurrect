@@ -64,7 +64,6 @@ namespace MK52Simulator
             _m_RPN_Functions.init(this);
 
             //TODO
-            _m_Extended_Memory.setCounter(8);
             foreach (Display d in Displays.Values) d.init(this);
         }
 
@@ -467,7 +466,6 @@ namespace MK52Simulator
         {
             current_Display = addDisplay(new Display_Splash());
             addDisplay(new Display_PROG());
-            addDisplay(new Display_DATA());
             addDisplay(new Display_FILE());
             addDisplay(new Display_FontTest());
         }
@@ -492,26 +490,36 @@ namespace MK52Simulator
             addReceiver(new Receiver_AUTO_A(this));
             addReceiver(new Receiver_AUTO_R(this)); // Running in AUTO mode
 
-            addReceiver(new Receiver_DATA(this));
+            addReceiver(new Receiver_DATA_N(this));
+            addReceiver(new Receiver_DATA_F(this));
+            addReceiver(new Receiver_DATA_K(this));
+            addReceiver(new Receiver_DATA_A(this));
 
             addReceiver(new Receiver_Address(this));
             addReceiver(new Receiver_Address_PC(this));
             addReceiver(new Receiver_Address_MC(this));
             addReceiver(new Receiver_Address_AMX(this));
             addReceiver(new Receiver_Address_AXM(this));
+
             addReceiver(new Receiver_Number(this));
+            addReceiver(new Receiver_Number_DATA(this));
+            addReceiver(new Receiver_Number_PROG(this));
+            
             addReceiver(new Receiver_Register(this));
-            addReceiver(new Receiver_Register_A(this));
+            addReceiver(new Receiver_Register_MX(this));
+            addReceiver(new Receiver_Register_XM(this));
+            addReceiver(new Receiver_Register_KMX(this));
+            addReceiver(new Receiver_Register_KXM(this));
+            addReceiver(new Receiver_Register_ME(this));
+            addReceiver(new Receiver_Register_EM(this));
+
+            //addReceiver(new Receiver_Register_A(this));
 
             //addReceiver(new InputReceiver_PROG_N(this));
             //addReceiver(new InputReceiver_PROG_F(this));
             //addReceiver(new InputReceiver_PROG_K(this));
             //addReceiver(new InputReceiver_PROG_A(this));
 
-            //addReceiver(new InputReceiver_DATA_N(this));
-            //addReceiver(new InputReceiver_DATA_F(this));
-            //addReceiver(new InputReceiver_DATA_K(this));
-            //addReceiver(new InputReceiver_DATA_A(this));
         }
         #endregion
     }

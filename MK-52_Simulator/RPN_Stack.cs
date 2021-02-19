@@ -34,6 +34,8 @@ namespace MK52Simulator
         private string[] _stackLabels = new string[RPN_STACK_SIZE];
         private List<UniversalValue> _stackValues = new List<UniversalValue>();
 
+        public StringBuilder _DataEntry = new StringBuilder();
+
         public void init( MK52_Host parent)
         {
             for (int i = 0; i <= RPN_STACK_SIZE; i++)

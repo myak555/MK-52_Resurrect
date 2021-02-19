@@ -14,33 +14,33 @@ using System.IO;
 namespace MK52Simulator
 {
     //
-    // Implements a generic receiver for all keys in auto mode
+    // Implements a generic empty receiver
     //
-    public class Receiver_AUTO_N : Receiver_AUTO
+    public class Receiver_DATA_N: Receiver_DATA
     {
-        public Receiver_AUTO_N(MK52_Host parent)
+        public Receiver_DATA_N(MK52_Host parent)
             : base( parent)
         {
-            Moniker = "AUTO_N";
+            Moniker = "DATA_N";
         }
 
         public override byte tick(byte scancode)
         {
             RPN_Functions _rpnf = _parent.getFunctions();
-            switch( scancode)
+            switch (scancode)
             {
                 case 0: // keyboard inactive
                     return 0;
 
                 // Column 0
                 case 1:
-                    _rpnf.requestNextReceiver("AUTO_F");
+                    _rpnf.requestNextReceiver("DATA_F");
                     return 0;
                 case 2:
-                    _rpnf.requestNextReceiver("AUTO_K");
+                    _rpnf.requestNextReceiver("DATA_K");
                     return 0;
                 case 3:
-                    _rpnf.requestNextReceiver("AUTO_A");
+                    _rpnf.requestNextReceiver("DATA_A");
                     return 0;
                 case 4:
                     _rpnf.execute(RPN_Functions.FUNC_TOGGLE_DMOD, "");
@@ -48,71 +48,70 @@ namespace MK52Simulator
 
                 // Column 1
                 case 5:
-                    _rpnf.execute(RPN_Functions.FUNC_INCREMENT_PC);
+                    _rpnf.execute(RPN_Functions.FUNC_INCREMENT_MC);
                     break;
                 case 6:
-                    _rpnf.execute(RPN_Functions.FUNC_DECREMENT_PC);
+                    _rpnf.execute(RPN_Functions.FUNC_DECREMENT_MC);
                     break;
                 case 7:
-                    _rpnf.execute(RPN_Functions.FUNC_RESET_PC);
+                    _rpnf.execute(RPN_Functions.FUNC_RESET_MC);
                     break;
                 case 8:
-                    _rpnf.requestNextReceiver("AUTO_R");
-                    return 0;
+                    _rpnf.execute(RPN_Functions.FUNC_MEXTOX);
+                    _rpnf.execute(RPN_Functions.FUNC_INCREMENT_MC);
+                    break;
 
                 // Column 2
                 case 9:
-                    _rpnf.requestNextReceiver("REGISTER_MX");
+                    // TODO
+                    _rpnf.requestNextReceiver("REGISTER_ME");
                     return 0;
                 case 10:
-                    _rpnf.requestNextReceiver("REGISTER_XM");
+                    // TODO
+                    _rpnf.requestNextReceiver("REGISTER_EM");
                     return 0;
                 case 11:
-                    _rpnf.requestNextReceiver("ADDRESS_PC");
+                    _rpnf.requestNextReceiver("ADDRESS_MC", "DATA_N", 0);
                     return 0;
                 case 12:
-                    _rpnf.executeStep();
+                    _rpnf.execute(RPN_Functions.FUNC_XTOMEX);
+                    _rpnf.execute(RPN_Functions.FUNC_INCREMENT_MC);
                     break;
 
-                // Column 5
-                case 24:
-                    _rpnf.execute(RPN_Functions.FUNC_NEGATE);
-                    break;
+                // Column 3-5 - number entry
 
                 // Column 6
                 case 25:
-                    _rpnf.execute(RPN_Functions.FUNC_MINUS);
-                    break;
                 case 26:
-                    _rpnf.execute(RPN_Functions.FUNC_PLUS);
                     break;
                 case 27:
-                    _rpnf.execute(RPN_Functions.FUNC_SWAP);
+                    _rpnf.execute(RPN_Functions.FUNC_MEMSWP);
+                    _rpnf.execute(RPN_Functions.FUNC_INCREMENT_MC);
                     break;
 
                 // Column 7
                 case 29:
-                    _rpnf.execute(RPN_Functions.FUNC_DIVIDE);
-                    break;
                 case 30:
-                    _rpnf.execute(RPN_Functions.FUNC_MULTIPLY);
                     break;
                 case 31:
-                    _rpnf.execute(RPN_Functions.FUNC_ENTER);
+                    // TODO
+                    _rpnf.execute(RPN_Functions.FUNC_MEMSET,
+                        _parent._m_RPN_Stack._DataEntry.ToString().Trim());
+                    _rpnf.execute(RPN_Functions.FUNC_INCREMENT_MC);
                     break;
                 case 32:
-                    if (_parent._m_RPN_Stack.customStackLabels())
-                        _parent._m_RPN_Stack.resetStackLabels();
-                    else _rpnf.execute(RPN_Functions.FUNC_CLEAR_X);
+                    _rpnf.execute(RPN_Functions.FUNC_MEXCLR);
+                    _rpnf.execute(RPN_Functions.FUNC_INCREMENT_MC);
                     break;
+
                 case 33:
+                    // Shutdown signal
                     _rpnf.requestNextReceiver("OFF");
-                    return 0;
+                    return 33;
 
                 default: // all other buttons activate number entry
-                    _rpnf.execute(RPN_Functions.FUNC_ENTER);
-                    base.tick(0); // redraw stack movement
-                    _rpnf.requestNextReceiver("NUMBER");
+                    // TODO
+                    _rpnf.requestNextReceiver("NUMBER_DATA");
                     return scancode;
             }
             return base.tick(0);

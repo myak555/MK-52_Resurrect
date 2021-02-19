@@ -35,14 +35,18 @@ namespace MK52Simulator
             LCD_Manager lm = _parent._m_Hardware_LCD;
             Extended_Memory em = _parent._m_Extended_Memory;
             lm.clearScreen();
-            base.activate(prevReceiver);
+            lm.outputStatus(
+                _parent._m_Program_Memory.getCounter(),
+                em.getCounter(),
+                _parent._m_RPN_Stack.getDModeName(),
+                "   ");
             int cnt = (int)em.getCounter();
             for (int i = 10, j = cnt; i >= 0; i--, j--)
             {
                 string s = em.toString("", j);
                 lm.outputTerminalLine((uint)i, s);
             }
-            lm.Refresh();
+            lm.forcePaint();
         }
 
         public override byte tick(byte scancode)
@@ -58,7 +62,7 @@ namespace MK52Simulator
                 string s = em.toString("", j);
                 lm.updateTerminalLine((uint)i, s);
             }
-            lm.Refresh();
+            lm.forcePaint();
             return 0;
         }
     }
