@@ -8,3 +8,6 @@
 [Pending] Y^X
 [Pending] RADIUS
 [Pending] Hex display for logical ops
+[Pending] Insert in the data entry
+[Pending] Move to the next empty data
+[Pending] Move to the next empty program line on K-GOTO

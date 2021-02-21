@@ -98,7 +98,7 @@ namespace MK52Simulator
 
         public override void execute(MK52_Host components, string command)
         {
-            //_ProgMem(components).toggleEditMode();
+            _ProgMem(components).toggleEditMode();
         }
     }
 
@@ -117,7 +117,7 @@ namespace MK52Simulator
         public override void execute(MK52_Host components, string command)
         {
             RPN_Stack s = _Stack(components);
-            s.storeBx();
+            //s.storeBx(); // in MK-52 the Bx is not updated here
             s.push();
             s.X.fromString( command);
         }

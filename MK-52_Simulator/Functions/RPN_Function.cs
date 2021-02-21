@@ -20,7 +20,7 @@ namespace MK52Simulator
 
         public virtual string Name()
         {
-            return null;
+            return "";
         }
 
         public virtual string IOName()

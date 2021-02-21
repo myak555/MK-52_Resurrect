@@ -202,9 +202,7 @@ namespace MK52Simulator
 
         public override void execute(MK52_Host components, string command)
         {
-            // TODO
-            //RPN_Functions* fs = (RPN_Functions*)components[COMPONENT_FUNCTIONS];
-            //fs._atStop = true;
+            components._m_RPN_Functions._atStop = true;
         }
     }
 
