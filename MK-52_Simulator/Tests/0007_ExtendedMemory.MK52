@@ -1,9 +1,0 @@
-P000: # EXTENDED MEMORY
-P001: # Demonstrates direct extended memory access
-P100: AX->M 500
-P101: GOSUB 200
-P102: AM->X 500
-P103: STOP
-P104: GOTO 100
-P200: LG
-P201: RETURN
