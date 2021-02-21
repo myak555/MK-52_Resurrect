@@ -30,6 +30,7 @@ namespace MK52Simulator
         public override void activate(string prevReceiver)
         {
             base.activate("AUTO_N");
+            _parent.getFunctions().clearStopCondition();
             LCD_Manager lm = _parent.getLCD();
             lm.updateStatusFMODE("RUN");
             lm.forcePaint();

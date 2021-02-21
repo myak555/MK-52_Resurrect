@@ -47,7 +47,7 @@ namespace MK52Simulator
                 case 'f': // entry completed, action needed
                     completeEntry( toTrimmedString());
                     _parent.getFunctions().requestNextReceiver(_return_to);
-                    return (c=='e')? (byte)0: scancode;
+                    return (c == 'e') ? (byte)0 : scancode;
                 case '0':
                 case '1':
                 case '2':
@@ -62,6 +62,7 @@ namespace MK52Simulator
                     _text.Append(c);
                     if( _text[0] == ' ') break;
                     completeEntry(toTrimmedString());
+                    _parent.getFunctions().requestNextReceiver(_return_to);
                     return 0;
                 case 'c': // erase
                     _text.Remove(3, 1);
@@ -96,9 +97,7 @@ namespace MK52Simulator
         {
             LCD_Manager lm = _parent.getLCD();
             StringBuilder sb = new StringBuilder();
-            sb.Append(_parent._m_Program_Memory.getCounter().ToString("0000"));
-            sb.Append("> ");
-            sb.Append(_parent._m_Program_Memory.getCurrentLine());
+            sb.Append(_parent._m_Program_Memory.toString());
             sb.Append(toTrimmedString());
             lm.updateTerminalLine(10, sb.ToString());
             lm.forcePaint();

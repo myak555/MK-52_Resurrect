@@ -33,7 +33,8 @@ namespace MK52Simulator
         public override byte tick(byte scancode)
         {
             if (scancode != 32) return 0;
-            _parent.getFunctions().requestNextReceiver("AUTO_N");
+            if (_return_to.Length <= 0 || _return_to.StartsWith("Font")) _return_to = "AUTO_N";
+            _parent.getFunctions().requestNextReceiver( "Splash", _return_to, 0);
             return 0;
         }
     }

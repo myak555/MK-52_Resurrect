@@ -37,10 +37,8 @@ namespace MK52Simulator
         {
             LCD_Manager lm = _parent.getLCD();
             Program_Memory pm = _parent._m_Program_Memory;
-            uint cnt = (uint)pm.getCounter();
             StringBuilder sb = new StringBuilder();
-            sb.Append(cnt.ToString("0000"));
-            sb.Append("> ");
+            sb.Append(pm.toCounterString());
             sb.Append(value.Trim());
             lm.updateTerminalLine(LCD_Manager.SCREEN_ROWS-2, sb.ToString());
             lm.forcePaint();

@@ -465,7 +465,6 @@ namespace MK52Simulator
 
         public void execute( uint id, string command)
         {
-            //TODO
             RPN_Function pf = getFunctionByID(id);
             if (pf == null) return;
             pf.execute(_parent, command);
@@ -486,13 +485,16 @@ namespace MK52Simulator
             progMem.incrementCounter();
         }
 
+        public void clearStopCondition()
+        {
+            if (!_atStop) return;
+            if (progMem.isAtStop()) progMem.incrementCounter();
+            _atStop = false;
+        }
+
         public void executeStep()
         {
-            if (_atStop)
-            {
-                if (progMem.isAtStop()) progMem.incrementCounter();
-                _atStop = false;
-            }
+            clearStopCondition();
             executeRun();
             if (_atStop && progMem.isAtStop()) 
                 rpnStack.setStackLabel_P(0, "STOP Reached");

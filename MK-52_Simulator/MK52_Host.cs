@@ -30,13 +30,9 @@ namespace MK52Simulator
         public Register_Memory _m_Register_Memory = new Register_Memory();
         public RPN_Functions _m_RPN_Functions = new RPN_Functions();
 
-        // receivers and displays
-        public Dictionary<string, Display> Displays =
-            new Dictionary<string, Display>();
+        // receivers
         public Dictionary<string, Receiver> Receivers =
             new Dictionary<string, Receiver>();
-
-        public Display current_Display = null;
         public Receiver current_Receiver = null;
 
         private string _stateFile = "";
@@ -45,11 +41,8 @@ namespace MK52Simulator
         {
             _m_Hardware_KBD = kbd;
             _m_Hardware_LCD = lcd;
-            addDisplays();
             addReceivers();
             _stateFile = AppDomain.CurrentDomain.BaseDirectory + "_RPN_State_New.txt";
-            //setDisplay("AUTO");
-            //loadState();
         }
 
         public void init()
@@ -63,8 +56,11 @@ namespace MK52Simulator
             _m_RPN_Stack.init(this);
             _m_RPN_Functions.init(this);
 
-            //TODO
-            foreach (Display d in Displays.Values) d.init(this);
+            // Show splash
+            this.current_Receiver.activate( "AUTO_N");
+
+            // TODO: load data / state here
+            // loadState();
         }
 
         /// <summary>
@@ -453,24 +449,6 @@ namespace MK52Simulator
         }
         #endregion
 
-        #region Implemented Displays
-        //
-        // Display adding helper
-        // 
-        private Display addDisplay(Display d)
-        {
-            Displays.Add(d.Moniker, d);
-            return d;
-        }
-        private void addDisplays()
-        {
-            current_Display = addDisplay(new Display_Splash());
-            addDisplay(new Display_PROG());
-            addDisplay(new Display_FILE());
-            addDisplay(new Display_FontTest());
-        }
-        #endregion
-
         #region Implemented Receivers
         //
         // Receiver adding helper
@@ -482,7 +460,8 @@ namespace MK52Simulator
         }
         private void addReceivers()
         {
-            current_Receiver = addReceiver(new Receiver_OFF(this));
+            current_Receiver = addReceiver(new Receiver_Splash(this));
+            addReceiver(new Receiver_OFF(this));
 
             addReceiver(new Receiver_AUTO_N(this));
             addReceiver(new Receiver_AUTO_F(this));
@@ -490,10 +469,20 @@ namespace MK52Simulator
             addReceiver(new Receiver_AUTO_A(this));
             addReceiver(new Receiver_AUTO_R(this)); // Running in AUTO mode
 
+            addReceiver(new Receiver_PROG_N(this));
+            addReceiver(new Receiver_PROG_F(this));
+            addReceiver(new Receiver_PROG_K(this));
+            addReceiver(new Receiver_PROG_A(this));
+
             addReceiver(new Receiver_DATA_N(this));
             addReceiver(new Receiver_DATA_F(this));
             addReceiver(new Receiver_DATA_K(this));
             addReceiver(new Receiver_DATA_A(this));
+
+            addReceiver(new Receiver_FILE_N(this));
+            addReceiver(new Receiver_FILE_F(this));
+            //addReceiver(new Receiver_FILE_K(this));
+            //addReceiver(new Receiver_FILE_A(this));
 
             addReceiver(new Receiver_Address(this));
             addReceiver(new Receiver_Address_PC(this));
@@ -513,13 +502,8 @@ namespace MK52Simulator
             addReceiver(new Receiver_Register_ME(this));
             addReceiver(new Receiver_Register_EM(this));
 
-            //addReceiver(new Receiver_Register_A(this));
-
-            //addReceiver(new InputReceiver_PROG_N(this));
-            //addReceiver(new InputReceiver_PROG_F(this));
-            //addReceiver(new InputReceiver_PROG_K(this));
-            //addReceiver(new InputReceiver_PROG_A(this));
-
+            // Simulator-only
+            addReceiver(new Receiver_FontTest(this));
         }
         #endregion
     }

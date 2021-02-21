@@ -16,12 +16,14 @@ namespace MK52Simulator
     //
     // Implements a generic receiver for all keys in DATA mode
     //
-    public class Receiver_DATA: Receiver
+    public class Receiver_FILE: Receiver
     {
-        public Receiver_DATA(MK52_Host parent)
+        protected int _nLinesShown = 11;
+   
+        public Receiver_FILE(MK52_Host parent)
             : base( parent)
         {
-            Moniker = "DATA";
+            Moniker = "FILE";
         }
 
         public override void activate( string prevReceiver)
@@ -33,18 +35,18 @@ namespace MK52Simulator
                 return;
             }
             LCD_Manager lm = _parent._m_Hardware_LCD;
-            Extended_Memory em = _parent._m_Extended_Memory;
             lm.clearScreen();
             lm.outputStatus(
                 _parent._m_Program_Memory.getCounter(),
-                em.getCounter(),
-                "MEM",
+                _parent._m_Extended_Memory.getCounter(),
+                "   ",
                 "   ");
-            int cnt = (int)em.getCounter();
-            for (int i = 10, j = cnt; i >= 0; i--, j--)
+
+            string[] Lines = _parent._m_RPN_Functions.getOutputLines();
+            _parent._m_Hardware_SD.getFolderListing(Lines, _nLinesShown, LCD_Manager.SCREEN_COLS - 1);
+            for (int i = 0; i < _nLinesShown; i++)
             {
-                string s = em.toString("", j);
-                lm.outputTerminalLine((uint)i, s);
+                lm.outputTerminalLine((uint)i, Lines[i]);
             }
             lm.forcePaint();
         }
@@ -52,15 +54,14 @@ namespace MK52Simulator
         public override byte tick(byte scancode)
         {
             LCD_Manager lm = _parent._m_Hardware_LCD;
-            Extended_Memory em = _parent._m_Extended_Memory;
             lm.updateStatusPC(_parent._m_Program_Memory.getCounter());
-            lm.updateStatusMC(em.getCounter());
+            lm.updateStatusMC(_parent._m_Extended_Memory.getCounter());
             //lm.updateStatusDMODE(_parent._m_RPN_Stack.getDModeName());
-            int cnt = (int)em.getCounter();
-            for (int i = 10, j = cnt; i >= 0; i--, j--)
+            string[] Lines = _parent._m_RPN_Functions.getOutputLines();
+            _parent._m_Hardware_SD.getFolderListing(Lines, _nLinesShown, LCD_Manager.SCREEN_COLS - 1);
+            for (int i = 0; i < _nLinesShown; i++)
             {
-                string s = em.toString("", j);
-                lm.updateTerminalLine((uint)i, s);
+                lm.updateTerminalLine((uint)i, Lines[i]);
             }
             lm.forcePaint();
             return 0;

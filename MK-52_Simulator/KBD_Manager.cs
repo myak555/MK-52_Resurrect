@@ -20,6 +20,9 @@ namespace MK52Simulator
     {
         private List<MK52_Button> m_Buttons = new List<MK52_Button>();
         private Queue<byte> m_ButtonsPressed = new Queue<byte>();
+        private bool _recording = false;
+        //private int _recordPosition = 0;
+        private List<MK52_Button> _record = new List<MK52_Button>();
 
         public byte lastScan = 0;
         public DateTime lastScanTime = new DateTime(0);
@@ -98,6 +101,25 @@ namespace MK52Simulator
                 if (!rpb.isPressed(e.X, e.Y)) continue;
                 m_ButtonsPressed.Enqueue((byte)rpb.Scancode);
                 return;
+            }
+        }
+
+        public void StartRecording()
+        {
+            _record.Clear();
+            _recording = true; 
+        }
+
+        public void StopRecording()
+        {
+            _recording = false;
+        }
+
+        public bool isRecording
+        {
+            get
+            {
+                return _recording;
             }
         }
     }

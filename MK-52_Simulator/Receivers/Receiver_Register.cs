@@ -32,6 +32,8 @@ namespace MK52Simulator
         {
             base.activate(prevReceiver);
             LCD_Manager lm = _parent.getLCD();
+            if (prevReceiver.StartsWith( "PROG"))
+                lm.updateTerminalLine(10, _parent._m_Program_Memory.toString());
             lm.updateStatusFMODE( "MEM");
             lm.forcePaint();
             _text = new StringBuilder();

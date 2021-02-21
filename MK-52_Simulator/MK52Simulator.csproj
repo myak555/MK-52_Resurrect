@@ -36,15 +36,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Displays\Display_FontTest.cs" />
-    <Compile Include="Displays\Display_Splash.cs" />
-    <Compile Include="Displays\Display_FILE.cs" />
     <Compile Include="LCD_Manager.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="LCD_Manager.Designer.cs">
       <DependentUpon>LCD_Manager.cs</DependentUpon>
     </Compile>
+    <Compile Include="Receivers\Receiver_Splash.cs" />
+    <Compile Include="Receivers\Receiver_PROG.cs" />
+    <Compile Include="Receivers\Receiver_FILE_F.cs" />
+    <Compile Include="Receivers\Receiver_FILE_N.cs" />
+    <Compile Include="Receivers\Receiver_FontTest.cs" />
+    <Compile Include="Receivers\Receiver_FILE.cs" />
     <Compile Include="Receivers\Receiver_Number_PROG.cs" />
     <Compile Include="Receivers\Receiver_Register_EM.cs" />
     <Compile Include="Receivers\Receiver_Register_МE.cs" />
@@ -56,7 +59,6 @@
     <Compile Include="Receivers\Receiver_DATA.cs" />
     <Compile Include="Receivers\Receiver_Address_AXM.cs" />
     <Compile Include="Receivers\Receiver_Address_AMX.cs" />
-    <Compile Include="Receivers\Receiver_Register_A.cs" />
     <Compile Include="Receivers\Receiver_Register.cs" />
     <Compile Include="Receivers\Receiver_Address_MC.cs" />
     <Compile Include="Receivers\Receiver_Address_PC.cs" />
@@ -77,19 +79,17 @@
     <Compile Include="Receivers\Receiver_DATA_K.cs" />
     <Compile Include="Receivers\Receiver_DATA_F.cs" />
     <Compile Include="Receivers\Receiver_DATA_A.cs" />
-    <Compile Include="Receivers\InputReceiver_PROG_K.cs" />
-    <Compile Include="Receivers\InputReceiver_PROG_F.cs" />
-    <Compile Include="Receivers\InputReceiver_PROG_A.cs" />
+    <Compile Include="Receivers\Receiver_PROG_K.cs" />
+    <Compile Include="Receivers\Receiver_PROG_F.cs" />
+    <Compile Include="Receivers\Receiver_PROG_A.cs" />
     <Compile Include="Receivers\Receiver_AUTO_A.cs" />
     <Compile Include="Receivers\Receiver_AUTO_K.cs" />
     <Compile Include="Receivers\Receiver_AUTO_F.cs" />
     <Compile Include="Receivers\Receiver_DATA_N.cs" />
-    <Compile Include="Receivers\InputReceiver_PROG_N.cs" />
+    <Compile Include="Receivers\Receiver_PROG_N.cs" />
     <Compile Include="Receivers\Receiver_OFF.cs" />
     <Compile Include="Receivers\Receiver_AUTO_N.cs" />
     <Compile Include="Receivers\Receiver.cs" />
-    <Compile Include="Displays\Display.cs" />
-    <Compile Include="Displays\Display_PROG.cs" />
     <Compile Include="Receivers\Receiver_Number.cs" />
     <Compile Include="Functions\Func_Stack.cs" />
     <Compile Include="Functions\Func_Log.cs" />

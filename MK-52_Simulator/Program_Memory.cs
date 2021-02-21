@@ -43,17 +43,6 @@ namespace MK52Simulator
             _parent = components;
             clear();
             setEMode(EMODE_OWERWRITE);
-
-            // TODO
-            setCounter(3);
-            replaceLine_P("This is a test.");
-            string s = getCurrentLine();
-            decrementCounter();
-            s = getCurrentLine();
-            replaceLine_P("Alice in Wonderland!");
-            s = getCurrentLine();
-            incrementCounter();
-            s = getCurrentLine();
         }
 
         public void clear()
@@ -164,7 +153,12 @@ namespace MK52Simulator
 
         public bool returnFromSub()
         {
-            if (_returnStackPtr == 0) return true;
+            if (_returnStackPtr == 0)
+            {
+                _current = 0;
+                _counter = 0;
+                return false;
+            }
             _returnStackPtr--;
             _current = _returnStack_ptrs[_returnStackPtr];
             _counter = _returnStack_ctrs[_returnStackPtr];
@@ -340,162 +334,26 @@ namespace MK52Simulator
             return UniversalValue._identicalTo_P( getCurrentLine(), "STOP");
         }
 
-        //public const int ProgramSize = 1000;
+        public string toString()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append(_counter.ToString("0000"));
+            sb.Append("> ");
+            sb.Append(getCurrentLine());
+            return sb.ToString();
+        }
 
-        //private MK52_Host _parent = null;
-        //private Dictionary<int, string> ProgramMemory = new Dictionary<int, string>();
+        public string toCounterString()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append(_counter.ToString("0000"));
+            sb.Append("> ");
+            return sb.ToString();
+        }
 
-        //public RPN_Counter Counter = new RPN_Counter( "PC", ProgramSize);
-        //public InputReceiver_String Text = null;
-        //public InputReceiver_Value Number = null;
-
-        //public Program_Memory( MK52_Host parent)
-        //{
-        //    _parent = parent;
-        //    Text = new InputReceiver_String(parent);
-        //    Number = new InputReceiver_Value( parent);
-        //}
-
-        //public void Clear()
-        //{
-        //    ProgramMemory.Clear();
-        //    Counter.Set(0);
-        //}
-
-        //public bool isAtStop
-        //{
-        //    get
-        //    {
-        //        return GetCurrentLine().Trim().StartsWith("STOP");
-        //    }
-        //}
-        
-        //public string GetCurrentLine()
-        //{
-        //    return GetLine( Counter.V);
-        //}
-
-        //public void SetCurrentLine( string line)
-        //{
-        //    SetLine(Counter.V, line);
-        //}
-
-        //public void AppendCurrentLine(string line)
-        //{
-        //    string tmp = GetCurrentLine();
-        //    SetCurrentLine( tmp + line);
-        //}
-
-        //public void AppendCounterString()
-        //{
-        //    string tmp = GetCurrentLine();
-        //    if( tmp.Length <= 0) return;
-        //    SetCurrentLine(tmp + Counter.entryResult.ToString("000"));
-        //}
-
-        //public void ExecuteCurrentLine()
-        //{
-        //    string line = GetCurrentLine().Trim();
-        //    //if (_parent.Functions["Empty"].execute(_parent, line)) return;
-        //    //if (_parent.Functions["Comment"].execute(_parent, line)) return;
-        //    //if (_parent.Functions["STOP"].execute(_parent, line)) return;
-        //    if (_parent.Functions.ContainsKey(line))
-        //    {
-        //        RPN_Function f = _parent.Functions[line];
-        //        f.execute(_parent, line);
-        //        Counter.Increment();
-        //        return;
-        //    }
-        //    foreach (string k in _parent.Functions.Keys)
-        //    {
-        //        //if( _parent.Functions[k].execute(_parent,  line))
-        //            return;
-        //    }
-        //    //_parent.CalcStack.X_Label = "Not Found: " + line;
-        //    Counter.Increment();
-        //}
-
-        //public string GetLine( int number)
-        //{
-        //    if( !ProgramMemory.ContainsKey( number)) return ""; // string empty
-        //    return ProgramMemory[number];
-        //}
-
-        //public void SetLine( int number, string line)
-        //{
-        //    if (line.Length == 0)
-        //    {
-        //        if( ProgramMemory.ContainsKey(number))
-        //            ProgramMemory.Remove(number);
-        //        return;
-        //    }
-        //    if (!ProgramMemory.ContainsKey(number))
-        //    {
-        //        ProgramMemory.Add(number, line);
-        //        return;
-        //    }
-        //    ProgramMemory[number] = line;
-        //}
-
-        //public void InsertLine(int number, string line)
-        //{
-        //    //for( i
-
-        //    if (line.Length == 0)
-        //    {
-        //        if (ProgramMemory.ContainsKey(number))
-        //            ProgramMemory.Remove(number);
-        //        return;
-        //    }
-        //    if (!ProgramMemory.ContainsKey(number))
-        //    {
-        //        ProgramMemory.Add(number, line);
-        //        return;
-        //    }
-        //    ProgramMemory[number] = line;
-        //}
-
-        //public bool LoadLine(string s)
-        //{
-        //    if (!s.StartsWith("P")) return false;
-        //    if (PCLoadHelper(s)) return true;
-        //    int number = Convert.ToInt32(s.Substring(1, 3));
-        //    SetLine( number, s.Substring(5).Trim());
-        //    return true;
-        //}
-
-        //public bool Load(StreamReader sr)
-        //{
-        //    ProgramMemory.Clear();
-        //    while( !sr.EndOfStream)
-        //    {
-        //        string s = sr.ReadLine().Trim();
-        //        if( s.Length == 0 || s.StartsWith("#")) continue;
-        //        LoadLine(s);
-        //    }
-        //    return true;
-        //}
-
-        //private bool PCLoadHelper(string s)
-        //{
-        //    if (!s.StartsWith("PC = ")) return false;
-        //    Counter.Set(Convert.ToInt32(s.Substring(5).Trim()));
-        //    return true;
-        //}
-
-        //public void Save(StreamWriter sw)
-        //{
-        //    sw.Write("#\n");
-        //    sw.Write("# Program:\n");
-        //    sw.Write("#\n");
-        //    sw.Write("PC = " + Counter.V.ToString() + "\n");
-        //    for( int k=0; k<Counter.MaxValue; k++)
-        //    {
-        //        if (!ProgramMemory.ContainsKey(k)) continue;
-        //        string v = ProgramMemory[k];
-        //        if (v.Length == 0) continue;
-        //        sw.Write(k.ToString("P000: ") + v + "\n");
-        //    }
-        //}
+        public override string ToString()
+        {
+            return toString();
+        }
     }
 }

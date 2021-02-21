@@ -42,9 +42,10 @@ namespace MK52Simulator
                 case 3:
                     _rpnf.requestNextReceiver("DATA_A");
                     return 0;
-                case 4:
-                    _rpnf.execute(RPN_Functions.FUNC_TOGGLE_DMOD, "");
-                    break;
+                case 4: // TODO: Insert mode
+                    // _rpnf.execute(RPN_Functions.FUNC_TOGGLE_DMOD, "");
+                    // base.tick(0);
+                    return 0;
 
                 // Column 1
                 case 5:

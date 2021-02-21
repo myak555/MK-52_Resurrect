@@ -16,16 +16,17 @@ namespace MK52Simulator
     //
     // Implements a receiver for F-modified list
     //
-    public class Receiver_DATA_F: Receiver_DATA
+    public class Receiver_FILE_F: Receiver_FILE
     {
-        public Receiver_DATA_F(MK52_Host parent)
+        public Receiver_FILE_F(MK52_Host parent)
             : base( parent)
         {
-            Moniker = "DATA_F";
+            Moniker = "FILE_F";
         }
 
         public override void activate(string prevReceiver)
         {
+            _nLinesShown = LCD_Manager.SCREEN_ROWS - 1;
             base.activate(prevReceiver);
             LCD_Manager lm = _parent.getLCD();
             lm.updateStatusFMODE(" F ");
@@ -42,29 +43,35 @@ namespace MK52Simulator
 
                 // Column 0
                 case 2:
-                    _rpnf.requestNextReceiver("DATA_K");
+                    _rpnf.requestNextReceiver("FILE_K");
                     return 0;
                 case 3:
-                    _rpnf.requestNextReceiver("DATA_A");
-                    return 0;
-                case 4:
-                    //_rpnf.execute(RPN_Functions.FUNC_TOGGLE_DMOD, "");
-                    //base.tick(0);
+                    _rpnf.requestNextReceiver("FILE_A");
                     return 0;
 
                 // Column 1
                 case 5:
-                    for( int i=0; i<9; i++)
-                        _rpnf.execute(RPN_Functions.FUNC_INCREMENT_MC);
+                    for (int i = 0; i < 9; i++)
+                        _rpnf.execute(RPN_Functions.FUNC_NEXTFILE);
                     break;
                 case 6:
                     for (int i = 0; i < 9; i++)
-                        _rpnf.execute(RPN_Functions.FUNC_DECREMENT_MC);
+                        _rpnf.execute(RPN_Functions.FUNC_PREVFILE);
                     break;
-                //case 7:
-                //    TODO: goto to the next entry
-                //    break;
-                // Column 2 does nothing (for now)
+
+                // Column 2
+                case 9:
+                    _rpnf.execute(RPN_Functions.FUNC_LOADDATA);
+                    _rpnf.requestNextReceiver("DATA_N");
+                    return 0;
+                case 10:
+                    _rpnf.execute(RPN_Functions.FUNC_SAVEDATA);
+                    break;
+                case 11:
+                    // TODO Save data as
+                    _rpnf.execute(RPN_Functions.FUNC_SAVEDATA);
+                    break;
+
                 // Column 3 does nothing (for now)
                 // Column 4 does nothing (for now)
 
@@ -85,13 +92,13 @@ namespace MK52Simulator
 
                 case 33:
                     // Shutdown signal
-                    _rpnf.requestNextReceiver("DATA_N");
+                    _rpnf.requestNextReceiver("FILE_N");
                     return 33;
 
                 default: // all other buttons do nothing, keeping F-mode
                     return 0;
             }
-            _rpnf.requestNextReceiver("DATA_N");
+            _rpnf.requestNextReceiver("FILE_N");
             return 0;
         }
     }

@@ -45,8 +45,8 @@ namespace MK52Simulator
                     _rpnf.requestNextReceiver("DATA_K");
                     return 0;
                 case 4:
-                    _rpnf.execute(RPN_Functions.FUNC_TOGGLE_DMOD, "");
-                    base.tick(0);
+                    // _rpnf.execute(RPN_Functions.FUNC_TOGGLE_DMOD, "");
+                    // base.tick(0);
                     return 0;
 
                 // Column 1 does nothing (for now)

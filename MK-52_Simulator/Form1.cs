@@ -91,6 +91,11 @@ namespace MK52Simulator
             //timer1.Enabled = true;
         }
 
+        private void recordButtonsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
         private void functionsListToolStripMenuItem_Click(object sender, EventArgs e)
         {
             timer1.Enabled = false;
@@ -108,5 +113,11 @@ namespace MK52Simulator
         {
             this.Close();
         }
+
+        private void fontToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            myRPN.getFunctions().requestNextReceiver("FontTest");
+        }
+
     }
 }

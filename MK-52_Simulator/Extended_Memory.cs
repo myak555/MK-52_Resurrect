@@ -150,7 +150,29 @@ namespace MK52Simulator
 		{
            return getLine((uint)index);
 		}
-        
+
+        public string toString()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append(_counter.ToString("0000"));
+            sb.Append("> ");
+            sb.Append(getCurrentLine().toString());
+            return sb.ToString();
+        }
+
+        public string toCounterString()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append(_counter.ToString("0000"));
+            sb.Append("> ");
+            return sb.ToString();
+        }
+
+        public override string ToString()
+        {
+            return toString();
+        }
+
         //public bool LoadLine(string s)
         //{
         //    if (!s.StartsWith("M")) return false;
