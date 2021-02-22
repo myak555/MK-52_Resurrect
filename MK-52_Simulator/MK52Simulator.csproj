@@ -9,6 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>MK52Simulator</RootNamespace>
     <AssemblyName>MK52Simulator</AssemblyName>
+    <ApplicationIcon>MK52.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -159,6 +160,7 @@
     <Content Include="Images\Keyboard3.png" />
     <Content Include="Images\Keyboard4.png" />
     <Content Include="Images\MK52.ico" />
+    <Content Include="MK52.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

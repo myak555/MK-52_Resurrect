@@ -54,7 +54,7 @@ namespace MK52Simulator
 
         public override void execute(MK52_Host components, string command)
         {
-            //_SDM(components).upFolder();
+            _SDM(components).upFolder();
         }
     }
 
@@ -72,7 +72,7 @@ namespace MK52Simulator
 
         public override void execute(MK52_Host components, string command)
         {
-            //_SDM(components).nextListingPosition();
+            _SDM(components).nextListingPosition();
         }
     }
 
@@ -90,7 +90,7 @@ namespace MK52Simulator
 
         public override void execute(MK52_Host components, string command)
         {
-            //_SDM(components).previousListingPosition();
+            _SDM(components).previousListingPosition();
         }
     }
 
@@ -121,7 +121,17 @@ namespace MK52Simulator
             return id == RPN_Functions.FUNC_STEPIN;
         }
 
-        public override void execute(MK52_Host components, string command) { }
+        public override void execute(MK52_Host components, string command)
+        {
+            SD_Manager sd = _SDM(components);
+            string filename = sd.getItemFromListing();
+            if( !sd.stepIn( filename)) return;
+            RPN_Functions _rpnf = components.getFunctions();
+            if( UniversalValue._endsWith_P( filename, ".DAT"))
+                _rpnf.loadDataFile( filename);
+            else
+                _rpnf.loadProgramFile( filename);
+        }
     }
 
     public class Func_Save : RPN_Function
@@ -162,7 +172,10 @@ namespace MK52Simulator
         {
             return id == RPN_Functions.FUNC_LOAD;
         }
-        public override void execute(MK52_Host components, string command) { }
+        public override void execute(MK52_Host components, string command)
+        {
+            components.getFunctions().loadProgramFile();
+        }
     }
 
     public class Func_LoadFrom : RPN_Function

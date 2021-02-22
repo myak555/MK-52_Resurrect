@@ -20,19 +20,26 @@ namespace MK52Simulator
         private Dictionary<string, FileInfo> _fileListing
             = new Dictionary<string, FileInfo>();
         private List<string> _itemListing = new List<string>();
+
         private string _current_Dir_Name = "C:/";
-        private DateTime _lastDirectoryRead = DateTime.MinValue;
+        private string _current_File_Name = "";
+        private DateTime _lastDirectoryRead = DateTime.MinValue; // Windows-only
 
         public const byte _LF_ = 10;
         public const byte _CR_ = 13;
 
         public bool SDMounted = false; // fake for simulator only
-        public UInt64 cardSize = 0L;
+        public UInt64 cardSize = 4000000000L; // fake for simulator only
         public int listingPosition = -1;
         public int _nDirs = 0;
         public int _nItems = 0;
+
         public string _current_File = "";
         public bool _current_File_open = false;
+        public StreamReader __sr = null;
+        public StreamWriter __sw = null;
+        public FileStream __fs = null;
+        public string __text = "";
         
         public void init()
         {
@@ -70,16 +77,49 @@ namespace MK52Simulator
             return _current_Dir_Name + "/";
         }
 
+        public void nextListingPosition()
+        {
+            if (_nItems <= 0)
+            {
+                listingPosition = -1;
+                return;
+            }
+            listingPosition++;
+            if (listingPosition >= _nItems) listingPosition = _nItems - 1;
+        }
 
-        //abstract public void nextListingPosition();
-        //abstract public void previousListingPosition();
+        public void previousListingPosition()
+        {
+            if (_nItems <= 0)
+            {
+                listingPosition = -1;
+                return;
+            }
+            listingPosition--;
+            if (listingPosition < 0) listingPosition = 0;
+        }
         
         public bool isAtFolder()
         {
             return listingPosition <_nDirs;
         }
-        
-        //abstract public string getItemFromListing();
+
+        /// <summary>
+        /// Gets an item from selector
+        /// This is Windows-only implementation
+        /// </summary>
+        /// <returns></returns>
+        public string getItemFromListing()
+        {
+            _current_File_Name = "";
+            if( listingPosition<0 || listingPosition >= _nItems) return _current_File_Name;
+            string searchKey = _itemListing[listingPosition];
+            if (_directoryListing.ContainsKey(searchKey))
+                _current_File_Name = _directoryListing[searchKey].FullName;
+            if (_fileListing.ContainsKey(searchKey))
+                _current_File_Name = _fileListing[searchKey].FullName; 
+            return _current_File_Name;
+        }
 
         //abstract public void checkRootExists();
 
@@ -105,11 +145,6 @@ namespace MK52Simulator
             return _itemListing[n];
         }
 
-        //public int getItemPtr( int n)
-        //{
-        //    return (_buffer + n*LCD_Manager.SCREEN_COLS);
-        //}
-
         public void setFolder(string name)
         {
             setFolder_P(name);
@@ -123,13 +158,14 @@ namespace MK52Simulator
 
         public void readFolderItems()
         {
-            readFolderItems("");
+            readFolderItems("", true);
         }
 
-        public void readFolderItems(string location)
+        public void readFolderItems(string location, bool resetListingPosition)
         {
             if( !SDMounted) return;
             _clearItems();
+            if (resetListingPosition) listingPosition = -1;
             if( !checkEntityExists(_current_Dir_Name)) return;
             string wdn = getWindowsFolderName();
             if (!Directory.Exists(wdn)) return;
@@ -149,7 +185,7 @@ namespace MK52Simulator
                 _fileListing[en] = fi;
             }
             List<string> tmp = new List<string>();
-            foreach (string s in _directoryListing.Keys) tmp.Add(s);
+            foreach (string s in _directoryListing.Keys)tmp.Add(s);
             tmp.Sort();
             foreach (string s in tmp) _itemListing.Add(s);
             _nDirs = _itemListing.Count;
@@ -172,12 +208,18 @@ namespace MK52Simulator
             }
         }
 
+        /// <summary>
+        /// In Windows, we re-read the folder once in a while, as other processes may add files/folders
+        /// </summary>
+        /// <param name="Lines"></param>
+        /// <param name="nLines"></param>
+        /// <param name="lineLen"></param>
+        /// <returns></returns>
         public string[] getFolderListing(string[] Lines, int nLines, int lineLen)
         {
             if (DateTime.Now - _lastDirectoryRead > TimeSpan.FromSeconds(10.0))
             {
-                // TODO
-                readFolderItems("");
+                readFolderItems("", false);
                 _lastDirectoryRead = DateTime.Now;
             }
             return getFolderListing( Lines, nLines, lineLen, null);
@@ -211,23 +253,145 @@ namespace MK52Simulator
         
         //abstract public bool deleteEntity(  string name);
         //abstract public void createFolder( string name);
-        //abstract public void upFolder();
-        //abstract public bool stepIn(string name);
 
-        //abstract public bool openFile( string path, bool write);
-        //abstract public bool openFile_P(  string path, bool write);
-        //abstract public void closeFile();
+        public void upFolder()
+        {
+            if( !SDMounted) return;
+            if (_current_Dir_Name.Length <= 2) return; // already at root
+            int index = _current_Dir_Name.LastIndexOf('/');
+            if (index < 2) return;
+            _current_File_Name = _current_Dir_Name.Substring(index+1);
+            _current_Dir_Name = _current_Dir_Name.Substring(0, index);
+            readFolderItems( _current_File_Name, true);
+        }
+
+        /// <summary>
+        /// Steps into a folder or executes a file
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns>returns true if a run is required</returns>
+        public bool stepIn(string name)
+        {
+            if( !SDMounted) return false;
+            if( Directory.Exists( name.Replace('/', '\\')))
+            {
+                setFolder( name);
+                return false;
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// Simulates ESP32 SD utilities
+        /// </summary>
+        /// <param name="path">Fake "Linux" file name</param>
+        /// <param name="write">true to write</param>
+        /// <returns>True if an error</returns>
+        public bool openFile(string path, bool write)
+        {
+            return openFile_P(path, write);
+        }
+
+        /// <summary>
+        /// Simulates ESP32 SD utilities
+        /// </summary>
+        /// <param name="path">Windows file name</param>
+        /// <param name="write">true to write</param>
+        /// <returns>True if an error</returns>
+        public bool openFile_P(string path, bool write)
+        {
+            if( !SDMounted) return true;
+            closeFile();
+            if( path.Length == 0){
+                if( isAtFolder()) return true;
+                path = getItemFromListing();
+            }
+            if( path.Length < 4 ) return true; // cannot overwrite root, e.g. C:\
+            try
+            {
+                if (write)
+                {
+                    __fs = File.Open(path, FileMode.Open, FileAccess.Write, FileShare.Read);
+                    __sw = new StreamWriter(__fs);
+                }
+                else
+                {
+                    __fs = File.Open(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                    __sr = new StreamReader(__fs);
+                }
+                _current_File = path;
+                _current_File_open = true;
+                return false;
+            }
+            catch
+            {
+                closeFile();
+            }
+            return true;
+        }
+
+        public void closeFile()
+        {
+            if( __sr != null)
+            {
+                __sr.Close();
+                __sr = null;
+            }
+            if( __sw != null)
+            {
+                __sw.Close();
+                __sw = null;
+            }
+            if( __fs != null)
+            {
+                __fs.Close();
+                __fs = null;
+            }
+            _current_File = "";
+            _current_File_open = false;
+        }
+
         //abstract public bool print( string  message);
         //abstract public bool print_P(  string  message);
         //abstract public bool println( string  message);
         //abstract public bool println_P(  string  message);
-        //abstract public bool read( string buffer, int n);
-        //abstract public bool readln( string buffer, int n);
 
-        //private string _current_Dir_Name = "";
-        //private string _current_File_Name = "";
-        //private string _text = "";
-        //private string _buffer = "";
+        public bool read(string buffer, int n)
+        {
+            __text = "";
+            if (!SDMounted) return true;
+            if (!_current_File_open) return true;
+            StringBuilder sb = new StringBuilder();
+            while (n > 0 && !__sr.EndOfStream)
+            {
+                sb.Append((char)__sr.Read());
+                n--;
+            }
+            __text = sb.ToString();
+            return n > 0; // not all symbols read - file end
+        }
+
+        public bool readln( string buffer, int n)
+        {
+            __text = "";
+            if (!SDMounted) return true;
+            if (!_current_File_open) return true;
+            byte b = 0;
+            StringBuilder sb = new StringBuilder();
+            while (!__sr.EndOfStream)
+            {
+                b = (byte)__sr.Read(); // to match ESP32 method
+                if (b == _CR_) continue;
+                if (b == _LF_) break;
+                if (n > 0)
+                {
+                    sb.Append((char)b);
+                    n--;
+                }
+            }
+            __text = sb.ToString();
+            return __sr.EndOfStream;
+        }
 
         //private void _resetRoot();
         //private File _getCurrentDir();        
@@ -236,7 +400,6 @@ namespace MK52Simulator
         {
             _nDirs = 0;
             _nItems = 0;
-            listingPosition = -1;
             _directoryListing .Clear();
             _fileListing.Clear();
             _itemListing.Clear();
@@ -333,51 +496,6 @@ namespace MK52Simulator
 //    return SD.exists(name);
 //}
 
-//void SD_Manager::nextListingPosition(){
-//    if( _nItems <= 0){
-//        listingPosition = -1;
-//        return;
-//    }
-//    listingPosition++;
-//    if(listingPosition>=_nItems) listingPosition=_nItems-1;
-//}
-
-//void SD_Manager::previousListingPosition(){
-//    if( _nItems <= 0){
-//        listingPosition = -1;
-//        return;
-//    }
-//    listingPosition--;
-//    if(listingPosition<0) listingPosition=0;
-//}
-
-
-////
-//// gets an item from selector
-////
-//char *SD_Manager::getItemFromListing(){
-//    memset( _current_File_Name, 0, CURRENT_FILE_LEN);
-//    if( listingPosition<0) return _current_File_Name;
-//    int16_t loc = *(getItemPtr( listingPosition));
-//    if( loc < 0 || loc >= _nItems) return _current_File_Name;
-//    File current_Dir = _getCurrentDir();
-//    if( !current_Dir) return _current_File_Name;
-//    File file = current_Dir.openNextFile();
-//    while( loc>0 && file){ 
-//        file = current_Dir.openNextFile();
-//        loc--;
-//    }
-//    current_Dir.close();
-//    if( !file) return _current_File_Name;
-//    strncpy( _current_File_Name, file.name(), CURRENT_FILE_LEN-1);
-//    _current_File_Name[CURRENT_FILE_LEN-1] = 0;
-//    file.close();
-//    #ifdef __DEBUG
-//    Serial.print("Selected: ");
-//    Serial.println(_current_File_Name);
-//    #endif
-//    return _current_File_Name;
-//}
 
 //bool SD_Manager::deleteEntity( const char *name){
 //    if( !SDMounted) return true;
@@ -410,51 +528,6 @@ namespace MK52Simulator
 //    return _text;
 //}
 
-////
-//// returns true if an error
-////
-//bool SD_Manager::openFile( char *path, bool write){
-//    if( !SDMounted) return true;
-//    closeFile();
-//    if( path == NULL){
-//        if( isAtFolder()) return true;
-//        path = getItemFromListing();
-//    }
-//    if( strlen( path) <= 1 ) return true; // cannot overwrite root!
-//    if( write)
-//        _current_File = SD.open( (const char*)path, FILE_WRITE);
-//    else
-//        _current_File = SD.open( (const char*)path);
-//    if( _current_File){
-//        _current_File_open = true;
-//        #ifdef __DEBUG
-//        Serial.print("Opened ");
-//        Serial.print( path);
-//        Serial.println( write? " for writing": " for reading");
-//        #endif
-//        return false;
-//    }
-//    #ifdef __DEBUG
-//    else{
-//        Serial.print("Failed to open ");
-//        Serial.println( path);
-//    }
-//    #endif
-//    return true;
-//}
-
-//bool SD_Manager::openFile_P( const char *path, bool write){
-//    strncpy_P( _current_File_Name, path, CURRENT_FILE_LEN);
-//    _current_File_Name[CURRENT_FILE_LEN] = 0;
-//    return openFile( _current_File_Name, write);
-//}
-
-//void SD_Manager::closeFile(){
-//    if( !SDMounted) return;
-//    if( _current_File_open) _current_File.close();
-//    _current_File_open = false;
-//}
-
 //bool SD_Manager::print( char *message){
 //    if( !SDMounted) return true;
 //    if( !_current_File_open) return true;
@@ -481,34 +554,6 @@ namespace MK52Simulator
 //    return( println( _text));
 //}
 
-//bool SD_Manager::read( char *buffer, int32_t n){
-//    if( !SDMounted) return true;
-//    if( !_current_File_open) return true;
-//    while( n>0 && _current_File.available()){
-//        *(buffer++) = (char) _current_File.read();
-//        n--;
-//    }
-//    *buffer = 0; // safety zero
-//    return n>0; // not all symbols read - file end
-//}
-
-//bool SD_Manager::readln( char *buffer, int32_t n){
-//    if( !SDMounted) return true;
-//    if( !_current_File_open) return true;
-//    uint8_t b = 0;
-//    while( _current_File.available()){
-//        uint8_t b = _current_File.read();
-//        if( b ==_CR_) continue;
-//        if( b ==_LF_) break;
-//        if(n>0){
-//            *(buffer++) = (char)b;
-//            n--;
-//        }
-//    }
-//    *buffer = 0; // safety zero
-//    return  !_current_File.available();
-//}
-
 //void SD_Manager::createFolder( char * name){
 //    if( !SDMounted) return;
 //    if(strlen(name) <= 0) return; // no name given
@@ -519,38 +564,6 @@ namespace MK52Simulator
 //    #endif
 //    if( !SD.mkdir(_text)) return;
 //    setFolder( _text);
-//}
-
-//void SD_Manager::upFolder(){
-//    if( !SDMounted) return;
-//    int ln = strlen(_current_Dir_Name);
-//    if( ln <= 1) return; // already at root
-//    while( ln>0 && _current_Dir_Name[ln] != '/') ln--;
-//    strcpy( _current_File_Name, _current_Dir_Name+ln+1);
-//    _current_Dir_Name[ln] = 0;
-//    #ifdef __DEBUG
-//    Serial.print("Going up: ");
-//    Serial.println( _current_Dir_Name);
-//    Serial.print( "Proposed location: ");
-//    Serial.println( _current_File_Name);
-//    #endif
-//    readFolderItems( _current_File_Name);
-//}
-
-////
-//// returns true if a run is required
-////
-//bool SD_Manager::stepIn(char *name){
-//    if( !SDMounted) return false;
-//    File tmp = SD.open( (const char*)name);
-//    if(!tmp) return false;
-//    if( tmp.isDirectory()){
-//        tmp.close();
-//        setFolder( name);
-//        return false;
-//    }
-//    tmp.close();
-//    return true;
 //}
 
 //void SD_Manager::_resetRoot(){

@@ -67,7 +67,7 @@ namespace MK52Simulator
                 // Column 2
                 case 9:
                     _rpnf.execute(RPN_Functions.FUNC_LOAD);
-                    _rpnf.requestNextReceiver("AUTO_N");
+                    _rpnf.requestNextReceiver("PROG_N");
                     return 0;
                 case 10:
                     _rpnf.execute(RPN_Functions.FUNC_SAVE);
@@ -89,7 +89,8 @@ namespace MK52Simulator
                 // Column 7
                 case 31:
                     _rpnf.execute(RPN_Functions.FUNC_STEPIN);
-                    break;
+                    _rpnf.requestNextReceiver("AUTO_N");
+                    return 0;
                 case 32:
                     // remove file TODO
                     _rpnf.execute(RPN_Functions.FUNC_REMOVE);

@@ -45,7 +45,7 @@ namespace MK52Simulator
             if (s == null) return;
             s.storeBx();
             double result = s.X.toReal();
-            result = Math.Log10(result);
+            result = Math.Log(result);
             s.X.fromReal(result);
         }
     }

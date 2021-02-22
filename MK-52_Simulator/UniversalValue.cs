@@ -417,7 +417,7 @@ namespace MK52Simulator
                 if( text[i] == ':')
                 {
                     tmp[0] = text.Substring(0, i);
-                    tmp[1] = text.Substring(i+1);
+                    tmp[1] = text.Substring(i+2);
                     break;
                 }
             }

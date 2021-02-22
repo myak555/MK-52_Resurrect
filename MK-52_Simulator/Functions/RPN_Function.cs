@@ -120,14 +120,11 @@ namespace MK52Simulator
         {
             UniversalValue loopReg = _RegMem( components)._registerAddress( (int)reg);
             Int64 t = loopReg.toInt();
-            if( t > 0)
-            {
-                loopReg.fromInt(t - 1);
+            if( t > 0) loopReg.fromInt(t - 1);
+            if( loopReg.toInt() > 0)
                 _ProgMem( components).setCounter(command);
-            }
-            else{
+            else
                 _ProgMem( components).incrementCounter();
-            }
         }
     }
 }
