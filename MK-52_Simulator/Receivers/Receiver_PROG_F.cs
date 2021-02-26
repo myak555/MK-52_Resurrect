@@ -54,37 +54,37 @@ namespace MK52Simulator
                 // Column 1
                 case 5:
                     _rpnf.appendProgramLine_P(RPN_Functions.FUNC_IFNOTLT0);
-                    _rpnf.requestNextReceiver("ADDRESS", "PROG_N", 0);
+                    _rpnf.requestNextReceiver("ADDRESS", "PROG_N");
                     return 0;
                 case 6:
                     _rpnf.appendProgramLine_P(RPN_Functions.FUNC_IFNOTEQ0);
-                    _rpnf.requestNextReceiver("ADDRESS", "PROG_N", 0);
+                    _rpnf.requestNextReceiver("ADDRESS", "PROG_N");
                     return 0;
                 case 7:
                     _rpnf.appendProgramLine_P(RPN_Functions.FUNC_IFNOTGE0);
-                    _rpnf.requestNextReceiver("ADDRESS", "PROG_N", 0);
+                    _rpnf.requestNextReceiver("ADDRESS", "PROG_N");
                     return 0;
                 case 8:
                     _rpnf.appendProgramLine_P(RPN_Functions.FUNC_IFNOTNE0);
-                    _rpnf.requestNextReceiver("ADDRESS", "PROG_N", 0);
+                    _rpnf.requestNextReceiver("ADDRESS", "PROG_N");
                     return 0;
 
                 // Column 2 does nothing (for now)
                 case 9:
                     _rpnf.appendProgramLine_P(RPN_Functions.FUNC_L0);
-                    _rpnf.requestNextReceiver("ADDRESS", "PROG_N", 0);
+                    _rpnf.requestNextReceiver("ADDRESS", "PROG_N");
                     return 0;
                 case 10:
                     _rpnf.appendProgramLine_P(RPN_Functions.FUNC_L1);
-                    _rpnf.requestNextReceiver("ADDRESS", "PROG_N", 0);
+                    _rpnf.requestNextReceiver("ADDRESS", "PROG_N");
                     return 0;
                 case 11:
                     _rpnf.appendProgramLine_P(RPN_Functions.FUNC_L2);
-                    _rpnf.requestNextReceiver("ADDRESS", "PROG_N", 0);
+                    _rpnf.requestNextReceiver("ADDRESS", "PROG_N");
                     return 0;
                 case 12:
                     _rpnf.appendProgramLine_P(RPN_Functions.FUNC_L3);
-                    _rpnf.requestNextReceiver("ADDRESS", "PROG_N", 0);
+                    _rpnf.requestNextReceiver("ADDRESS", "PROG_N");
                     return 0;
 
                 // Column 3

@@ -73,7 +73,7 @@ namespace MK52Simulator
                     _rpnf.requestNextReceiver("ADDRESS_AXM");
                     return 0;
                 case 11:
-                    _rpnf.requestNextReceiver("ADDRESS_MC", "AUTO_N", 0);
+                    _rpnf.requestNextReceiver("ADDRESS_MC", "AUTO_N");
                     return 0;
                 case 12:
                     _rpnf.execute(RPN_Functions.FUNC_A_M2X);

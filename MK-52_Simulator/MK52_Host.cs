@@ -95,6 +95,9 @@ namespace MK52Simulator
             return _m_RPN_Functions;
         }
 
+        /// <summary>
+        /// Runs one simulation cycle
+        /// </summary>
         public void tick()
         {
             byte b = _m_Hardware_KBD.scan();
@@ -142,187 +145,17 @@ namespace MK52Simulator
             string return_to = _m_RPN_Functions.getRequestedReturnReceiver();
             if (return_to == "None") return_to = current_Receiver.Moniker;
             ri.activate(return_to);
-            ri.setMode(_m_RPN_Functions.getRequestedReceiverMode());
             current_Receiver = ri;
             return false;
         }
 
-        #region Load and Save
-        public void loadState()
-        {
-            if( !File.Exists( _stateFile))
-            {
-                //CalcStack.X_Label = "File not found";
-                return;
-            }
-            FileStream fs = null;
-            StreamReader sr = null;
-            try
-            {
-                fs = File.Open( _stateFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-                sr = new StreamReader(fs);
-                //CallStack.Clear();
-                while (!sr.EndOfStream)
-                {
-                    string s = sr.ReadLine().Trim();
-                    if (s.Length <= 0) continue;
-                    if (s.StartsWith("#")) continue;
-                    if (StatusLoadHelper(s)) continue;
-                    //if (IntLoadHelper(s, "dMode", ref dMode)) continue;
-                    //if (CalcStack.LoadLine(s)) continue;
-                    //if (Registers.LoadLine(s)) continue;
-                    //if (Memory.LoadLine(s)) continue;
-                    //if (_m_Program_Memory.LoadLine(s)) continue;
-                    //if (CallStackLoadHelper(s)) continue;
-                }
-            }
-            catch
-            {
-                //CalcStack.X_Label = "Error: file load";
-            }
-            finally
-            {
-                if(sr != null) sr.Close();
-                if(fs != null) fs.Close();
-            }
-        }
-
-        public void saveState()
-        {
-            //CalcStack.CompleteEntry();
-            FileStream fs = null;
-            StreamWriter sw = null;
-            try
-            {
-                fs = File.Open(_stateFile, FileMode.Create, FileAccess.Write, FileShare.Read);
-                sw = new StreamWriter(fs);
-
-                sw.Write("#\n");
-                sw.Write("# MK-52 state file " + DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss\n"));
-                sw.Write("#\n");
-
-                string stat = current_Receiver.Moniker;
-                if (stat == "OFF") stat = "AUTO"; // Upon the switch-off, always start in auto mode
-                sw.Write("Status = " + stat.Substring(0, 4) + "\n");
-                //if (dMode > 0) sw.Write("dMode = " + dMode.ToString() + "\n");
-
-                //CalcStack.Save(sw);
-                //Registers.Save(sw);
-                //_m_Program_Memory.Save(sw);
-                //Memory.Save(sw);
-                //if (CallStack.Count > 0)
-                //{
-                //    sw.Write("#\n");
-                //    sw.Write("# Call stack:");
-                //    sw.Write("#\n");
-                //    int[] cs = CallStack.ToArray();
-                //    for (int i = 0; i < cs.Length; i++)
-                //        sw.Write(cs[i].ToString("CS000\n"));
-                //}
-            }
-            catch
-            {
-                //CalcStack.X_Label = "Error: file save";
-            }
-            finally
-            {
-                if (sw != null) sw.Close();
-                if (fs != null) fs.Close();
-            }
-        }
-
-        public void loadProgram( string name)
-        {
-            if (!File.Exists(name))
-            {
-                //CalcStack.X_Label = "File not found";
-                return;
-            }
-            FileStream fs = null;
-            StreamReader sr = null;
-            try
-            {
-                fs = File.Open( name, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-                sr = new StreamReader(fs);
-                //_m_Program_Memory.Clear();
-                while (!sr.EndOfStream)
-                {
-                    string s = sr.ReadLine().Trim();
-                    if (s.Length <= 0) continue;
-                    if (s.StartsWith("#")) continue;
-                    //if (IntLoadHelper(s, "dMode", ref dMode)) continue;
-                    //_m_Program_Memory.LoadLine(s);
-                }
-            }
-            catch
-            {
-                //CalcStack.X_Label = "Error: file load";
-            }
-            finally
-            {
-                if (sr != null) sr.Close();
-                if (fs != null) fs.Close();
-            }
-        }
-
-        public void saveProgram(string filename)
-        {
-            //CalcStack.CompleteEntry();
-            FileStream fs = null;
-            StreamWriter sw = null;
-            try
-            {
-                fs = File.Open(filename, FileMode.Create, FileAccess.Write, FileShare.Read);
-                sw = new StreamWriter(fs);
-
-                sw.Write("#\n");
-                sw.Write("# MK-52 program file " + DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss\n"));
-                sw.Write("#\n");
-
-                //if (dMode > 0) sw.Write("dMode = " + dMode.ToString() + "\n");
-                //_m_Program_Memory.Save(sw);
-            }
-            catch
-            {
-                //CalcStack.X_Label = "Error: file save";
-            }
-            finally
-            {
-                if (sw != null) sw.Close();
-                if (fs != null) fs.Close();
-            }
-        }
-
-        private bool StatusLoadHelper(string s)
-        {
-            //string varName = "Status = ";
-            //if (!s.StartsWith(varName)) return false;
-            //string name = s.Substring(varName.Length).Trim();
-            //if (name == "OFF") name = "AUTO_N"; // cold restart
-            //setReceiver(name + "_N");
-            return true;
-        }
-
-        private bool IntLoadHelper(string s, string varName, ref int inp)
-        {
-            varName += " = ";
-            if (!s.StartsWith(varName)) return false;
-            inp = Convert.ToInt32(s.Substring(varName.Length));
-            return true;
-        }
-
-        //private bool CallStackLoadHelper(string s)
-        //{
-        //    if (!s.StartsWith("CS")) return false;
-        //    CallStack.Push( Convert.ToInt32(s.Substring(2)));
-        //    return true;
-        //}
-        #endregion
-
         public void shutdown()
         {
-            //saveState();
-            //setDisplay("OFF");
+            // TODO: Simulator dog-and-pony here
+            _m_Hardware_LCD.clearScreen();
+            _m_Hardware_LCD.showSplash();
+            _m_Hardware_LCD.forcePaint();
+            _m_RPN_Functions.saveStateFile();
             _m_Hardware_LCD.clearScreen();
             _m_Hardware_LCD.forcePaint();
         }
@@ -460,9 +293,6 @@ namespace MK52Simulator
         }
         private void addReceivers()
         {
-            current_Receiver = addReceiver(new Receiver_Splash(this));
-            addReceiver(new Receiver_OFF(this));
-
             addReceiver(new Receiver_AUTO_N(this));
             addReceiver(new Receiver_AUTO_F(this));
             addReceiver(new Receiver_AUTO_K(this));
@@ -483,6 +313,9 @@ namespace MK52Simulator
             addReceiver(new Receiver_FILE_F(this));
             //addReceiver(new Receiver_FILE_K(this));
             //addReceiver(new Receiver_FILE_A(this));
+            addReceiver(new Receiver_FILE_Delete(this));
+            addReceiver(new Receiver_FILE_Name(this));
+            addReceiver(new Receiver_FILE_MkDir(this));
 
             addReceiver(new Receiver_Address(this));
             addReceiver(new Receiver_Address_PC(this));
@@ -502,7 +335,11 @@ namespace MK52Simulator
             addReceiver(new Receiver_Register_ME(this));
             addReceiver(new Receiver_Register_EM(this));
 
+            addReceiver(new Receiver_Text(this));
+
             // Simulator-only
+            current_Receiver = addReceiver(new Receiver_Splash(this));
+            addReceiver(new Receiver_OFF(this));
             addReceiver(new Receiver_FontTest(this));
         }
         #endregion

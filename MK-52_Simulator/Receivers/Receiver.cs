@@ -63,8 +63,6 @@ namespace MK52Simulator
 
         public uint getMode() { return _mode; }
 
-        public virtual void setMode( uint mode) {} // empty on purpose!
-
         protected char _convertButton( string list, uint scancode)
         {
             if (scancode >= list.Length) return (char)0;

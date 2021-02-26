@@ -36,7 +36,7 @@ namespace MK52Simulator
 
         public override void execute(MK52_Host components, string command)
         {
-            //_SDM(components).createFolder(command);
+            _SDM(components).createFolder(command);
         }
     }
 
@@ -106,7 +106,14 @@ namespace MK52Simulator
             return id == RPN_Functions.FUNC_REMOVE;
         }
 
-        public override void execute(MK52_Host components, string command) { }
+        public override void execute(MK52_Host components, string command)
+        {
+            SD_Manager sd = components.getSD();
+            sd.deleteEntity(sd.getItemFromListing());
+            int tmp = sd.listingPosition;
+            sd.readFolderItems();
+            sd.setListingPosition(tmp);
+        }
     }
 
     public class Func_StepIn : RPN_Function
@@ -146,7 +153,10 @@ namespace MK52Simulator
             return id == RPN_Functions.FUNC_SAVE;
         }
 
-        public override void execute(MK52_Host components, string command) { }
+        public override void execute(MK52_Host components, string command)
+        {
+            components.getFunctions().saveProgramFile();
+        }
     }
 
     public class Func_SaveAs : RPN_Function
@@ -155,15 +165,21 @@ namespace MK52Simulator
         {
             return id == RPN_Functions.FUNC_SAVEAS;
         }
+
         public override bool checkName(string name)
         {
             return UniversalValue._startsWith_P(name, Name());
         }
+
         public override string Name()
         {
             return "SAVE AS ";
         }
-        public override void execute(MK52_Host components, string command) { }
+
+        public override void execute(MK52_Host components, string command)
+        {
+            components.getFunctions().saveProgramFile(command);
+        }
     }
 
     public class Func_Load : RPN_Function
@@ -192,7 +208,10 @@ namespace MK52Simulator
         {
             return "LOAD ";
         }
-        public override void execute(MK52_Host components, string command) { }
+        public override void execute(MK52_Host components, string command)
+        {
+            components.getFunctions().loadProgramFile( command);
+        }
     }
 
     public class Func_SaveData : RPN_Function
@@ -201,7 +220,10 @@ namespace MK52Simulator
         {
             return id == RPN_Functions.FUNC_SAVEDATA;
         }
-        public override void execute(MK52_Host components, string command) { }
+        public override void execute(MK52_Host components, string command)
+        {
+            components.getFunctions().saveDataFile();
+        }
     }
 
     public class Func_SaveDataAs : RPN_Function
@@ -216,9 +238,12 @@ namespace MK52Simulator
         }
         public override string Name()
         {
-            return "SAVE DATA AS ";
+            return "SAVEDATA ";
         }
-        public override void execute(MK52_Host components, string command) { }
+        public override void execute(MK52_Host components, string command)
+        {
+            components.getFunctions().saveDataFile( command);
+        }
     }
 
     public class Func_LoadData : RPN_Function
@@ -227,7 +252,10 @@ namespace MK52Simulator
         {
             return id == RPN_Functions.FUNC_LOADDATA;
         }
-        public override void execute(MK52_Host components, string command) { }
+        public override void execute(MK52_Host components, string command)
+        {
+            components.getFunctions().loadDataFile(command);
+        }
     }
 
     public class Func_LoadDataFrom : RPN_Function
@@ -244,7 +272,10 @@ namespace MK52Simulator
         {
             return "LOADDATA ";
         }
-        public override void execute(MK52_Host components, string command) { }
+        public override void execute(MK52_Host components, string command)
+        {
+            components.getFunctions().loadDataFile(command);
+        }
     }
 
     public class Func_Chain : RPN_Function
@@ -261,6 +292,9 @@ namespace MK52Simulator
         {
             return "CHAIN ";
         }
-        public override void execute(MK52_Host components, string command) { }
+        public override void execute(MK52_Host components, string command)
+        {
+            // TODO
+        }
     }
 }

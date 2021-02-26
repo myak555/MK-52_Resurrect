@@ -43,6 +43,9 @@
     <Compile Include="LCD_Manager.Designer.cs">
       <DependentUpon>LCD_Manager.cs</DependentUpon>
     </Compile>
+    <Compile Include="Receivers\Receiver_FILE_MkDir.cs" />
+    <Compile Include="Receivers\Receiver_FILE_Name.cs" />
+    <Compile Include="Receivers\Receiver_FILE_Delete.cs" />
     <Compile Include="Receivers\Receiver_Splash.cs" />
     <Compile Include="Receivers\Receiver_PROG.cs" />
     <Compile Include="Receivers\Receiver_FILE_F.cs" />
@@ -65,7 +68,7 @@
     <Compile Include="Receivers\Receiver_Address_PC.cs" />
     <Compile Include="Receivers\Receiver_AUTO.cs" />
     <Compile Include="Receivers\Receiver_Address.cs" />
-    <Compile Include="Receivers\InputReceiver_String.cs" />
+    <Compile Include="Receivers\Receiver_Text.cs" />
     <Compile Include="Functions\Func_Memory.cs" />
     <Compile Include="Functions\Func_If.cs" />
     <Compile Include="Functions\Func_Goto.cs" />

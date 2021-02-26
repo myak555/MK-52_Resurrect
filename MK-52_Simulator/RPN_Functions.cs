@@ -134,7 +134,6 @@ namespace MK52Simulator
         private UniversalValue _tmpuv = new UniversalValue(); // temporary value for number conversion
         private string _receiverRequested = "None";
         private string _receiverReturnRequested = "None";
-        private uint _receiverModeRequested = 0;
 
         // random number remembered (emulator-only)
         public Random myRNG = new Random();
@@ -517,7 +516,13 @@ namespace MK52Simulator
 
         public bool saveStateFile()
         {
-            return true;
+            if (_sd.openFile_P(_sd.StatusFileName, true)) return true;
+            bool result = _writeStackFile();
+            if (!result) result = _writeRegisterFile();
+            if (!result) result = _writeProgramFile();
+            if (!result) result = _writeDataFile();
+            _sd.closeFile();
+            return result;
         }
 
         public bool loadProgramFile()
@@ -541,7 +546,12 @@ namespace MK52Simulator
         
         public bool saveProgramFile( string name)
         {
-            return true;
+            name = name.Replace('/', '\\');
+            if (_sd.openFile(name, true)) return true;
+            bool result = _writeProgramFile();
+            _sd.closeFile();
+            _sd.readFolderItems();
+            return result;
         }
 
         public bool loadDataFile()
@@ -551,7 +561,11 @@ namespace MK52Simulator
  
         public bool loadDataFile( string name)
         {
-            return true;
+            if (_sd.openFile(name, false)) return true;
+            extMem.clear();
+            bool result = _readFile(false, false, true);
+            _sd.closeFile();
+            return result;
         }
 
         public bool saveDataFile()
@@ -578,14 +592,13 @@ namespace MK52Simulator
         #region Next Receiver Setting
         public void requestNextReceiver(string name)
         {
-            requestNextReceiver(name, "None", 0);
+            requestNextReceiver(name, "None");
         }
 
-        public void requestNextReceiver(string name, string exitTo, uint mode)
+        public void requestNextReceiver(string name, string exitTo)
         {
             _receiverRequested = name;
             _receiverReturnRequested = exitTo;
-            _receiverModeRequested = mode;
         }
 
         public string getRequestedReceiver()
@@ -600,11 +613,6 @@ namespace MK52Simulator
             string tmp = _receiverReturnRequested;
             _receiverReturnRequested = "None";
             return tmp;
-        }
-
-        public uint getRequestedReceiverMode()
-        {
-            return _receiverModeRequested;
         }
 
         public void appendProgramLine_P( uint id)
@@ -622,29 +630,108 @@ namespace MK52Simulator
 
         private bool _writeStackFile()
         {
-            return true;
+            if( _sd.println_P("#")) return true;
+            if( _sd.println_P("# MK-52 stack")) return true;
+            if( _sd.println_P("#")) return true;
+            if(_sd.print("DMODE=")) return true;
+            if(_sd.println(rpnStack.getDModeName())) return true;
+            if (_sd.print("Bx=")) return true;
+            if (_sd.println(rpnStack.Bx.toString())) return true;
+            if (_sd.print("X=")) return true;
+            if (_sd.println(rpnStack.X.toString())) return true;
+            if (_sd.print("Y=")) return true;
+            if (_sd.println(rpnStack.Y.toString())) return true;
+            if (_sd.print("Z=")) return true;
+            if (_sd.println(rpnStack.Z.toString())) return true;
+            if (_sd.print("T=")) return true;
+            if (_sd.println(rpnStack.T.toString())) return true;
+            if (!rpnStack.customStackLabels()) return false;
+            if (_sd.print("LX=")) return true;
+            if (_sd.println(rpnStack.X_Label)) return true;
+            if (_sd.print("LY=")) return true;
+            if (_sd.println(rpnStack.Y_Label)) return true;
+            if (_sd.print("LZ=")) return true;
+            if (_sd.println(rpnStack.Z_Label)) return true;
+            if (_sd.print("LT=")) return true;
+            if (_sd.println(rpnStack.T_Label)) return true;
+            return false;
         }
 
         private bool _writeRegisterFile()
         {
-            return true;
+            if( _sd.println_P("#")) return true;
+            if( _sd.println_P("# MK-52 registers")) return true;
+            if( _sd.println_P("#")) return true;
+            for( byte i=0; i<Register_Memory.REGISTER_MEMORY_NVALS; i++)
+            {
+                UniversalValue uv = regMem._registerAddress(i);
+                if( uv.isEmpty()) continue;
+                if (_sd.print("R")) return true;
+                if (_sd.print(i.ToString("00"))) return true;
+                if (_sd.print("=")) return true;
+                if (_sd.println(uv.toString())) return true;
+            }
+            return false;
         }
 
         private bool _writeProgramFile()
         {
-            return true;
+            if( _sd.println_P("#")) return true;
+            if( _sd.println_P("# MK-52 program")) return true;
+            if( _sd.println_P("#")) return true;
+            uint ctr = progMem.getCounter();
+            StringBuilder sb = new StringBuilder();
+            sb.Append("PC=");
+            sb.Append(ctr.ToString("0000"));
+            progMem.resetCounter();
+            if (_sd.println(sb.ToString())) return true;
+            while (!progMem.isAtEnd())
+            {
+                string ptr = progMem.getCurrentLine();
+                if (ptr.Length == 0)
+                { // empty lines ignored
+                    progMem.incrementCounter();
+                    continue;
+                }
+                sb.Remove(0, sb.Length);
+                sb.Append('P');
+                sb.Append(progMem.getCounter().ToString("0000"));
+                sb.Append(": ");
+                sb.Append(ptr);
+                if (_sd.println(sb.ToString()))
+                {
+                    progMem.setCounter(ctr);
+                    return true;
+                }
+                progMem.incrementCounter();
+            }
+            progMem.setCounter(ctr);
+            return false;
         }
 
         private bool _writeDataFile()
         {
-            return true;
+            if( _sd.println_P("#")) return true;
+            if( _sd.println_P("# MK-52 data")) return true;
+            if( _sd.println_P("#")) return true;
+            if (_sd.print_P("MC=")) return true;
+            if (_sd.println_P(extMem.getCounter().ToString("0000"))) return true;
+            for( uint i=0; i<Extended_Memory.EXTENDED_MEMORY_NVALS; i++){
+                UniversalValue ptr = extMem.getLine( i);
+                if( ptr.isEmpty()) continue;
+                if (_sd.print_P("M")) return true;
+                if (_sd.print_P(i.ToString("0000"))) return true;
+                if (_sd.print_P(": ")) return true;
+                if (_sd.print_P(ptr.toString())) return true;
+            }
+            return false;
         }
 
         private bool _readFile(bool readStack, bool readProg, bool readMem)
         {
             uint pmemctr = progMem.getCounter();
             uint ememctr = extMem.getCounter();
-            //uint regAddress = 0;
+            byte regAddress = 0;
             while (true)
             {
                 bool result = _sd.readln( _text, PROGRAM_LINE_LENGTH);
@@ -666,83 +753,78 @@ namespace MK52Simulator
                         continue;
                     }
                 }
-            //    if( readMem){
-            //        if( UniversalValue::_startsWith_P( _text, PSTR("MC="))){
-            //            execute( FUNC_GOMEM, _text+3);
-            //            ememctr = extMem->getCounter();
-            //            continue;
-            //        }
-            //        if( UniversalValue::_isMemoryAddress(_text)){
-            //            ptr = UniversalValue::_selectAddress(_text);
-            //            if( *ptr == 0) continue; // string too short or incorrectly formed
-            //            execute( FUNC_GOMEM, _text+1);
-            //            #ifdef __DEBUG
-            //            Serial.print("Reading Data: [");
-            //            Serial.print(ptr);
-            //            Serial.println("]");
-            //            #endif
-            //            _tmpuv->fromString( ptr);
-            //            if( _tmpuv->getType() > 0) _tmpuv->toLocation( extMem->getCurrentLine());
-            //            continue;
-            //        }
-            //    }
-            //    if( readStack){
-            //        if( UniversalValue::_startsWith_P( _text, PSTR("X="))){
-            //            rpnStack->X->fromString( _text + 2);
-            //            continue;
-            //        }
-            //        if( UniversalValue::_startsWith_P( _text, PSTR("Y="))){
-            //            rpnStack->Y->fromString( _text + 2);
-            //            continue;
-            //        }
-            //        if( UniversalValue::_startsWith_P( _text, PSTR("Z="))){
-            //            rpnStack->Z->fromString( _text + 2);
-            //            continue;
-            //        }
-            //        if( UniversalValue::_startsWith_P( _text, PSTR("T="))){
-            //            rpnStack->T->fromString( _text + 2);
-            //            continue;
-            //        }
-            //        if( UniversalValue::_startsWith_P( _text, PSTR("Bx="))){
-            //            rpnStack->Bx->fromString( _text + 3);
-            //            continue;
-            //        }
-            //        if( UniversalValue::_startsWith_P( _text, PSTR("DMODE=DEG"))){
-            //            rpnStack->setDMode(0);
-            //            continue;
-            //        }
-            //        if( UniversalValue::_startsWith_P( _text, PSTR("DMODE=RAD"))){
-            //            rpnStack->setDMode(1);
-            //            continue;
-            //        }
-            //        if( UniversalValue::_startsWith_P( _text, PSTR("DMODE=GRD"))){
-            //            rpnStack->setDMode(1);
-            //            continue;
-            //        }
-            //        if( UniversalValue::_startsWith_P( _text, PSTR("LX="))){
-            //            rpnStack->setStackLabel( 0, _text+3);
-            //            continue;
-            //        }
-            //        if( UniversalValue::_startsWith_P( _text, PSTR("LY="))){
-            //            rpnStack->setStackLabel( 1, _text+3);
-            //            continue;
-            //        }
-            //        if( UniversalValue::_startsWith_P( _text, PSTR("LZ="))){
-            //            rpnStack->setStackLabel( 2, _text+3);
-            //            continue;
-            //        }
-            //        if( UniversalValue::_startsWith_P( _text, PSTR("LT="))){
-            //            rpnStack->setStackLabel( 3, _text+3);
-            //            continue;
-            //        }
-            //        regAddress = UniversalValue::_isRegisterAddress(_text);
-            //        if( regAddress < REGISTER_MEMORY_NVALS){
-            //            _tmpuv->fromLocation( regMem->_registerAddress(regAddress));
-            //            _tmpuv->fromString( _text+4);
-            //            continue;
-            //        }
-            //    }
-            }
+                if( readMem){
+                    if( UniversalValue._startsWith_P( _text, "MC=")){
+                        extMem.setCounter(_text.Substring(3));
+                        ememctr = extMem.getCounter();
+                        continue;
+                    }
+                    if( UniversalValue._isMemoryAddress(_text)){
+                        string[] ptr = UniversalValue._selectAddress(_text);
+                        if (ptr[0].Length < 4 && ptr[1].Length < 1) continue; // string too short or incorrectly formed
+                        extMem.setCounter( ptr[0]);
+                        extMem.fromString( ptr[1]);
+                        continue;
+                    }
+                }
+                if( readStack){
+                    if( UniversalValue._startsWith_P( _text, "X=")){
+                        rpnStack.X.fromString(_text.Substring(2));
+                        continue;
+                    }
+                    if( UniversalValue._startsWith_P( _text, "Y=")){
+                        rpnStack.Y.fromString(_text.Substring(2));
+                        continue;
+                    }
+                    if( UniversalValue._startsWith_P( _text, "Z=")){
+                        rpnStack.Z.fromString(_text.Substring(2));
+                        continue;
+                    }
+                    if( UniversalValue._startsWith_P( _text, "T=")){
+                        rpnStack.T.fromString(_text.Substring(2));
+                        continue;
+                    }
+                    if( UniversalValue._startsWith_P( _text, "Bx=")){
+                        rpnStack.Bx.fromString(_text.Substring(3));
+                        continue;
+                    }
+                    if( UniversalValue._startsWith_P( _text, "DMODE=DEG")){
+                        rpnStack.setDMode(0);
+                        continue;
+                    }
+                    if( UniversalValue._startsWith_P( _text, "DMODE=RAD")){
+                        rpnStack.setDMode(1);
+                        continue;
+                    }
+                    if( UniversalValue._startsWith_P( _text, "DMODE=GRD")){
+                        rpnStack.setDMode(2);
+                        continue;
+                    }
+                    if( UniversalValue._startsWith_P( _text, "LX=")){
+                        rpnStack.setStackLabel(0, _text.Substring(3));
+                        continue;
+                    }
+                    if( UniversalValue._startsWith_P( _text, "LY=")){
+                        rpnStack.setStackLabel(1, _text.Substring(3));
+                        continue;
+                    }
+                    if( UniversalValue._startsWith_P( _text, "LZ=")){
+                        rpnStack.setStackLabel(2, _text.Substring(3));
+                        continue;
+                    }
+                    if( UniversalValue._startsWith_P( _text, "LT=")){
+                        rpnStack.setStackLabel(3, _text.Substring(3));
+                        continue;
+                    }
+                    regAddress = UniversalValue._isRegisterAddress(_text);
+                    if( regAddress < Register_Memory.REGISTER_MEMORY_NVALS)
+                    {
+                        UniversalValue uv  = regMem._registerAddress(regAddress);
+                        uv.fromString(_text.Substring(4));
+                        continue;
+                    }
+                }
+            }// while
             progMem.setCounter( pmemctr);
             extMem.setCounter( ememctr);
             return false;
@@ -755,35 +837,6 @@ namespace MK52Simulator
 //    if( _sd->openFile_P(StatusFile)) return true;
 //    bool result = _readFile( true, true, true);
 //    _sd->closeFile();
-//    return result;
-//}
-
-//bool RPN_Functions::saveStateFile(){
-//    #ifdef __DEBUG
-//    Serial.println("Saving state...");
-//    #endif
-//    if( _sd->openFile_P(StatusFile, true)) return true;
-//    bool result = _writeStackFile();
-//    if(!result) result = _writeRegisterFile();
-//    if(!result) result = _writeProgramFile();
-//    if(!result) result = _writeDataFile();
-//    _sd->closeFile();
-//    return result;
-//}
-
-//bool RPN_Functions::saveProgramFile(char *name){
-//    Serial.print("Saving program file");
-//    if( name != NULL){
-//        Serial.print(" as ");
-//        Serial.println(name);
-//    }
-//    else{
-//        Serial.println();
-//    }
-//    if( _sd->openFile(name, true)) return true;
-//    bool result = _writeProgramFile();
-//    _sd->closeFile();
-//    _sd->readFolderItems();
 //    return result;
 //}
 
@@ -814,121 +867,6 @@ namespace MK52Simulator
 //    _sd->readFolderItems();
 //    return result;
 //}
-
-//bool RPN_Functions::_writeStackFile(){
-//    if( _sd->println_P(PSTR("#"))) return true;
-//    if( _sd->println_P(PSTR("# MK-52 stack"))) return true;
-//    if( _sd->println_P(PSTR("#"))) return true;
-//    sprintf_P( _text, PSTR("DMODE=%s"), rpnStack->getDModeName());
-//    if(_sd->println(_text)) return true;
-//    sprintf_P( _text, PSTR("Bx="));
-//    rpnStack->Bx->toString(_text+3);
-//    if(_sd->println(_text)) return true;
-//    sprintf_P( _text, PSTR("X="));
-//    rpnStack->X->toString(_text+2);
-//    if(_sd->println(_text)) return true;
-//    sprintf_P( _text, PSTR("Y="));
-//    rpnStack->Y->toString(_text+2);
-//    if(_sd->println(_text)) return true;
-//    sprintf_P( _text, PSTR("Z="));
-//    rpnStack->Z->toString(_text+2);
-//    if(_sd->println(_text)) return true;
-//    sprintf_P( _text, PSTR("T="));
-//    rpnStack->T->toString(_text+2);
-//    if(_sd->println(_text)) return true;
-//    if( rpnStack->customStackLabels()){
-//        sprintf_P( _text, PSTR("LX=%s"), rpnStack->X_Label);
-//        if(_sd->println(_text)) return true;
-//        sprintf_P( _text, PSTR("LY=%s"), rpnStack->Y_Label);
-//        if(_sd->println(_text)) return true;
-//        sprintf_P( _text, PSTR("LZ=%s"), rpnStack->Z_Label);
-//        if(_sd->println(_text)) return true;
-//        sprintf_P( _text, PSTR("LT=%s"), rpnStack->T_Label);
-//        if(_sd->println(_text)) return true;
-//    }
-//    #ifdef __DEBUG
-//    Serial.println("Stack written");
-//    #endif
-//    return false;
-//}
-
-//bool RPN_Functions::_writeRegisterFile(){
-//    if( _sd->println_P(PSTR("#"))) return true;
-//    if( _sd->println_P(PSTR("# MK-52 registers"))) return true;
-//    if( _sd->println_P(PSTR("#"))) return true;
-//    for( uint8_t i=0; i<REGISTER_MEMORY_NVALS; i++){
-//        _tmpuv->fromLocation(regMem->_registerAddress(i));
-//        if( _tmpuv->isEmpty()) continue;
-//        sprintf_P( _text, PSTR("R%02u="), i);
-//        _tmpuv->toString( _text+4);
-//        if(_sd->println(_text)) return true;
-//    }
-//    #ifdef __DEBUG
-//    Serial.println("Registers written");
-//    #endif
-//    return false;
-//}
-
-//bool RPN_Functions::_writeProgramFile(){
-//    if( _sd->println_P(PSTR("#"))) return true;
-//    if( _sd->println_P(PSTR("# MK-52 program"))) return true;
-//    if( _sd->println_P(PSTR("#"))) return true;
-//    uint32_t ctr = progMem->getCounter();
-//    sprintf_P( _text, PSTR("PC=%04u"), ctr);
-//    progMem->resetCounter();
-//    if(_sd->println(_text)) return true;
-//    while( !progMem->isAtEnd()){
-//        char *ptr = progMem->getCurrentLine();
-//        if( *ptr==0){ // empty lines ignored
-//            progMem->incrementCounter();
-//            continue;
-//        }
-//        snprintf_P( _text, PROGRAM_LINE_LENGTH, PSTR("P%04u: %s"), progMem->getCounter(), ptr);
-//        _text[PROGRAM_LINE_LENGTH-1] = 0;
-//        Serial.println(_text);
-//        if(_sd->println(_text)){
-//            progMem->setCounter(ctr);
-//            return true;
-//        }
-//        progMem->incrementCounter();
-//    }
-//    progMem->setCounter(ctr);
-//    #ifdef __DEBUG
-//    Serial.println("Program written");
-//    #endif
-//    return false;
-//}
-
-//bool RPN_Functions::_writeDataFile(){
-//    if( _sd->println_P(PSTR("#"))) return true;
-//    if( _sd->println_P(PSTR("# MK-52 data"))) return true;
-//    if( _sd->println_P(PSTR("#"))) return true;
-//    sprintf_P( _text, PSTR("MC=%04u"), extMem->getCounter());
-//    if(_sd->println(_text)) return true;    
-//    for( uint32_t i=0; i<EXTENDED_MEMORY_NVALS; i++){
-//        uint8_t *ptr = extMem->getLine( i);
-//        if( *ptr==VALUE_TYPE_EMPTY) continue;
-//        #ifdef __DEBUG
-//        Serial.print("Preparing Data: ");
-//        Serial.println(i);
-//        #endif
-//        _tmpuv->fromLocation( ptr);
-//        sprintf_P( _text, PSTR("M%04u: "), i);
-//        _tmpuv->toString(_text+7);
-//        #ifdef __DEBUG
-//        Serial.print("Writing Data: [");
-//        Serial.print(_text);
-//        Serial.println("]");
-//        #endif
-//        if(!_sd->println(_text)) continue;
-//        return true;
-//    }
-//    #ifdef __DEBUG
-//    Serial.println("Data written");
-//    #endif
-//    return false;
-//}
-
         #endregion
     }
 }

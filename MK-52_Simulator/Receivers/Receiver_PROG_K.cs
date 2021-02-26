@@ -54,29 +54,29 @@ namespace MK52Simulator
                 // Column 1
                 case 5:
                     _rpnf.appendProgramLine_P(RPN_Functions.FUNC_IFNOTLTY);
-                    _rpnf.requestNextReceiver("ADDRESS", "PROG_N", 0);
+                    _rpnf.requestNextReceiver("ADDRESS", "PROG_N");
                     return 0;
                 case 6:
                     _rpnf.appendProgramLine_P(RPN_Functions.FUNC_IFNOTEQY);
-                    _rpnf.requestNextReceiver("ADDRESS", "PROG_N", 0);
+                    _rpnf.requestNextReceiver("ADDRESS", "PROG_N");
                     return 0;
                 case 7:
                     _rpnf.appendProgramLine_P(RPN_Functions.FUNC_IFNOTGEY);
-                    _rpnf.requestNextReceiver("ADDRESS", "PROG_N", 0);
+                    _rpnf.requestNextReceiver("ADDRESS", "PROG_N");
                     return 0;
                 case 8:
                     _rpnf.appendProgramLine_P(RPN_Functions.FUNC_IFNOTNEY);
-                    _rpnf.requestNextReceiver("ADDRESS", "PROG_N", 0);
+                    _rpnf.requestNextReceiver("ADDRESS", "PROG_N");
                     return 0;
 
                 // Column 2
                 case 9:
                     _rpnf.appendProgramLine_P(RPN_Functions.FUNC_K_M2X);
-                    _rpnf.requestNextReceiver("REGISTER", "PROG_N", 0);
+                    _rpnf.requestNextReceiver("REGISTER", "PROG_N");
                     return 0;
                 case 10:
                     _rpnf.appendProgramLine_P(RPN_Functions.FUNC_K_X2M);
-                    _rpnf.requestNextReceiver("REGISTER", "PROG_N", 0);
+                    _rpnf.requestNextReceiver("REGISTER", "PROG_N");
                     return 0;
                 case 11:
                     _rpnf.progMem.updateLine_P("# K-GOTO is bad!");

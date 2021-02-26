@@ -53,38 +53,45 @@ namespace MK52Simulator
 
                 // Column 1
                 case 5:
-                    // TODO
                     _rpnf.appendProgramLine_P(RPN_Functions.FUNC_LBT);
-                    _rpnf.requestNextReceiver("ADDRESS");
+                    _rpnf.requestNextReceiver("TEXT", "PROG_N");
                     return 0;
                 case 6:
                     // TODO
                     _rpnf.appendProgramLine_P(RPN_Functions.FUNC_LBZ);
-                    _rpnf.requestNextReceiver("ADDRESS");
+                    _rpnf.requestNextReceiver("TEXT", "PROG_N");
                     return 0;
                 case 7:
                     // TODO
                     _rpnf.appendProgramLine_P(RPN_Functions.FUNC_LBY);
-                    _rpnf.requestNextReceiver("ADDRESS");
+                    _rpnf.requestNextReceiver("TEXT", "PROG_N");
                     return 0;
                 case 8:
                     // TODO
                     _rpnf.appendProgramLine_P(RPN_Functions.FUNC_LBX);
-                    _rpnf.requestNextReceiver("ADDRESS");
+                    _rpnf.requestNextReceiver("TEXT", "PROG_N");
                     return 0;
 
                 // Column 2
                 case 9:
                     _rpnf.appendProgramLine_P(RPN_Functions.FUNC_A_M2X);
-                    _rpnf.requestNextReceiver("ADDRESS", "PROG_N", 0);
+                    _rpnf.requestNextReceiver("ADDRESS", "PROG_N");
                     return 0;
                 case 10:
                     _rpnf.appendProgramLine_P(RPN_Functions.FUNC_A_X2M);
-                    _rpnf.requestNextReceiver("ADDRESS", "PROG_N", 0);
+                    _rpnf.requestNextReceiver("ADDRESS", "PROG_N");
                     return 0;
 
-                // Column 3 does nothing
-                // Column 4 does nothing
+                // Column 3
+                case 12:
+                    _rpnf.progMem.deleteLine();
+                    break;
+
+                // Column 4
+                case 16:
+                    _rpnf.progMem.commentLine();
+                    _rpnf.requestNextReceiver("TEXT", "PROG_N");
+                    return 0;
 
                 // Column 5
                 case 22:

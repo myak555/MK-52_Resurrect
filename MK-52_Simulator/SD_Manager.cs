@@ -25,6 +25,8 @@ namespace MK52Simulator
         private string _current_File_Name = "";
         private DateTime _lastDirectoryRead = DateTime.MinValue; // Windows-only
 
+        public string StatusFileName = "";
+
         public const byte _LF_ = 10;
         public const byte _CR_ = 13;
 
@@ -53,6 +55,7 @@ namespace MK52Simulator
             if (!Directory.Exists(_current_Dir_Name))
                 Directory.CreateDirectory(_current_Dir_Name);
             SDMounted = Directory.Exists(_current_Dir_Name);
+            StatusFileName = _current_Dir_Name + "\\_MK52_Status.DAT";
             _current_Dir_Name = _current_Dir_Name.Replace('\\', '/');
             setFolder_P(_current_Dir_Name);
         }
@@ -65,6 +68,11 @@ namespace MK52Simulator
         public string getWindowsFolderName()
         {
             return _current_Dir_Name.Replace('/', '\\');
+        }
+
+        public string getWindowsFileName()
+        {
+            return _current_File_Name.Replace('/', '\\');
         }
 
         public string getFolderNameTruncated( int n)
@@ -246,13 +254,62 @@ namespace MK52Simulator
             return Lines;
         }
 
-        //public void setListingPosition( uint pos)
-        //{
-        //    listingPosition = ( pos>=_nItems)? _nItems-1: pos;
-        //}
-        
-        //abstract public bool deleteEntity(  string name);
-        //abstract public void createFolder( string name);
+        public void setListingPosition( int pos)
+        {
+            listingPosition = ( pos>=_nItems)? _nItems-1: pos;
+        }
+
+        /// <summary>
+        /// Simulator-only (ESP32 is recursive)
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public bool deleteEntity(string name)
+        {
+            if( !SDMounted) return true;
+            if( name.Length < 3) return false;
+            if (Directory.Exists(name))
+            {
+                try
+                {
+                    Directory.Delete(name, true);
+                    return false;
+                }
+                catch
+                {
+                    return true;
+                }
+            }
+            if (File.Exists(name))
+            {
+                try
+                {
+                    File.Delete(name);
+                    return false;
+                }
+                catch
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public void createFolder(string name)
+        {
+            if( !SDMounted) return;
+            if(name.Length <= 0) return; // no name given
+            __text = makeEntityName( name);
+            string tmp = __text.Replace('/', '\\');
+            try
+            {
+                if( !Directory.Exists( tmp)) Directory.CreateDirectory(tmp);
+                setFolder( __text);
+            }
+            catch
+            {
+            }
+        }
 
         public void upFolder()
         {
@@ -311,7 +368,7 @@ namespace MK52Simulator
             {
                 if (write)
                 {
-                    __fs = File.Open(path, FileMode.Open, FileAccess.Write, FileShare.Read);
+                    __fs = File.Open(path, FileMode.Create, FileAccess.Write, FileShare.Read);
                     __sw = new StreamWriter(__fs);
                 }
                 else
@@ -351,10 +408,45 @@ namespace MK52Simulator
             _current_File_open = false;
         }
 
-        //abstract public bool print( string  message);
-        //abstract public bool print_P(  string  message);
-        //abstract public bool println( string  message);
-        //abstract public bool println_P(  string  message);
+        public bool print(string message)
+        {
+            if( !SDMounted) return true;
+            if( !_current_File_open) return true;
+            try
+            {
+                __sw.Write(message);
+            }
+            catch
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public bool print_P(string message)
+        {
+            return print(message);
+        }
+
+        public bool println(string message)
+        {
+            if( !SDMounted) return true;
+            if( !_current_File_open) return true;
+            try
+            {
+                __sw.WriteLine( message);
+            }
+            catch
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public bool println_P(string message)
+        {
+            return println( message);
+        }
 
         public bool read(string buffer, int n)
         {
@@ -393,9 +485,6 @@ namespace MK52Simulator
             return __sr.EndOfStream;
         }
 
-        //private void _resetRoot();
-        //private File _getCurrentDir();        
-        
         private void _clearItems()
         {
             _nDirs = 0;
@@ -421,8 +510,6 @@ namespace MK52Simulator
             return true;
         } 
         
-        //private string _stripFolders(  string name);
-
         private string _formEntityName(DirectoryInfo f)
         {
             StringBuilder sb = new StringBuilder();
@@ -479,162 +566,3 @@ namespace MK52Simulator
         }
     }
 }
-
-//void SD_Manager::checkRootExists(){
-//    if(!SDMounted) return;
-//    File root = SD.open( _current_Dir_Name);
-//    if(!root){
-//        _resetRoot();
-//        return;
-//    }
-//    if(!root.isDirectory()) _resetRoot();
-//    root.close();
-//}
-
-//bool SD_Manager::checkEntityExists( const char *name){
-//    if( !SDMounted ) return false;
-//    return SD.exists(name);
-//}
-
-
-//bool SD_Manager::deleteEntity( const char *name){
-//    if( !SDMounted) return true;
-//    if( strlen(name) == 1) return false;
-//    #ifdef __DEBUG
-//    Serial.print( "Deleting: ");
-//    Serial.println( name);
-//    #endif
-//    if( !SD.exists( name)) return false;
-//    File root = SD.open( name);
-//    bool dir = root.isDirectory();
-//    if( dir){ // delete recursively
-//        File file = root.openNextFile();
-//        while(file){
-//        if( deleteEntity( file.name())) break;
-//        file = root.openNextFile();
-//        } // while
-//    }//if
-//    root.close();
-//    return !(dir? SD.rmdir(name): SD.remove( name));
-//}
-
-//char *SD_Manager::makeEntityName( char *name){
-//    memset( _text, 0, CURRENT_FILE_LEN);
-//    if(strlen(name) <= 0) return _text; // no name given
-//    strncpy( _text, _current_Dir_Name, CURRENT_FILE_LEN-3);
-//    int ln = strlen(_text);
-//    if( ln>1) _text[ln++] = '/'; // add slash if not at root
-//    strncpy( _text+ln, name, CURRENT_FILE_LEN-2-ln);
-//    return _text;
-//}
-
-//bool SD_Manager::print( char *message){
-//    if( !SDMounted) return true;
-//    if( !_current_File_open) return true;
-//    if( !_current_File.print((const char*)message)) return true;
-//    return false;
-//}
-
-//bool SD_Manager::print_P( const char *message){
-//    strncpy_P( _text, message, CURRENT_FILE_LEN-1);
-//    _text[CURRENT_FILE_LEN-1] = 0;
-//    return( print( _text));
-//}
-
-//bool SD_Manager::println( char *message){
-//    if( !SDMounted) return true;
-//    if( !_current_File_open) return true;
-//    if( !_current_File.println((const char*)message)) return true;
-//    return false;
-//}
-
-//bool SD_Manager::println_P( const char *message){
-//    strncpy_P( _text, message, CURRENT_FILE_LEN-1);
-//    _text[CURRENT_FILE_LEN-1] = 0;
-//    return( println( _text));
-//}
-
-//void SD_Manager::createFolder( char * name){
-//    if( !SDMounted) return;
-//    if(strlen(name) <= 0) return; // no name given
-//    makeEntityName( name);
-//    #ifdef __DEBUG
-//    Serial.print( "Creating folder: ");
-//    Serial.println( _text);
-//    #endif
-//    if( !SD.mkdir(_text)) return;
-//    setFolder( _text);
-//}
-
-//void SD_Manager::_resetRoot(){
-//    #ifdef __DEBUG
-//    Serial.println("Reset to root");
-//    #endif
-//    strncpy_P( _current_Dir_Name, SD_root, CURRENT_DIR_LEN);
-//}
-
-//File SD_Manager::_getCurrentDir(){
-//    checkRootExists();
-//    return SD.open( _current_Dir_Name);
-//}
-
-//void SD_Manager::_clearItems(){
-//    _nDirs = 0;
-//    _nItems = 0;
-//    listingPosition = -1;
-//    memset( _buffer, 0, DIRECTORY_LIST_SIZE);
-//}
-
-////
-//// Scans items and locates the added item alphabetically:
-//// Directories are sorted first
-//// Returns the slot number for insertion
-////
-//int16_t SD_Manager::_locateAlphabetic(const char *name, bool isDir){
-//    if( _nItems <= 0) return 0;
-//    int16_t slot = 0;
-//    char *ptr = (char *)name;
-//    if( isDir){
-//        while( slot < _nDirs){
-//            if( strncmp( ptr, getItemString(slot), 21) <= 0)
-//                return slot;
-//            slot++;
-//        }
-//        return _nDirs;
-//    }
-//    else{
-//        slot = _nDirs;
-//    }
-//    while( slot < _nItems){
-//        if( strncmp( ptr, getItemString(slot), 21) <= 0)
-//            return slot;
-//        slot++;
-//    }
-//    return _nItems;
-//}
-
-////
-//// Returns true if the maximum directory length is exceeded
-////
-//bool SD_Manager::_insertItem(const char *name, int16_t pos, int16_t slot, bool isDir){
-//    if( slot>=DIRECTORY_LIST_NITEMS-1) return true;
-//    if( slot>=_nItems) slot = _nItems;
-//    int16_t toMove = _nItems - slot;
-//    char *ptr = _buffer + slot * LCD_Manager.SCREEN_COLS;
-//    if( toMove > 0) memmove( ptr+LCD_Manager.SCREEN_COLS, ptr, toMove*LCD_Manager.SCREEN_COLS);
-//    int16_t toCopy = strlen( name);
-//    if( toCopy > LCD_Manager.SCREEN_COLS-3) toCopy = LCD_Manager.SCREEN_COLS-3;
-//    memcpy( ptr, &pos, 2);
-//    memset( ptr+2, 0, LCD_Manager.SCREEN_COLS-2);
-//    memcpy( ptr+2, name, toCopy);
-//    if( isDir) _nDirs++;
-//    _nItems++;
-//    return false;
-//}
-
-//char *SD_Manager::_stripFolders( const char *name){
-//  int16_t lastHash = strlen( (char*) name) - 1;
-//  while( lastHash>0 && name[lastHash] != '/') lastHash--;
-//  return (char *)name+lastHash+1; 
-//}
-

@@ -32,7 +32,6 @@ namespace MK52Simulator
 
         public override byte tick(byte scancode)
         {
-
             RPN_Functions _rpnf = _parent.getFunctions();
             switch (scancode)
             {
@@ -76,25 +75,23 @@ namespace MK52Simulator
                     // find program TODO
                     break;
                 case 12:
-                    // save program as TODO
-                    break;
+                    _rpnf.requestNextReceiver("File_Name");
+                    return 0;
 
                 // Column 3-5 - do nothing (for now)
 
                 // Column 6
                 case 28:
-                    // create folder TODO
+                    _rpnf.requestNextReceiver("File_MkDir");
                     break;
 
                 // Column 7
                 case 31:
                     _rpnf.execute(RPN_Functions.FUNC_STEPIN);
-                    _rpnf.requestNextReceiver("AUTO_N");
-                    return 0;
-                case 32:
-                    // remove file TODO
-                    _rpnf.execute(RPN_Functions.FUNC_REMOVE);
                     break;
+                case 32:
+                    _rpnf.requestNextReceiver("File_Delete");
+                    return 0;
 
                 case 33:
                     // Shutdown signal
