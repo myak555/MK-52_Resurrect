@@ -122,7 +122,8 @@ namespace MK52Simulator
         public const uint FUNC_LBY = 105;
         public const uint FUNC_LBZ = 106;
         public const uint FUNC_LBT = 107;
-        public const uint FUNC_NOP = 104;
+        public const uint FUNC_LBR = 108;
+        public const uint FUNC_NOP = 109;
         
         public const uint MK52_NFUNCTIONS = 128;
         public const int PROGRAM_LINE_LENGTH = 64; // TODO
@@ -376,6 +377,8 @@ namespace MK52Simulator
             _appendFunction( new Func_LBZ());
             // #define FUNC_LBT                107
             _appendFunction( new Func_LBT());
+            // #define FUNC_LBR                108
+            _appendFunction(new Func_LBR());
             // if the name is not found, it must be a number and should be placed to register X
             _appendFunction( new Func_Number());
         }
@@ -484,17 +487,22 @@ namespace MK52Simulator
             rpnStack.setStackLabel(0, command);
             progMem.incrementCounter();
         }
-
-        public void clearStopCondition()
+        
+        /// <summary>
+        /// Resets the stop for counter
+        /// </summary>
+        /// <returns>True if the condition cleared</returns>
+        public bool clearStopCondition()
         {
-            if (!_atStop) return;
+            if (!_atStop) return false;
             if (progMem.isAtStop()) progMem.incrementCounter();
             _atStop = false;
+            return true;
         }
 
         public void executeStep()
         {
-            clearStopCondition();
+            if( clearStopCondition()) return; // just move to the next line
             executeRun();
             if (_atStop && progMem.isAtStop()) 
                 rpnStack.setStackLabel_P(0, "STOP Reached");
@@ -508,72 +516,78 @@ namespace MK52Simulator
         }
         #endregion
 
-        #region File Operations (TODO)
-        public bool loadStateFile()
+        #region File Operations
+        public bool loadState()
         {
-            return true;
-        }
-
-        public bool saveStateFile()
-        {
-            if (_sd.openFile_P(_sd.StatusFileName, true)) return true;
-            bool result = _writeStackFile();
-            if (!result) result = _writeRegisterFile();
-            if (!result) result = _writeProgramFile();
-            if (!result) result = _writeDataFile();
+            _receiverRequested = "AUTO_N"; // this is in case file reading fails
+            _receiverReturnRequested = "None";
+            if (_sd.openFile_P(_sd.StatusFileName, false)) return true;
+            bool result = _read(true, true, true);
             _sd.closeFile();
             return result;
         }
 
-        public bool loadProgramFile()
+        public bool saveState( string returnReceiver)
         {
-            return loadProgramFile("");
+            if (_sd.openFile_P(_sd.StatusFileName, true)) return true;
+            bool result = _writeStack(returnReceiver);
+            if (!result) result = _writeRegisters();
+            if (!result) result = _writeProgram();
+            if (!result) result = _writeData();
+            if (!result) result = _writeReturnStack();
+            _sd.closeFile();
+            return result;
+        }
+
+        public bool loadProgram()
+        {
+            return loadProgram("");
         }
  
-        public bool loadProgramFile( string name)
+        public bool loadProgram( string name)
         {
             if( _sd.openFile(name, false)) return true;
             progMem.clear();
-            bool result = _readFile( false, true, false);
+            bool result = _read( false, true, false);
             _sd.closeFile();
             return result;
         }
 
-        public bool saveProgramFile()
+        public bool saveProgram()
         {
-            return saveProgramFile("");
+            return saveProgram("");
         }
         
-        public bool saveProgramFile( string name)
+        public bool saveProgram( string name)
         {
             name = name.Replace('/', '\\');
             if (_sd.openFile(name, true)) return true;
-            bool result = _writeProgramFile();
+            bool result = _writeProgram();
             _sd.closeFile();
             _sd.readFolderItems();
             return result;
         }
 
-        public bool loadDataFile()
+        public bool loadData()
         {
-            return loadDataFile("");
+            return loadData("");
         }
  
-        public bool loadDataFile( string name)
+        public bool loadData( string name)
         {
             if (_sd.openFile(name, false)) return true;
             extMem.clear();
-            bool result = _readFile(false, false, true);
+            bool result = _read(false, false, true);
             _sd.closeFile();
             return result;
         }
 
-        public bool saveDataFile()
+        public bool saveData()
         {
-            return saveDataFile("");
+            return saveData("");
         }
         
-        public bool saveDataFile( string name)
+        public bool saveData( string name)
         {
             return true;
         }
@@ -628,12 +642,14 @@ namespace MK52Simulator
             _functions.Add( f);
         }
 
-        private bool _writeStackFile()
+        private bool _writeStack(string returnReceiver)
         {
             if( _sd.println_P("#")) return true;
             if( _sd.println_P("# MK-52 stack")) return true;
             if( _sd.println_P("#")) return true;
-            if(_sd.print("DMODE=")) return true;
+            if (_sd.print("DISPL=")) return true;
+            if (_sd.println( returnReceiver)) return true;
+            if (_sd.print("DMODE=")) return true;
             if(_sd.println(rpnStack.getDModeName())) return true;
             if (_sd.print("Bx=")) return true;
             if (_sd.println(rpnStack.Bx.toString())) return true;
@@ -657,7 +673,7 @@ namespace MK52Simulator
             return false;
         }
 
-        private bool _writeRegisterFile()
+        private bool _writeRegisters()
         {
             if( _sd.println_P("#")) return true;
             if( _sd.println_P("# MK-52 registers")) return true;
@@ -674,17 +690,15 @@ namespace MK52Simulator
             return false;
         }
 
-        private bool _writeProgramFile()
+        private bool _writeProgram()
         {
             if( _sd.println_P("#")) return true;
             if( _sd.println_P("# MK-52 program")) return true;
             if( _sd.println_P("#")) return true;
             uint ctr = progMem.getCounter();
-            StringBuilder sb = new StringBuilder();
-            sb.Append("PC=");
-            sb.Append(ctr.ToString("0000"));
-            progMem.resetCounter();
-            if (_sd.println(sb.ToString())) return true;
+            if (_sd.print("PC=")) return true;
+            if (_sd.println(ctr.ToString("0000"))) return true;
+            progMem.setCounter(0);
             while (!progMem.isAtEnd())
             {
                 string ptr = progMem.getCurrentLine();
@@ -693,12 +707,10 @@ namespace MK52Simulator
                     progMem.incrementCounter();
                     continue;
                 }
-                sb.Remove(0, sb.Length);
-                sb.Append('P');
-                sb.Append(progMem.getCounter().ToString("0000"));
-                sb.Append(": ");
-                sb.Append(ptr);
-                if (_sd.println(sb.ToString()))
+                if (_sd.print_P("P") ||
+                    _sd.print(progMem.getCounter().ToString("0000")) ||
+                    _sd.print_P(": ") ||
+                    _sd.println(ptr))
                 {
                     progMem.setCounter(ctr);
                     return true;
@@ -709,7 +721,7 @@ namespace MK52Simulator
             return false;
         }
 
-        private bool _writeDataFile()
+        private bool _writeData()
         {
             if( _sd.println_P("#")) return true;
             if( _sd.println_P("# MK-52 data")) return true;
@@ -722,15 +734,33 @@ namespace MK52Simulator
                 if (_sd.print_P("M")) return true;
                 if (_sd.print_P(i.ToString("0000"))) return true;
                 if (_sd.print_P(": ")) return true;
-                if (_sd.print_P(ptr.toString())) return true;
+                if (_sd.println_P(ptr.toString())) return true;
             }
             return false;
         }
 
-        private bool _readFile(bool readStack, bool readProg, bool readMem)
+        private bool _writeReturnStack()
+        {
+            uint n = progMem.getCallStackPtr();
+            if (n == 0) return false;
+            if (_sd.println_P("#")) return true;
+            if (_sd.println_P("# MK-52 return stack")) return true;
+            if (_sd.println_P("#")) return true;
+            if (_sd.print_P("RS=")) return true;
+            if (_sd.println_P(n.ToString("0000"))) return true;
+            for (uint i = 0; i < n; i++)
+            {
+                if (_sd.println(progMem.getCallStackValues(i))) return true;
+            }
+            return false;
+        }
+
+        private bool _read(bool readStack, bool readProg, bool readMem)
         {
             uint pmemctr = progMem.getCounter();
             uint ememctr = extMem.getCounter();
+            //uint callStackDeclared = 0; presented in dump file, but not used
+            uint callStackActual = 0;
             byte regAddress = 0;
             while (true)
             {
@@ -752,6 +782,13 @@ namespace MK52Simulator
                         progMem.replaceLine( ptr[1]); // TODO: name conversion
                         continue;
                     }
+                    if (UniversalValue._isReturnStackAddress(_text))
+                    {
+                        string[] ptr = UniversalValue._selectAddress(_text);
+                        if (ptr[0].Length < 4 && ptr[1].Length < 1) continue; // string too short or incorrectly formed
+                        progMem.setCallStackValues(callStackActual++, ptr[0], ptr[1]);
+                        continue;
+                    }
                 }
                 if( readMem){
                     if( UniversalValue._startsWith_P( _text, "MC=")){
@@ -768,6 +805,10 @@ namespace MK52Simulator
                     }
                 }
                 if( readStack){
+                    if( UniversalValue._startsWith_P( _text, "DISPL=")){
+                        _receiverRequested = _text.Substring(6);
+                        continue;
+                    }
                     if( UniversalValue._startsWith_P( _text, "X=")){
                         rpnStack.X.fromString(_text.Substring(2));
                         continue;
@@ -830,43 +871,6 @@ namespace MK52Simulator
             return false;
         }
 
-//    bool RPN_Functions::loadStateFile(){
-//    #ifdef __DEBUG
-//    Serial.println("Loading state file");
-//    #endif
-//    if( _sd->openFile_P(StatusFile)) return true;
-//    bool result = _readFile( true, true, true);
-//    _sd->closeFile();
-//    return result;
-//}
-
-//bool RPN_Functions::loadDataFile(char *name){
-//    #ifdef __DEBUG
-//    Serial.println("Loading data file");
-//    #endif
-//    if( _sd->openFile(name)) return true;
-//    bool result = _readFile( false, false, true);
-//    _sd->closeFile();
-//    return result;
-//}
-
-//bool RPN_Functions::saveDataFile(char *name){
-//    #ifdef __DEBUG
-//    Serial.print("Saving data file");
-//    if( name != NULL){
-//        Serial.print(" as ");
-//        Serial.println(name);
-//    }
-//    else{
-//        Serial.println();
-//    }
-//    #endif
-//    if( _sd->openFile(name, true)) return true;
-//    bool result = _writeDataFile();
-//    _sd->closeFile();
-//    _sd->readFolderItems();
-//    return result;
-//}
         #endregion
     }
 }

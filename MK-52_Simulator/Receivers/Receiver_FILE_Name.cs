@@ -22,10 +22,10 @@ namespace MK52Simulator
         protected string _Question = "File name?";
         protected string _Confirmation = "Overwrite? (\u0018)";
         protected string _Ext = ".MK52";
-        private const int _Off = 0;
-        private const int _Text = 1;
-        private const int _Number = 2;
-        private const int _Overwrite = 3;
+        protected const int _Off = 0;
+        protected const int _Text = 1;
+        protected const int _Number = 2;
+        protected const int _Overwrite = 3;
 
         /// <summary>
         /// Constructor
@@ -135,7 +135,7 @@ namespace MK52Simulator
                 updateDisplay(toString());
                 return;
             }
-            _rpnf.saveProgramFile( tmpName);
+            _rpnf.saveProgram( tmpName);
             _parent.getFunctions().requestNextReceiver(_return_to);
             return;
         }

@@ -29,7 +29,7 @@ namespace MK52Simulator
         protected override void completeEntry( string value)
         {
             Program_Memory pm = _parent._m_Program_Memory;
-            pm.replaceLine(value);
+            pm.updateLine(value);
             pm.incrementCounter();
         }
 

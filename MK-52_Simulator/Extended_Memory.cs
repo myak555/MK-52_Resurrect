@@ -13,10 +13,14 @@ using System.IO;
 
 namespace MK52Simulator
 {
-    //
-    // Implements program storage (as prototype)
-    // The actual code on C++ will be without Dictionary
-    //
+    /// <summary>
+    /// Implements data storage (as prototype)
+    /// The actual code on C++ will be without Dictionary
+    /// In the original MK-52, there are no extended memory 
+    /// In the Resurrect, there are 4000 slots, each identical to the
+    /// common register (0 to F).
+    /// The addresses are from 0 to 3999
+    /// </summary>
     public class Extended_Memory
     {
         public const int EXTENDED_MEMORY_SIZE  = 36000;
@@ -172,48 +176,5 @@ namespace MK52Simulator
         {
             return toString();
         }
-
-        //public bool LoadLine(string s)
-        //{
-        //    if (!s.StartsWith("M")) return false;
-        //    if (MCLoadHelper(s)) return true;
-        //    int number = Convert.ToInt32(s.Substring(1, 3));
-        //    SetLine( number, new RPN_Value( s.Substring(5).Trim()));
-        //    return true;
-        //}
-
-        //public bool Load(StreamReader sr)
-        //{
-        //    ExtendedMemory.Clear();
-        //    while( !sr.EndOfStream)
-        //    {
-        //        string s = sr.ReadLine().Trim();
-        //        if( s.Length == 0 || s.StartsWith("#")) continue;
-        //        LoadLine(s);
-        //    }
-        //    return true;
-        //}
-
-        //public void Save(StreamWriter sw)
-        //{
-        //    sw.Write("#\n");
-        //    sw.Write("# Extended Memory:\n");
-        //    sw.Write("#\n");
-        //    sw.Write("MC = " + Counter.V.ToString() + "\n");
-        //    for (int k = 0; k < Counter.MaxValue; k++)
-        //    {
-        //        if (!ExtendedMemory.ContainsKey(k)) continue;
-        //        RPN_Value v = ExtendedMemory[k];
-        //        if (v.isEmpty) continue;
-        //        sw.Write(k.ToString("M000: ") + v.ToString() + "\n");
-        //    }
-        //}
-
-        //private bool MCLoadHelper(string s)
-        //{
-        //    if (!s.StartsWith("MC = ")) return false;
-        //    Counter.Set(Convert.ToInt32(s.Substring(5).Trim()));
-        //    return true;
-        //}
     }
 }

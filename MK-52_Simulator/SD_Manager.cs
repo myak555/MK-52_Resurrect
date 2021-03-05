@@ -36,7 +36,6 @@ namespace MK52Simulator
         public int _nDirs = 0;
         public int _nItems = 0;
 
-        public string _current_File = "";
         public bool _current_File_open = false;
         public StreamReader __sr = null;
         public StreamWriter __sw = null;
@@ -376,7 +375,7 @@ namespace MK52Simulator
                     __fs = File.Open(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
                     __sr = new StreamReader(__fs);
                 }
-                _current_File = path;
+                _current_File_Name = path.Replace('\\', '/');
                 _current_File_open = true;
                 return false;
             }
@@ -404,7 +403,6 @@ namespace MK52Simulator
                 __fs.Close();
                 __fs = null;
             }
-            _current_File = "";
             _current_File_open = false;
         }
 

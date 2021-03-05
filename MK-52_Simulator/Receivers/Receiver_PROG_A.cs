@@ -57,17 +57,14 @@ namespace MK52Simulator
                     _rpnf.requestNextReceiver("TEXT", "PROG_N");
                     return 0;
                 case 6:
-                    // TODO
                     _rpnf.appendProgramLine_P(RPN_Functions.FUNC_LBZ);
                     _rpnf.requestNextReceiver("TEXT", "PROG_N");
                     return 0;
                 case 7:
-                    // TODO
                     _rpnf.appendProgramLine_P(RPN_Functions.FUNC_LBY);
                     _rpnf.requestNextReceiver("TEXT", "PROG_N");
                     return 0;
                 case 8:
-                    // TODO
                     _rpnf.appendProgramLine_P(RPN_Functions.FUNC_LBX);
                     _rpnf.requestNextReceiver("TEXT", "PROG_N");
                     return 0;
@@ -81,13 +78,14 @@ namespace MK52Simulator
                     _rpnf.appendProgramLine_P(RPN_Functions.FUNC_A_X2M);
                     _rpnf.requestNextReceiver("ADDRESS", "PROG_N");
                     return 0;
-
-                // Column 3
+                case 11:
+                    _rpnf.appendProgramLine_P(RPN_Functions.FUNC_LBR);
+                    break;
                 case 12:
                     _rpnf.progMem.deleteLine();
                     break;
 
-                // Column 4
+                // Column 3
                 case 16:
                     _rpnf.progMem.commentLine();
                     _rpnf.requestNextReceiver("TEXT", "PROG_N");

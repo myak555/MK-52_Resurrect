@@ -56,11 +56,11 @@ namespace MK52Simulator
             _m_RPN_Stack.init(this);
             _m_RPN_Functions.init(this);
 
-            // Show splash
-            this.current_Receiver.activate( "AUTO_N");
-
-            // TODO: load data / state here
-            // loadState();
+            // Show splash (if "Undefined", the return receiver is set by loadState!)
+            this.current_Receiver.activate( "Undefined");
+            
+            // Hide status loading behind splash
+            _m_RPN_Functions.loadState();
         }
 
         /// <summary>
@@ -155,92 +155,14 @@ namespace MK52Simulator
             _m_Hardware_LCD.clearScreen();
             _m_Hardware_LCD.showSplash();
             _m_Hardware_LCD.forcePaint();
-            _m_RPN_Functions.saveStateFile();
+            string returnReceiver = current_Receiver.Moniker;
+            if (returnReceiver == "OFF") returnReceiver = current_Receiver.getReturnReceiverMoniker();
+            _m_RPN_Functions.saveState(returnReceiver);
             _m_Hardware_LCD.clearScreen();
             _m_Hardware_LCD.forcePaint();
         }
 
         #region Implemented Functions
-        //private void addFunctions()
-        //{
-            //addFunction(new Func_10x());
-            //addFunction(new Func_1X());
-            //addFunction(new Func_Abs());
-            //addFunction(new Func_And());
-            //addFunction(new Func_A_M2X());
-            //addFunction(new Func_ArcCos());
-            //addFunction(new Func_ArcSin());
-            //addFunction(new Func_ArcTg());
-            //addFunction(new Func_A_X2M());
-            //addFunction(new Func_Cos());
-            //addFunction(new Func_Clear_X());
-            //addFunction(new Func_set_DMOD_DEG());
-            //addFunction(new Func_Divide());
-            //addFunction(new Func_EE());
-            //addFunction(new Func_Enter());
-            //addFunction(new Func_Exp());
-            //addFunction(new Func_Frac());
-            //addFunction(new Func_DM2D());
-            //addFunction(new Func_DMS2D());
-            //addFunction(new Func_in2mm());
-            //addFunction(new Func_Rad2D());
-            //addFunction(new Func_GOTO());
-            //addFunction(new Func_GOSUB());
-            //addFunction(new Func_set_DMOD_GRD());
-            //addFunction(new Func_IfNotLT0());
-            //addFunction(new Func_IfNotEQ0());
-            //addFunction(new Func_IfNotGE0());
-            //addFunction(new Func_IfNotNE0());
-            //addFunction(new Func_IfNotLTY());
-            //addFunction(new Func_IfNotEQY());
-            //addFunction(new Func_IfNotGEY());
-            //addFunction(new Func_IfNotNEY());
-            //addFunction(new Func_Whole());
-            //addFunction(new Func_K_M2X());
-            //addFunction(new Func_K_X2M());
-            //addFunction(new Func_LBT());
-            //addFunction(new Func_LBX());
-            //addFunction(new Func_LBY());
-            //addFunction(new Func_LBZ());
-            //addFunction(new Func_Lg());
-            //addFunction(new Func_Ln());
-            //addFunction(new Func_Log());
-            //addFunction(new Func_L0());
-            //addFunction(new Func_L1());
-            //addFunction(new Func_L2());
-            //addFunction(new Func_L3());
-            //addFunction(new Func_Max());
-            //addFunction(new Func_Minus());
-            //addFunction(new Func_M2X());
-            //addFunction(new Func_Multiply());
-            //addFunction(new Func_Negate());
-            //addFunction(new Func_NOP());
-            //addFunction(new Func_Not());
-            //addFunction(new Func_Or());
-            //addFunction(new Func_PI());
-            //addFunction(new Func_Plus());
-            //addFunction(new Func_PrevFile());
-            //addFunction(new Func_set_DMOD_RAD());
-            //addFunction(new Func_Rand());
-            //addFunction(new Func_Return());
-            //addFunction(new Func_Rot());
-            //addFunction(new Func_Seed());
-            //addFunction(new Func_Sign());
-            //addFunction(new Func_Sin());
-            //addFunction(new Func_SQRT());
-            //addFunction(new Func_Stop());
-            //addFunction(new Func_Swap());
-            //addFunction(new Func_Tg());
-            //addFunction(new Func_D2DM());
-            //addFunction(new Func_D2DMS());
-            //addFunction(new Func_mm2in());
-            //addFunction(new Func_D2Rad());
-            //addFunction(new Func_X2());
-            //addFunction(new Func_Xor());
-            //addFunction(new Func_Pow());
-            //addFunction(new Func_X2M());
-            //addFunction(new Func_Toggle_DMOD());
-        //}
         public void listFunctions(string filename)
         {
             FileStream fs = null;
@@ -303,18 +225,21 @@ namespace MK52Simulator
             addReceiver(new Receiver_PROG_F(this));
             addReceiver(new Receiver_PROG_K(this));
             addReceiver(new Receiver_PROG_A(this));
+            addReceiver(new Receiver_Prog_Erase(this));
 
             addReceiver(new Receiver_DATA_N(this));
             addReceiver(new Receiver_DATA_F(this));
             addReceiver(new Receiver_DATA_K(this));
             addReceiver(new Receiver_DATA_A(this));
+            addReceiver(new Receiver_Data_Erase(this));
 
             addReceiver(new Receiver_FILE_N(this));
             addReceiver(new Receiver_FILE_F(this));
-            //addReceiver(new Receiver_FILE_K(this));
-            //addReceiver(new Receiver_FILE_A(this));
+            addReceiver(new Receiver_FILE_K(this));
+            addReceiver(new Receiver_FILE_A(this));
             addReceiver(new Receiver_FILE_Delete(this));
             addReceiver(new Receiver_FILE_Name(this));
+            addReceiver(new Receiver_FILE_Data(this));
             addReceiver(new Receiver_FILE_MkDir(this));
 
             addReceiver(new Receiver_Address(this));

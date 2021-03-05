@@ -35,6 +35,10 @@ namespace MK52Simulator
             if (scancode != 32) return 0;
             if (_return_to.Length <= 0 || _return_to.StartsWith("Font")) _return_to = "AUTO_N";
             _parent.getFunctions().requestNextReceiver( "Splash", _return_to);
+
+            // Simulates state file loading at power-up
+            // Real ESP32 hardware does not need this
+            _parent.getFunctions().loadState();
             return 0;
         }
     }

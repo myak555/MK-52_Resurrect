@@ -290,4 +290,32 @@ namespace MK52Simulator
             _Stack(components).setStackLabel(3, command);
         }
     }
+
+    public class Func_LBR : RPN_Function
+    {
+        public Func_LBR()
+        {
+            Description = "Resets labels";
+        }
+
+        public override bool checkID(uint id)
+        {
+            return id == RPN_Functions.FUNC_LBR;
+        }
+
+        public override bool checkName(string name)
+        {
+            return UniversalValue._identicalTo_P(name, Name());
+        }
+
+        public override string Name()
+        {
+            return "LBR";
+        }
+
+        public override void execute(MK52_Host components, string command)
+        {
+            _Stack(components).resetStackLabels();
+        }
+    }
 }

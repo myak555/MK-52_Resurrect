@@ -38,6 +38,9 @@ namespace MK52Simulator
             this.saveProgramAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.dataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.loadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.buttonsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.recordButtonsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.stopToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -55,9 +58,6 @@ namespace MK52Simulator
             this.saveFileDialog3 = new System.Windows.Forms.SaveFileDialog();
             this.LCD_Manager1 = new MK52Simulator.LCD_Manager();
             this.KBD_Manager1 = new MK52Simulator.KBD_Manager();
-            this.dataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.loadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openFileDialog2 = new System.Windows.Forms.OpenFileDialog();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -98,21 +98,21 @@ namespace MK52Simulator
             this.loadProgramToolStripMenuItem.Name = "loadProgramToolStripMenuItem";
             this.loadProgramToolStripMenuItem.Size = new System.Drawing.Size(152, 28);
             this.loadProgramToolStripMenuItem.Text = "&Load";
-            this.loadProgramToolStripMenuItem.Click += new System.EventHandler(this.loadProgramToolStripMenuItem_Click);
+            this.loadProgramToolStripMenuItem.Click += new System.EventHandler(this.programLoad_Click);
             // 
             // saveProgramToolStripMenuItem
             // 
             this.saveProgramToolStripMenuItem.Name = "saveProgramToolStripMenuItem";
             this.saveProgramToolStripMenuItem.Size = new System.Drawing.Size(152, 28);
             this.saveProgramToolStripMenuItem.Text = "&Save";
-            this.saveProgramToolStripMenuItem.Click += new System.EventHandler(this.saveProgramToolStripMenuItem_Click);
+            this.saveProgramToolStripMenuItem.Click += new System.EventHandler(this.programSave_Click);
             // 
             // saveProgramAsToolStripMenuItem
             // 
             this.saveProgramAsToolStripMenuItem.Name = "saveProgramAsToolStripMenuItem";
             this.saveProgramAsToolStripMenuItem.Size = new System.Drawing.Size(152, 28);
             this.saveProgramAsToolStripMenuItem.Text = "Save &As...";
-            this.saveProgramAsToolStripMenuItem.Click += new System.EventHandler(this.saveProgramAsToolStripMenuItem_Click);
+            this.saveProgramAsToolStripMenuItem.Click += new System.EventHandler(this.programSaveAs_Click);
             // 
             // menuSeparator1
             // 
@@ -124,7 +124,30 @@ namespace MK52Simulator
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
             this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 28);
             this.exitToolStripMenuItem.Text = "E&xit";
-            this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
+            this.exitToolStripMenuItem.Click += new System.EventHandler(this.programExit_Click);
+            // 
+            // dataToolStripMenuItem
+            // 
+            this.dataToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.loadToolStripMenuItem,
+            this.saveAsToolStripMenuItem});
+            this.dataToolStripMenuItem.Name = "dataToolStripMenuItem";
+            this.dataToolStripMenuItem.Size = new System.Drawing.Size(58, 27);
+            this.dataToolStripMenuItem.Text = "&Data";
+            // 
+            // loadToolStripMenuItem
+            // 
+            this.loadToolStripMenuItem.Name = "loadToolStripMenuItem";
+            this.loadToolStripMenuItem.Size = new System.Drawing.Size(150, 28);
+            this.loadToolStripMenuItem.Text = "&Load";
+            this.loadToolStripMenuItem.Click += new System.EventHandler(this.dataLoad_Click);
+            // 
+            // saveAsToolStripMenuItem
+            // 
+            this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
+            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(150, 28);
+            this.saveAsToolStripMenuItem.Text = "&Save As...";
+            this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.dataSaveAs_Click);
             // 
             // buttonsToolStripMenuItem
             // 
@@ -222,10 +245,10 @@ namespace MK52Simulator
             // 
             // saveFileDialog2
             // 
-            this.saveFileDialog2.DefaultExt = "MK52";
-            this.saveFileDialog2.Filter = "MK52 Programs|*.mk52|All files|*.*";
+            this.saveFileDialog2.DefaultExt = "DAT";
+            this.saveFileDialog2.Filter = "MK52 Data|*.DAT|All files|*.*";
             this.saveFileDialog2.RestoreDirectory = true;
-            this.saveFileDialog2.Title = "Save program";
+            this.saveFileDialog2.Title = "Save data";
             // 
             // saveFileDialog3
             // 
@@ -251,28 +274,6 @@ namespace MK52Simulator
             this.KBD_Manager1.Name = "KBD_Manager1";
             this.KBD_Manager1.Size = new System.Drawing.Size(560, 275);
             this.KBD_Manager1.TabIndex = 0;
-            // 
-            // dataToolStripMenuItem
-            // 
-            this.dataToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.loadToolStripMenuItem,
-            this.saveAsToolStripMenuItem});
-            this.dataToolStripMenuItem.Name = "dataToolStripMenuItem";
-            this.dataToolStripMenuItem.Size = new System.Drawing.Size(58, 27);
-            this.dataToolStripMenuItem.Text = "&Data";
-            // 
-            // loadToolStripMenuItem
-            // 
-            this.loadToolStripMenuItem.Name = "loadToolStripMenuItem";
-            this.loadToolStripMenuItem.Size = new System.Drawing.Size(152, 28);
-            this.loadToolStripMenuItem.Text = "&Load";
-            this.loadToolStripMenuItem.Click += new System.EventHandler(this.loadToolStripMenuItem_Click);
-            // 
-            // saveAsToolStripMenuItem
-            // 
-            this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(152, 28);
-            this.saveAsToolStripMenuItem.Text = "&Save As...";
             // 
             // openFileDialog2
             // 

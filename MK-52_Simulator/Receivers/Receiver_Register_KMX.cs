@@ -34,7 +34,7 @@ namespace MK52Simulator
         protected override void completeEntry( string value)
         {
             if (value.Length < 1) return;
-            _parent._m_Register_Memory.K_XtoM(value);
+            _parent._m_Register_Memory.K_MtoX(value);
         }
     }
 }

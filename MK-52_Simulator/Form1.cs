@@ -27,8 +27,6 @@ namespace MK52Simulator
             InitializeComponent();
             myRPN = new MK52_Host(KBD_Manager1, LCD_Manager1);
             myRPN.init();
-            //myRPN.setDisplay("Splash");
-            //myRPN.setReceiver("AUTO_N");
             timer1.Enabled = true;
             return;
         }
@@ -43,51 +41,73 @@ namespace MK52Simulator
             myRPN.shutdown();
         }
 
-        private void loadProgramToolStripMenuItem_Click(object sender, EventArgs e)
+        private void programLoad_Click(object sender, EventArgs e)
         {
             RPN_Functions fn = _stopIfRunning();
             string name = myRPN.getSD().getWindowsFolderName();
             openFileDialog1.InitialDirectory = name;
             openFileDialog1.FileName = "";
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
-                fn.loadProgramFile(openFileDialog1.FileName);
+            {
+                fn.loadProgram(openFileDialog1.FileName);
+                myRPN.current_Receiver.tick(0); // needed to redraw!
+            }
             timer1.Enabled = true;
         }
 
-        private void saveProgramToolStripMenuItem_Click(object sender, EventArgs e)
+        private void programSave_Click(object sender, EventArgs e)
         {
             string name = myRPN.getSD().getWindowsFileName();
-            if (name.Length < 1)
-                saveProgramAsToolStripMenuItem_Click(sender, e);
-            _stopIfRunning().saveProgramFile(name);
+            if (!name.EndsWith(".MK52"))
+            {
+                programSaveAs_Click(sender, e);
+                return;
+            }
+            _stopIfRunning().saveProgram(name);
             timer1.Enabled = true;
         }
 
-        private void saveProgramAsToolStripMenuItem_Click(object sender, EventArgs e)
+        private void programSaveAs_Click(object sender, EventArgs e)
         {
             RPN_Functions fn = _stopIfRunning();
             string name = myRPN.getSD().getWindowsFolderName();
             saveFileDialog1.InitialDirectory = name;
             saveFileDialog1.FileName = "";
             if (saveFileDialog1.ShowDialog() == DialogResult.OK)
-                fn.saveProgramFile(saveFileDialog1.FileName);
+                fn.saveProgram(saveFileDialog1.FileName);
             timer1.Enabled = true;
         }
 
-        private void loadToolStripMenuItem_Click(object sender, EventArgs e)
+        private void programExit_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        private void dataLoad_Click(object sender, EventArgs e)
         {
             RPN_Functions fn = _stopIfRunning();
             string name = myRPN.getSD().getFolderName();
             openFileDialog2.InitialDirectory = name;
             openFileDialog2.FileName = "";
             if (openFileDialog2.ShowDialog() == DialogResult.OK)
-                fn.loadDataFile(openFileDialog2.FileName);
+                fn.loadData(openFileDialog2.FileName);
+            timer1.Enabled = true;
+        }
+
+        private void dataSaveAs_Click(object sender, EventArgs e)
+        {
+            RPN_Functions fn = _stopIfRunning();
+            string name = myRPN.getSD().getWindowsFolderName();
+            saveFileDialog2.InitialDirectory = name;
+            saveFileDialog2.FileName = "";
+            if (saveFileDialog2.ShowDialog() == DialogResult.OK)
+                fn.saveData(saveFileDialog2.FileName);
             timer1.Enabled = true;
         }
 
         private void recordButtonsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            // TODO
         }
 
         private void functionsListToolStripMenuItem_Click(object sender, EventArgs e)
@@ -98,11 +118,6 @@ namespace MK52Simulator
                 myRPN.listFunctions(saveFileDialog3.FileName);
             }
             timer1.Enabled = true;
-        }
-
-        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            this.Close();
         }
 
         private void fontToolStripMenuItem_Click(object sender, EventArgs e)

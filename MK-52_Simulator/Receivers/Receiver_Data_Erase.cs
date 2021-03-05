@@ -12,24 +12,18 @@ using System.Text;
 
 namespace MK52Simulator
 {
-    //
-    // Implements a text data entry editor
-    //
-    public class Receiver_FILE_Delete : Receiver_Confirmation
+    public class Receiver_Data_Erase : Receiver_Confirmation
     {   
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        public Receiver_FILE_Delete(MK52_Host parent)
+        public Receiver_Data_Erase(MK52_Host parent)
             : base(parent)
         {
-            Moniker = "File_Delete";
-            _Question = "Delete? (\u0018)";
+            Moniker = "Data_Erase";
+            _Question = "Ext. memory erase? (\u0018)";
         }
 
         protected override void performAction()
         {
-            _parent.getFunctions().execute(RPN_Functions.FUNC_REMOVE);
+            _parent._m_Extended_Memory.clear();
         }
     }
 }

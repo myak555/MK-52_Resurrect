@@ -135,9 +135,9 @@ namespace MK52Simulator
             if( !sd.stepIn( filename)) return;
             RPN_Functions _rpnf = components.getFunctions();
             if( UniversalValue._endsWith_P( filename, ".DAT"))
-                _rpnf.loadDataFile( filename);
+                _rpnf.loadData( filename);
             else
-                _rpnf.loadProgramFile( filename);
+                _rpnf.loadProgram( filename);
         }
     }
 
@@ -155,7 +155,7 @@ namespace MK52Simulator
 
         public override void execute(MK52_Host components, string command)
         {
-            components.getFunctions().saveProgramFile();
+            components.getFunctions().saveProgram();
         }
     }
 
@@ -178,7 +178,7 @@ namespace MK52Simulator
 
         public override void execute(MK52_Host components, string command)
         {
-            components.getFunctions().saveProgramFile(command);
+            components.getFunctions().saveProgram(command);
         }
     }
 
@@ -190,7 +190,7 @@ namespace MK52Simulator
         }
         public override void execute(MK52_Host components, string command)
         {
-            components.getFunctions().loadProgramFile();
+            components.getFunctions().loadProgram();
         }
     }
 
@@ -210,7 +210,7 @@ namespace MK52Simulator
         }
         public override void execute(MK52_Host components, string command)
         {
-            components.getFunctions().loadProgramFile( command);
+            components.getFunctions().loadProgram( command);
         }
     }
 
@@ -222,7 +222,7 @@ namespace MK52Simulator
         }
         public override void execute(MK52_Host components, string command)
         {
-            components.getFunctions().saveDataFile();
+            components.getFunctions().saveData();
         }
     }
 
@@ -242,7 +242,7 @@ namespace MK52Simulator
         }
         public override void execute(MK52_Host components, string command)
         {
-            components.getFunctions().saveDataFile( command);
+            components.getFunctions().saveData( command);
         }
     }
 
@@ -254,7 +254,7 @@ namespace MK52Simulator
         }
         public override void execute(MK52_Host components, string command)
         {
-            components.getFunctions().loadDataFile(command);
+            components.getFunctions().loadData(command);
         }
     }
 
@@ -274,7 +274,7 @@ namespace MK52Simulator
         }
         public override void execute(MK52_Host components, string command)
         {
-            components.getFunctions().loadDataFile(command);
+            components.getFunctions().loadData(command);
         }
     }
 
@@ -295,6 +295,7 @@ namespace MK52Simulator
         public override void execute(MK52_Host components, string command)
         {
             // TODO
+            components.getFunctions().loadProgram(command);
         }
     }
 }

@@ -13,12 +13,12 @@ using System.IO;
 
 namespace MK52Simulator
 {
-    public class Receiver_DATA_K: Receiver_DATA
+    public class Receiver_FILE_K: Receiver_FILE
     {
-        public Receiver_DATA_K(MK52_Host parent)
+        public Receiver_FILE_K(MK52_Host parent)
             : base( parent)
         {
-            Moniker = "DATA_K";
+            Moniker = "FILE_K";
         }
 
         public override void activate(string prevReceiver)
@@ -39,14 +39,10 @@ namespace MK52Simulator
 
                 // Column 0
                 case 1:
-                    _rpnf.requestNextReceiver("DATA_F");
+                    _rpnf.requestNextReceiver("FILE_F");
                     return 0;
                 case 3:
-                    _rpnf.requestNextReceiver("DATA_A");
-                    return 0;
-                case 4:
-                    //    _rpnf.execute(RPN_Functions.FUNC_TOGGLE_DMOD, "");
-                    //    base.tick(0);
+                    _rpnf.requestNextReceiver("FILE_A");
                     return 0;
 
                 // Column 1 does nothing (for now)
@@ -58,18 +54,18 @@ namespace MK52Simulator
 
                 // Column 7
                 case 32:
-                    _rpnf.requestNextReceiver("Data_Erase");
+                    _rpnf.requestNextReceiver("Prog_Erase", "PROG_N");
                     return 0;
 
                 case 33:
                     // Shutdown signal
-                    _rpnf.requestNextReceiver("DATA_N");
+                    _rpnf.requestNextReceiver("FILE_N");
                     return 33;
 
                 default: // all other buttons do nothing, keeping K-mode
                     return 0;
             }
-            //_rpnf.requestNextReceiver("DATA_N");
+            //_rpnf.requestNextReceiver("FILE_N");
             //return 0;
         }
     }

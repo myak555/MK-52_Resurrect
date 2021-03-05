@@ -118,7 +118,6 @@ namespace MK52Simulator
                 // Column 6
                 case 25:
                     // TODO
-                    //_rpnf.execute(RPN_Functions.FUNC_SQRT);
                     _parent._m_RPN_Stack.setStackLabel_P(0, "K-SQRT is available!");
                     break;
                 case 26:
@@ -134,12 +133,10 @@ namespace MK52Simulator
                 // Column 7
                 case 29:
                     // TODO
-                    //_rpnf.execute(RPN_Functions.FUNC_1X);
                     _parent._m_RPN_Stack.setStackLabel_P(0, "K-1/X is available!");
                     break;
                 case 30:
                     // TODO
-                    //_rpnf.execute(RPN_Functions.FUNC_X2);
                     _parent._m_RPN_Stack.setStackLabel_P(0, "K-X2 is available!");
                     break;
                 case 31:

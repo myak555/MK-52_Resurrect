@@ -13,9 +13,10 @@ using System.IO;
 
 namespace MK52Simulator
 {
-    //
-    // Implements the RPN stack
-    //
+    /// <summary>
+    /// Implements RPN stack (as prototype)
+    /// There are 5 registers: X to T and Bx (the same as in the original MK-52)  
+    /// </summary>
     public class RPN_Stack
     {
         private const string _RPN_Stack_TrigAccuracy = "Warn: Trig Accuracy";
@@ -124,6 +125,11 @@ namespace MK52Simulator
         public void setStackLabel_P(int n, string text)
         {
             if( n < 0 || 3 < n) return;
+            if (text.Length <= 0)
+            {
+                _stackLabels[n] = _standardLabels[n];
+                return;
+            }
             if (text.Length < LCD_Manager.SCREEN_COLS - 1)
                 _stackLabels[n] = text;
             else

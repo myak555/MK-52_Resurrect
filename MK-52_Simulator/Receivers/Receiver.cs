@@ -63,20 +63,18 @@ namespace MK52Simulator
 
         public uint getMode() { return _mode; }
 
+        public string getReturnReceiverMoniker()
+        {
+            if (_return_to.Length <= 0) return "AUTO_N"; // as minimum need to return to AUTO_N
+            return _return_to;
+        }
+
         protected char _convertButton( string list, uint scancode)
         {
             if (scancode >= list.Length) return (char)0;
             char c = list[(int)scancode];
             if( c == '#') return (char)0;
             return c;
-        }
-
-        protected bool _getConfirmation( uint confirmationButton)
-        {
-            //TODO
-            //_parent._m_Hardware_KBD.scan()
-            //while( _parent._m_Hardware_KBD() == 0) delay(KBD_IDLE_DELAY);
-            return true;
         }
     }
 }

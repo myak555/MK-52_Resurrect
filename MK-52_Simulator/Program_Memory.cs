@@ -13,10 +13,12 @@ using System.IO;
 
 namespace MK52Simulator
 {
-    //
-    // Implements program storage (as prototype)
-    // The actual code on C++ will be without Dictionary
-    //
+    /// <summary>
+    /// Implements program storage (as prototype)
+    /// In the original MK-52, there are 103 slots of program memory 
+    /// In the Resurrect, there is a space of 64000 bytes, the actual
+    /// number of program steps is determined by the command length.
+    /// </summary>
     public class Program_Memory
     {
         public const int EMODE_OWERWRITE = 0;
@@ -157,12 +159,14 @@ namespace MK52Simulator
             {
                 _current = 0;
                 _counter = 0;
-                return false;
             }
-            _returnStackPtr--;
-            _current = _returnStack_ptrs[_returnStackPtr];
-            _counter = _returnStack_ctrs[_returnStackPtr];
-            incrementCounter(); // go to the next line after call
+            else
+            {
+                _returnStackPtr--;
+                _current = _returnStack_ptrs[_returnStackPtr];
+                _counter = _returnStack_ctrs[_returnStackPtr];
+            }
+            incrementCounter(); // go to the next line after call (mimic actual MK-52)
             return false;
         }
 
@@ -233,7 +237,7 @@ namespace MK52Simulator
             {
                 for (int i = (int)_current-shift; i <= _bottom; i++)
                     _buffer[i+shift] = _buffer[i];
-                for (int i = shift; i <= 0; i++, _bottom--)
+                for (int i = shift; i < 0; i++, _bottom--)
                     _buffer[_bottom] = 0;
             }
             return false;
@@ -354,6 +358,34 @@ namespace MK52Simulator
         public override string ToString()
         {
             return toString();
+        }
+
+        public uint getCallStackPtr()
+        {
+            return (uint)_returnStackPtr;
+        }
+
+        public string getCallStackValues( uint n)
+        {
+            if( n>=_returnStackPtr) return "";
+            StringBuilder sb = new StringBuilder();
+            sb.Append( "S");
+            sb.Append( _returnStack_ctrs[n].ToString("0000"));
+            sb.Append( ": ");
+            sb.Append( _returnStack_ptrs[n].ToString("0"));
+            return sb.ToString();
+        }
+
+        public void setCallStackValues( uint n, string ctr, string ptr)
+        {
+            if( n>= RETURN_STACK_SIZE) return;
+            try
+            {
+                _returnStack_ctrs[n] = Convert.ToUInt32(ctr.Trim());
+                _returnStack_ptrs[n] = Convert.ToUInt32(ptr.Trim());
+                _returnStackPtr = (int)n + 1;
+            }
+            catch { }
         }
     }
 }

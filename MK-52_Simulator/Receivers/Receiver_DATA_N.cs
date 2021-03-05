@@ -95,7 +95,6 @@ namespace MK52Simulator
                 case 30:
                     break;
                 case 31:
-                    // TODO
                     _rpnf.execute(RPN_Functions.FUNC_MEMSET,
                         _parent._m_RPN_Stack._DataEntry.ToString().Trim());
                     _rpnf.execute(RPN_Functions.FUNC_INCREMENT_MC);
@@ -111,7 +110,6 @@ namespace MK52Simulator
                     return 33;
 
                 default: // all other buttons activate number entry
-                    // TODO
                     _rpnf.requestNextReceiver("NUMBER_DATA");
                     return scancode;
             }

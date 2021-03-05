@@ -30,7 +30,7 @@ namespace MK52Simulator
             switch( scancode)
             {
                 case 0: // keyboard inactive
-                    return 0;
+                    return base.tick(0);
 
                 // Column 0
                 case 1:

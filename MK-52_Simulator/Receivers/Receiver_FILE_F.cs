@@ -68,9 +68,8 @@ namespace MK52Simulator
                     _rpnf.execute(RPN_Functions.FUNC_SAVEDATA);
                     break;
                 case 11:
-                    // TODO Save data as
-                    _rpnf.execute(RPN_Functions.FUNC_SAVEDATA);
-                    break;
+                    _rpnf.requestNextReceiver("File_Data");
+                    return 0;
 
                 // Column 3 does nothing (for now)
                 // Column 4 does nothing (for now)

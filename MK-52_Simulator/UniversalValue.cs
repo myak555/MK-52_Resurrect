@@ -388,7 +388,16 @@ namespace MK52Simulator
             if( text[3] != '=') return 20;
             return val;
         }
-        
+
+        /// <summary>
+        /// Alias for C++ implementation
+        /// </summary>
+        public static bool _isReturnStackAddress(string text)
+        {
+            if (text[0] != 'S') return false;
+            return _isAddress(text.Substring(1));
+        }
+
         /// <summary>
         /// Alias for C++ implementation
         /// </summary>
