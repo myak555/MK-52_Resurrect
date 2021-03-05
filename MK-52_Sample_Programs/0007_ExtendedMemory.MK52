@@ -1,8 +1,8 @@
 P0000: # EXTENDED MEMORY
 P0001: # Demonstrates direct extended memory access
-P0100: A X->M 500
+P0100: AX->M 500
 P0101: GOSUB 200
-P0102: A M->X 500
+P0102: AM->X 500
 P0103: STOP
 P0104: GOTO 100
 P0200: LG
