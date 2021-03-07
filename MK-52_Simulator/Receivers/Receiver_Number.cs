@@ -112,7 +112,7 @@ namespace MK52Simulator
         {
             LCD_Manager lm = _parent.getLCD(); 
             lm.updateCalcRegister(0, toString());
-            lm.forcePaint();
+            lm.requestUpdate();
         }
 
         public override string toString()

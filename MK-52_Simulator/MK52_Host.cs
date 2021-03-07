@@ -108,6 +108,7 @@ namespace MK52Simulator
                 if (setRequestedReceiver()) break;
             }
             while (b > 0);
+            _m_Hardware_LCD.update();
         }
 
         /// <summary>
@@ -156,7 +157,32 @@ namespace MK52Simulator
             _m_Hardware_LCD.showSplash();
             _m_Hardware_LCD.forcePaint();
             string returnReceiver = current_Receiver.Moniker;
-            if (returnReceiver == "OFF") returnReceiver = current_Receiver.getReturnReceiverMoniker();
+
+            // checks for Simulator only;
+            // the actual ESP32 hardware is simply off!
+            switch (returnReceiver)
+            {
+                case "OFF":
+                case "CONFIRMATION":
+                case "Data_Erase":
+                case "Prog_Erase":
+                    returnReceiver = current_Receiver.getReturnReceiverMoniker();
+                    break;
+                case "ADDRESS":
+                case "ADDRESS_AMX":
+                case "ADDRESS_AXM":
+                case "ADDRESS_MC":
+                case "ADDRESS_PC":
+                case "NUMBER":
+                case "NUMBER_DATA":
+                case "NUMBER_PROG":
+                case "TEXT":
+                    current_Receiver.tick(31);
+                    returnReceiver = current_Receiver.getReturnReceiverMoniker();
+                    break;
+                default:
+                    break;
+            }
             _m_RPN_Functions.saveState(returnReceiver);
             _m_Hardware_LCD.clearScreen();
             _m_Hardware_LCD.forcePaint();

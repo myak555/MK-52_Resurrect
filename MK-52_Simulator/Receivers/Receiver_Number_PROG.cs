@@ -41,7 +41,7 @@ namespace MK52Simulator
             sb.Append(pm.toCounterString());
             sb.Append(value.Trim());
             lm.updateTerminalLine(LCD_Manager.SCREEN_ROWS-2, sb.ToString());
-            lm.forcePaint();
+            lm.requestUpdate();
         }
     }
 }

@@ -76,7 +76,7 @@ namespace MK52Simulator
                 s += (k == display_PC) ? "> " : "  ";
                 lm.updateTerminalLine((uint)i, s + _displayLines[j]);
             }
-            lm.forcePaint();
+            lm.requestUpdate();
             return 0;
         }
     }

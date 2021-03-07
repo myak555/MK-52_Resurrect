@@ -601,6 +601,7 @@ namespace MK52Simulator
 
         private Bitmap m_CurrentBitmap = new Bitmap(320, 240);
         private Graphics m_CurrentGraphics = null;
+        private bool m_GraphicsUpdatePending = true;
         private string[] _lines = new string[SCREEN_ROWS];
         private string _prevPC = "NANA"; 
         private string _prevMC = "NANA";
@@ -613,6 +614,10 @@ namespace MK52Simulator
         private const string _standard_Error = "Error";  
         private const string _standard_MinusInfinity = "-Inf";  
         private const string _standard_PlusInfinity = "+Inf";
+
+        //private DateTime UpdateRequested = DateTime.MaxValue;
+        //private DateTime LastUpdated = DateTime.MinValue;
+        //public int UpdatePeriod = 30; // ms
 
         public LCD_Manager()
         {
@@ -753,6 +758,7 @@ namespace MK52Simulator
         public void eraseTerminalLine(uint row)
         {
             if (row > 10) return;
+            if (_lines[row + 1].Length <= 0) return; // already erased
             _lines[row + 1] = "";
             int y = Convert.ToInt32(20 * row + 20);
             drawBitmap(0, y, _m_Nixed_Font, 320, 20, bgcolor, bgcolor);
@@ -762,6 +768,7 @@ namespace MK52Simulator
         public void clearScreen()
         {
             m_CurrentGraphics.Clear(bgcolor);
+            m_GraphicsUpdatePending = true;
             for (int i = 0; i < _lines.Length; i++) _lines[i] = "";
             _prevPC = "NANA"; // in C++ this is via malloc'ed memory! 
             _prevMC = "NANA";
@@ -794,6 +801,7 @@ namespace MK52Simulator
                     m_CurrentBitmap.SetPixel(x1, y1, pltColor);
                 }
             }
+            m_GraphicsUpdatePending = true;
         }
 
         public void outputDigitString( int x, int y, string src, Color fg, Color bg)
@@ -895,7 +903,22 @@ namespace MK52Simulator
             Graphics g = panel1.CreateGraphics();
             g.DrawImage(m_CurrentBitmap, 0, 0);
             g.Dispose();
+            //LastUpdated = DateTime.Now;
+            m_GraphicsUpdatePending = false;
             _isPainting = false;
-        }            
+        }
+    
+        public void requestUpdate()
+        {
+            //UpdateRequested = DateTime.Now;
+        }
+
+        public void update()
+        {
+            if (!m_GraphicsUpdatePending) return;
+            //TimeSpan ts = UpdateRequested.Subtract( LastUpdated);
+            //if (ts.Milliseconds < UpdatePeriod) return;
+            forcePaint();
+        }
     }
 }

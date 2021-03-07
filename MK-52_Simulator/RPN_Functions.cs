@@ -500,12 +500,26 @@ namespace MK52Simulator
             return true;
         }
 
+        /// <summary>
+        /// the original MK-52 programs sometimes used PP for data entry;
+        /// must simulate the same, although not obvious for debugging.
+        /// the commented line is to revert to other logic
+        /// </summary>
         public void executeStep()
         {
-            if( clearStopCondition()) return; // just move to the next line
-            executeRun();
-            if (_atStop && progMem.isAtStop()) 
+            // if( clearStopCondition()) return; // just move to the next line
+            //clearStopCondition();
+            //executeRun();
+            //if (_atStop && progMem.isAtStop()) 
+            //    rpnStack.setStackLabel_P(0, "STOP Reached");
+            _atStop = false;
+            if (progMem.isAtStop())
+            {
                 rpnStack.setStackLabel_P(0, "STOP Reached");
+                progMem.incrementCounter();
+                return;
+            }
+            executeRun();
         }
 
         public void executeRun()

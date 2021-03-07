@@ -62,7 +62,7 @@ namespace MK52Simulator
                 string s = em.toString("", j);
                 lm.updateTerminalLine((uint)i, s);
             }
-            lm.forcePaint();
+            lm.requestUpdate();
             return 0;
         }
     }

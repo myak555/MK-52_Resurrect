@@ -13,6 +13,7 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using System.IO;
 
 namespace MK52Simulator
 {
@@ -49,7 +50,10 @@ namespace MK52Simulator
             openFileDialog1.FileName = "";
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                fn.loadProgram(openFileDialog1.FileName);
+                // Simulator - only (helps debugging!)
+                FileInfo fi = new FileInfo(openFileDialog1.FileName);
+                myRPN.getSD().setFolder_P(fi.DirectoryName);
+                fn.loadProgram(fi.FullName);
                 myRPN.current_Receiver.tick(0); // needed to redraw!
             }
             timer1.Enabled = true;

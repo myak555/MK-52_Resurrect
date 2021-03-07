@@ -96,33 +96,33 @@ namespace MK52Simulator
             // loadProgramToolStripMenuItem
             // 
             this.loadProgramToolStripMenuItem.Name = "loadProgramToolStripMenuItem";
-            this.loadProgramToolStripMenuItem.Size = new System.Drawing.Size(152, 28);
+            this.loadProgramToolStripMenuItem.Size = new System.Drawing.Size(150, 28);
             this.loadProgramToolStripMenuItem.Text = "&Load";
             this.loadProgramToolStripMenuItem.Click += new System.EventHandler(this.programLoad_Click);
             // 
             // saveProgramToolStripMenuItem
             // 
             this.saveProgramToolStripMenuItem.Name = "saveProgramToolStripMenuItem";
-            this.saveProgramToolStripMenuItem.Size = new System.Drawing.Size(152, 28);
+            this.saveProgramToolStripMenuItem.Size = new System.Drawing.Size(150, 28);
             this.saveProgramToolStripMenuItem.Text = "&Save";
             this.saveProgramToolStripMenuItem.Click += new System.EventHandler(this.programSave_Click);
             // 
             // saveProgramAsToolStripMenuItem
             // 
             this.saveProgramAsToolStripMenuItem.Name = "saveProgramAsToolStripMenuItem";
-            this.saveProgramAsToolStripMenuItem.Size = new System.Drawing.Size(152, 28);
+            this.saveProgramAsToolStripMenuItem.Size = new System.Drawing.Size(150, 28);
             this.saveProgramAsToolStripMenuItem.Text = "Save &As...";
             this.saveProgramAsToolStripMenuItem.Click += new System.EventHandler(this.programSaveAs_Click);
             // 
             // menuSeparator1
             // 
             this.menuSeparator1.Name = "menuSeparator1";
-            this.menuSeparator1.Size = new System.Drawing.Size(149, 6);
+            this.menuSeparator1.Size = new System.Drawing.Size(147, 6);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 28);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(150, 28);
             this.exitToolStripMenuItem.Text = "E&xit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.programExit_Click);
             // 

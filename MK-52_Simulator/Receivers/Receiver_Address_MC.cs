@@ -39,7 +39,7 @@ namespace MK52Simulator
         {
             LCD_Manager lm = _parent.getLCD();
             lm.updateStatusMC( toString());
-            lm.forcePaint();
+            lm.requestUpdate();
         }
     }
 }

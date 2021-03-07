@@ -66,7 +66,7 @@ namespace MK52Simulator
             lm.updateCalcLabel(2, st.Z_Label);
             lm.updateCalcRegister(3, st.T.toString());
             lm.updateCalcLabel(3, st.T_Label);
-            lm.forcePaint();
+            lm.requestUpdate();
             return 0;
         }
     }

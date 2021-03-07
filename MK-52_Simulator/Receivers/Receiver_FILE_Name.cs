@@ -161,7 +161,7 @@ namespace MK52Simulator
                     lm.updateTerminalLine(LCD_Manager.SCREEN_ROWS - 3, _Confirmation);
                     break;
             }
-            lm.forcePaint();
+            lm.requestUpdate();
         }
     }
 }

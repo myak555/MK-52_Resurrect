@@ -42,9 +42,13 @@ namespace MK52Simulator
                 m_Values[i].fromInt(0);
         }
 
+        /// <summary>
+        /// In the original MK-52, the M->X does not do Bx storage!
+        /// </summary>
+        /// <param name="n">register number (0 to 19)</param>
         public void MtoX(int n)
         {
-            _rst.storeBx();
+            //_rst.storeBx();
             _rst.push();
             if (n < 0 || n >= REGISTER_MEMORY_NVALS)
             {
@@ -66,7 +70,7 @@ namespace MK52Simulator
 
         public void K_MtoX(int n)
         {
-            _rst.storeBx();
+            //_rst.storeBx();
             _rst.push();
             if (n < 0 || n >= REGISTER_MEMORY_NVALS) return;
             UniversalValue uv = _registerAddress(n);
@@ -100,7 +104,7 @@ namespace MK52Simulator
 
         public void A_MtoX(Int64 index)
         {
-            _rst.storeBx();
+            //_rst.storeBx();
             _rst.push();
             if (index < 0 || index >= Extended_Memory.EXTENDED_MEMORY_NVALS)
             {

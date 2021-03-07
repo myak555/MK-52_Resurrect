@@ -358,8 +358,9 @@ namespace MK52Simulator
         {
             if( !SDMounted) return true;
             closeFile();
-            if( path.Length == 0){
-                if( isAtFolder()) return true;
+            if (path.Length == 0)
+            {
+                if (isAtFolder()) return true;
                 path = getItemFromListing();
             }
             if( path.Length < 4 ) return true; // cannot overwrite root, e.g. C:\

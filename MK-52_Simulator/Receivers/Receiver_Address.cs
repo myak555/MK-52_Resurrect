@@ -100,7 +100,7 @@ namespace MK52Simulator
             sb.Append(_parent._m_Program_Memory.toString());
             sb.Append(toTrimmedString());
             lm.updateTerminalLine(10, sb.ToString());
-            lm.forcePaint();
+            lm.requestUpdate();
         }
     }
 }

@@ -116,7 +116,7 @@ namespace MK52Simulator
                     lm.updateStatusFMODE("   ");
                     break;
             }
-            lm.forcePaint();
+            lm.requestUpdate();
         }
     }
 }

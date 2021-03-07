@@ -63,7 +63,7 @@ namespace MK52Simulator
             {
                 lm.updateTerminalLine((uint)i, Lines[i]);
             }
-            lm.forcePaint();
+            lm.requestUpdate();
             return 0;
         }
     }

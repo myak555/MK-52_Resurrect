@@ -53,7 +53,7 @@ namespace MK52Simulator
                     lm.updateStatusPC(_rpnf.progMem.getCounter());
                     lm.updateStatusMC(_rpnf.extMem.getCounter());
                     lm.updateCalcRegister(0, _rpnf.rpnStack.X.toString());
-                    lm.forcePaint();
+                    lm.requestUpdate();
                 }
             }
             _rpnf.requestNextReceiver("AUTO_N");
