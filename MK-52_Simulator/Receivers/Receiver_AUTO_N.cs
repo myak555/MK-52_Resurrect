@@ -101,8 +101,8 @@ namespace MK52Simulator
                     _rpnf.execute(RPN_Functions.FUNC_ENTER);
                     break;
                 case 32:
-                    if (_parent._m_RPN_Stack.customStackLabels())
-                        _parent._m_RPN_Stack.resetStackLabels();
+                    if (_parent._m_RPN_Stack.customLabels())
+                        _parent._m_RPN_Stack.resetLabels();
                     else _rpnf.execute(RPN_Functions.FUNC_CLEAR_X);
                     break;
                 case 33:

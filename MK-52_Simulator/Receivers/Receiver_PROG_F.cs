@@ -48,8 +48,8 @@ namespace MK52Simulator
                     _rpnf.requestNextReceiver("PROG_A");
                     return 0;
                 case 4:
-                    _rpnf.execute(RPN_Functions.FUNC_TOGGLE_EMOD, "");
-                    return base.tick(0);
+                    _rpnf.appendProgramLine_P(RPN_Functions.FUNC_SET_DMOD_DEG);
+                    break;
 
                 // Column 1
                 case 5:
@@ -156,7 +156,8 @@ namespace MK52Simulator
                     break;
                 case 32:
                     // Clear F mode
-                    break;
+                    _rpnf.requestNextReceiver("PROG_N");
+                    return 0;
                 case 33:
                     // Shutdown signal
                     _rpnf.requestNextReceiver("PROG_N");

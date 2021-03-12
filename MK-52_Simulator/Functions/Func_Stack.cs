@@ -188,7 +188,7 @@ namespace MK52Simulator
 
         public override void execute(MK52_Host components, string command)
         {
-            _Stack(components).setStackLabel( 0, command);
+            _Stack(components).setLabel( 0, command);
         }
     }
 
@@ -221,7 +221,7 @@ namespace MK52Simulator
 
         public override void execute(MK52_Host components, string command)
         {
-            _Stack(components).setStackLabel(1, command);
+            _Stack(components).setLabel(1, command);
         }
     }
 
@@ -254,7 +254,7 @@ namespace MK52Simulator
 
         public override void execute(MK52_Host components, string command)
         {
-            _Stack(components).setStackLabel(2, command);
+            _Stack(components).setLabel(2, command);
         }
     }
 
@@ -287,7 +287,7 @@ namespace MK52Simulator
 
         public override void execute(MK52_Host components, string command)
         {
-            _Stack(components).setStackLabel(3, command);
+            _Stack(components).setLabel(3, command);
         }
     }
 
@@ -315,7 +315,7 @@ namespace MK52Simulator
 
         public override void execute(MK52_Host components, string command)
         {
-            _Stack(components).resetStackLabels();
+            _Stack(components).resetLabels();
         }
     }
 }

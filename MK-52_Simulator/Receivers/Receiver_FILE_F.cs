@@ -65,9 +65,9 @@ namespace MK52Simulator
                     _rpnf.requestNextReceiver("DATA_N");
                     return 0;
                 case 10:
-                    _rpnf.execute(RPN_Functions.FUNC_SAVEDATA);
+                    _rpnf.requestNextReceiver("File_Overwrite_Data");
                     break;
-                case 11:
+                case 12:
                     _rpnf.requestNextReceiver("File_Data");
                     return 0;
 

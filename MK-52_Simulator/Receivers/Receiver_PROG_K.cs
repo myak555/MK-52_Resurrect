@@ -48,8 +48,8 @@ namespace MK52Simulator
                     _rpnf.requestNextReceiver("PROG_A");
                     return 0;
                 case 4:
-                    _rpnf.execute(RPN_Functions.FUNC_TOGGLE_EMOD, "");
-                    return base.tick(0);
+                    _rpnf.appendProgramLine_P(RPN_Functions.FUNC_SET_DMOD_RAD);
+                    break;
 
                 // Column 1
                 case 5:

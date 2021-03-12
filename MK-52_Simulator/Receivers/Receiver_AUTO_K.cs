@@ -67,10 +67,10 @@ namespace MK52Simulator
                     _rpnf.requestNextReceiver("REGISTER_KXM");
                     return 0;
                 case 11:
-                    _parent._m_RPN_Stack.setStackLabel_P(0, "K-GOTO is bad for you!");
+                    _parent._m_RPN_Stack.setLabel_P(0, "K-GOTO is bad for you!");
                     break;
                 case 12:
-                    _parent._m_RPN_Stack.setStackLabel_P(0, "K-GOSUB is bad for you!");
+                    _parent._m_RPN_Stack.setLabel_P(0, "K-GOSUB is bad for you!");
                     break;
 
                 // Column 3
@@ -118,7 +118,7 @@ namespace MK52Simulator
                 // Column 6
                 case 25:
                     // TODO
-                    _parent._m_RPN_Stack.setStackLabel_P(0, "K-SQRT is available!");
+                    _parent._m_RPN_Stack.setLabel_P(0, "K-SQRT is available!");
                     break;
                 case 26:
                     _rpnf.execute(RPN_Functions.FUNC_D2DM);
@@ -133,11 +133,11 @@ namespace MK52Simulator
                 // Column 7
                 case 29:
                     // TODO
-                    _parent._m_RPN_Stack.setStackLabel_P(0, "K-1/X is available!");
+                    _parent._m_RPN_Stack.setLabel_P(0, "K-1/X is available!");
                     break;
                 case 30:
                     // TODO
-                    _parent._m_RPN_Stack.setStackLabel_P(0, "K-X2 is available!");
+                    _parent._m_RPN_Stack.setLabel_P(0, "K-X2 is available!");
                     break;
                 case 31:
                     _rpnf.execute(RPN_Functions.FUNC_RAND);

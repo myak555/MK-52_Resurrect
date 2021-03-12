@@ -69,7 +69,7 @@ namespace MK52Simulator
                     _rpnf.requestNextReceiver("PROG_N");
                     return 0;
                 case 10:
-                    _rpnf.execute(RPN_Functions.FUNC_SAVE);
+                    _rpnf.requestNextReceiver("File_Overwrite");
                     return 0;
                 case 11:
                     // find program TODO

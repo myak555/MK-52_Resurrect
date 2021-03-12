@@ -6,3 +6,4 @@
 * Numbers between 0.1 and 1 are not "exponetized".
 * Whole numbers are preserved whole until the operation necessary converts them into real.
 * Unnecessary zeros are truncated for X between 0.1 and 99999999999.9.
+* Can delete/insert a program line with automatic recompute of GOTOs, GOSUBs, IFs and LOOPs.

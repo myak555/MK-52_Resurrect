@@ -46,7 +46,19 @@ namespace MK52Simulator
                     return 0;
 
                 // Column 1 does nothing (for now)
-                // Column 2 does nothing (for now)
+
+                // Column 2
+                case 9:
+                    _rpnf.execute(RPN_Functions.FUNC_LOADALL);
+                    _rpnf.requestNextReceiver("AUTO_N");
+                    return 0;
+                case 10:
+                    _rpnf.requestNextReceiver("File_Overwrite_All");
+                    return 0;
+                case 12:
+                    _rpnf.requestNextReceiver("File_All");
+                    return 0;
+
                 // Column 3 does nothing (for now)
                 // Column 4 does nothing (for now)
                 // Column 5 does nothing (for now)

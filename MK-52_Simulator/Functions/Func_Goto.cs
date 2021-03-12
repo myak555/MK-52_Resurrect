@@ -140,7 +140,7 @@ namespace MK52Simulator
         {
             Program_Memory pm = _ProgMem( components);
             if( !pm.goSub(command)) return;
-            _Stack( components).setStackLabel_P(0, "Error: call stack full");
+            _Stack( components).setLabel_P(0, "Error: call stack full");
         }
     }
 
@@ -172,7 +172,7 @@ namespace MK52Simulator
         {
             Program_Memory pm = _ProgMem( components);
             if( !pm.returnFromSub()) return;
-            _Stack( components).setStackLabel_P(0, "Error: stack busted!");
+            _Stack( components).setLabel_P(0, "Error: stack busted!");
         }
     }
 
