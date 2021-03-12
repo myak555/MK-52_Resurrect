@@ -243,11 +243,12 @@ bool SD_Manager::read( char *buffer, int32_t n){
 }
 
 bool SD_Manager::readln( char *buffer, int32_t n){
+    memset( buffer, 0, n);
     if( !SDMounted) return true;
     if( !_current_File_open) return true;
     uint8_t b = 0;
     while( _current_File.available()){
-        uint8_t b = _current_File.read();
+        b = _current_File.read();
         if( b ==_CR_) continue;
         if( b ==_LF_) break;
         if(n>0){
@@ -255,7 +256,7 @@ bool SD_Manager::readln( char *buffer, int32_t n){
             n--;
         }
     }
-    *buffer = 0; // safety zero
+    //*buffer = 0; // safety zero
     return  !_current_File.available();
 }
 

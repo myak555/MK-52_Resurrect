@@ -326,6 +326,8 @@ void RPN_Functions::execute( char *command){
         pf->advancePC( _components);
         return;
     }
+    rpnStack->setStackLabel(0, command);
+    progMem->incrementCounter();
 }
 
 //
@@ -337,7 +339,7 @@ void RPN_Functions::executeStep(){
         _atStop = false;
     }
     executeRun();
-    if( _atStop)
+    if( _atStop && progMem->isAtStop())
         rpnStack->setStackLabel_P(0, PSTR("STOP Reached"));
 }
 

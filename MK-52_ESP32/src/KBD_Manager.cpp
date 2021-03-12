@@ -46,6 +46,7 @@ uint8_t KBD_Manager::scanImmediate(){
         _pulseCLK();
     }
     if( digitalRead( KBD_Cx) == HIGH) ret = 32; // read the Cx - power button, set apart
+    lastScanTime = millis();
     return ret;
 }
 

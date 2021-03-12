@@ -38,7 +38,6 @@ int Receiver_Register::tick( uint8_t scancode){
     char c = _convertButton( _RR_ButtonConversion, scancode);
     switch( c){
         case 0:
-            //delay(KBD_IDLE_DELAY);
             return NO_CHANGE;
         case 'f':
             _parentReceiver = (int)scancode;
@@ -60,6 +59,5 @@ int Receiver_Register::tick( uint8_t scancode){
     #ifdef __DEBUG
     Serial.println( "Receiver REGISTER ticked");
     #endif
-    //delay(KBD_IDLE_DELAY);
     return _parentReceiver;
 }

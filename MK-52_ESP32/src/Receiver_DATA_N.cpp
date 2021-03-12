@@ -88,7 +88,6 @@ int Receiver_DATA_N::tick( uint8_t scancode){
             _rr->activate(0, 0);
             break;
         case 11:
-            Serial.print( "Address entry activating...");
             _mode = 5;
             _ar->activate(0, 0);
             _lcd->updateStatusMC( _ar->toString());

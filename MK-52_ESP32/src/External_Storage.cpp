@@ -76,6 +76,7 @@ bool RPN_Functions::loadProgramFile(char *name){
     progMem->clear();
     bool result = _readFile( false, true, false);
     _sd->closeFile();
+    Serial.println("File load done");
     return result;
 }
 
@@ -243,39 +244,36 @@ bool RPN_Functions::_readFile(bool readStack, bool readProg, bool readMem){
     uint8_t regAddress = 0;
     char *ptr = NULL;
     while( true){
-        if( _sd->readln( _text, PROGRAM_LINE_LENGTH)) break;
+        bool result = _sd->readln( _text, PROGRAM_LINE_LENGTH);
+        if( result && _text[0] == 0) break;
         Serial.println( _text);
-        if( _text[0] == 0 || _text[0] == '#') continue;
+        if( _text[0] == 0) continue;
+        if( _text[0] == '#') continue;
         if( readProg){
             if( UniversalValue::_startsWith_P( _text, PSTR("PC="))){
-                execute( FUNC_GOTO, _text+3);
-                pmemctr = extMem->getCounter();
+                progMem->setCounter( _text+3);
+                pmemctr = progMem->getCounter();
                 continue;
             }
             if( UniversalValue::_isProgramAddress(_text)){
                 ptr = UniversalValue::_selectAddress(_text);
                 while( *ptr==' ') ptr++;
                 if( *ptr == 0) continue; // string too short or incorrectly formed
-                execute( FUNC_GOTO, _text+1);
+                progMem->setCounter( _text+1);
                 progMem->replaceLine( ptr); // TODO: name conversion
                 continue;
             }
         }
         if( readMem){
             if( UniversalValue::_startsWith_P( _text, PSTR("MC="))){
-                execute( FUNC_GOMEM, _text+3);
+                extMem->setCounter( _text+3);
                 ememctr = extMem->getCounter();
                 continue;
             }
             if( UniversalValue::_isMemoryAddress(_text)){
                 ptr = UniversalValue::_selectAddress(_text);
                 if( *ptr == 0) continue; // string too short or incorrectly formed
-                execute( FUNC_GOMEM, _text+1);
-                #ifdef __DEBUG
-                Serial.print("Reading Data: [");
-                Serial.print(ptr);
-                Serial.println("]");
-                #endif
+                extMem->setCounter( _text+1);
                 _tmpuv->fromString( ptr);
                 if( _tmpuv->getType() > 0) _tmpuv->toLocation( extMem->getCurrentLine());
                 continue;
@@ -311,7 +309,7 @@ bool RPN_Functions::_readFile(bool readStack, bool readProg, bool readMem){
                 continue;
             }
             if( UniversalValue::_startsWith_P( _text, PSTR("DMODE=GRD"))){
-                rpnStack->setDMode(1);
+                rpnStack->setDMode(2);
                 continue;
             }
             if( UniversalValue::_startsWith_P( _text, PSTR("LX="))){
@@ -338,6 +336,7 @@ bool RPN_Functions::_readFile(bool readStack, bool readProg, bool readMem){
             }
         }
     }
+    Serial.println("Read completed");
     progMem->setCounter( pmemctr);
     extMem->setCounter( ememctr);
     return false;

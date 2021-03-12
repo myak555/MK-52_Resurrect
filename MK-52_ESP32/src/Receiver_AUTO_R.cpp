@@ -35,7 +35,7 @@ int Receiver_AUTO_R::tick( uint8_t scancode){
         _rpnf->executeRun();
         if( _rpnf->_atStop) break;
         if( update_required){
-            if( _kbd->scan() == 8) break;
+            if( _kbd->scanImmediate() == 8) break;
             _lcd->updateStatusPC( _rpnf->progMem->getCounter());
             _lcd->updateStatusMC( _rpnf->extMem->getCounter());
             _lcd->updateCalcRegister( 0, _rpnf->rpnStack->X->toString( _rpnf->getOutputBuffer()));
@@ -43,6 +43,7 @@ int Receiver_AUTO_R::tick( uint8_t scancode){
     }
     _lcd->outputStatus( _rpnf->progMem->getCounter(), _rpnf->extMem->getCounter(),
                         _rpnf->rpnStack->getDModeName(), "   ");
+    while( _kbd->scanImmediate() != 0) delay( KBD_JITTER_DELAY);
     _mode = 0;
     return COMPONENT_DISPLAY_AUTO;
 }

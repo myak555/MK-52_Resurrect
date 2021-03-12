@@ -174,7 +174,15 @@ bool Program_Memory::goSub( char *text){
 // Returns true if stack is busted
 //
 bool Program_Memory::returnFromSub(){
-    if( _returnStackPtr == 0) return true;
+    if( _returnStackPtr < 2){
+        _returnStackPtr = 0;
+        _current = 0;
+        _counter = 0;
+        #ifdef __DEBUG
+        Serial.println("Warning: return to zero ");
+        #endif
+        return false;
+    }
     _current = _returnStack[--_returnStackPtr];
     _counter = _returnStack[--_returnStackPtr];
     #ifdef __DEBUG

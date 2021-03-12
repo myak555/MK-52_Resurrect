@@ -158,7 +158,7 @@ namespace MK52_Interpreter{
         int tick( uint8_t scancode = 0);
       private:
         Receiver_Register *_rr;
-        //Receiver_Text *_tr;
+        Receiver_Address *_ar;
     };
 
     class Receiver_PROG_A: public Receiver{
@@ -168,6 +168,7 @@ namespace MK52_Interpreter{
         int tick( uint8_t scancode = 0);
       private:
         Receiver_Address *_ar;
+        Receiver_Text *_tr;
     };
 
     class Receiver_DATA_N: public Receiver{

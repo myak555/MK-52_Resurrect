@@ -18,6 +18,7 @@ void Receiver_PROG_A::init( void *components[]) {
     Serial.println( "Init PROG_A");
     #endif
     _ar = (Receiver_Address *)components[COMPONENT_RECEIVER_ADDRESS];
+    _tr = (Receiver_Text *)components[COMPONENT_RECEIVER_TEXT];
     Receiver::init(components);
 }
 
@@ -48,6 +49,21 @@ int Receiver_PROG_A::tick( uint8_t scancode){    int return_value = COMPONENT_RE
         _lcd->updateStatusPC( _rpnf->progMem->getCounter());
         return return_value;
     }
+    if( _tr->isActive()){        
+        if( _tr->tick( scancode) == NO_CHANGE){
+            sprintf_P( _rpnf->getOutputBuffer(), PSTR("%04u> "), _rpnf->progMem->getCounter());
+            _rpnf->appendOutputBuffer( _rpnf->progMem->getCurrentLine());
+            _rpnf->appendOutputBuffer( _tr->toString());
+            _lcd->updateTerminalLine( 10, _rpnf->getOutputBuffer());
+            return NO_CHANGE;
+        }
+        _rpnf->setOutputBuffer( _rpnf->progMem->getCurrentLine());
+        _rpnf->appendOutputBuffer( _tr->toString());
+        _rpnf->progMem->replaceLine( _rpnf->getOutputBuffer());
+        _rpnf->progMem->incrementCounter();
+        _lcd->updateStatusPC( _rpnf->progMem->getCounter());
+        return return_value;
+    }
     switch( scancode){
         // Column 0
         case 1:
@@ -63,20 +79,20 @@ int Receiver_PROG_A::tick( uint8_t scancode){    int return_value = COMPONENT_RE
 
         // Column 1
         case 5:
-            _rpnf->appendProgramLine_P(FUNC_IFNOTLTY);
-            _ar->activate( 0, COMPONENT_RECEIVER_PROG_N);
+            _rpnf->appendProgramLine_P(FUNC_LBX);
+            _tr->activate( 0, COMPONENT_RECEIVER_PROG_N);
             return NO_CHANGE;
         case 6:
-            _rpnf->appendProgramLine_P(FUNC_IFNOTEQY);
-            _ar->activate( 0, COMPONENT_RECEIVER_PROG_N);
+            _rpnf->appendProgramLine_P(FUNC_LBY);
+            _tr->activate( 0, COMPONENT_RECEIVER_PROG_N);
             return NO_CHANGE;
         case 7:
-            _rpnf->appendProgramLine_P(FUNC_IFNOTGEY);
-            _ar->activate( 0, COMPONENT_RECEIVER_PROG_N);
+            _rpnf->appendProgramLine_P(FUNC_LBZ);
+            _tr->activate( 0, COMPONENT_RECEIVER_PROG_N);
             return NO_CHANGE;
         case 8:
-            _rpnf->appendProgramLine_P(FUNC_IFNOTNEY);
-            _ar->activate( 0, COMPONENT_RECEIVER_PROG_N);
+            _rpnf->appendProgramLine_P(FUNC_LBT);
+            _tr->activate( 0, COMPONENT_RECEIVER_PROG_N);
             return NO_CHANGE;
 
         // Column 2

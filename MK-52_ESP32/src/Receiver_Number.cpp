@@ -65,7 +65,7 @@ int Receiver_Number::tick( uint8_t scancode){
                 _text[1] = c;
                 break;
             }
-            if( _mode == 1 && ln>12) break;
+            if( _mode == 1 && ln>17) break;
             if( _mode == 2 && ln>13) break;
             if( _mode == 3){
                 _text[ln-3] = _text[ln-2]; 
@@ -84,6 +84,7 @@ int Receiver_Number::tick( uint8_t scancode){
             _swapSign( _text, ' ');
             break;
         case '.':
+            if( _mode == 1 && ln>12) break;
             if( _mode >= 2) break;
             _mode = 2;
             if( ln == 1){
@@ -93,6 +94,7 @@ int Receiver_Number::tick( uint8_t scancode){
             strcpy_P( _text+ln, PSTR("."));
             break;
         case 'E':
+            if( _mode == 1 && ln>12) break;
             if( _mode == 3){
                 _text[ln-5] = 0;
                 _mode = 2;
@@ -133,7 +135,7 @@ int Receiver_Number::tick( uint8_t scancode){
                 _mode = 1;
                 break;
             }
-            if( ln>1){
+            if( ln>2){
                 _text[ln-1] = 0;
                 break;
             }
