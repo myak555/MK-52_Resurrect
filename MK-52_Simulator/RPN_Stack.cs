@@ -41,8 +41,8 @@ namespace MK52Simulator
         {
             for (int i = 0; i <= RPN_STACK_SIZE; i++)
                 _stackValues.Add(new UniversalValue());
-            clearStack();
-            resetStackLabels();
+            clear();
+            resetLabels();
             setDMode( DMODE_DEGREES);
         }
 
@@ -93,7 +93,7 @@ namespace MK52Simulator
         }
         #endregion
 
-        public void clearStack()
+        public void clear()
         {
             Bx.fromInt(0L);
             X.fromInt(0L);
@@ -102,13 +102,13 @@ namespace MK52Simulator
             T.fromInt(0L);
         }
 
-        public void resetStackLabels()
+        public void resetLabels()
         {
             for( int i=0; i<4; i++)
                 _stackLabels[i] = _standardLabels[i];
         }
 
-        public bool customStackLabels()
+        public bool customLabels()
         {
             for( int i=0; i<4; i++)
             {
@@ -117,12 +117,12 @@ namespace MK52Simulator
             return false;
         }
 
-        public void setStackLabel(int n, string text)
+        public void setLabel(int n, string text)
         {
-            setStackLabel_P(n, text);
+            setLabel_P(n, text);
         }
 
-        public void setStackLabel_P(int n, string text)
+        public void setLabel_P(int n, string text)
         {
             if( n < 0 || 3 < n) return;
             if (text.Length <= 0)
@@ -253,13 +253,13 @@ namespace MK52Simulator
         public void setTrigAccuracyWarning(double value)
         {
             if( -1e12 <= value && value <= 1e12) return;
-            setStackLabel_P(0, _RPN_Stack_TrigAccuracy);
+            setLabel_P(0, _RPN_Stack_TrigAccuracy);
         }
 
         public bool setNegativeRootWarning(double value)
         {
             if( value >= 0) return false;
-            setStackLabel_P(0, _RPN_Stack_ComplexRoot);
+            setLabel_P(0, _RPN_Stack_ComplexRoot);
             return true;
         }
     }

@@ -123,7 +123,11 @@ namespace MK52Simulator
         public const uint FUNC_LBZ = 106;
         public const uint FUNC_LBT = 107;
         public const uint FUNC_LBR = 108;
-        public const uint FUNC_NOP = 109;
+        public const uint FUNC_SAVEALL = 109;
+        public const uint FUNC_SAVEALLTO = 110;
+        public const uint FUNC_LOADALL = 111;
+        public const uint FUNC_LOADALLFROM = 112;
+        public const uint FUNC_NOP = 113;
         
         public const uint MK52_NFUNCTIONS = 128;
         public const int PROGRAM_LINE_LENGTH = 64; // TODO
@@ -379,6 +383,15 @@ namespace MK52Simulator
             _appendFunction( new Func_LBT());
             // #define FUNC_LBR                108
             _appendFunction(new Func_LBR());
+            // #define FUNC_SAVEALL            109
+            _appendFunction(new Func_SaveAll());
+            // #define FUNC_SAVEALLTO           110
+            _appendFunction(new Func_SaveAllTo());
+            // #define FUNC_LOADALL            109
+            _appendFunction(new Func_LoadAll());
+            // #define FUNC_LOADALLFROM        110
+            _appendFunction(new Func_LoadAllFrom());
+
             // if the name is not found, it must be a number and should be placed to register X
             _appendFunction( new Func_Number());
         }
@@ -484,7 +497,7 @@ namespace MK52Simulator
                 pf.advancePC( _parent);
                 return;
             }
-            rpnStack.setStackLabel(0, command);
+            rpnStack.setLabel(0, command);
             progMem.incrementCounter();
         }
         
@@ -515,7 +528,7 @@ namespace MK52Simulator
             _atStop = false;
             if (progMem.isAtStop())
             {
-                rpnStack.setStackLabel_P(0, "STOP Reached");
+                rpnStack.setLabel_P(0, "STOP Reached");
                 progMem.incrementCounter();
                 return;
             }
@@ -603,7 +616,45 @@ namespace MK52Simulator
         
         public bool saveData( string name)
         {
-            return true;
+            name = name.Replace('/', '\\');
+            if (_sd.openFile(name, true)) return true;
+            bool result = _writeData();
+            _sd.closeFile();
+            _sd.readFolderItems();
+            return result;
+        }
+
+        public bool loadAll()
+        {
+            return loadAll("");
+        }
+
+        public bool loadAll(string name)
+        {
+            if (_sd.openFile(name, false)) return true;
+            rpnStack.clear();
+            regMem.clear();
+            progMem.clear();
+            extMem.clear();
+            bool result = _read(true, true, true);
+            _sd.closeFile();
+            return result;
+        }
+
+        public bool saveAll()
+        {
+            return saveAll("");
+        }
+
+        public bool saveAll(string name)
+        {
+            if (_sd.openFile_P(_sd.StatusFileName, true)) return true;
+            bool result = _writeStack("AUTO_N");
+            if (!result) result = _writeRegisters();
+            if (!result) result = _writeProgram();
+            if (!result) result = _writeData();
+            _sd.closeFile();
+            return result;
         }
 
         public  string formFileName(string name)
@@ -665,6 +716,8 @@ namespace MK52Simulator
             if (_sd.println( returnReceiver)) return true;
             if (_sd.print("DMODE=")) return true;
             if(_sd.println(rpnStack.getDModeName())) return true;
+            if (_sd.print("EMODE=")) return true;
+            if (_sd.println(progMem.getEModeName())) return true;
             if (_sd.print("Bx=")) return true;
             if (_sd.println(rpnStack.Bx.toString())) return true;
             if (_sd.print("X=")) return true;
@@ -675,7 +728,7 @@ namespace MK52Simulator
             if (_sd.println(rpnStack.Z.toString())) return true;
             if (_sd.print("T=")) return true;
             if (_sd.println(rpnStack.T.toString())) return true;
-            if (!rpnStack.customStackLabels()) return false;
+            if (!rpnStack.customLabels()) return false;
             if (_sd.print("LX=")) return true;
             if (_sd.println(rpnStack.X_Label)) return true;
             if (_sd.print("LY=")) return true;
@@ -855,20 +908,35 @@ namespace MK52Simulator
                         rpnStack.setDMode(2);
                         continue;
                     }
-                    if( UniversalValue._startsWith_P( _text, "LX=")){
-                        rpnStack.setStackLabel(0, _text.Substring(3));
+                    if (UniversalValue._startsWith_P(_text, "EMODE=OVR"))
+                    {
+                        progMem.setEMode(0);
+                        continue;
+                    }
+                    if (UniversalValue._startsWith_P(_text, "EMODE=INS"))
+                    {
+                        progMem.setEMode(1);
+                        continue;
+                    }
+                    if (UniversalValue._startsWith_P(_text, "DMODE=SHF"))
+                    {
+                        progMem.setEMode(2);
+                        continue;
+                    }
+                    if (UniversalValue._startsWith_P(_text, "LX=")) {
+                        rpnStack.setLabel(0, _text.Substring(3));
                         continue;
                     }
                     if( UniversalValue._startsWith_P( _text, "LY=")){
-                        rpnStack.setStackLabel(1, _text.Substring(3));
+                        rpnStack.setLabel(1, _text.Substring(3));
                         continue;
                     }
                     if( UniversalValue._startsWith_P( _text, "LZ=")){
-                        rpnStack.setStackLabel(2, _text.Substring(3));
+                        rpnStack.setLabel(2, _text.Substring(3));
                         continue;
                     }
                     if( UniversalValue._startsWith_P( _text, "LT=")){
-                        rpnStack.setStackLabel(3, _text.Substring(3));
+                        rpnStack.setLabel(3, _text.Substring(3));
                         continue;
                     }
                     regAddress = UniversalValue._isRegisterAddress(_text);

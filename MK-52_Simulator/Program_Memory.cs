@@ -273,15 +273,75 @@ namespace MK52Simulator
 
         public bool updateLine_P( string line)
         {
-            if (_eMode == EMODE_OWERWRITE) return replaceLine_P(line);
-            else return insertLine_P(line);
+            bool result;
+            switch (_eMode)
+            {
+                case EMODE_OWERWRITE:
+                    return replaceLine_P(line);
+                case EMODE_INSERT:
+                    return insertLine_P(line);
+                default:
+                    result = insertLine_P(line);
+                    if (!result) renumberAdresses(_counter, 1);
+                    break;
+            }
+            return result;
         }
 
         public void deleteLine()
         {
             if (_current >= _bottom) return;
             string s = getCurrentLine();
-            __moveStringsFromCurrent( -s.Length );
+            switch (_eMode)
+            {
+                case EMODE_OWERWRITE:
+                    __moveStringsFromCurrent(-s.Length);
+                    break;
+                case EMODE_INSERT:
+                    __moveStringsFromCurrent(-s.Length-1);
+                    break;
+                default:
+                    __moveStringsFromCurrent(-s.Length-1);
+                    renumberAdresses(_current, -1);
+                    break;
+            }
+        }
+
+        private string modifyAddress(string address, uint fromLine, int shift)
+        {
+            if (address.Length <= 0) return address;
+            try
+            {
+                int addr = Convert.ToInt32(address);
+                if (addr <= fromLine) return address;
+                addr += shift;
+                if (addr < 0) addr = 0;
+                return addr.ToString("0000");
+            }
+            catch
+            {
+                return address;
+            }
+        }
+
+        public void renumberAdresses( uint fromLine, int shift)
+        {
+            uint tmpCounter = _counter;
+            resetCounter();
+            while (_current < _bottom)
+            {
+                string progLine = getCurrentLine();
+                RPN_Function fn = _parent._m_RPN_Functions.getFunctionByName(progLine);
+                if (fn != null && fn.containsPC())
+                {
+                    int operand = fn.Name().Length;
+                    string addrStr = progLine.Substring(operand);
+                    addrStr = modifyAddress(addrStr, fromLine, shift);
+                    replaceLine(fn.Name() + addrStr);
+                }
+                incrementCounter();
+            }
+            setCounter(tmpCounter);
         }
 
         public bool commentLine()

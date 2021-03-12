@@ -220,7 +220,7 @@ namespace MK52Simulator
             }
             catch
             {
-                this._m_RPN_Stack.setStackLabel_P( 0, "Error: file save");
+                this._m_RPN_Stack.setLabel_P( 0, "Error: file save");
             }
             finally
             {
@@ -263,10 +263,14 @@ namespace MK52Simulator
             addReceiver(new Receiver_FILE_F(this));
             addReceiver(new Receiver_FILE_K(this));
             addReceiver(new Receiver_FILE_A(this));
-            addReceiver(new Receiver_FILE_Delete(this));
-            addReceiver(new Receiver_FILE_Name(this));
+            addReceiver(new Receiver_FILE_All(this));
             addReceiver(new Receiver_FILE_Data(this));
+            addReceiver(new Receiver_FILE_Delete(this));
             addReceiver(new Receiver_FILE_MkDir(this));
+            addReceiver(new Receiver_FILE_Name(this));
+            addReceiver(new Receiver_FILE_Overwrite(this));
+            addReceiver(new Receiver_FILE_Overwrite_All(this));
+            addReceiver(new Receiver_FILE_Overwrite_Data(this));
 
             addReceiver(new Receiver_Address(this));
             addReceiver(new Receiver_Address_PC(this));

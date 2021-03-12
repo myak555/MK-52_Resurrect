@@ -455,12 +455,12 @@ namespace MK52Simulator
                 return _composeFloat(negative? -value: value);
 
             int exponent = 0;
-            while(value<1.0)
+            while (value < 0.999999999999)
             {
                 exponent--;
                 value *= 10.0;
             }
-            while(value>=10.0)
+            while(value >= 9.99999999999)
             {
                 exponent++;
                 value *= 0.1;

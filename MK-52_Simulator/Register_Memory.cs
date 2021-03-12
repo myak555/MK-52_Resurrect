@@ -121,7 +121,7 @@ namespace MK52Simulator
         {
             if (index < 0 || index >= Extended_Memory.EXTENDED_MEMORY_NVALS)
             {
-                _rst.setStackLabel_P(0, "No such address");
+                _rst.setLabel_P(0, "No such address");
                 return;
             }
             index = index % 10000;
