@@ -122,7 +122,7 @@ int Receiver_AUTO_N::tick( uint8_t scancode){
             _rpnf->execute( FUNC_ENTER);
             break;
         case 32:
-            if(_rpnf->rpnStack->customStackLabels()) _rpnf->rpnStack->resetStackLabels();              
+            if(_rpnf->rpnStack->customLabels()) _rpnf->rpnStack->resetLabels();              
             else _rpnf->execute( FUNC_CLEAR_X);
             break;
 

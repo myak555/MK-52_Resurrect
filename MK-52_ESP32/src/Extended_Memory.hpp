@@ -30,6 +30,7 @@ namespace MK52_Interpreter{
         inline uint8_t *getLine( uint32_t n){return _buffer + n * 9;};
 
         char *toString( char *text, int32_t n);
+        char *toCounterString( char *text);
         void fromString( char *text);
         inline UniversalValue *getTemporaryUV(){return _uv;};
         void fromUV( UniversalValue *uv);

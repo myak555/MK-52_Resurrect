@@ -23,12 +23,13 @@ void Register_Memory::init( void *components[]) {
     #endif
     _rst = (RPN_Stack*)components[COMPONENT_STACK];
     _emem = (Extended_Memory *)components[COMPONENT_EXTENDED_MEMORY];
-    _buffer = (uint8_t *)malloc( REGISTER_MEMORY_SIZE);
+    _buffer = (uint8_t *)malloc( REGISTER_MEMORY_SIZE + 9);
     #ifdef __DEBUG
     if( _buffer == NULL){
         Serial.println("Register Memory malloc busted!");
     }
     #endif
+    _uv = new UniversalValue( _buffer + REGISTER_MEMORY_SIZE);
     clear();
 }
 
@@ -49,48 +50,40 @@ void Register_Memory::MtoX(int8_t n){
 
 void Register_Memory::XtoM(int8_t n){
     if( n<0 || n>=REGISTER_MEMORY_NVALS) return;
-    UniversalValue *uv = new UniversalValue( _registerAddress(n));
     if( n<16)
-        uv->fromLocation( _rst->X->toBytes());
+        _uv->fromLocation( _rst->X->toBytes());
     else
-        uv->fromInt( _rst->X->toInt());
-    delete uv;
+        _uv->fromInt( _rst->X->toInt());
+    _uv->toLocation(_registerAddress(n));
 }
 
 void Register_Memory::K_MtoX(int8_t n){
     _rst->storeBx();
     _rst->push();
     if( n<0 || n>=REGISTER_MEMORY_NVALS) return;
-    UniversalValue *uv = new UniversalValue( _registerAddress(n));
-    if( uv->isEmpty()){
+    _uv->fromLocation(_registerAddress(n));
+    if( _uv->isEmpty()){
         _rst->X->fromInt(0);
-        delete uv;
         return;
     }
-    int64_t index = uv->toInt();
-    _autoIncrement( n, uv);
+    int64_t index = _uv->toInt();
+    _autoIncrement( n);
     if( index<0 || index>=EXTENDED_MEMORY_NVALS){
         _rst->X->fromInt(0);
-        delete uv;
         return;
     }
     _emem->setCounter(index);
     uint8_t *ptr = _emem->getCurrentLine();
     if( *ptr == VALUE_TYPE_EMPTY) _rst->X->fromInt(0);
     else _rst->X->fromLocation( ptr);
-    delete uv;
 }
 
 void Register_Memory::K_XtoM(int8_t n){
     if( n<0 || n>=REGISTER_MEMORY_NVALS) return;
-    UniversalValue *uv = new UniversalValue( _registerAddress(n));
-    if( uv->isEmpty()){
-        delete uv;
-        return;
-    }
-    int64_t index = uv->toInt();
-    _autoIncrement( n, uv);
-    delete uv;
+    _uv->fromLocation(_registerAddress(n));
+    if( _uv->isEmpty()) return;
+    int64_t index = _uv->toInt();
+    _autoIncrement( n);
     A_XtoM( index);
 }
 
@@ -109,7 +102,7 @@ void Register_Memory::A_MtoX(int64_t index){
 
 void Register_Memory::A_XtoM(int64_t index){
     if( index<0 || index>=EXTENDED_MEMORY_NVALS){
-        _rst->setStackLabel_P(0, "No such address");
+        _rst->setLabel_P(0, "No such address");
         return;
     }
     _emem->setCounter(index);
@@ -158,15 +151,18 @@ int8_t Register_Memory::_chrfind_P( char c){
     return -1;
 }
 
-void Register_Memory::_autoIncrement( int8_t n, UniversalValue *uv){
+//
+// TODO: For compatibility, registers are converted to int!
+// Not sure, if this must be supported or changed
+//
+void Register_Memory::_autoIncrement( int8_t n){
+    if( n<0) return;
     if( n>6) return;
-    int delta = (n>3)? 1: -1;
-    if( uv->isInt()){
-        uv->fromInt( uv->toInt() + delta);
-        return;
-    }
-    if( uv->isReal()){
-        uv->fromReal( uv->toReal() + (double)delta);
-        return;
-    }
+    int delta = (n > 3)? 1: -1;
+    if( _uv->isInt())
+        _uv->fromInt( _uv->toInt() + delta);
+    if( _uv->isReal())
+        // _uv->fromReal( _uv->toReal() + (double)delta);
+        _uv->fromInt( _uv->toInt() + delta);
+    _uv->toLocation( _registerAddress(n));
 }

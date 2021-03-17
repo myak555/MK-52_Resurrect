@@ -9,7 +9,6 @@
 #ifndef REGISTER_MEMORY_HPP
 #define REGISTER_MEMORY_HPP
 
-#include "UniversalValue.hpp"
 #include "RPN_Stack.hpp"
 #include "Extended_Memory.hpp"
 
@@ -46,8 +45,9 @@ namespace MK52_Interpreter{
         uint8_t *_buffer = NULL;
         RPN_Stack *_rst = NULL;
         Extended_Memory *_emem = NULL;
+        UniversalValue *_uv = NULL;
         int8_t _chrfind_P( char c);
-        void _autoIncrement( int8_t n, UniversalValue *uv);
+        void _autoIncrement( int8_t n);
     };
 };
 

@@ -21,9 +21,9 @@ namespace MK52_Interpreter{
             inline bool isInt(){return *_ptr == VALUE_TYPE_INTEGER;};
             inline bool isReal(){return *_ptr == VALUE_TYPE_DOUBLE;};
 
-            void fromEmpty();
-            void fromInt(int64_t value);
-            void fromReal(double value);
+            uint8_t fromEmpty();
+            uint8_t fromInt(int64_t value);
+            uint8_t fromReal(double value);
             inline uint8_t fromLocation( uint8_t *location){
                 memcpy(_ptr, location, 9);
                 return *_ptr;};                
@@ -46,13 +46,16 @@ namespace MK52_Interpreter{
             static bool _identicalTo_P(char *text, const char *keyword);
             static bool _inString_P(char c, const char *keyword);
             static bool _isDigit(char c);
+            static bool _looksLikeANumber(char *text);
             static bool _isProgramAddress(char *text);
             static bool _isMemoryAddress(char *text);
             static uint8_t _isRegisterAddress(char *text);
+            static bool _isReturnStackAddress(char *text);
             static bool _isAddress(char *text);
             static char *_selectAddress(char *text);
             static bool _containsChar(char *text, char c);
-            static bool _looksLikeANumber(char *text);
+            static int32_t _recoverAddress(char *text);
+            static char *_makeAddress(char *text, int32_t address);
 
         private:
             uint8_t *_ptr = NULL;

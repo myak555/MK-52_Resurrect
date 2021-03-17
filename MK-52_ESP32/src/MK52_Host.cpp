@@ -65,6 +65,11 @@ void MK52_Host::init() {
     #ifdef __DEBUG
     Serial.begin(SERIAL_HARD_BAUD_RATE);
     while(Serial.available()) Serial.read();
+    Serial.println();
+    Serial.println("###");
+    Serial.println("### Launch sequence start!");
+    Serial.println("###");
+    Serial.println();
     #endif
 
     //
@@ -156,10 +161,14 @@ void MK52_Host::init() {
     _m_Display_DATA.init( _components);
     _m_Display_FILE.init( _components);
 
-    bool result = _m_RPN_Functions.loadStateFile();
+    bool result = _m_RPN_Functions.loadState();
  
     #ifdef __DEBUG
-    Serial.println("MK-52 Resurrect!");
+    Serial.println();
+    Serial.println("###");
+    Serial.println("### MK-52 Resurrect!");
+    Serial.println("###");
+    Serial.println();
     #endif
 
     // end splash and start serving keyboard
@@ -200,7 +209,7 @@ void MK52_Host::setDisplay(int id){
 void MK52_Host::shutdown(){
     bool t = !(getKBD()->LEDOn);
     getKBD()->LEDOn = t;
-    _m_RPN_Functions.saveStateFile();
+    _m_RPN_Functions.saveState();
     digitalWrite( SYSTEM_POWER_HOLD, t);
 
     // after the power transistor is installed, this will not happen:

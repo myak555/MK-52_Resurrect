@@ -63,10 +63,10 @@ int Receiver_AUTO_K::tick( uint8_t scancode){
             _rr->activate(0 , -3);
             return NO_CHANGE;
         case 11:
-            _rpnf->rpnStack->setStackLabel_P(0, PSTR("K-GOTO is bad for you!"));
+            _rpnf->rpnStack->setLabel_P(0, PSTR("K-GOTO is bad for you!"));
             break;
         case 12:
-            _rpnf->rpnStack->setStackLabel_P(0, PSTR("K-GOSUB is bad for you!"));
+            _rpnf->rpnStack->setLabel_P(0, PSTR("K-GOSUB is bad for you!"));
             break;
 
         // Column 3

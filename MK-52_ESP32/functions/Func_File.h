@@ -12,52 +12,72 @@ void Func_StepIn::execute( void *components[], char *command){
     if( !sd->stepIn( filename)) return;
     RPN_Functions *rpnf = (RPN_Functions *)components[COMPONENT_FUNCTIONS];
     if( UniversalValue::_endsWith_P( filename, PSTR(".DAT")))
-        rpnf->loadDataFile( filename);
+        rpnf->loadData( filename);
     else
-        rpnf->loadProgramFile( filename);
+        rpnf->loadProgram( filename);
 }
 
 void Func_Save::execute( void *components[], char *command){
     RPN_Functions *rpnf = (RPN_Functions *)components[COMPONENT_FUNCTIONS];
-    rpnf->saveProgramFile();
+    rpnf->saveProgram();
 }
 
 void Func_SaveAs::execute( void *components[], char *command){
     RPN_Functions *rpnf = (RPN_Functions *)components[COMPONENT_FUNCTIONS];
-    rpnf->saveProgramFile( command);
+    rpnf->saveProgram( command);
 }
 
 void Func_Load::execute( void *components[], char *command){
     RPN_Functions *rpnf = (RPN_Functions *)components[COMPONENT_FUNCTIONS];
-    rpnf->loadProgramFile();
+    rpnf->loadProgram();
 }
 
 void Func_LoadFrom::execute( void *components[], char *command){
     RPN_Functions *rpnf = (RPN_Functions *)components[COMPONENT_FUNCTIONS];
-    rpnf->loadProgramFile( command);
-}
-
-void Func_Chain::execute( void *components[], char *command){
-    RPN_Functions *rpnf = (RPN_Functions *)components[COMPONENT_FUNCTIONS];
-    rpnf->loadProgramFile( command);
+    rpnf->loadProgram( command);
 }
 
 void Func_SaveData::execute( void *components[], char *command){
     RPN_Functions *rpnf = (RPN_Functions *)components[COMPONENT_FUNCTIONS];
-    rpnf->saveDataFile();
+    rpnf->saveData();
 }
 
 void Func_SaveDataAs::execute( void *components[], char *command){
     RPN_Functions *rpnf = (RPN_Functions *)components[COMPONENT_FUNCTIONS];
-    rpnf->saveDataFile( command);
+    rpnf->saveData( command);
 }
 
 void Func_LoadData::execute( void *components[], char *command){
     RPN_Functions *rpnf = (RPN_Functions *)components[COMPONENT_FUNCTIONS];
-    rpnf->loadDataFile();
+    rpnf->loadData();
 }
 
 void Func_LoadDataFrom::execute( void *components[], char *command){
     RPN_Functions *rpnf = (RPN_Functions *)components[COMPONENT_FUNCTIONS];
-    rpnf->loadDataFile(command);
+    rpnf->loadData(command);
+}
+
+void Func_SaveAll::execute( void *components[], char *command){
+    RPN_Functions *rpnf = (RPN_Functions *)components[COMPONENT_FUNCTIONS];
+    rpnf->saveData(); // TODO
+}
+
+void Func_SaveAllAs::execute( void *components[], char *command){
+    RPN_Functions *rpnf = (RPN_Functions *)components[COMPONENT_FUNCTIONS];
+    rpnf->saveData( command); // TODO
+}
+
+void Func_LoadAll::execute( void *components[], char *command){
+    RPN_Functions *rpnf = (RPN_Functions *)components[COMPONENT_FUNCTIONS];
+    rpnf->loadData(); // TODO
+}
+
+void Func_LoadAllFrom::execute( void *components[], char *command){
+    RPN_Functions *rpnf = (RPN_Functions *)components[COMPONENT_FUNCTIONS];
+    rpnf->loadData(command); // TODO
+}
+
+void Func_Chain::execute( void *components[], char *command){
+    RPN_Functions *rpnf = (RPN_Functions *)components[COMPONENT_FUNCTIONS];
+    rpnf->loadProgram( command); // TODO
 }

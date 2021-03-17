@@ -33,6 +33,7 @@ namespace MK52_Hardware{
       public:
         uint8_t lastScan = 0;
         unsigned long lastScanTime = 0L;
+        unsigned long lastPressedTime = 0L;
         bool LEDOn = true;
 
         void init();

@@ -6,9 +6,9 @@
 //
 //////////////////////////////////////////////////////////
 
-#include "RPN_Functions.hpp"
+#include "RPN_Function.hpp"
 
-#define __DEBUG
+//#define __DEBUG
 using namespace MK52_Interpreter;
 
 void RPN_Function::advancePC(void *components[]){
@@ -59,7 +59,8 @@ RPN_Stack *RPN_Function::_dealWithClergy2(void *components[]){
 void RPN_Function::_executeLoop(void *components[], char *command, uint8_t reg){
     int64_t *ptr = (int64_t *)(_RegMem( components)->_registerAddress( reg) + 1);
     if( *ptr > 0) *ptr = (*ptr) - 1;
-    if( *ptr > 0) _ProgMem( components)->setCounter(command);
+    if( *ptr > 0)
+        _ProgMem( components)->setCounter(command);
     else
         _ProgMem( components)->incrementCounter();
 }

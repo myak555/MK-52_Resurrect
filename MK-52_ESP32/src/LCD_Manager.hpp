@@ -103,6 +103,8 @@ namespace MK52_Hardware{
         void _redrawCalcLabel( uint8_t row, char *line, char* text);
         void _redrawCalcRegister( uint8_t row, char *line, char* text);
         void _redrawTerminalLine( uint8_t row, char *line, char* text);
+
+        // TODO: Remove redundant function
         inline void _printCounter( uint32_t c){ sprintf_P( _text, PSTR("%04d"), c % 10000);};
     };
 };

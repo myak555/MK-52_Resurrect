@@ -1,6 +1,6 @@
 void Func_Number::execute( void *components[], char *command){
     RPN_Stack *s = _Stack(components);
-    s->storeBx();
+    // s->storeBx(); // The original MK-52 does not do Bx
     s->push();
     s->X->fromString( command);
 }

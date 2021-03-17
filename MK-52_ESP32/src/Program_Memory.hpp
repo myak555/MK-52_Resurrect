@@ -30,8 +30,7 @@ namespace MK52_Interpreter{
 
         inline uint32_t getFree(){return (uint32_t)(PROGRAM_MEMORY_SIZE-_bottom);};
         inline char *getCurrentLine(){return (char*)(_buffer+_current);};
-        inline char *currentChar(){return (char*)_buffer[_current];};
-        // char *getNextLine();
+        inline char currentChar(){return (char)_buffer[_current];};
         inline char *getBottom(){return (char*)(_buffer+_bottom);};
         inline bool isAtEnd(){return _current >= _bottom;};
 
@@ -44,6 +43,7 @@ namespace MK52_Interpreter{
         bool updateLine(char *line);
         bool updateLine_P(const char *line);
         void deleteLine();
+        void renumberAdresses( uint32_t fromLine, int32_t shift);
         bool commentLine();
 
         inline uint8_t getEMode(){ return _eMode;}; 
@@ -54,7 +54,16 @@ namespace MK52_Interpreter{
         void getPreviousLines( char *lines[], uint8_t n);
         bool isAtStop();
 
+        char *toString( char *text, int8_t n);
+        char *toCounterString( char *text, int8_t n);
+
+        inline uint32_t getCallStackPtr(){
+          return _returnStackPtr >> 1;};
+        char *getCallStackValues( char *text, uint16_t index);
+        void setCallStackValues( uint16_t index, char *ctr, char *ptr);
+
       private:
+        void **_components;
         uint32_t _counter = 0;
         uint32_t _bottom = 1;
         uint32_t _current = 0;
@@ -63,6 +72,7 @@ namespace MK52_Interpreter{
         char _eModeName[5];
         uint32_t *_returnStack = NULL;
         uint32_t _returnStackPtr = 0;
+        char *_modifyAddress(char *address, uint32_t fromLine, int32_t shift);
         bool _moveStringsFromCurrent(int32_t shift);
     };
 };

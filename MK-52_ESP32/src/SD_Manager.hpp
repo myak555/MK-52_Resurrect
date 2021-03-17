@@ -58,7 +58,7 @@ namespace MK52_Hardware{
         inline int16_t *getItemPtr( int16_t n){ return (int16_t*)(_buffer + n*SCREEN_COLS);};
         void setFolder( char *name);
         void setFolder_P( const char *name);
-        void readFolderItems( char *location = NULL);
+        void readFolderItems( char *location = NULL, bool resetListingPosition = false);
 
         void getFolderListing( char *Lines[], uint8_t nLines, uint8_t lineLen, char *name=NULL);
         inline void setListingPosition( uint16_t pos){

@@ -25,11 +25,11 @@ namespace MK52_Interpreter{
             char *T_Label = NULL;
 
             void init( void *components[]);
-            void clearStack();
-            void resetStackLabels();
-            bool customStackLabels();
-            void setStackLabel(int n, char *text);
-            void setStackLabel_P(int n, const char *text);
+            void clear();
+            void resetLabels();
+            bool customLabels();
+            void setLabel(int n, char *text);
+            void setLabel_P(int n, const char *text);
 
             inline uint8_t getDMode(){ return _dMode;}; 
             inline char *getDModeName(){ return _dModeName;}; 

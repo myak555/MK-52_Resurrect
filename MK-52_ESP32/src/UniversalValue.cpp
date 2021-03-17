@@ -25,22 +25,25 @@ UniversalValue::UniversalValue( uint8_t *location){
     _ptr = location;
 }
 
-void UniversalValue::fromEmpty(){
-    if(!_ptr) return;
+uint8_t UniversalValue::fromEmpty(){
+    if(!_ptr) return 0;
     memset( _ptr, 0, 9);
+    return getType();
 }
 
-void UniversalValue::fromInt(int64_t value){
-    if(!_ptr) return;
+uint8_t UniversalValue::fromInt(int64_t value){
+    if(!_ptr) return 0;
     *_ptr = VALUE_TYPE_INTEGER;
     memcpy( _ptr+1, &value, sizeof(int64_t));
+    return getType();
 }
 
-void UniversalValue::fromReal(double value){
-    if(!_ptr) return;
+uint8_t UniversalValue::fromReal(double value){
+    if(!_ptr) return 0;
     *_ptr = VALUE_TYPE_DOUBLE;
     memcpy( _ptr+1, &value, sizeof(double));
     _checkRounding();
+    return getType();
 }
 
 uint8_t UniversalValue::fromString( char *text){
@@ -50,12 +53,12 @@ uint8_t UniversalValue::fromString( char *text){
         fromReal( NAN);
         return getType();
     }
-    if (_startsWith_P( text, _standard_MinusInfinity))
+    if (_identicalTo_P( text, _standard_MinusInfinity))
     {
         fromReal(INFINITY);
         return getType();
     }
-    if (_startsWith_P( text, _standard_PlusInfinity))
+    if (_identicalTo_P( text, _standard_PlusInfinity))
     {
         fromReal(-INFINITY);
         return getType();
@@ -160,6 +163,203 @@ char *UniversalValue::toString( char *text){
     return _composeDouble( text, toReal());
 }
 
+void UniversalValue::_checkRounding(double accuracy){
+    if( !isReal()) return;
+    double value = *_asRealPtr();
+    if( isnan(value)) return;
+    if( value == -INFINITY) return;
+    if( value == INFINITY) return;
+    bool positive = true;
+    if( value<0.0){
+        positive = false;
+        value = -value;
+    }
+    if( value < 1.0e-300){ // true zero;
+        fromInt( 0);
+        return;
+    }
+    if( value >= HUGE_POSITIVE_AS_REAL) return; // should not convert
+    double rValue = round(value);
+    if( value > accuracy && abs( value - rValue) < accuracy / HUGE_POSITIVE_AS_REAL){
+        fromInt( (int64_t)rValue);
+        return; // This must be an int
+    }
+    if( value < 0.99999999999) return; // whole part < 1. 
+    if( value < 1.00000000001){
+        fromInt( positive? 1: -1);
+        return;
+    }
+
+    double vLimit = accuracy;
+    double cutoff = 0.3;
+    while( value < vLimit){
+        vLimit *= 0.1;
+        cutoff *= 0.1;
+    }
+    double fl = floor(value);
+    double frac = value - fl;
+    if( cutoff < frac && frac < 1.0-cutoff) return; // meaningful decimal present
+    if( frac > 0.5) fl += 1.0;
+    
+    fromInt( positive? (int64_t)fl: -(int64_t)fl);
+}
+
+//
+// keyword is usually shorter than text
+//
+bool UniversalValue::_startsWith(char *text, char *keyword){
+    if( text==NULL || keyword==NULL) return false;
+    #ifdef __DEBUG
+    Serial.print("Starts with compare ");
+    Serial.println(text);
+    Serial.println(keyword);
+    #endif
+    int ln = strlen( keyword);
+    for( int i=0; i<ln; i++){
+        if( text[i] != keyword[i]) return false;
+    }
+    return true; // all letters are the same   
+}
+
+//
+// Empty keywords forbidden
+//
+bool UniversalValue::_startsWith_P(char *text, const char *keyword){
+    int ln = strlen_P( keyword);
+    for( int i=0; i<ln; i++, text++){
+        if( !(*text)) return false;
+        if( (char)pgm_read_byte( keyword+i) != *text) return false;
+    }
+    return true; // all letters are the same
+}
+
+//
+// Empty keywords forbidden
+//
+bool UniversalValue::_endsWith_P(char *text, const char *keyword){
+    int ln1 = strlen_P( keyword);
+    int ln2 = strlen( text);
+    if( ln2 < ln1) return false;
+    char *ptr = text+ln2-1;
+    for( int i=ln1-1; i>=0; i--, ptr--){
+        if( (char)pgm_read_byte( keyword+i) != *ptr) return false;
+    }
+    return true; // all letters are the same
+}
+
+//
+// Empty keywords forbidden
+//
+bool UniversalValue::_identicalTo_P(char *text, const char *keyword){
+    return strcmp_P( text, keyword) == 0;
+}
+
+//
+// Empty keywords forbidden
+//
+bool UniversalValue::_inString_P(char c, const char *keyword){
+    int ln = strlen_P( keyword);
+    for( int i=0; i<ln; i++){
+        if( (char)pgm_read_byte( keyword+i) == c) return true;
+    }
+    return false;
+}
+
+bool UniversalValue::_isDigit(char c){
+    const char *ptr = _standard_Decimals;    
+    for( int8_t i=0; i<10; i++){
+        if( (char)pgm_read_byte( ptr++) == c) return true;
+    }
+    return false; // digit not found
+}
+
+bool UniversalValue::_looksLikeANumber(char *text){
+    if( text[0] == 0) return false; // empty string is not a number
+    if( _identicalTo_P( text, _standard_Error)) return true;
+    if( _identicalTo_P( text, _standard_MinusInfinity)) return true;
+    if( _identicalTo_P( text, _standard_PlusInfinity)) return true;
+    char *ptr = text;
+    while( *ptr){
+        if( !_inString_P(*ptr++, _standard_NumberComponents)) return false;
+    }
+    return true;
+}
+
+bool UniversalValue::_isProgramAddress(char *text){
+    if( *text != 'P') return false;
+    return _isAddress(text+1);
+}
+
+bool UniversalValue::_isMemoryAddress(char *text){
+    if( *text != 'M') return false;
+    return _isAddress(text+1);
+}
+
+uint8_t UniversalValue::_isRegisterAddress(char *text){
+    if( *text++ != 'R') return REGISTER_MEMORY_NVALS;
+    if( !_isDigit(*text)) return REGISTER_MEMORY_NVALS;
+    uint8_t val = (uint8_t)text[0] - '0';
+    if( !_isDigit(text[1])) return REGISTER_MEMORY_NVALS;
+    val *= 10;
+    val += (uint8_t)text[1] - '0';
+    if( text[2] != '=') return REGISTER_MEMORY_NVALS;
+    return val;
+}
+
+bool UniversalValue::_isReturnStackAddress(char *text){
+    if( *text != 'S') return false;
+    return _isAddress(text+1);
+}
+
+bool UniversalValue::_isAddress(char *text){
+    for( int8_t i=0; i<4; i++){
+        if( !_isDigit(text[i])) return false;
+    }
+    return text[4] == ':' && text[5] == ' ';
+}
+
+//
+// Returns pointer to the content string
+//
+char *UniversalValue::_selectAddress(char *text){
+    text += 1;
+    for( int8_t i=0; i<5; i++, text++){
+        if( _isDigit(*text)) continue;
+        if( *text == ':'){
+            *text = 0;
+            text++;
+            break;
+        }
+    }
+    return text;
+}
+
+bool UniversalValue::_containsChar(char *text, char c){
+    while( *text){
+        if( *text++ == c) return true;
+    }
+    return false;
+}
+
+int32_t UniversalValue::_recoverAddress(char *text){
+    int32_t tmp = 0;
+    while( *text == ' ') text++;
+    while( *text){
+        if( !_isDigit( *text)) return tmp;
+        tmp *= 10;
+        tmp += *text - '0';
+        if( tmp > 100000) return tmp;
+        text++;
+    }
+    return tmp;
+}
+
+char *UniversalValue::_makeAddress(char *text, int32_t address){
+    snprintf_P(text, 5, PSTR("%04u"), (uint32_t)address);
+    text[4] = 0;
+    return text;
+}
+
 //
 // Converts double number
 //
@@ -185,11 +385,11 @@ char *UniversalValue::_composeDouble(char *text, double value){
         return _composeFloat(text, negative? -value: value);
 
     int16_t exponent = 0;
-    while(value<1.0){
+    while(value<0.999999999999){
         exponent--;
         value *= 10.0;
     }
-    while(value>=10.0){
+    while(value>=9.99999999999){
         exponent++;
         value *= 0.1;
     }
@@ -321,180 +521,4 @@ int64_t UniversalValue::_recoverInt64(char *ptr){
         ptr++;
     }
     return positive? tmp: -tmp;
-}
-
-void UniversalValue::_checkRounding(double accuracy){
-    if( !isReal()) return;
-    double value = *_asRealPtr();
-    if( isnan(value)) return;
-    if( value == -INFINITY) return;
-    if( value == INFINITY) return;
-    bool positive = true;
-    if( value<0.0){
-        positive = false;
-        value = -value;
-    }
-    if( value < 1.0e-300){ // true zero;
-        fromInt( 0);
-        return;
-    }
-    if( value >= HUGE_POSITIVE_AS_REAL) return; // should not convert
-    double rValue = round(value);
-    if( value > accuracy && abs( value - rValue) < accuracy / HUGE_POSITIVE_AS_REAL){
-        fromInt( (int64_t)rValue);
-        return; // This must be an int
-    }
-    if( value < 0.99999999999) return; // whole part < 1. 
-    if( value < 1.00000000001){
-        fromInt( positive? 1: -1);
-        return;
-    }
-
-    double vLimit = accuracy;
-    double cutoff = 0.3;
-    while( value < vLimit){
-        vLimit *= 0.1;
-        cutoff *= 0.1;
-    }
-    double fl = floor(value);
-    double frac = value - fl;
-    if( cutoff < frac && frac < 1.0-cutoff) return; // meaningful decimal present
-    if( frac > 0.5) fl += 1.0;
-    
-    fromInt( positive? (int64_t)fl: -(int64_t)fl);
-}
-
-//
-// keyword is usually shorter than text
-//
-bool UniversalValue::_startsWith(char *text, char *keyword){
-    if( text==NULL || keyword==NULL) return false;
-    #ifdef __DEBUG
-    Serial.print("Starts with compare ");
-    Serial.println(text);
-    Serial.println(keyword);
-    #endif
-    int ln = strlen( keyword);
-    for( int i=0; i<ln; i++){
-        if( text[i] != keyword[i]) return false;
-    }
-    return true; // all letters are the same   
-}
-
-//
-// Empty keywords forbidden
-//
-bool UniversalValue::_startsWith_P(char *text, const char *keyword){
-    int ln = strlen_P( keyword);
-    for( int i=0; i<ln; i++, text++){
-        if( !(*text)) return false;
-        if( (char)pgm_read_byte( keyword+i) != *text) return false;
-    }
-    return true; // all letters are the same
-}
-
-//
-// Empty keywords forbidden
-//
-bool UniversalValue::_endsWith_P(char *text, const char *keyword){
-    int ln1 = strlen_P( keyword);
-    int ln2 = strlen( text);
-    if( ln2 < ln1) return false;
-    char *ptr = text+ln2-1;
-    for( int i=ln1-1; i>=0; i--, ptr--){
-        if( (char)pgm_read_byte( keyword+i) != *ptr) return false;
-    }
-    return true; // all letters are the same
-}
-
-//
-// Empty keywords forbidden
-//
-bool UniversalValue::_identicalTo_P(char *text, const char *keyword){
-    return strcmp_P( text, keyword) == 0;
-}
-
-//
-// Empty keywords forbidden
-//
-bool UniversalValue::_inString_P(char c, const char *keyword){
-    int ln = strlen_P( keyword);
-    for( int i=0; i<ln; i++){
-        if( (char)pgm_read_byte( keyword+i) == c) return true;
-    }
-    return false;
-}
-
-bool UniversalValue::_isDigit(char c){
-    const char *ptr = _standard_Decimals;    
-    for( int8_t i=0; i<10; i++){
-        if( (char)pgm_read_byte( ptr++) == c) return true;
-    }
-    return false; // digit not found
-}
-
-bool UniversalValue::_isProgramAddress(char *text){
-    if( *text != 'P') return false;
-    return _isAddress(text+1);
-}
-
-bool UniversalValue::_isMemoryAddress(char *text){
-    if( *text != 'M') return false;
-    return _isAddress(text+1);
-}
-
-uint8_t UniversalValue::_isRegisterAddress(char *text){
-    if( *text++ != 'R') return REGISTER_MEMORY_NVALS;
-    if( !_isDigit(*text)) return REGISTER_MEMORY_NVALS;
-    uint8_t val = (uint8_t)text[0] - '0';
-    if( !_isDigit(text[1])) return REGISTER_MEMORY_NVALS;
-    val *= 10;
-    val += (uint8_t)text[1] - '0';
-    if( text[2] != '=') return REGISTER_MEMORY_NVALS;
-    return val;
-}
-
-bool UniversalValue::_isAddress(char *text){
-    for( int8_t i=0; i<4; i++){
-        if( !_isDigit(text[i])) return false;
-    }
-    return text[4] == ':' && text[5] == ' ';
-}
-
-//
-// Returns pointer to the content string
-//
-char *UniversalValue::_selectAddress(char *text){
-    text += 1;
-    for( int8_t i=0; i<5; i++, text++){
-        if( _isDigit(*text)) continue;
-        if( *text == ':'){
-            *text = 0;
-            text++;
-            break;
-        }
-    }
-    return text;
-}
-
-bool UniversalValue::_containsChar(char *text, char c){
-    while( *text){
-        if( *text++ == c) return true;
-    }
-    return false;
-}
-
-bool UniversalValue::_looksLikeANumber(char *text){
-    if( text[0] == 0) return false; // empty string is not a number
-    if( _identicalTo_P( text, _standard_Error)) return true;
-    if( _identicalTo_P( text, _standard_MinusInfinity)) return true;
-    if( _identicalTo_P( text, _standard_PlusInfinity)) return true;
-    char *ptr = text;
-    while( *ptr){
-        if( !_inString_P(*ptr++, _standard_NumberComponents)) return false;
-    }
-    Serial.print( "[");
-    Serial.print( text);
-    Serial.println( "] is a number");
-    return true;
 }

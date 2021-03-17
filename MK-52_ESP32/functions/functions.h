@@ -105,3 +105,9 @@
 #define FUNC_LBY                105
 #define FUNC_LBZ                106
 #define FUNC_LBT                107
+#define FUNC_LBR                108
+#define FUNC_SAVEALL            109
+#define FUNC_SAVEALLAS          110
+#define FUNC_LOADALL            111
+#define FUNC_LOADALLFROM        112
+#define FUNC_NOP                113

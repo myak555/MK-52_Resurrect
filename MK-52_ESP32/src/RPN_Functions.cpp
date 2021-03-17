@@ -9,6 +9,7 @@
 #include "RPN_Functions.hpp"
 
 #define __DEBUG
+//#define __DEBUG_PRINT_FUNCTIONS
 using namespace MK52_Interpreter;
 
 #include <math.h>
@@ -18,6 +19,10 @@ using namespace MK52_Interpreter;
 // Inits the calculator program memory
 //
 void RPN_Functions::init( void *components[]) {
+    #ifdef __DEBUG
+    Serial.println( "Init Functions");
+    #endif
+    
     _components = components;
     rpnStack = (RPN_Stack*) components[COMPONENT_STACK];
     regMem = (Register_Memory *)components[COMPONENT_REGISTER_MEMORY];
@@ -252,10 +257,21 @@ void RPN_Functions::init( void *components[]) {
     _appendFunction( new Func_LBZ());
     // #define FUNC_LBT                107
     _appendFunction( new Func_LBT());
+    // #define FUNC_LBR                108
+    _appendFunction(new Func_LBR());
+    // #define FUNC_SAVEALL            109
+    _appendFunction(new Func_SaveAll());
+    // #define FUNC_SAVEALLAS          110
+    _appendFunction(new Func_SaveAllAs());
+    // #define FUNC_LOADALL            111
+    _appendFunction(new Func_LoadAll());
+    // #define FUNC_LOADALLFROM        112
+    _appendFunction(new Func_LoadAllFrom());
+
     // if the name is not found, it must be a number and should be placed to register X
     _appendFunction( new Func_Number());
 
-    #ifdef __DEBUG
+    #ifdef __DEBUG_PRINT_FUNCTIONS
     Serial.print( _nfunctions);
     Serial.println(" functions defined:");
     for( int i=0; i<_nfunctions; i++){
@@ -326,21 +342,40 @@ void RPN_Functions::execute( char *command){
         pf->advancePC( _components);
         return;
     }
-    rpnStack->setStackLabel(0, command);
+    rpnStack->setLabel(0, command);
     progMem->incrementCounter();
 }
 
+// 
+// Resets the stop marker
+// Returns true if the condition has been cleared
 //
-// Executes one step at project counter
+bool RPN_Functions::clearStopCondition()
+{
+    if (!_atStop) return false;
+    if (progMem->isAtStop()) progMem->incrementCounter();
+    _atStop = false;
+    return true;
+}
+
+//
+// Some original MK-52 programs used PP for data entry;
+// must simulate the same, although not obvious for debugging.
+// the commented line is to revert to the new logic
 //
 void RPN_Functions::executeStep(){
-    if(_atStop){
-        if( progMem->isAtStop()) progMem->incrementCounter();
-        _atStop = false;
+    // if( clearStopCondition()) return; // just move to the next line
+    //clearStopCondition();
+    //executeRun();
+    //if (_atStop && progMem->isAtStop()) 
+    //    rpnStack->setStackLabel_P(0, PSTR("STOP Reached"));
+    _atStop = false;
+    if (progMem->isAtStop()){
+        rpnStack->setLabel_P(0, PSTR("STOP Reached"));
+        progMem->incrementCounter();
+        return;
     }
     executeRun();
-    if( _atStop && progMem->isAtStop())
-        rpnStack->setStackLabel_P(0, PSTR("STOP Reached"));
 }
 
 //

@@ -27,6 +27,7 @@
 #define KBD_RUNNING_DELAY           300
 #define KBD_JITTER_DELAY            3
 #define DEBUG_SHOW_DELAY            10000
+#define KBD_SLEEP_DELAY             60000
 
 #define VALUE_TYPE_EMPTY            0
 #define VALUE_TYPE_INTEGER          1

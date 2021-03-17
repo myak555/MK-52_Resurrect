@@ -6,11 +6,12 @@
 //
 //////////////////////////////////////////////////////////
 
-//#include "SD_Manager.hpp"
 #include "Extended_Memory.hpp"
 
-#define __DEBUG
+//#define __DEBUG
 using namespace MK52_Interpreter;
+
+const char _standard_CounterFormat[] PROGMEM = "%04u> ";  
 
 //
 // Inits the calculator program memory
@@ -99,13 +100,18 @@ char *Extended_Memory::toString( char *text, int32_t n){
     memset( text, 0, 2*SCREEN_COLS);
     text[0] = ' ';
     if( n<0 || EXTENDED_MEMORY_NVALS<=n) return text;
-    snprintf_P( text, 5, PSTR("%04u"), (uint32_t)n);
-    text[4] = (n == _counter)? '>': ' ';
-    text[5] = ' ';
+    sprintf_P( text, _standard_CounterFormat, (uint32_t)n);
+    if (n != _counter) text[4] = ' ';
     _uv->fromLocation( _memoryAddress(n));
     if( _uv->isEmpty()) return text;
     _uv->toString(text+6);
     return text;
+}
+
+char *Extended_Memory::toCounterString( char *text){
+    memset( text, 0, 2*SCREEN_COLS);
+    sprintf_P( text, _standard_CounterFormat, (uint32_t)_counter);
+    return text + 6;
 }
 
 void Extended_Memory::fromString( char *text){

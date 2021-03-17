@@ -7,14 +7,24 @@
 //////////////////////////////////////////////////////////
 
 #include "Program_Memory.hpp"
+#include "RPN_Functions.hpp"
 
 //#define __DEBUG
 using namespace MK52_Interpreter;
+
+const char _EMODE_Label0[] PROGMEM = "OVR";
+const char _EMODE_Label1[] PROGMEM = "INS";
+const char _EMODE_Label2[] PROGMEM = "SHF";
+const char *_EMODE_Labels[] PROGMEM = {
+    _EMODE_Label0,
+    _EMODE_Label1,
+    _EMODE_Label2};
 
 //
 // Inits the calculator program memory
 //
 void Program_Memory::init( void *components[]) {
+    _components = components;
     _buffer = (uint8_t *)malloc( PROGRAM_MEMORY_SIZE);
     _returnStack = (uint32_t *)malloc( RETURN_STACK_SIZE * 8);
     #ifdef __DEBUG
@@ -45,11 +55,6 @@ void Program_Memory::resetCounter(){
     _returnStackPtr = 0;
 }
 
-// char *Program_Memory::getNextLine(){
-//     char *ptr = getCurrentLine();
-//     return ptr + strlen(ptr) + 1;
-// }
-
 //
 // Returns the counter actually set
 //
@@ -70,16 +75,8 @@ uint32_t Program_Memory::setCounter(char *text){
     int ln = strlen(text);
     if( ln <= 0) return _counter;
     if( text[0]==' ') return _counter;
-    uint32_t n = 0;
-    while( *text){
-        if( *text == ' '){
-            text++;
-            continue;
-        }
-        n = n*10 + *text - '0';
-        text++; 
-    }
-    return setCounter(n);
+    int32_t n = UniversalValue::_recoverAddress(text);
+    return setCounter((uint32_t)n);
 }
 
 //
@@ -199,7 +196,7 @@ bool Program_Memory::returnFromSub(){
 // Returns true if not enough memory
 //
 bool Program_Memory::appendLine(char *line){
-    size_t toAppend = strlen( (line)) + 1;
+    size_t toAppend = strlen(line) + 1;
     if( _current + toAppend >= PROGRAM_MEMORY_SIZE) return true;
     memcpy( getCurrentLine(), line, toAppend);
     _bottom = _current + toAppend;
@@ -214,7 +211,7 @@ bool Program_Memory::appendLine(char *line){
     return false;
 }
 bool Program_Memory::appendLine_P(const char *line){
-    size_t toAppend = strlen_P( (line)) + 1;
+    size_t toAppend = strlen_P(line) + 1;
     if( _current + toAppend >= PROGRAM_MEMORY_SIZE) return true;
     memcpy_P( getCurrentLine(), line, toAppend);
     _bottom = _current + toAppend;
@@ -300,19 +297,68 @@ bool Program_Memory::insertLine_P(const char *line){
 }
 
 bool Program_Memory::updateLine(char *line){
-    if( _eMode == EMODE_OWERWRITE) return replaceLine(line);
-    return insertLine(line);
+    bool result;
+    switch (_eMode){
+        case EMODE_OWERWRITE:
+            return replaceLine(line);
+        case EMODE_INSERT:
+            return insertLine(line);
+        default:
+            result = insertLine(line);
+            if (!result) renumberAdresses(_counter, 1);
+            break;
+    }
+    return result;
 }
 
 bool Program_Memory::updateLine_P(const char *line){
-    if( _eMode == EMODE_OWERWRITE) return replaceLine_P(line);
-    return insertLine_P(line);
+    bool result;
+    switch (_eMode){
+        case EMODE_OWERWRITE:
+            return replaceLine_P(line);
+        case EMODE_INSERT:
+            return insertLine_P(line);
+        default:
+            result = insertLine_P(line);
+            if (!result) renumberAdresses(_counter, 1);
+            break;
+    }
+    return result;
 }
 
 void Program_Memory::deleteLine(){
     if( _current >= _bottom) return;
-    int toDelete = strlen( getCurrentLine()) + 1;
-    _moveStringsFromCurrent( -toDelete );
+    int32_t ln = strlen(getCurrentLine());
+    switch (_eMode){
+        case EMODE_OWERWRITE:
+            _moveStringsFromCurrent(-ln);
+            break;
+        case EMODE_INSERT:
+            _moveStringsFromCurrent(-ln-1);
+            break;
+        default:
+            _moveStringsFromCurrent(-ln-1);
+            renumberAdresses(_current, -1);
+            break;
+    }
+}
+
+void Program_Memory::renumberAdresses( uint32_t fromLine, int32_t shift){
+    uint32_t tmpCounter = _counter;
+    resetCounter();
+    RPN_Functions *fns = (RPN_Functions *)_components[COMPONENT_FUNCTIONS]; 
+    while (_current < _bottom)
+    {
+        char *progLine = getCurrentLine();
+        RPN_Function *fn = fns->getFunctionByName(progLine);
+        if (fn != NULL && fn->containsPC())
+        {
+            char *addrStr = progLine + strlen_P( fn->Name());
+            _modifyAddress(addrStr, fromLine, shift);
+        }
+        incrementCounter();
+    }
+    setCounter(tmpCounter);
 }
 
 bool Program_Memory::commentLine(){
@@ -323,6 +369,16 @@ bool Program_Memory::commentLine(){
     *ptrC = '#';
     return false;
 }
+
+void Program_Memory::setEMode(uint8_t m){
+    _eMode = (m>2)? 0: m;
+    strcpy_P( _eModeName, _EMODE_Labels[_eMode]);
+} 
+
+uint8_t Program_Memory::toggleEditMode(){
+    setEMode( _eMode+1);
+    return _eMode;
+} 
 
 void Program_Memory::getPreviousLines( char *lines[], uint8_t n){
     lines[0] = getCurrentLine();
@@ -348,28 +404,43 @@ bool Program_Memory::isAtStop(){
     return UniversalValue::_identicalTo_P( getCurrentLine(), PSTR("STOP"));
 }
 
-void Program_Memory::setEMode(uint8_t m){
-    switch(m){
-        case 1:
-            _eMode = EMODE_INSERT;
-            strncpy_P( _eModeName, PSTR("INS"), 3);
-            break;
-        case 2:
-            _eMode = EMODE_SHIFT;
-            strncpy_P( _eModeName, PSTR("SHF"), 3);
-            break;
-        default:
-            _eMode = EMODE_OWERWRITE;
-            strncpy_P( _eModeName, PSTR("OVR"), 3);
-            break;
-    }
-    _eModeName[3] = 0;
-} 
+char *Program_Memory::toString( char *text, int8_t n){
+    snprintf_P( text, n, PSTR("%04u> %s"), _counter, getCurrentLine());
+    text[n-1] = 0;
+    return text;   
+}
 
-uint8_t Program_Memory::toggleEditMode(){
-    setEMode( _eMode+1);
-    return _eMode;
-} 
+char *Program_Memory::toCounterString( char *text, int8_t n){
+    snprintf_P( text, n, PSTR("%04u> "), _counter);
+    text[6] = 0;
+    return text;   
+}
+
+char *Program_Memory::getCallStackValues( char *text, uint16_t index){
+    index <<= 1;
+    *text = 0;
+    if( index>=_returnStackPtr) return text;
+    sprintf_P( text, PSTR("S%04u: %u"), _returnStack[index], _returnStack[index+1]);
+    return text;
+}
+
+void Program_Memory::setCallStackValues( uint16_t index, char *ctr, char *ptr){
+    index <<= 1;
+    if( index >= RETURN_STACK_SIZE) return;
+    _returnStack[index] = UniversalValue::_recoverAddress(ctr);
+    _returnStack[index+1] = UniversalValue::_recoverAddress(ptr);
+    _returnStackPtr = (int)index + 1;
+}
+
+char *Program_Memory::_modifyAddress(char *address, uint32_t fromLine, int32_t shift){
+    int ln = strlen( address);
+    if ( ln < 4) return address;
+    int32_t addr = UniversalValue::_recoverAddress(address);
+    if (addr <= fromLine) return address;
+    addr += shift;
+    if (addr < 0) addr = 0;
+    return UniversalValue::_makeAddress( address, addr);
+}
 
 bool Program_Memory::_moveStringsFromCurrent(int32_t shift)
 {

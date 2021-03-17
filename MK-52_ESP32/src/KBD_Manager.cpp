@@ -22,6 +22,11 @@ void KBD_Manager::init(){
 uint8_t KBD_Manager::scan(){
     uint8_t ret = scanImmediate();
     if( ret == 0){
+        if( LEDOn && lastPressedTime + KBD_SLEEP_DELAY < lastScanTime){
+            LEDOn = false;
+            // TODO - uncomment after receiver is ready
+            // return 33; 
+        }
         delay(KBD_IDLE_DELAY);
         return ret;
     }
@@ -30,7 +35,7 @@ uint8_t KBD_Manager::scan(){
         ret = scanImmediate();
         delay( KBD_JITTER_DELAY);
     }
-    lastScanTime = millis();
+    lastPressedTime = millis();
     return lastScan;
 }
 

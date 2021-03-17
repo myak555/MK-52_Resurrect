@@ -11,18 +11,8 @@
 #include "UniversalValue.hpp"
 
 //#define __DEBUG
-
-// const char SD_Error_NotMounted[] PROGMEM = "Error: Not mounted";
-// const char SD_Error_FileNameTooLong[] PROGMEM = "Err: Long name";
-// const char SD_Error_FileNotFound[] PROGMEM = "Err: Not found";
-// const char SD_Error_WriteFailed[] PROGMEM = "Err: SD fail";
-// const char SD_Error_FileAccessError[] PROGMEM = "Err: Write fail";
-// const char SD_Error_OutOfMemory[] PROGMEM = "Err: Out of memory";
-// const char SD_Error_DeleteFailed[] PROGMEM = "Err: Delete fail";
-
-const char SD_root[] PROGMEM = "/";
-
 using namespace MK52_Hardware;
+const char SD_root[] PROGMEM = "/";
 
 //
 // Init and status update
@@ -329,9 +319,10 @@ char *SD_Manager::getFolderNameTruncated( int8_t n){
     return _text;
 }
 
-void SD_Manager::readFolderItems(char *location){
+void SD_Manager::readFolderItems(char *location, bool resetListingPosition){
     if( !SDMounted) return;
     _clearItems();
+    if (resetListingPosition) listingPosition = -1;
     if( !checkEntityExists(_current_Dir_Name)) return;
     File current_Dir = _getCurrentDir();
     if(!current_Dir) return;
@@ -382,7 +373,6 @@ File SD_Manager::_getCurrentDir(){
 void SD_Manager::_clearItems(){
     _nDirs = 0;
     _nItems = 0;
-    listingPosition = -1;
     memset( _buffer, 0, DIRECTORY_LIST_SIZE);
 }
 
