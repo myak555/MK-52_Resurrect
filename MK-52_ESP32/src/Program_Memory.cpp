@@ -168,7 +168,8 @@ bool Program_Memory::goSub( char *text){
 }
 
 //
-// Returns true if stack is busted
+// On MK-52, calling RETURN if not inside the subroutine 
+// causes the program to return to line 0001 
 //
 bool Program_Memory::returnFromSub(){
     if( _returnStackPtr < 2){
@@ -178,10 +179,11 @@ bool Program_Memory::returnFromSub(){
         #ifdef __DEBUG
         Serial.println("Warning: return to zero ");
         #endif
-        return false;
     }
-    _current = _returnStack[--_returnStackPtr];
-    _counter = _returnStack[--_returnStackPtr];
+    else{
+        _current = _returnStack[--_returnStackPtr];
+        _counter = _returnStack[--_returnStackPtr];
+    }
     #ifdef __DEBUG
     Serial.print("Returned from sub: ");
     Serial.print(_returnStackPtr);
