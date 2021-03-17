@@ -40,8 +40,8 @@ P0033: -
 P0034: SQRT
 P0035: X->M 6
 P0036: M->X 5
-P0037: LBY> Standard deviation:
-P0038: LBX> Mean:
+P0037: LBY> Sn:
+P0038: LBX> Expected (Mean):
 P0039: STOP
 P0040: LBY>
 P0041: GOTO 003
