@@ -124,7 +124,7 @@ namespace MK52Simulator
         public const uint FUNC_LBT = 107;
         public const uint FUNC_LBR = 108;
         public const uint FUNC_SAVEALL = 109;
-        public const uint FUNC_SAVEALLTO = 110;
+        public const uint FUNC_SAVEALLAS = 110;
         public const uint FUNC_LOADALL = 111;
         public const uint FUNC_LOADALLFROM = 112;
         public const uint FUNC_NOP = 113;
@@ -385,11 +385,11 @@ namespace MK52Simulator
             _appendFunction(new Func_LBR());
             // #define FUNC_SAVEALL            109
             _appendFunction(new Func_SaveAll());
-            // #define FUNC_SAVEALLTO           110
-            _appendFunction(new Func_SaveAllTo());
-            // #define FUNC_LOADALL            109
+            // #define FUNC_SAVEALLAS          110
+            _appendFunction(new Func_SaveAllAs());
+            // #define FUNC_LOADALL            111
             _appendFunction(new Func_LoadAll());
-            // #define FUNC_LOADALLFROM        110
+            // #define FUNC_LOADALLFROM        112
             _appendFunction(new Func_LoadAllFrom());
 
             // if the name is not found, it must be a number and should be placed to register X
@@ -514,7 +514,7 @@ namespace MK52Simulator
         }
 
         /// <summary>
-        /// the original MK-52 programs sometimes used PP for data entry;
+        /// Some original MK-52 programs used PP for data entry;
         /// must simulate the same, although not obvious for debugging.
         /// the commented line is to revert to other logic
         /// </summary>
@@ -654,6 +654,7 @@ namespace MK52Simulator
             if (!result) result = _writeProgram();
             if (!result) result = _writeData();
             _sd.closeFile();
+            _sd.readFolderItems();
             return result;
         }
 

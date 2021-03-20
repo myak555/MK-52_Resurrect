@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
+using System.ComponentModel;
 
 namespace MK52Simulator
 {
@@ -30,6 +31,9 @@ namespace MK52Simulator
         public Register_Memory _m_Register_Memory = new Register_Memory();
         public RPN_Functions _m_RPN_Functions = new RPN_Functions();
 
+        // backgroundWorker (simulator-only)
+        public BackgroundWorker _m_backgroundWorker = null;
+
         // receivers
         public Dictionary<string, Receiver> Receivers =
             new Dictionary<string, Receiver>();
@@ -45,7 +49,7 @@ namespace MK52Simulator
             _stateFile = AppDomain.CurrentDomain.BaseDirectory + "_RPN_State_New.txt";
         }
 
-        public void init()
+        public void init( BackgroundWorker bw)
         {
             _m_Hardware_LCD.init();
             _m_Hardware_SD.init();
@@ -55,6 +59,7 @@ namespace MK52Simulator
             _m_Register_Memory.init(this);
             _m_RPN_Stack.init(this);
             _m_RPN_Functions.init(this);
+            _m_backgroundWorker = bw;
 
             // Show splash (if "Undefined", the return receiver is set by loadState!)
             this.current_Receiver.activate( "Undefined");

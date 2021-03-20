@@ -16,6 +16,9 @@ namespace MK52Simulator
     {
         private const string _standard_DoubleFormat = "0.0"; //"%f";
         private const string _standard_FullPrecision = "0.00000000000"; //"%13.11f";  
+        //private const string _standard_FullPrecision = "0.0000000"; //"%9.7f";  
+        private const double _standard_ConvertLow = 0.999999999999;
+        private const double _standard_ConvertHigh = 9.99999999999;
         private const string _standard_ExponentFormat = "+000;-000"; //"%+04d";  
         private const string _standard_Error = "Error";  
         private const string _standard_MinusInfinity = "-Inf";  
@@ -270,7 +273,7 @@ namespace MK52Simulator
             }
 
             if( value >= accuracy) return; // should not convert
-            if( value < 0.99999999999) return; // whole part < 1. 
+            if (value < _standard_ConvertLow) return; // whole part < 1. 
             if( value < 1.00000000001)
             {
                 fromInt( positive? 1: -1);
@@ -455,12 +458,12 @@ namespace MK52Simulator
                 return _composeFloat(negative? -value: value);
 
             int exponent = 0;
-            while (value < 0.999999999999)
+            while (value < _standard_ConvertLow)
             {
                 exponent--;
                 value *= 10.0;
             }
-            while(value >= 9.99999999999)
+            while (value >= _standard_ConvertHigh)
             {
                 exponent++;
                 value *= 0.1;

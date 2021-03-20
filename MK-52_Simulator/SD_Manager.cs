@@ -128,7 +128,10 @@ namespace MK52Simulator
             return _current_File_Name;
         }
 
-        //abstract public void checkRootExists();
+        /// <summary>
+        /// On Windows, does nothing
+        /// </summary>
+        public void checkRootExists(){}
 
         public bool checkEntityExists(string name)
         {

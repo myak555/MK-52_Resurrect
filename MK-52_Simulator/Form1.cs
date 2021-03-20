@@ -27,7 +27,7 @@ namespace MK52Simulator
         {
             InitializeComponent();
             myRPN = new MK52_Host(KBD_Manager1, LCD_Manager1);
-            myRPN.init();
+            myRPN.init( backgroundWorker1);
             timer1.Enabled = true;
             return;
         }
@@ -137,6 +137,21 @@ namespace MK52Simulator
             fn.requestNextReceiver("AUTO_N");
             myRPN.tick();
             return fn;
+        }
+
+        private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
+        {
+            RPN_Functions _rpnf = myRPN.getFunctions();
+            while (!backgroundWorker1.CancellationPending)
+            {
+                _rpnf.executeRun();
+                if (_rpnf._atStop) break;
+            }
+        }
+
+        private void backgroundWorker1_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            // TODO: force status update
         }
     }
 }

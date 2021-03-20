@@ -56,9 +56,10 @@ namespace MK52Simulator
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.saveFileDialog2 = new System.Windows.Forms.SaveFileDialog();
             this.saveFileDialog3 = new System.Windows.Forms.SaveFileDialog();
+            this.openFileDialog2 = new System.Windows.Forms.OpenFileDialog();
+            this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.LCD_Manager1 = new MK52Simulator.LCD_Manager();
             this.KBD_Manager1 = new MK52Simulator.KBD_Manager();
-            this.openFileDialog2 = new System.Windows.Forms.OpenFileDialog();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -257,6 +258,21 @@ namespace MK52Simulator
             this.saveFileDialog3.RestoreDirectory = true;
             this.saveFileDialog3.Title = "Save implemented  functions list";
             // 
+            // openFileDialog2
+            // 
+            this.openFileDialog2.DefaultExt = "DAT";
+            this.openFileDialog2.FileName = "openFileDialog2";
+            this.openFileDialog2.Filter = "Data Files|*.dat|MK52 Programs|*.mk52|All files|*.*";
+            this.openFileDialog2.RestoreDirectory = true;
+            this.openFileDialog2.Title = "Load data";
+            // 
+            // backgroundWorker1
+            // 
+            this.backgroundWorker1.WorkerReportsProgress = true;
+            this.backgroundWorker1.WorkerSupportsCancellation = true;
+            this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker1_DoWork);
+            this.backgroundWorker1.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.backgroundWorker1_ProgressChanged);
+            // 
             // LCD_Manager1
             // 
             this.LCD_Manager1.BackColor = System.Drawing.Color.DimGray;
@@ -274,14 +290,6 @@ namespace MK52Simulator
             this.KBD_Manager1.Name = "KBD_Manager1";
             this.KBD_Manager1.Size = new System.Drawing.Size(560, 275);
             this.KBD_Manager1.TabIndex = 0;
-            // 
-            // openFileDialog2
-            // 
-            this.openFileDialog2.DefaultExt = "DAT";
-            this.openFileDialog2.FileName = "openFileDialog2";
-            this.openFileDialog2.Filter = "Data Files|*.dat|MK52 Programs|*.mk52|All files|*.*";
-            this.openFileDialog2.RestoreDirectory = true;
-            this.openFileDialog2.Title = "Load data";
             // 
             // Form1
             // 
@@ -337,6 +345,7 @@ namespace MK52Simulator
         private System.Windows.Forms.ToolStripMenuItem loadToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveAsToolStripMenuItem;
         private System.Windows.Forms.OpenFileDialog openFileDialog2;
+        private System.ComponentModel.BackgroundWorker backgroundWorker1;
     }
 }
 
