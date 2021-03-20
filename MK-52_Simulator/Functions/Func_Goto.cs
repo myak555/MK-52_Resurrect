@@ -198,7 +198,7 @@ namespace MK52Simulator
             return "STOP";
         }
 
-        // On the original MK-52 stop has advanced PC
+        // On the original MK-52 stop advanced PC
         // public override void advancePC(MK52_Host components) { }
 
         public override void execute(MK52_Host components, string command)

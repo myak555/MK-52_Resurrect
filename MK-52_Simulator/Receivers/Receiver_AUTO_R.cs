@@ -35,28 +35,31 @@ namespace MK52Simulator
             lm.updateStatusFMODE("RUN");
             lm.forcePaint();
             _lastUIUpdate = DateTime.Now;
+            _parent._m_backgroundWorker.RunWorkerAsync();
         }
 
         public override byte tick(byte scancode)
         {
             RPN_Functions _rpnf = _parent.getFunctions();
-            LCD_Manager lm = _parent.getLCD();
-            while (true)
+            if (!_parent._m_backgroundWorker.IsBusy)
             {
-                TimeSpan ts = DateTime.Now.Subtract(_lastUIUpdate);
-                bool update_required = ts.TotalMilliseconds > KBD_RUNNING_DELAY;
-                _rpnf.executeRun();
-                if (_rpnf._atStop) break;
-                if (update_required)
-                {
-                    if (_parent.getKBD().scanImmediate() == 8) break;
-                    lm.updateStatusPC(_rpnf.progMem.getCounter());
-                    lm.updateStatusMC(_rpnf.extMem.getCounter());
-                    lm.updateCalcRegister(0, _rpnf.rpnStack.X.toString());
-                    lm.requestUpdate();
-                }
+                _rpnf.requestNextReceiver("AUTO_N");
+                return 0;
             }
-            _rpnf.requestNextReceiver("AUTO_N");
+            if (scancode == 8)
+            {
+                _parent._m_backgroundWorker.CancelAsync();
+                return 0;
+            }
+            TimeSpan ts = DateTime.Now.Subtract(_lastUIUpdate);
+            bool update_required = ts.TotalMilliseconds > KBD_RUNNING_DELAY;
+            if (!update_required) return 0;
+            LCD_Manager lm = _parent.getLCD();
+            lm.updateStatusPC(_rpnf.progMem.getCounter());
+            lm.updateStatusMC(_rpnf.extMem.getCounter());
+            lm.updateCalcRegister(0, _rpnf.rpnStack.X.toString());
+            lm.requestUpdate();
+            _lastUIUpdate = DateTime.Now;
             return 0;
         }
     }

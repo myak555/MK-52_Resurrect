@@ -173,7 +173,7 @@ namespace MK52Simulator
 
         public override string Name()
         {
-            return "SAVE AS ";
+            return "SAVE ";
         }
 
         public override void execute(MK52_Host components, string command)
@@ -290,11 +290,11 @@ namespace MK52Simulator
         }
     }
 
-    public class Func_SaveAllTo : RPN_Function
+    public class Func_SaveAllAs : RPN_Function
     {
         public override bool checkID(uint id)
         {
-            return id == RPN_Functions.FUNC_SAVEALLTO;
+            return id == RPN_Functions.FUNC_SAVEALLAS;
         }
         public override bool checkName(string name)
         {

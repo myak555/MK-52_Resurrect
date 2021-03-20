@@ -347,11 +347,6 @@ namespace MK52Simulator
             return "MEMSET ";
         }
 
-        public override string IOName()
-        {
-            return Name();
-        }
-
         public override void execute(MK52_Host components, string command)
         {
             _ExtMem(components).fromString(command);
@@ -378,11 +373,6 @@ namespace MK52Simulator
         public override string Name()
         {
             return "MEMSWP ";
-        }
-
-        public override string IOName()
-        {
-            return Name();
         }
 
         public override void execute(MK52_Host components, string command)
