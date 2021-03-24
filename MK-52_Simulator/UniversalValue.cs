@@ -31,7 +31,7 @@ namespace MK52Simulator
         public const double HUGE_POSITIVE_AS_REAL = 9e18;
         public const double HUGE_NEGATIVE_AS_REAL = -9e18;
         public const double __PI = 3.141592653589793;
-        public const double __PI4 = 0.017453292519943295;
+        public const double __PI4 = 0.7853981633974483;
         public const double __EE = 2.718281828459045;
         public const double __ROUNDING_ACCURACY = 1e11;
         public const byte VALUE_TYPE_EMPTY = 0;

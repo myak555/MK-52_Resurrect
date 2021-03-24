@@ -22,7 +22,6 @@ namespace MK52Simulator
         public const uint FUNC_DECREMENT_MC = 5;
         public const uint FUNC_RESET_PC = 6;
         public const uint FUNC_RESET_MC = 7;
-        public const uint FUNC_TOGGLE_DMOD = 8;
         public const uint FUNC_SET_DMOD_DEG = 9;
         public const uint FUNC_SET_DMOD_RAD = 10;
         public const uint FUNC_SET_DMOD_GRD = 11;
@@ -88,7 +87,6 @@ namespace MK52Simulator
         public const uint FUNC_MEXTOR = 71;
         public const uint FUNC_RTOMEX = 72;
         public const uint FUNC_MEXCLR = 73;
-        public const uint FUNC_TOGGLE_EMOD = 74;
         public const uint FUNC_STOP = 75;
         public const uint FUNC_MKDIR = 76;
         public const uint FUNC_UPDIR = 77;
@@ -181,8 +179,6 @@ namespace MK52Simulator
             _appendFunction( new Func_Reset_PC());
             // #define FUNC_RESET_MC           7
             _appendFunction( new Func_Reset_MC());
-            // #define FUNC_TOGGLE_DMOD        8
-            _appendFunction( new Func_Toggle_DMOD());
             // #define FUNC_SET_DMOD_DEG       9
             _appendFunction( new Func_set_DMOD_DEG());
             // #define FUNC_SET_DMOD_RAD       10
@@ -313,8 +309,6 @@ namespace MK52Simulator
             _appendFunction( new Func_RToMex());
             // #define FUNC_MEXCLR             73
             _appendFunction( new Func_MexClr());
-            // #define FUNC_TOGGLE_EMOD        74
-            _appendFunction( new Func_Toggle_EMOD());
             // #define FUNC_STOP               75
             _appendFunction( new Func_Stop());
             // #define FUNC_MKDIR              76
@@ -670,15 +664,16 @@ namespace MK52Simulator
         #endregion
 
         #region Next Receiver Setting
-        public void requestNextReceiver(string name)
+        public byte requestNextReceiver(string name)
         {
-            requestNextReceiver(name, "None");
+            return requestNextReceiver(name, "None");
         }
 
-        public void requestNextReceiver(string name, string exitTo)
+        public byte requestNextReceiver(string name, string exitTo)
         {
             _receiverRequested = name;
             _receiverReturnRequested = exitTo;
+            return (byte)0;
         }
 
         public string getRequestedReceiver()
