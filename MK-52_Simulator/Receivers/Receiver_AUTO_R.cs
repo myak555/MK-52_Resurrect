@@ -42,10 +42,7 @@ namespace MK52Simulator
         {
             RPN_Functions _rpnf = _parent.getFunctions();
             if (!_parent._m_backgroundWorker.IsBusy)
-            {
-                _rpnf.requestNextReceiver("AUTO_N");
-                return 0;
-            }
+                return _rpnf.requestNextReceiver("AUTO_N");
             if (scancode == 8)
             {
                 _parent._m_backgroundWorker.CancelAsync();

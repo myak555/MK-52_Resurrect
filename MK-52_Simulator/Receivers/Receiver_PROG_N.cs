@@ -34,16 +34,13 @@ namespace MK52Simulator
 
                 // Column 0
                 case 1:
-                    _rpnf.requestNextReceiver("PROG_F");
-                    return 0;
+                    return _rpnf.requestNextReceiver("PROG_F");
                 case 2:
-                    _rpnf.requestNextReceiver("PROG_K");
-                    return 0;
+                    return _rpnf.requestNextReceiver("PROG_K");
                 case 3:
-                    _rpnf.requestNextReceiver("PROG_A");
-                    return 0;
+                    return _rpnf.requestNextReceiver("PROG_A");
                 case 4:
-                    _rpnf.execute(RPN_Functions.FUNC_TOGGLE_EMOD, "");
+                    _parent._m_Program_Memory.toggleEditMode();
                     return base.tick(0);
 
                 // Column 1
@@ -62,20 +59,16 @@ namespace MK52Simulator
                 // Column 2
                 case 9:
                     _rpnf.appendProgramLine_P(RPN_Functions.FUNC_M2X);
-                    _rpnf.requestNextReceiver("REGISTER");
-                    return 0;
+                    return _rpnf.requestNextReceiver("REGISTER");
                 case 10:
                     _rpnf.appendProgramLine_P(RPN_Functions.FUNC_X2M);
-                    _rpnf.requestNextReceiver("REGISTER");
-                    return 0;
+                    return _rpnf.requestNextReceiver("REGISTER");
                 case 11:
                     _rpnf.appendProgramLine_P(RPN_Functions.FUNC_GOTO);
-                    _rpnf.requestNextReceiver("ADDRESS");
-                    return 0;
+                    return _rpnf.requestNextReceiver("ADDRESS");
                 case 12:
                     _rpnf.appendProgramLine_P(RPN_Functions.FUNC_GOSUB);
-                    _rpnf.requestNextReceiver("ADDRESS");
-                    return 0;
+                    return _rpnf.requestNextReceiver("ADDRESS");
 
                 // Column 5
                 case 24:
@@ -107,8 +100,7 @@ namespace MK52Simulator
                     _rpnf.appendProgramLine_P(RPN_Functions.FUNC_CLEAR_X);
                     break;
                 case 33:
-                    _rpnf.requestNextReceiver("OFF");
-                    return 0;
+                    return _rpnf.requestNextReceiver("OFF");
 
                 default: // all other buttons activate number entry
                     _rpnf.requestNextReceiver("NUMBER_PROG");

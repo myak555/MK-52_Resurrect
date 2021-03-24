@@ -40,14 +40,11 @@ namespace MK52Simulator
 
                 // Column 0
                 case 1:
-                    _rpnf.requestNextReceiver("FILE_F");
-                    return 0;
+                    return _rpnf.requestNextReceiver("FILE_F");
                 case 2:
-                    _rpnf.requestNextReceiver("FILE_K");
-                    return 0;
+                    return _rpnf.requestNextReceiver("FILE_K");
                 case 3:
-                    _rpnf.requestNextReceiver("FILE_A");
-                    return 0;
+                    return _rpnf.requestNextReceiver("FILE_A");
 
                 // Column 1
                 case 5:
@@ -66,32 +63,27 @@ namespace MK52Simulator
                 // Column 2
                 case 9:
                     _rpnf.execute(RPN_Functions.FUNC_LOAD);
-                    _rpnf.requestNextReceiver("PROG_N");
-                    return 0;
+                    return _rpnf.requestNextReceiver("PROG_N");
                 case 10:
-                    _rpnf.requestNextReceiver("File_Overwrite");
-                    return 0;
+                    return _rpnf.requestNextReceiver("File_Overwrite");
                 case 11:
                     // find program TODO
                     break;
                 case 12:
-                    _rpnf.requestNextReceiver("File_Name");
-                    return 0;
+                    return _rpnf.requestNextReceiver("File_Name");
 
                 // Column 3-5 - do nothing (for now)
 
                 // Column 6
                 case 28:
-                    _rpnf.requestNextReceiver("File_MkDir");
-                    break;
+                    return _rpnf.requestNextReceiver("File_MkDir");
 
                 // Column 7
                 case 31:
                     _rpnf.execute(RPN_Functions.FUNC_STEPIN);
                     break;
                 case 32:
-                    _rpnf.requestNextReceiver("File_Delete");
-                    return 0;
+                    return _rpnf.requestNextReceiver("File_Delete");
 
                 case 33:
                     // Shutdown signal

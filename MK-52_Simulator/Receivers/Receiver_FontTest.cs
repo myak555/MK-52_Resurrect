@@ -41,8 +41,7 @@ namespace MK52Simulator
         public override byte tick(byte scancode)
         {
             if (scancode != 32) return 0;
-            _parent.getFunctions().requestNextReceiver( _return_to);
-            return 0;
+            return _parent.getFunctions().requestNextReceiver( _return_to);
         }
     }
 }

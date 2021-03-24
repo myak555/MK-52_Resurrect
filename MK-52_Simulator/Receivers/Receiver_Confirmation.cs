@@ -45,16 +45,14 @@ namespace MK52Simulator
                     return 0;
                 case 31:
                     performAction();
-                    _rpnf.requestNextReceiver(_return_to);
-                    return 0;
+                    return _rpnf.requestNextReceiver(_return_to);
                 case 33:
                     _rpnf.requestNextReceiver(_return_to);
                     return 33;
                 default:
                     break;
             }
-            _rpnf.requestNextReceiver(_return_to);
-            return 0;
+            return _rpnf.requestNextReceiver(_return_to);
         }
 
         protected virtual void performAction()

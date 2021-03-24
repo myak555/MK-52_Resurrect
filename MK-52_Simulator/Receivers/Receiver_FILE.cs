@@ -56,7 +56,6 @@ namespace MK52Simulator
             LCD_Manager lm = _parent._m_Hardware_LCD;
             lm.updateStatusPC(_parent._m_Program_Memory.getCounter());
             lm.updateStatusMC(_parent._m_Extended_Memory.getCounter());
-            //lm.updateStatusDMODE(_parent._m_RPN_Stack.getDModeName());
             string[] Lines = _parent._m_RPN_Functions.getOutputLines();
             _parent._m_Hardware_SD.getFolderListing(Lines, _nLinesShown, LCD_Manager.SCREEN_COLS - 1);
             for (int i = 0; i < _nLinesShown; i++)

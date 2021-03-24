@@ -42,15 +42,12 @@ namespace MK52Simulator
 
                 // Column 0
                 case 1:
-                    _rpnf.requestNextReceiver("AUTO_F");
-                    return 0;
+                    return _rpnf.requestNextReceiver("AUTO_F");
                 case 3:
-                    _rpnf.requestNextReceiver("AUTO_A");
-                    return 0;
+                    return _rpnf.requestNextReceiver("AUTO_A");
                 case 4:
-                    _rpnf.execute(RPN_Functions.FUNC_TOGGLE_DMOD, "");
-                    base.tick(0);
-                    return 0;
+                    _parent._m_RPN_Stack.toggleAngleMode();
+                    return base.tick(0);
 
                 // Column 1 does nothing (for now)
                 case 5:
@@ -61,11 +58,9 @@ namespace MK52Simulator
 
                 // Column 2
                 case 9:
-                    _rpnf.requestNextReceiver("REGISTER_KMX");
-                    return 0;
+                    return _rpnf.requestNextReceiver("REGISTER_KMX");
                 case 10:
-                    _rpnf.requestNextReceiver("REGISTER_KXM");
-                    return 0;
+                    return _rpnf.requestNextReceiver("REGISTER_KXM");
                 case 11:
                     _parent._m_RPN_Stack.setLabel_P(0, "K-GOTO is bad for you!");
                     break;
@@ -128,7 +123,7 @@ namespace MK52Simulator
                     break;
                 case 28:
                     _rpnf.execute(RPN_Functions.FUNC_XOR);
-                    return 0;
+                    break;
 
                 // Column 7
                 case 29:
@@ -153,8 +148,7 @@ namespace MK52Simulator
                 default: // all other buttons do nothing, keeping K-mode
                     return 0;
             }
-            _rpnf.requestNextReceiver("AUTO_N");
-            return 0;
+            return _rpnf.requestNextReceiver("AUTO_N");
         }
     }
 }

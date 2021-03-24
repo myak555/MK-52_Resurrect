@@ -34,16 +34,14 @@ namespace MK52Simulator
 
                 // Column 0
                 case 1:
-                    _rpnf.requestNextReceiver("DATA_F");
-                    return 0;
+                    return _rpnf.requestNextReceiver("DATA_F");
                 case 2:
-                    _rpnf.requestNextReceiver("DATA_K");
-                    return 0;
+                    return _rpnf.requestNextReceiver("DATA_K");
                 case 3:
-                    _rpnf.requestNextReceiver("DATA_A");
-                    return 0;
-                case 4: // TODO: Insert mode
-                    // _rpnf.execute(RPN_Functions.FUNC_TOGGLE_DMOD, "");
+                    return _rpnf.requestNextReceiver("DATA_A");
+                case 4:
+                    // TODO: Insert mode
+                    //_parent._m_RPN_Stack.toggleAngleMode();
                     // base.tick(0);
                     return 0;
 
@@ -65,15 +63,12 @@ namespace MK52Simulator
                 // Column 2
                 case 9:
                     // TODO
-                    _rpnf.requestNextReceiver("REGISTER_ME");
-                    return 0;
+                    return _rpnf.requestNextReceiver("REGISTER_ME");
                 case 10:
                     // TODO
-                    _rpnf.requestNextReceiver("REGISTER_EM");
-                    return 0;
+                    return _rpnf.requestNextReceiver("REGISTER_EM");
                 case 11:
-                    _rpnf.requestNextReceiver("ADDRESS_MC", "DATA_N");
-                    return 0;
+                    return _rpnf.requestNextReceiver("ADDRESS_MC", "DATA_N");
                 case 12:
                     _rpnf.execute(RPN_Functions.FUNC_XTOMEX);
                     _rpnf.execute(RPN_Functions.FUNC_INCREMENT_MC);

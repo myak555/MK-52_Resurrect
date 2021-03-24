@@ -67,15 +67,12 @@ namespace MK52Simulator
                     return 0;
                 case 32:
                     if (_text.Length <= 0)
-                    {
-                        _parent.getFunctions().requestNextReceiver(_return_to);
-                        return 0;
-                    }
+                        return _rpnf.requestNextReceiver(_return_to);
                     _text.Remove(_text.Length - 1, 1);
                     updateDisplay(toString());
                     return 0;
                 case 33:
-                    _parent.getFunctions().requestNextReceiver(_return_to);
+                    _rpnf.requestNextReceiver(_return_to);
                     return 33;
                 default: 
                     break;
@@ -109,11 +106,9 @@ namespace MK52Simulator
                     return 0;
                 case 31:
                     completeEntry(toString());
-                    _rpnf.requestNextReceiver(_return_to);
-                    return 0;
+                    return _rpnf.requestNextReceiver(_return_to);
                 case 32:
-                    _rpnf.requestNextReceiver(_return_to);
-                    return 0;
+                    return _rpnf.requestNextReceiver(_return_to);
                 case 33:
                     _rpnf.requestNextReceiver(_return_to);
                     return 33;

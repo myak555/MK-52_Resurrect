@@ -42,15 +42,12 @@ namespace MK52Simulator
 
                 // Column 0
                 case 2:
-                    _rpnf.requestNextReceiver("AUTO_K");
-                    return 0;
+                    return _rpnf.requestNextReceiver("AUTO_K");
                 case 3:
-                    _rpnf.requestNextReceiver("AUTO_A");
-                    return 0;
+                    return _rpnf.requestNextReceiver("AUTO_A");
                 case 4:
-                    _rpnf.execute(RPN_Functions.FUNC_TOGGLE_DMOD, "");
-                    base.tick(0);
-                    return 0;
+                    _parent._m_RPN_Stack.toggleAngleMode();
+                    return base.tick(0);
 
                 // Column 1 does nothing (for now)
                 case 5:
@@ -118,8 +115,7 @@ namespace MK52Simulator
                     _rpnf.execute(RPN_Functions.FUNC_POW);
                     break;
                 case 28:
-                    _rpnf.requestNextReceiver("PROG_N");
-                    return 0;
+                    return _rpnf.requestNextReceiver("PROG_N");
 
                 // Column 7
                 case 29:
@@ -141,8 +137,7 @@ namespace MK52Simulator
                 default: // all other buttons do nothing, keeping F-mode
                     return 0;
             }
-            _rpnf.requestNextReceiver("AUTO_N");
-            return 0;
+            return _rpnf.requestNextReceiver("AUTO_N");
         }
     }
 }

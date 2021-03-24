@@ -31,13 +31,14 @@ namespace MK52Simulator
 
         protected override void completeEntry( string value)
         {
+            RPN_Functions _rpnf = _parent.getFunctions();
             if (value.Length == 0)
             {
-                _parent.getFunctions().execute(RPN_Functions.FUNC_A_M2X);
-                _parent.getFunctions().execute(RPN_Functions.FUNC_DECREMENT_MC);
+                _rpnf.execute(RPN_Functions.FUNC_A_M2X);
+                _rpnf.execute(RPN_Functions.FUNC_DECREMENT_MC);
             }
             else
-                _parent.getFunctions().execute( RPN_Functions.FUNC_A_M2X, value);
+                _rpnf.execute(RPN_Functions.FUNC_A_M2X, value);
         }
 
         protected override void updateDisplay(string value)

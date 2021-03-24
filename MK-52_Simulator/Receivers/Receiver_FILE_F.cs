@@ -43,11 +43,9 @@ namespace MK52Simulator
 
                 // Column 0
                 case 2:
-                    _rpnf.requestNextReceiver("FILE_K");
-                    return 0;
+                    return _rpnf.requestNextReceiver("FILE_K");
                 case 3:
-                    _rpnf.requestNextReceiver("FILE_A");
-                    return 0;
+                    return _rpnf.requestNextReceiver("FILE_A");
 
                 // Column 1
                 case 5:
@@ -62,27 +60,22 @@ namespace MK52Simulator
                 // Column 2
                 case 9:
                     _rpnf.execute(RPN_Functions.FUNC_LOADDATA);
-                    _rpnf.requestNextReceiver("DATA_N");
-                    return 0;
+                    return _rpnf.requestNextReceiver("DATA_N");
                 case 10:
-                    _rpnf.requestNextReceiver("File_Overwrite_Data");
-                    break;
+                    return _rpnf.requestNextReceiver("File_Overwrite_Data");
                 case 12:
-                    _rpnf.requestNextReceiver("File_Data");
-                    return 0;
+                    return _rpnf.requestNextReceiver("File_Data");
 
                 // Column 3 does nothing (for now)
                 // Column 4 does nothing (for now)
 
                 // Column 5
                 case 24:
-                    _rpnf.requestNextReceiver("AUTO_N");
-                    return 0;
+                    return _rpnf.requestNextReceiver("AUTO_N");
 
                 // Column 6
                 case 28:
-                    _rpnf.requestNextReceiver("PROG_N");
-                    return 0;
+                    return _rpnf.requestNextReceiver("PROG_N");
 
                 // Column 7
                 case 32:
@@ -97,8 +90,7 @@ namespace MK52Simulator
                 default: // all other buttons do nothing, keeping F-mode
                     return 0;
             }
-            _rpnf.requestNextReceiver("FILE_N");
-            return 0;
+            return _rpnf.requestNextReceiver("FILE_N");
         }
     }
 }

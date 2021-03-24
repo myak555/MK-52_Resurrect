@@ -77,31 +77,6 @@ namespace MK52Simulator
         public override void execute(MK52_Host components, string command) { }
     }
 
-    public class Func_Toggle_EMOD : RPN_Function
-    {
-        public Func_Toggle_EMOD()
-        {
-            Description = "Toggles program editing mode";
-        }
-
-        public override bool checkID(uint id)
-        {
-            return id == RPN_Functions.FUNC_TOGGLE_EMOD;
-        }
-
-        public override bool checkName(string name)
-        {
-            return false;
-        }
-
-        public override void advancePC(MK52_Host components) { }
-
-        public override void execute(MK52_Host components, string command)
-        {
-            _ProgMem(components).toggleEditMode();
-        }
-    }
-
     public class Func_Number : RPN_Function
     {
         public Func_Number()

@@ -45,8 +45,7 @@ namespace MK52Simulator
             }
             if (_return_to == "Undefined") return 0;
             if (_return_to.Length <= 0 || _return_to.StartsWith( "Font")) _return_to = "AUTO_N";
-            _parent.getFunctions().requestNextReceiver(_return_to);
-            return 0;
+            return _parent.getFunctions().requestNextReceiver(_return_to);
         }
     }
 }

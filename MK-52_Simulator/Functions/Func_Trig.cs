@@ -496,26 +496,6 @@ namespace MK52Simulator
         }
     }
 
-    public class Func_Toggle_DMOD : RPN_Function
-    {
-        public Func_Toggle_DMOD()
-        {
-            Description = "Toggles DEG-RAD-GRD mode";
-        }
-
-        public override bool checkID(uint id)
-        {
-            return id == RPN_Functions.FUNC_TOGGLE_DMOD;
-        }
-
-        public override void advancePC(MK52_Host components) { }
-
-        public override void execute(MK52_Host components, string command)
-        {
-            _Stack(components).toggleAngleMode();
-        }
-    }
-
     public class Func_set_DMOD_DEG : RPN_Function
     {
         public Func_set_DMOD_DEG()

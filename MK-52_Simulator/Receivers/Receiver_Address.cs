@@ -40,13 +40,14 @@ namespace MK52Simulator
 
         public override byte tick(byte scancode)
         {
+            RPN_Functions _rpnf = _parent.getFunctions();
             char c = _convertButton(_AR_ButtonConversion, scancode);
             switch (c)
             {
                 case 'e': // entry completed
                 case 'f': // entry completed, action needed
                     completeEntry( toTrimmedString());
-                    _parent.getFunctions().requestNextReceiver(_return_to);
+                    _rpnf.requestNextReceiver(_return_to);
                     return (c == 'e') ? (byte)0 : scancode;
                 case '0':
                 case '1':
@@ -62,15 +63,13 @@ namespace MK52Simulator
                     _text.Append(c);
                     if( _text[0] == ' ') break;
                     completeEntry(toTrimmedString());
-                    _parent.getFunctions().requestNextReceiver(_return_to);
-                    return 0;
+                    return _rpnf.requestNextReceiver(_return_to);
                 case 'c': // erase
                     _text.Remove(3, 1);
                     _text.Insert(0, ' ');
                     if (_text[3] != ' ') break;
                     completeEntry(toTrimmedString());
-                    _parent.getFunctions().requestNextReceiver(_return_to);
-                    return 0;
+                    return _rpnf.requestNextReceiver(_return_to);
                 default:
                     break;
             }
@@ -80,17 +79,18 @@ namespace MK52Simulator
 
         protected virtual void completeEntry( string value)
         {
+            Program_Memory pm = _parent._m_Program_Memory;
             if (value.Length == 0)
             {
-                _parent._m_Program_Memory.replaceLine_P("");
+                pm.replaceLine_P("");
                 return;
             }
             uint addr = Convert.ToUInt32(value);
             StringBuilder sb = new StringBuilder();
-            sb.Append(_parent._m_Program_Memory.getCurrentLine());
+            sb.Append(pm.getCurrentLine());
             sb.Append(addr.ToString("0000"));
-            _parent._m_Program_Memory.replaceLine(sb.ToString());
-            _parent._m_Program_Memory.incrementCounter();
+            pm.replaceLine(sb.ToString());
+            pm.incrementCounter();
         }
 
         protected virtual void updateDisplay(string value)

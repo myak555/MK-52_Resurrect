@@ -39,14 +39,12 @@ namespace MK52Simulator
 
                 // Column 0
                 case 1:
-                    _rpnf.requestNextReceiver("DATA_F");
-                    return 0;
+                    return _rpnf.requestNextReceiver("DATA_F");
                 case 2:
-                    _rpnf.requestNextReceiver("DATA_K");
-                    return 0;
+                    return _rpnf.requestNextReceiver("DATA_K");
                 case 4:
-                    // _rpnf.execute(RPN_Functions.FUNC_TOGGLE_DMOD, "");
-                    // base.tick(0);
+                    //_parent._m_RPN_Stack.toggleAngleMode();
+                    // return base.tick(0);
                     return 0;
 
                 // Column 1 does nothing (for now)
@@ -56,8 +54,7 @@ namespace MK52Simulator
 
                 // Column 5
                 case 24:
-                    _rpnf.requestNextReceiver("FILE_N");
-                    return 0;
+                    return _rpnf.requestNextReceiver("FILE_N");
 
                 // Column 6 does nothing (for now)
 
@@ -69,8 +66,7 @@ namespace MK52Simulator
                 default: // all other buttons do nothing, keeping A-mode
                     return 0;
             }
-            //_rpnf.requestNextReceiver("DATA_N");
-            //return 0;
+            //return _rpnf.requestNextReceiver("DATA_N");
         }
     }
 }

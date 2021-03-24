@@ -42,11 +42,9 @@ namespace MK52Simulator
 
                 // Column 0
                 case 2:
-                    _rpnf.requestNextReceiver("PROG_K");
-                    return 0;
+                    return _rpnf.requestNextReceiver("PROG_K");
                 case 3:
-                    _rpnf.requestNextReceiver("PROG_A");
-                    return 0;
+                    return _rpnf.requestNextReceiver("PROG_A");
                 case 4:
                     _rpnf.appendProgramLine_P(RPN_Functions.FUNC_SET_DMOD_DEG);
                     break;
@@ -54,38 +52,30 @@ namespace MK52Simulator
                 // Column 1
                 case 5:
                     _rpnf.appendProgramLine_P(RPN_Functions.FUNC_IFNOTLT0);
-                    _rpnf.requestNextReceiver("ADDRESS", "PROG_N");
-                    return 0;
+                    return _rpnf.requestNextReceiver("ADDRESS", "PROG_N");
                 case 6:
                     _rpnf.appendProgramLine_P(RPN_Functions.FUNC_IFNOTEQ0);
-                    _rpnf.requestNextReceiver("ADDRESS", "PROG_N");
-                    return 0;
+                    return _rpnf.requestNextReceiver("ADDRESS", "PROG_N");
                 case 7:
                     _rpnf.appendProgramLine_P(RPN_Functions.FUNC_IFNOTGE0);
-                    _rpnf.requestNextReceiver("ADDRESS", "PROG_N");
-                    return 0;
+                    return _rpnf.requestNextReceiver("ADDRESS", "PROG_N");
                 case 8:
                     _rpnf.appendProgramLine_P(RPN_Functions.FUNC_IFNOTNE0);
-                    _rpnf.requestNextReceiver("ADDRESS", "PROG_N");
-                    return 0;
+                    return _rpnf.requestNextReceiver("ADDRESS", "PROG_N");
 
                 // Column 2 does nothing (for now)
                 case 9:
                     _rpnf.appendProgramLine_P(RPN_Functions.FUNC_L0);
-                    _rpnf.requestNextReceiver("ADDRESS", "PROG_N");
-                    return 0;
+                    return _rpnf.requestNextReceiver("ADDRESS", "PROG_N");
                 case 10:
                     _rpnf.appendProgramLine_P(RPN_Functions.FUNC_L1);
-                    _rpnf.requestNextReceiver("ADDRESS", "PROG_N");
-                    return 0;
+                    return _rpnf.requestNextReceiver("ADDRESS", "PROG_N");
                 case 11:
                     _rpnf.appendProgramLine_P(RPN_Functions.FUNC_L2);
-                    _rpnf.requestNextReceiver("ADDRESS", "PROG_N");
-                    return 0;
+                    return _rpnf.requestNextReceiver("ADDRESS", "PROG_N");
                 case 12:
                     _rpnf.appendProgramLine_P(RPN_Functions.FUNC_L3);
-                    _rpnf.requestNextReceiver("ADDRESS", "PROG_N");
-                    return 0;
+                    return _rpnf.requestNextReceiver("ADDRESS", "PROG_N");
 
                 // Column 3
                 case 13:
@@ -126,8 +116,7 @@ namespace MK52Simulator
                     _rpnf.appendProgramLine_P(RPN_Functions.FUNC_LN);
                     break;
                 case 24:
-                    _rpnf.requestNextReceiver("AUTO_N");
-                    return 0;
+                    return _rpnf.requestNextReceiver("AUTO_N");
 
                 // Column 6
                 case 25:
@@ -141,8 +130,7 @@ namespace MK52Simulator
                     break;
                 case 28:
                     // PROG is already on
-                    _rpnf.requestNextReceiver("PROG_N");
-                    return 0;
+                    return _rpnf.requestNextReceiver("PROG_N");
 
                 // Column 7
                 case 29:
@@ -156,8 +144,7 @@ namespace MK52Simulator
                     break;
                 case 32:
                     // Clear F mode
-                    _rpnf.requestNextReceiver("PROG_N");
-                    return 0;
+                    return _rpnf.requestNextReceiver("PROG_N");
                 case 33:
                     // Shutdown signal
                     _rpnf.requestNextReceiver("PROG_N");
@@ -166,8 +153,7 @@ namespace MK52Simulator
                     return 0;
             }
             _rpnf.execute(RPN_Functions.FUNC_INCREMENT_PC);
-            _rpnf.requestNextReceiver("PROG_N");
-            return 0;
+            return _rpnf.requestNextReceiver("PROG_N");
         }
     }
 }

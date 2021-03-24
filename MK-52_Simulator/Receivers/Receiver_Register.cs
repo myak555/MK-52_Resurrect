@@ -41,13 +41,14 @@ namespace MK52Simulator
 
         public override byte tick(byte scancode)
         {
+            RPN_Functions _rpnf = _parent.getFunctions();  
             char c = _convertButton(_RR_ButtonConversion, scancode);
             switch (c)
             {
                 case (char)0:
                     return 0;
                 case 'f': // entry completed, action needed
-                    _parent.getFunctions().requestNextReceiver(_return_to);
+                    _rpnf.requestNextReceiver(_return_to);
                     return scancode;
                 case 'a':
                     _text.Append("L0");
@@ -66,8 +67,7 @@ namespace MK52Simulator
                     break;
             }
             completeEntry( toString());
-            _parent.getFunctions().requestNextReceiver(_return_to);
-            return 0;
+            return _rpnf.requestNextReceiver(_return_to);
         }
 
         protected virtual void completeEntry( string value)

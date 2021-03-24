@@ -34,16 +34,13 @@ namespace MK52Simulator
 
                 // Column 0
                 case 1:
-                    _rpnf.requestNextReceiver("AUTO_F");
-                    return 0;
+                    return _rpnf.requestNextReceiver("AUTO_F");
                 case 2:
-                    _rpnf.requestNextReceiver("AUTO_K");
-                    return 0;
+                    return _rpnf.requestNextReceiver("AUTO_K");
                 case 3:
-                    _rpnf.requestNextReceiver("AUTO_A");
-                    return 0;
+                    return _rpnf.requestNextReceiver("AUTO_A");
                 case 4:
-                    _rpnf.execute(RPN_Functions.FUNC_TOGGLE_DMOD, "");
+                    _parent._m_RPN_Stack.toggleAngleMode();
                     break;
 
                 // Column 1
@@ -57,19 +54,15 @@ namespace MK52Simulator
                     _rpnf.execute(RPN_Functions.FUNC_RESET_PC);
                     break;
                 case 8:
-                    _rpnf.requestNextReceiver("AUTO_R");
-                    return 0;
+                    return _rpnf.requestNextReceiver("AUTO_R");
 
                 // Column 2
                 case 9:
-                    _rpnf.requestNextReceiver("REGISTER_MX");
-                    return 0;
+                    return _rpnf.requestNextReceiver("REGISTER_MX");
                 case 10:
-                    _rpnf.requestNextReceiver("REGISTER_XM");
-                    return 0;
+                    return _rpnf.requestNextReceiver("REGISTER_XM");
                 case 11:
-                    _rpnf.requestNextReceiver("ADDRESS_PC");
-                    return 0;
+                    return _rpnf.requestNextReceiver("ADDRESS_PC");
                 case 12:
                     _rpnf.executeStep();
                     break;
@@ -106,8 +99,7 @@ namespace MK52Simulator
                     else _rpnf.execute(RPN_Functions.FUNC_CLEAR_X);
                     break;
                 case 33:
-                    _rpnf.requestNextReceiver("OFF");
-                    return 0;
+                    return _rpnf.requestNextReceiver("OFF");
 
                 default: // all other buttons activate number entry
                     _rpnf.execute(RPN_Functions.FUNC_ENTER);

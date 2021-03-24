@@ -39,14 +39,12 @@ namespace MK52Simulator
 
                 // Column 0
                 case 1:
-                    _rpnf.requestNextReceiver("DATA_F");
-                    return 0;
+                    return _rpnf.requestNextReceiver("DATA_F");
                 case 3:
-                    _rpnf.requestNextReceiver("DATA_A");
-                    return 0;
+                    return _rpnf.requestNextReceiver("DATA_A");
                 case 4:
-                    //    _rpnf.execute(RPN_Functions.FUNC_TOGGLE_DMOD, "");
-                    //    base.tick(0);
+                    //_parent._m_RPN_Stack.toggleAngleMode();
+                    //    return base.tick(0);
                     return 0;
 
                 // Column 1 does nothing (for now)
@@ -58,8 +56,7 @@ namespace MK52Simulator
 
                 // Column 7
                 case 32:
-                    _rpnf.requestNextReceiver("Data_Erase");
-                    return 0;
+                    return _rpnf.requestNextReceiver("Data_Erase");
 
                 case 33:
                     // Shutdown signal
@@ -69,8 +66,7 @@ namespace MK52Simulator
                 default: // all other buttons do nothing, keeping K-mode
                     return 0;
             }
-            //_rpnf.requestNextReceiver("DATA_N");
-            //return 0;
+            //return _rpnf.requestNextReceiver("DATA_N");
         }
     }
 }

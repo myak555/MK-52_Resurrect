@@ -61,8 +61,6 @@ namespace MK52Simulator
             return _text.ToString().TrimStart();
         }
 
-        public uint getMode() { return _mode; }
-
         public string getReturnReceiverMoniker()
         {
             if (_return_to.Length <= 0) return "AUTO_N"; // as minimum need to return to AUTO_N

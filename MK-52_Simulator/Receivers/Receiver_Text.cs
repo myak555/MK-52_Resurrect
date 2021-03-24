@@ -44,6 +44,7 @@ namespace MK52Simulator
 
         public override byte tick(byte scancode)
         {
+            RPN_Functions _rpnf = _parent.getFunctions(); 
             switch( scancode)
             {
                 case 0:
@@ -55,15 +56,14 @@ namespace MK52Simulator
                     return 0;
                 case 31:
                     completeEntry(toString());
-                    _parent.getFunctions().requestNextReceiver(_return_to);
-                    return 0;
+                    return _rpnf.requestNextReceiver(_return_to);
                 case 32:
                     if( _text.Length > 0)
                         _text.Remove(_text.Length - 1, 1);
                     updateDisplay(toString());
                     return 0;
                 case 33:
-                    _parent.getFunctions().requestNextReceiver(_return_to);
+                    _rpnf.requestNextReceiver(_return_to);
                     return 33;
                 default: 
                     break;
