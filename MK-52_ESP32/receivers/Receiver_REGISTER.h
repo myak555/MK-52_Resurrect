@@ -25,7 +25,7 @@ void Receiver_Register::activate( int8_t prevReceiver){
     #endif
     Receiver::activate( prevReceiver);
     if( _RECEIVER_PROG_N <= prevReceiver && prevReceiver <=_RECEIVER_PROG_A)
-        _lcd->updateTerminalLine(10, _rpnf->progMem->getCurrentLine());
+        _lcd->updateTerminalLine(10, _rpnf->progMem->toString( _rpnf->getOutputBuffer(), PROGRAM_LINE_LENGTH));
     _lcd->updateStatusFMODE( _funlabel);
     memset(_text, 0, 3);
 }
@@ -54,11 +54,11 @@ uint8_t Receiver_Register::tick( uint8_t scancode){
 }
 
 void Receiver_Register::completeEntry( char *value){
+    Program_Memory *pm = _rpnf->progMem;
     if (value[0] == 0){
-        _rpnf->progMem->replaceLine_P(PSTR(""));
+        pm->deleteLine();
         return;
     }
-    Program_Memory *pm = _rpnf->progMem;
     _rpnf->setOutputBuffer(pm->getCurrentLine());
     _rpnf->appendOutputBuffer(value);
     pm->replaceLine(_rpnf->getOutputBuffer());

@@ -42,6 +42,8 @@ void Receiver_PROG::activate( int8_t prevReceiver){
     TargetTime = millis() - TargetTime;
     Serial.print("Activated in ");
     Serial.print ( TargetTime);
+    Serial.print("PC = ");
+    Serial.print ( pm->getCounter());
     Serial.println (" ms");
     #endif
 }

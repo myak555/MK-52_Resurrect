@@ -197,3 +197,25 @@ void Receiver_Number_DATA::updateDisplay( char *value){
     _rpnf->appendOutputBuffer( toTrimmedString());
     _lcd->updateTerminalLine(SCREEN_ROWS-2, buff);
 }
+
+//
+// Entering numbers in PROG mode
+//
+
+Receiver_Number_PROG::Receiver_Number_PROG(void *components[]) : Receiver_Number::Receiver_Number(components){
+    Moniker = _RECEIVER_NUMBER_PROG;
+}
+
+void Receiver_Number_PROG::completeEntry( char *value){
+    Program_Memory *pm = _rpnf->progMem;
+    pm->updateLine(toTrimmedString());
+    pm->incrementCounter();
+}
+
+void Receiver_Number_PROG::updateDisplay( char *value){
+    Program_Memory *pm = _rpnf->progMem;
+    char *buff = _rpnf->getOutputBuffer();
+    pm->toCounterString(buff, 10);
+    _rpnf->appendOutputBuffer( toTrimmedString());
+    _lcd->updateTerminalLine(SCREEN_ROWS-2, buff);
+}

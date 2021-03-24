@@ -75,14 +75,14 @@ char *Receiver_Address::toTrimmedString(){
 }
 
 void Receiver_Address::completeEntry( char *value){
+    Program_Memory *pm = _rpnf->progMem;
     if (value[0] == 0){
-        _rpnf->progMem->replaceLine_P(PSTR(""));
+        pm->deleteLine();
         return;
     }
     for( int8_t i=0; i<3; i++){
-        if( _text[i] = ' ') _text[i] = '0';
+        if( _text[i] == ' ') _text[i] = '0';
     }
-    Program_Memory *pm = _rpnf->progMem;
     _rpnf->setOutputBuffer(pm->getCurrentLine());
     _rpnf->appendOutputBuffer(_text);
     pm->replaceLine(_rpnf->getOutputBuffer());
@@ -91,8 +91,9 @@ void Receiver_Address::completeEntry( char *value){
 
 void Receiver_Address::updateDisplay( char *value){
     Program_Memory *pm = _rpnf->progMem;
-    _rpnf->setOutputBuffer(pm->getCurrentLine());
-    _rpnf->appendOutputBuffer( value);
+    char *buff = _rpnf->getOutputBuffer();
+    pm->toString(buff, PROGRAM_LINE_LENGTH-4);
+    _rpnf->appendOutputBuffer( toTrimmedString());
     _lcd->updateTerminalLine(10, _rpnf->getOutputBuffer());
 }
 
