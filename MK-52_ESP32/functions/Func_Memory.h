@@ -79,7 +79,3 @@ void Func_RToMex::execute( void *components[], char *command){
     uint8_t *ptrR = rm->_registerAddress( rm->registerByName( command));
     memcpy( ptrE, ptrR, 9);
 }
-
-void Func_MexClr::execute( void *components[], char *command){
-    _ExtMem(components)->clearCurrent();
-}

@@ -49,11 +49,13 @@ namespace MK52_Interpreter{
 
             void setTrigAccuracyWarning( double value);
             bool setNegativeRootWarning( double value);
+
+            char _DataEntry[SCREEN_COLS+1];
         private:
             uint8_t _stackValues[(RPN_STACK_SIZE+1)*9];
             char _stackLabels[SCREEN_COLS*4+4];
             uint8_t _dMode = DMODE_DEGREES;
-            char _dModeName[5];
+            char _dModeName[4];
     };
 }
 

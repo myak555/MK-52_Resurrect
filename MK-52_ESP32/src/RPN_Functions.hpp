@@ -52,17 +52,32 @@ namespace MK52_Interpreter{
             bool loadAll( char *name=NULL);
             bool saveAll( char *name=NULL);
 
-            inline char *formFileName(char *name){
-                return _sd->makeEntityName( name);};
+            char *formFileName(char *name, const char* ext=NULL);
             bool fileExists(char *name){
                 return _sd->checkEntityExists((const char *)name);};
+            inline const char *_defaultProgramExt(){return PSTR(".MK52");};
+            inline const char *_defaultDataExt(){return PSTR(".DAT");};;
 
-            // TODO: add receivers
+            inline uint8_t requestNextReceiver(int8_t id=-1, int8_t exitTo=-1){
+                _receiverRequested = id;
+                _receiverReturnRequested = exitTo;
+                return 0;};
+            inline int8_t getRequestedReceiver(){
+                int8_t tmp = _receiverRequested;
+                _receiverRequested = -1;
+                return tmp;};
+            inline int8_t getRequestedReturnReceiver(){
+                int8_t tmp = _receiverReturnRequested;
+                _receiverReturnRequested = -1;
+                return tmp;};
             inline void appendProgramLine_P( int16_t id){
                 progMem->updateLine_P( getFunctionByID(id)->Name());}
+            inline UniversalValue *getUV(){return _tmpuv;};
 
       private:
             void **_components;
+            int8_t _receiverRequested;
+            int8_t _receiverReturnRequested;
             MK52_Hardware::SD_Manager *_sd = NULL;
             uint16_t _nfunctions = 0;
             void *_functions[MK52_NFUNCTIONS];

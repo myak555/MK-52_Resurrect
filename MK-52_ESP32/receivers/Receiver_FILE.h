@@ -231,11 +231,11 @@ uint8_t Receiver_FILE_K::tick( uint8_t scancode){
         // Column 5 does nothing (for now)
         // Column 6
         case 28:
-            return _rpnf->requestNextReceiver(_RECEIVER_DATA_Erase, _RECEIVER_DATA_N);
+            return _rpnf->requestNextReceiver(_RECEIVER_DATA_Erase);
 
         // Column 7
         case 32:
-            return _rpnf->requestNextReceiver(_RECEIVER_PROG_Erase, _RECEIVER_PROG_N);
+            return _rpnf->requestNextReceiver(_RECEIVER_PROG_Erase);
 
         case 33:
             // Shutdown signal

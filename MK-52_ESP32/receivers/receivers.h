@@ -41,17 +41,16 @@
 
 #define _RECEIVER_TEXT                  33
 
-#define _RECEIVER_Confirmation          34
-#define _RECEIVER_DATA_Erase            35
+#define _RECEIVER_PROG_Erase            34
+#define _RECEIVER_DATA_Erase            35 
 #define _RECEIVER_FILE_All              36
-#define _RECEIVER_FILE_Data             37
+#define _RECEIVER_FILE_Data             37 
 #define _RECEIVER_FILE_Delete           38
 #define _RECEIVER_FILE_MkDir            39
 #define _RECEIVER_FILE_Name             40
 #define _RECEIVER_FILE_Overwrite        41
 #define _RECEIVER_FILE_Overwrite_All    42
 #define _RECEIVER_FILE_Overwrite_Data   43
-#define _RECEIVER_PROG_Erase            44
 
-#define N_RECEIVERS                     45
+#define N_RECEIVERS                     44
 #define N_DISPLAY_RECEIVERS             17

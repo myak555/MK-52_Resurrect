@@ -59,6 +59,7 @@ uint32_t Extended_Memory::setCounter(uint32_t address){
     return _counter;
 }
 uint32_t Extended_Memory::setCounter(char *text){
+    if( text == NULL) return _counter;
     #ifdef __DEBUG
     Serial.print( "Processing address: ");
     Serial.println( text);

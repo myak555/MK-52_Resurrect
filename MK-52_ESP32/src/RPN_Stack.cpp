@@ -36,6 +36,7 @@ static double _DMODE_ConversionsToRadian[] = {1.7453292519943295e-2, 1.0, 1.5707
 static double _DMODE_ConversionsFromRadian[] = {57.29577951308232, 1.0, 63.66197723675813};
 
 void RPN_Stack::init( void *components[]){
+    _DataEntry[0] = 0;
     Bx = new UniversalValue(_stackValues);
     X = new UniversalValue(_stackValues+9);
     Y = new UniversalValue(_stackValues+18);

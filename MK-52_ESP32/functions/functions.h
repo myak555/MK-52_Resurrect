@@ -5,7 +5,6 @@
 #define FUNC_DECREMENT_MC       5
 #define FUNC_RESET_PC           6
 #define FUNC_RESET_MC           7
-#define FUNC_TOGGLE_DMOD        8
 #define FUNC_SET_DMOD_DEG       9
 #define FUNC_SET_DMOD_RAD       10
 #define FUNC_SET_DMOD_GRD       11
@@ -70,8 +69,6 @@
 #define FUNC_XTOMEX             70
 #define FUNC_MEXTOR             71
 #define FUNC_RTOMEX             72
-#define FUNC_MEXCLR             73
-#define FUNC_TOGGLE_EMOD        74
 #define FUNC_STOP               75
 #define FUNC_MKDIR              76
 #define FUNC_UPDIR              77

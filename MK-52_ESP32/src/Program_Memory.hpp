@@ -54,8 +54,8 @@ namespace MK52_Interpreter{
         void getPreviousLines( char *lines[], uint8_t n);
         bool isAtStop();
 
-        char *toString( char *text, int8_t n);
-        char *toCounterString( char *text, int8_t n);
+        char *toString( char *text, int16_t textLength);
+        char *toCounterString( char *text, int16_t textLength);
 
         inline uint32_t getCallStackPtr(){
           return _returnStackPtr >> 1;};
@@ -69,7 +69,7 @@ namespace MK52_Interpreter{
         uint32_t _current = 0;
         uint8_t *_buffer = NULL;
         uint8_t _eMode = EMODE_OWERWRITE;
-        char _eModeName[5];
+        char _eModeName[4];
         uint32_t *_returnStack = NULL;
         uint32_t _returnStackPtr = 0;
         char *_modifyAddress(char *address, uint32_t fromLine, int32_t shift);

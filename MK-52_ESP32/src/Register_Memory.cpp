@@ -38,8 +38,11 @@ void Register_Memory::clear(){
     for( int i=0; i<REGISTER_MEMORY_SIZE; i+=9) _buffer[i] = VALUE_TYPE_INTEGER;
 }
 
+//
+// To maintain compatibility, Bx is not performed!
+//
 void Register_Memory::MtoX(int8_t n){
-    _rst->storeBx();
+    //_rst->storeBx();
     _rst->push();
     if( n<0 || n>=REGISTER_MEMORY_NVALS){
         _rst->X->fromInt(0);
@@ -57,8 +60,11 @@ void Register_Memory::XtoM(int8_t n){
     _uv->toLocation(_registerAddress(n));
 }
 
+//
+// To maintain compatibility, Bx is not performed!
+//
 void Register_Memory::K_MtoX(int8_t n){
-    _rst->storeBx();
+    //_rst->storeBx();
     _rst->push();
     if( n<0 || n>=REGISTER_MEMORY_NVALS) return;
     _uv->fromLocation(_registerAddress(n));
@@ -87,8 +93,11 @@ void Register_Memory::K_XtoM(int8_t n){
     A_XtoM( index);
 }
 
+//
+// To maintain compatibility, Bx is not performed!
+//
 void Register_Memory::A_MtoX(int64_t index){
-    _rst->storeBx();
+    //_rst->storeBx();
     _rst->push();
     if( index<0 || index>=EXTENDED_MEMORY_NVALS){
         _rst->X->fromInt(0);
@@ -110,8 +119,11 @@ void Register_Memory::A_XtoM(int64_t index){
     _rst->X->toLocation( ptr);
 }
 
+//
+// To maintain compatibility, Bx is not performed!
+//
 void Register_Memory::A_MtoX(char *address){
-    _rst->storeBx();
+    //_rst->storeBx();
     _rst->push();
     _emem->setCounter(address);
     uint8_t *ptr = _emem->getCurrentLine();

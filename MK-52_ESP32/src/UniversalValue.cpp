@@ -21,6 +21,11 @@ const char _standard_NumberComponents[] PROGMEM = "0123456789+-Ee.";
 
 using namespace MK52_Interpreter;
 
+UniversalValue::UniversalValue(){
+    _ptr = (uint8_t *)malloc(9);
+    fromEmpty();
+}
+
 UniversalValue::UniversalValue( uint8_t *location){
     _ptr = location;
 }

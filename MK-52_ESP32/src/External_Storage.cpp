@@ -15,10 +15,12 @@ using namespace MK52_Interpreter;
 
 const char SettingsFile[] PROGMEM = "/_MK52_Settings.txt";
 const char StatusFile[] PROGMEM = "/_MK52_Status.MK52";
-const char SD_DefaultExt[] PROGMEM = ".MK52";
-const char SD_DefaultDateExt[] PROGMEM = ".DAT";
 
 char *RPN_Functions::setOutputBuffer(char *text){
+    if( text == NULL || text[0] == 0){
+        _text[0] = 0;
+        return _text;
+    }
     strncpy( _text, text, PROGRAM_LINE_LENGTH);
     _text[PROGRAM_LINE_LENGTH] = 0;
     return _text;
@@ -27,12 +29,17 @@ char *RPN_Functions::setOutputBuffer(char *text){
 char *RPN_Functions::appendOutputBuffer(char *text){
     int ln = strlen( _text);
     if( ln >= PROGRAM_LINE_LENGTH) return _text;
+    if( text == NULL || text[0] == 0) return _text;
     strncpy( _text+ln, text, PROGRAM_LINE_LENGTH-ln);
     _text[PROGRAM_LINE_LENGTH] = 0;
     return _text;
 }
 
 char *RPN_Functions::setOutputBuffer_P(const char *text){
+    if( text == NULL || strlen_P(text) == 0){
+        _text[0] = 0;
+        return _text;
+    }
     strncpy_P( _text, text, PROGRAM_LINE_LENGTH);
     _text[PROGRAM_LINE_LENGTH] = 0;
     return _text;
@@ -41,6 +48,7 @@ char *RPN_Functions::setOutputBuffer_P(const char *text){
 char *RPN_Functions::appendOutputBuffer_P(const char *text){
     int ln = strlen( _text);
     if( ln >= PROGRAM_LINE_LENGTH) return _text;
+    if( strlen_P( text) == 0) return _text;
     strncpy_P( _text+ln, text, PROGRAM_LINE_LENGTH-ln);
     _text[PROGRAM_LINE_LENGTH] = 0;
     return _text;
@@ -160,6 +168,15 @@ bool RPN_Functions::saveAll(char *name){
     _sd->closeFile();
     _sd->readFolderItems();
     return result;
+}
+
+char *RPN_Functions::formFileName(char *name, const char* ext){
+    char *tmpName = _sd->makeEntityName(name);
+    int16_t ln = strlen(tmpName);
+    if( ln<=0 || ext == NULL || ln>=CURRENT_FILE_LEN-5) return tmpName;
+    if (!UniversalValue::_endsWith_P(tmpName, ext))
+        sprintf_P( tmpName+ln, "%s", ext);
+    return tmpName;
 }
 
 bool RPN_Functions::_writeStack(){

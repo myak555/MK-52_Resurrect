@@ -71,14 +71,6 @@ class Func_NOP: public RPN_Function{
         inline void execute( void *components[], char *command){};
 };
 
-class Func_Toggle_EMOD: public RPN_Function{
-    public:
-        inline bool checkID( uint16_t id){ return id == FUNC_TOGGLE_EMOD;};
-        inline void advancePC(void *components[]){};
-        inline void execute( void *components[], char *command){
-            _ProgMem(components)->toggleEditMode();};
-};
-
 class Func_Number: public RPN_Function{
     public:
         inline bool checkName(char *name){ return UniversalValue::_looksLikeANumber(name);};
@@ -700,15 +692,6 @@ class Func_RToMex: public RPN_Function{
         void execute( void *components[], char *command);
 };
 
-class Func_MexClr: public RPN_Function{
-    public:
-        inline bool checkID( uint16_t id){ return id == FUNC_MEXCLR;};
-        inline bool checkName(char *name){ return UniversalValue::_startsWith_P( name, Name());};
-        inline const char*Name(){ return PSTR("MexCx");};
-        inline const char*IOName(){ return Name();}; // TODO
-        void execute( void *components[], char *command);
-};
-
 //
 // Number
 // 
@@ -1008,14 +991,6 @@ class Func_Rad2D: public RPN_Function{
         inline const char*Name(){ return PSTR("RAD->DEG");};
         inline const char*IOName(){ return Name();}; // TODO
         void execute( void *components[], char *command);
-};
-
-class Func_Toggle_DMOD: public RPN_Function{
-    public:
-        inline bool checkID( uint16_t id){ return id == FUNC_TOGGLE_DMOD;};
-        inline void advancePC(void *components[]){};
-        inline void execute( void *components[], char *command){
-            _Stack( components)->toggleAngleMode();};
 };
 
 class Func_set_DMOD_DEG: public RPN_Function{

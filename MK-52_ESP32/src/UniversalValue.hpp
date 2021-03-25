@@ -14,6 +14,7 @@
 namespace MK52_Interpreter{
     class UniversalValue{
         public:
+            UniversalValue();
             UniversalValue( uint8_t *location);
 
             inline uint8_t getType(){return *_ptr;};

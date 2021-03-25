@@ -57,8 +57,6 @@ void RPN_Functions::init( void *components[]) {
     _appendFunction( new Func_Reset_PC());
     // #define FUNC_RESET_MC           7
     _appendFunction( new Func_Reset_MC());
-    // #define FUNC_TOGGLE_DMOD        8
-    _appendFunction( new Func_Toggle_DMOD());
     // #define FUNC_SET_DMOD_DEG       9
     _appendFunction( new Func_set_DMOD_DEG());
     // #define FUNC_SET_DMOD_RAD       10
@@ -187,10 +185,6 @@ void RPN_Functions::init( void *components[]) {
     _appendFunction( new Func_MexToR());
     // #define FUNC_RTOMEX             72
     _appendFunction( new Func_RToMex());
-    // #define FUNC_MEXCLR             73
-    _appendFunction( new Func_MexClr());
-    // #define FUNC_TOGGLE_EMOD        74
-    _appendFunction( new Func_Toggle_EMOD());
     // #define FUNC_STOP               75
     _appendFunction( new Func_Stop());
     // #define FUNC_MKDIR              76

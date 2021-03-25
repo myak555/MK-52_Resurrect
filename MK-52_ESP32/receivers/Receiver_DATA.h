@@ -136,7 +136,7 @@ uint8_t Receiver_DATA_N::tick( uint8_t scancode){
             _rpnf->execute(FUNC_INCREMENT_MC);
             break;
         case 32:
-            _rpnf->execute(FUNC_MEXCLR);
+            _rpnf->extMem->clearCurrent();
             _rpnf->execute(FUNC_INCREMENT_MC);
             break;
 

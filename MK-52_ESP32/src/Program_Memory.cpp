@@ -72,6 +72,7 @@ uint32_t Program_Memory::setCounter(uint32_t address){
     return _counter;
 }
 uint32_t Program_Memory::setCounter(char *text){
+    if( text == NULL) return _counter;
     int ln = strlen(text);
     if( ln <= 0) return _counter;
     if( text[0]==' ') return _counter;
@@ -406,14 +407,14 @@ bool Program_Memory::isAtStop(){
     return UniversalValue::_identicalTo_P( getCurrentLine(), PSTR("STOP"));
 }
 
-char *Program_Memory::toString( char *text, int8_t n){
-    snprintf_P( text, n, PSTR("%04u> %s"), _counter, getCurrentLine());
-    text[n-1] = 0;
+char *Program_Memory::toString( char *text, int16_t textLength){
+    snprintf_P( text, textLength, PSTR("%04u> %s"), _counter, getCurrentLine());
+    text[textLength] = 0;
     return text;   
 }
 
-char *Program_Memory::toCounterString( char *text, int8_t n){
-    snprintf_P( text, n, PSTR("%04u> "), _counter);
+char *Program_Memory::toCounterString( char *text, int16_t textLength){
+    snprintf_P( text, textLength, PSTR("%04u> "), _counter);
     text[6] = 0;
     return text;   
 }

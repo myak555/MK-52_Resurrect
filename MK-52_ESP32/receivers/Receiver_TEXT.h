@@ -53,6 +53,7 @@ uint8_t Receiver_Text::tick( uint8_t scancode){
             updateDisplay(toString());
             return 0;
         case 33:
+            if( _text != NULL) free(_text);
             _rpnf->requestNextReceiver(_return_to);
             return 33;
         default: 

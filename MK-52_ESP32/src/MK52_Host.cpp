@@ -20,37 +20,6 @@ static MK52_Interpreter::Extended_Memory _m_Extended_Memory;
 static MK52_Interpreter::Register_Memory _m_Register_Memory;
 static MK52_Interpreter::RPN_Functions _m_RPN_Functions;
 
-static MK52_Interpreter::Receiver_Number _m_Receiver_Number;
-static MK52_Interpreter::Receiver_Text _m_Receiver_Text;
-static MK52_Interpreter::Receiver_Address _m_Receiver_Address;
-static MK52_Interpreter::Receiver_Register _m_Receiver_Register;
-
-static MK52_Interpreter::Display_AUTO _m_Display_AUTO;
-static MK52_Interpreter::Display_PROG _m_Display_PROG;
-static MK52_Interpreter::Display_FILE _m_Display_FILE;
-static MK52_Interpreter::Display_DATA _m_Display_DATA;
-
-static MK52_Interpreter::Receiver_AUTO_N _m_Receiver_AUTO_N;
-static MK52_Interpreter::Receiver_AUTO_F _m_Receiver_AUTO_F;
-static MK52_Interpreter::Receiver_AUTO_K _m_Receiver_AUTO_K;
-static MK52_Interpreter::Receiver_AUTO_A _m_Receiver_AUTO_A;
-static MK52_Interpreter::Receiver_AUTO_R _m_Receiver_AUTO_R;
-
-static MK52_Interpreter::Receiver_PROG_N _m_Receiver_PROG_N;
-static MK52_Interpreter::Receiver_PROG_F _m_Receiver_PROG_F;
-static MK52_Interpreter::Receiver_PROG_K _m_Receiver_PROG_K;
-static MK52_Interpreter::Receiver_PROG_A _m_Receiver_PROG_A;
-
-static MK52_Interpreter::Receiver_DATA_N _m_Receiver_DATA_N;
-static MK52_Interpreter::Receiver_DATA_F _m_Receiver_DATA_F;
-static MK52_Interpreter::Receiver_DATA_K _m_Receiver_DATA_K;
-static MK52_Interpreter::Receiver_DATA_A _m_Receiver_DATA_A;
-
-static MK52_Interpreter::Receiver_FILE_N _m_Receiver_FILE_N;
-static MK52_Interpreter::Receiver_FILE_F _m_Receiver_FILE_F;
-static MK52_Interpreter::Receiver_FILE_K _m_Receiver_FILE_K;
-static MK52_Interpreter::Receiver_FILE_A _m_Receiver_FILE_A;
-
 using namespace MK52_Interpreter;
 
 //
@@ -91,75 +60,13 @@ void MK52_Host::init() {
     _components[ COMPONENT_REGISTER_MEMORY] = &_m_Register_Memory;
     _components[ COMPONENT_FUNCTIONS] = &_m_RPN_Functions;
 
-    // UI data receivers
-    _components[ COMPONENT_RECEIVER_NUMBER] = &_m_Receiver_Number;
-    _components[ COMPONENT_RECEIVER_TEXT] = &_m_Receiver_Text;
-    _components[ COMPONENT_RECEIVER_ADDRESS] = &_m_Receiver_Address;
-    _components[ COMPONENT_RECEIVER_REGISTER] = &_m_Receiver_Register;
-    
-    _components[ COMPONENT_RECEIVER_AUTO_N] = &_m_Receiver_AUTO_N;
-    _components[ COMPONENT_RECEIVER_AUTO_F] = &_m_Receiver_AUTO_F;
-    _components[ COMPONENT_RECEIVER_AUTO_K] = &_m_Receiver_AUTO_K;
-    _components[ COMPONENT_RECEIVER_AUTO_A] = &_m_Receiver_AUTO_A;
-    _components[ COMPONENT_RECEIVER_AUTO_R] = &_m_Receiver_AUTO_R;
-
-    _components[ COMPONENT_RECEIVER_PROG_N] = &_m_Receiver_PROG_N;
-    _components[ COMPONENT_RECEIVER_PROG_F] = &_m_Receiver_PROG_F;
-    _components[ COMPONENT_RECEIVER_PROG_K] = &_m_Receiver_PROG_K;
-    _components[ COMPONENT_RECEIVER_PROG_A] = &_m_Receiver_PROG_A;
-
-    _components[ COMPONENT_RECEIVER_DATA_N] = &_m_Receiver_DATA_N;
-    _components[ COMPONENT_RECEIVER_DATA_F] = &_m_Receiver_DATA_F;
-    _components[ COMPONENT_RECEIVER_DATA_K] = &_m_Receiver_DATA_K;
-    _components[ COMPONENT_RECEIVER_DATA_A] = &_m_Receiver_DATA_A;
-
-    _components[ COMPONENT_RECEIVER_FILE_N] = &_m_Receiver_FILE_N;
-    _components[ COMPONENT_RECEIVER_FILE_F] = &_m_Receiver_FILE_F;
-    _components[ COMPONENT_RECEIVER_FILE_K] = &_m_Receiver_FILE_K;
-    _components[ COMPONENT_RECEIVER_FILE_A] = &_m_Receiver_FILE_A;
-
-    // User interfaces
-    _components[ COMPONENT_DISPLAY_AUTO] = &_m_Display_AUTO;
-    _components[ COMPONENT_DISPLAY_PROG] = &_m_Display_PROG;
-    _components[ COMPONENT_DISPLAY_DATA] = &_m_Display_DATA;
-    _components[ COMPONENT_DISPLAY_FILE] = &_m_Display_FILE;
-
     _m_Program_Memory.init( _components);
     _m_Extended_Memory.init( _components);
     _m_Register_Memory.init( _components);
     _m_RPN_Stack.init( _components);
     _m_RPN_Functions.init( _components);
 
-    _m_Receiver_Number.init( _components);
-    _m_Receiver_Text.init( _components);
-    _m_Receiver_Address.init( _components);
-    _m_Receiver_Register.init( _components);
-
-    _m_Receiver_AUTO_N.init( _components);
-    _m_Receiver_AUTO_F.init( _components);
-    _m_Receiver_AUTO_K.init( _components);
-    _m_Receiver_AUTO_A.init( _components);
-    _m_Receiver_AUTO_R.init( _components);
-    
-    _m_Receiver_PROG_N.init( _components);
-    _m_Receiver_PROG_F.init( _components);
-    _m_Receiver_PROG_K.init( _components);
-    _m_Receiver_PROG_A.init( _components);
-
-    _m_Receiver_DATA_N.init( _components);
-    _m_Receiver_DATA_F.init( _components);
-    _m_Receiver_DATA_K.init( _components);
-    _m_Receiver_DATA_A.init( _components);
-
-    _m_Receiver_FILE_N.init( _components);
-    _m_Receiver_FILE_F.init( _components);
-    _m_Receiver_FILE_K.init( _components);
-    _m_Receiver_FILE_A.init( _components);
-
-    _m_Display_AUTO.init( _components);
-    _m_Display_PROG.init( _components);
-    _m_Display_DATA.init( _components);
-    _m_Display_FILE.init( _components);
+    _addReceivers();
 
     bool result = _m_RPN_Functions.loadState();
  
@@ -174,7 +81,7 @@ void MK52_Host::init() {
     // end splash and start serving keyboard
     _m_Hardware_LCD.waitForEndSplash( splashReady, false);
     #ifdef __DEBUG
-    // testing all displays
+    // testing all displays TODO
     //setDisplay( COMPONENT_DISPLAY_AUTO);
     //delay(DEBUG_SHOW_DELAY);
     //setDisplay( COMPONENT_DISPLAY_FILE);
@@ -185,22 +92,35 @@ void MK52_Host::init() {
     //delay(DEBUG_SHOW_DELAY);
     #endif
 
-    setDisplay( COMPONENT_DISPLAY_AUTO);
+    current_Receiver->activate(_RECEIVER_OFF);
     return;
 }
 
 void MK52_Host::tick(){
-    if( current_Display == NULL) return;
-    int newDisplay = current_Display->tick();
-    if( newDisplay == SHUTDOWN_REQUESTED) shutdown();
-    setDisplay( newDisplay);
+    uint8_t b = _m_Hardware_KBD.scan();
+    do{
+        b = current_Receiver->tick( b);
+        if( setRequestedReceiver()) break;
+    } while( b);
 }
 
-void MK52_Host::setDisplay(int id){
-    if( id<0) return;
-    current_Display = getDisplay( id);
-    if( current_Display == NULL) return;
-    current_Display->activate();
+bool MK52_Host::setReceiver(int id){
+    if( id<0) return true;
+    Receiver *ri = getReceiver( id);
+    if( !ri) return true;
+    ri->activate( current_Receiver->Moniker);
+    current_Receiver = ri;
+    return false;
+}
+
+bool MK52_Host::setRequestedReceiver(){
+    Receiver *ri = getReceiver(_m_RPN_Functions.getRequestedReceiver());
+    if (!ri) return true;
+    int8_t return_to = _m_RPN_Functions.getRequestedReturnReceiver();
+    if (return_to < 0) return_to = current_Receiver->Moniker;
+    ri->activate(return_to);
+    current_Receiver = ri;
+    return false;
 }
 
 //
@@ -213,5 +133,69 @@ void MK52_Host::shutdown(){
     digitalWrite( SYSTEM_POWER_HOLD, t);
 
     // after the power transistor is installed, this will not happen:
-    setDisplay( COMPONENT_DISPLAY_AUTO);
+    //setDisplay( COMPONENT_DISPLAY_AUTO);
+}
+
+Receiver *MK52_Host::_addReceiver( Receiver *rc){
+    #ifdef __DEBUG
+    if( rc->Moniker < 0 || rc->Moniker >= N_RECEIVERS){
+        Serial.print("Incorrect moniker: ");
+        Serial.println( rc->Moniker);
+        return rc;
+    }
+    #endif
+    _receivers[rc->Moniker] = rc;
+    return rc;
+}
+
+void MK52_Host::_addReceivers(){
+    for( int8_t i=0; i<N_RECEIVERS; i++){
+        _receivers[i] = NULL;
+    }
+    current_Receiver = _addReceiver( new Receiver_AUTO_N( _components));
+    _addReceiver( new Receiver_AUTO_F( _components));
+    _addReceiver( new Receiver_AUTO_K( _components));
+    _addReceiver( new Receiver_AUTO_A( _components));
+    _addReceiver( new Receiver_AUTO_R( _components));
+
+    _addReceiver( new Receiver_DATA_N( _components));
+    _addReceiver( new Receiver_DATA_F( _components));
+    _addReceiver( new Receiver_DATA_K( _components));
+    _addReceiver( new Receiver_DATA_A( _components));
+    _addReceiver( new Receiver_DATA_Erase( _components));
+
+    _addReceiver( new Receiver_PROG_N( _components));
+    _addReceiver( new Receiver_PROG_F( _components));
+    _addReceiver( new Receiver_PROG_K( _components));
+    _addReceiver( new Receiver_PROG_A( _components));
+    _addReceiver( new Receiver_PROG_Erase( _components));
+
+    _addReceiver( new Receiver_FILE_N( _components));
+    _addReceiver( new Receiver_FILE_F( _components));
+    _addReceiver( new Receiver_FILE_K( _components));
+    _addReceiver( new Receiver_FILE_A( _components));
+    _addReceiver( new Receiver_FILE_Name( _components));
+    _addReceiver( new Receiver_FILE_Overwrite( _components));
+    _addReceiver( new Receiver_FILE_Overwrite_All( _components));
+    _addReceiver( new Receiver_FILE_Overwrite_Data( _components));
+
+    _addReceiver( new Receiver_Number( _components));
+    _addReceiver( new Receiver_Number_DATA( _components));
+    _addReceiver( new Receiver_Number_PROG( _components));
+
+    _addReceiver( new Receiver_Text( _components));
+
+    _addReceiver( new Receiver_Address( _components));
+    _addReceiver( new Receiver_Address_AMX( _components));
+    _addReceiver( new Receiver_Address_AXM( _components));
+    _addReceiver( new Receiver_Address_MC( _components));
+    _addReceiver( new Receiver_Address_PC( _components));
+
+    _addReceiver( new Receiver_Register( _components));
+    _addReceiver( new Receiver_Register_MX( _components));
+    _addReceiver( new Receiver_Register_XM( _components));
+    _addReceiver( new Receiver_Register_KMX( _components));
+    _addReceiver( new Receiver_Register_KXM( _components));
+    _addReceiver( new Receiver_Register_ME( _components));
+    _addReceiver( new Receiver_Register_EM( _components));
 }
