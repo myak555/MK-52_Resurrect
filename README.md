@@ -5,7 +5,7 @@ Available resources:
 
 * Working simulator in C# (except for keyboard macros). [Installer here](https://github.com/myak555/MK-52_Resurrect/tree/main/Install) 
 * ESP32 hardware completed except for power transistors (components ordered)
-* ESP32 code fully operational (but may have some non-critical bugs still!)
+* ESP32 code fully operational (additional functionality in v.2.!)
 * [Wiki](https://github.com/myak555/MK-52_Resurrect/wiki) about 75% done
 * [MK-52 program examples](https://github.com/myak555/MK-52_Resurrect/tree/main/MK-52_Sample_Programs)
 
