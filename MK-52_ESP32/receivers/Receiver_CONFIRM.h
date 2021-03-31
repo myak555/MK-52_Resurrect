@@ -73,6 +73,19 @@ void Receiver_PROG_Erase::performAction(){
 }
 
 //
+// Confirms file deletion
+//
+
+Receiver_FILE_Delete::Receiver_FILE_Delete(void *components[]) : Receiver_CONFIRM::Receiver_CONFIRM(components){
+    Moniker = _RECEIVER_FILE_Delete;
+    strcpy_P( _Question, PSTR("Delete? (\x18)"));
+}
+
+void Receiver_FILE_Delete::performAction(){
+    _rpnf->execute(FUNC_REMOVE);
+}
+
+//
 // Confirms Program overwrite
 //
 

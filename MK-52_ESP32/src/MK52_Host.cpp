@@ -80,19 +80,7 @@ void MK52_Host::init() {
 
     // end splash and start serving keyboard
     _m_Hardware_LCD.waitForEndSplash( splashReady, false);
-    #ifdef __DEBUG
-    // testing all displays TODO
-    //setDisplay( COMPONENT_DISPLAY_AUTO);
-    //delay(DEBUG_SHOW_DELAY);
-    //setDisplay( COMPONENT_DISPLAY_FILE);
-    //delay(DEBUG_SHOW_DELAY);
-    //setDisplay( COMPONENT_DISPLAY_DATA);
-    //delay(DEBUG_SHOW_DELAY);
-    //setDisplay( COMPONENT_DISPLAY_PROG);
-    //delay(DEBUG_SHOW_DELAY);
-    #endif
-
-    current_Receiver->activate(_RECEIVER_OFF);
+    _m_RPN_Functions.requestNextReceiver( _RECEIVER_AUTO_N);
     return;
 }
 
@@ -123,19 +111,6 @@ bool MK52_Host::setRequestedReceiver(){
     return false;
 }
 
-//
-// For now, it is just a demo code for debugging (TODO)
-//
-void MK52_Host::shutdown(){
-    bool t = !(getKBD()->LEDOn);
-    getKBD()->LEDOn = t;
-    _m_RPN_Functions.saveState();
-    digitalWrite( SYSTEM_POWER_HOLD, t);
-
-    // after the power transistor is installed, this will not happen:
-    //setDisplay( COMPONENT_DISPLAY_AUTO);
-}
-
 Receiver *MK52_Host::_addReceiver( Receiver *rc){
     #ifdef __DEBUG
     if( rc->Moniker < 0 || rc->Moniker >= N_RECEIVERS){
@@ -152,7 +127,8 @@ void MK52_Host::_addReceivers(){
     for( int8_t i=0; i<N_RECEIVERS; i++){
         _receivers[i] = NULL;
     }
-    current_Receiver = _addReceiver( new Receiver_AUTO_N( _components));
+    current_Receiver = _addReceiver( new Receiver_OFF( _components));
+    _addReceiver( new Receiver_AUTO_N( _components));
     _addReceiver( new Receiver_AUTO_F( _components));
     _addReceiver( new Receiver_AUTO_K( _components));
     _addReceiver( new Receiver_AUTO_A( _components));
@@ -178,6 +154,10 @@ void MK52_Host::_addReceivers(){
     _addReceiver( new Receiver_FILE_Overwrite( _components));
     _addReceiver( new Receiver_FILE_Overwrite_All( _components));
     _addReceiver( new Receiver_FILE_Overwrite_Data( _components));
+    _addReceiver( new Receiver_FILE_All( _components));
+    _addReceiver( new Receiver_FILE_Data( _components));
+    _addReceiver( new Receiver_FILE_Delete( _components));
+    _addReceiver( new Receiver_FILE_MkDir( _components));
 
     _addReceiver( new Receiver_Number( _components));
     _addReceiver( new Receiver_Number_DATA( _components));

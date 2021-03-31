@@ -8,7 +8,7 @@
 
 #include "RPN_Stack.hpp"
 
-#define __DEBUG
+//#define __DEBUG
 
 using namespace MK52_Interpreter;
 

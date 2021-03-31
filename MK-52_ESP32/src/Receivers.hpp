@@ -22,6 +22,13 @@
 
 namespace MK52_Interpreter{
 
+    class Receiver_OFF: public Receiver{
+      public:
+        Receiver_OFF(void *components[]);
+        void activate( int8_t prevReceiver = NO_CHANGE);
+        uint8_t tick( uint8_t scancode = 0);
+    };
+
     class Receiver_AUTO: public Receiver{
       public:
         Receiver_AUTO(void *components[]);
@@ -322,10 +329,32 @@ namespace MK52_Interpreter{
         char *toTrimmedString();
       protected:
         char *_text = NULL;
+        char _Question[SCREEN_COLS+1];
         virtual void completeEntry( char *value);
         virtual void updateDisplay( char *value);
         virtual byte _mode1_Tick( uint8_t scancode);
         virtual byte _mode2_Tick( uint8_t scancode);
+    };
+
+    class Receiver_FILE_All: public Receiver_FILE_Name{
+      public:
+        Receiver_FILE_All( void *components[]);
+      protected:
+        void completeEntry( char *value);
+    };
+
+    class Receiver_FILE_Data: public Receiver_FILE_Name{
+      public:
+        Receiver_FILE_Data( void *components[]);
+      protected:
+        void completeEntry( char *value);
+    };
+
+    class Receiver_FILE_MkDir: public Receiver_FILE_Name{
+      public:
+        Receiver_FILE_MkDir( void *components[]);
+      protected:
+        void completeEntry( char *value);
     };
 
     class Receiver_CONFIRM: public Receiver{
@@ -348,6 +377,13 @@ namespace MK52_Interpreter{
     class Receiver_DATA_Erase: public Receiver_CONFIRM{
       public:
         Receiver_DATA_Erase( void *components[]);
+      protected:
+        virtual void performAction();
+    };
+
+    class Receiver_FILE_Delete: public Receiver_CONFIRM{
+      public:
+        Receiver_FILE_Delete( void *components[]);
       protected:
         virtual void performAction();
     };

@@ -12,6 +12,7 @@
 // Serial port for debugging
 // 
 #define SERIAL_HARD_BAUD_RATE 115200
+#define SYSTEM_POWER_HOLD      33
 
 // Screen dimensions in symbols
 // Columns 320 / 11 = 29
@@ -71,7 +72,6 @@
 #define RPN_REGISTER_L3             19
 
 #define NO_CHANGE                   -1
-#define SHUTDOWN_REQUESTED          -2
 
 #define COMPONENT_LCD_MANAGER       0
 #define COMPONENT_KBD_MANAGER       1

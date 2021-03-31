@@ -17,18 +17,16 @@ void KBD_Manager::init(){
     pinMode(KBD_Cx, INPUT);
     digitalWrite( KBD_CLK, LOW);
     _pulseRST();
+    lastScanTime = millis();
+    lastPressedTime = lastScanTime;
 }
 
 uint8_t KBD_Manager::scan(){
     uint8_t ret = scanImmediate();
     if( ret == 0){
-        if( LEDOn && lastPressedTime + KBD_SLEEP_DELAY < lastScanTime){
-            LEDOn = false;
-            // TODO - uncomment after receiver is ready
-            // return 33; 
-        }
+        if( lastPressedTime + KBD_SLEEP_DELAY < lastScanTime) return 33; 
         delay(KBD_IDLE_DELAY);
-        return ret;
+        return 0;
     }
     lastScan = ret;
     while( ret != 0){

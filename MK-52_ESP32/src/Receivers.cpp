@@ -22,9 +22,11 @@ const char _RT_LetterConversion[] PROGMEM = "#AIQ#BJRXCKSYDLTZEMU.FNV_GOW HP##";
 const char _RT_DigitConversion[] PROGMEM =  "### #<=>!,;:?7410852.963--+^E/*##";
 const char _RFN_DigitConversion[] PROGMEM = "### ####!,###7410852.963_-###/###";
 
-static char _FILE_Message_FileName[] = "File name?";
+const char _FILE_Message_FileName[] PROGMEM = "File name?";
+const char _FILE_Message_FolderName[] PROGMEM = "Folder name?";
 static char _FILE_Message_Overwrite[] = "Overwrite? (\x18)";
 
+#include "../receivers/Receiver_OFF.h"
 #include "../receivers/Receiver_AUTO.h"
 #include "../receivers/Receiver_DATA.h"
 #include "../receivers/Receiver_PROG.h"

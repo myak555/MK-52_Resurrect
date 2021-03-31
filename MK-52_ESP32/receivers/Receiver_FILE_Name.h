@@ -13,6 +13,7 @@
 Receiver_FILE_Name::Receiver_FILE_Name(void *components[]) : Receiver::Receiver(components){
     Moniker = _RECEIVER_FILE_Name;
     strcpy_P( _funlabel, PSTR("FIL"));
+    strcpy_P( _Question, _FILE_Message_FileName); 
 }
 
 void Receiver_FILE_Name::activate( int8_t prevReceiver){
@@ -93,8 +94,7 @@ uint8_t Receiver_FILE_Name::_mode1_Tick( uint8_t scancode){
 }
 
 uint8_t Receiver_FILE_Name::_mode2_Tick( uint8_t scancode){
-    switch (scancode)
-    {
+    switch (scancode){
         case 0:
             return 0;
         case 31:
@@ -131,15 +131,71 @@ void Receiver_FILE_Name::updateDisplay( char *value){
     switch (_mode){
         case _MODE_ENTRY_TEXT:
             _lcd->updateStatusFMODE("TXT");
-            _lcd->updateTerminalLine(SCREEN_ROWS - 3, _FILE_Message_FileName);
+            _lcd->updateTerminalLine(SCREEN_ROWS - 3, _Question);
             break;
         case _MODE_ENTRY_NUMBER:
             _lcd->updateStatusFMODE("NUM");
-            _lcd->updateTerminalLine(SCREEN_ROWS - 3, _FILE_Message_FileName);
+            _lcd->updateTerminalLine(SCREEN_ROWS - 3, _Question);
             break;
         default:
             _lcd->updateStatusFMODE("   ");
             _lcd->updateTerminalLine(SCREEN_ROWS - 3, _FILE_Message_Overwrite);
             break;
     }
+}
+
+//
+// Implements a text data entry for saving program with data
+//
+
+Receiver_FILE_All::Receiver_FILE_All(void *components[]) : Receiver_FILE_Name::Receiver_FILE_Name(components){
+    Moniker = _RECEIVER_FILE_All;
+}
+
+void Receiver_FILE_All::completeEntry( char *value){
+    char *tmpName = _rpnf->formFileName(value, _rpnf->_defaultProgramExt());
+    if( _rpnf->fileExists(tmpName)){
+        _mode = _MODE_ENTRY_CONFIRM;
+        updateDisplay(toString());
+        return;
+    }
+    free(_text);
+    _rpnf->saveAll( tmpName);
+    _rpnf->requestNextReceiver(_return_to);
+}
+
+//
+// Implements a text data entry for saving data only
+//
+
+Receiver_FILE_Data::Receiver_FILE_Data(void *components[]) : Receiver_FILE_Name::Receiver_FILE_Name(components){
+    Moniker = _RECEIVER_FILE_Data;
+}
+
+void Receiver_FILE_Data::completeEntry( char *value){
+    char *tmpName = _rpnf->formFileName(value, _rpnf->_defaultDataExt());
+    if( _rpnf->fileExists(tmpName)){
+        _mode = _MODE_ENTRY_CONFIRM;
+        updateDisplay(toString());
+        return;
+    }
+    free(_text);
+    _rpnf->saveData( tmpName);
+    _rpnf->requestNextReceiver(_return_to);
+}
+
+//
+// Implements a text data entry for making directories
+//
+
+Receiver_FILE_MkDir::Receiver_FILE_MkDir(void *components[]) : Receiver_FILE_Name::Receiver_FILE_Name(components){
+    Moniker = _RECEIVER_FILE_MkDir;
+    strcpy_P( _Question, _FILE_Message_FolderName); 
+}
+
+void Receiver_FILE_MkDir::completeEntry( char *value){
+    char *tmpName = _rpnf->formFileName(value);
+    _rpnf->execute(FUNC_MKDIR, tmpName);
+    _rpnf->requestNextReceiver(_return_to);
+    free(_text);
 }

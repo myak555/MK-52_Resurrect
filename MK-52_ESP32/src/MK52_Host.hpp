@@ -10,7 +10,6 @@
 // Pin assignment:
 //
 // 33 - POWER HOLD
-#define SYSTEM_POWER_HOLD      33
 
 #ifndef MK52_HOST_HPP
 #define MK52_HOST_HPP
@@ -40,8 +39,6 @@ namespace MK52_Interpreter{
           return (Receiver *)_receivers[id];};
         bool setReceiver(int id);
         bool setRequestedReceiver();
-
-        void shutdown();
 
       protected:
         void *_components[N_COMPONENTS];

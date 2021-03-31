@@ -8,7 +8,7 @@
 
 #include "RPN_Functions.hpp"
 
-#define __DEBUG
+//#define __DEBUG
 //#define __DEBUG_PRINT_FUNCTIONS
 using namespace MK52_Interpreter;
 

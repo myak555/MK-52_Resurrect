@@ -275,7 +275,7 @@ void SD_Manager::upFolder(){
     Serial.print( "Proposed location: ");
     Serial.println( _current_File_Name);
     #endif
-    readFolderItems( _current_File_Name);
+    readFolderItems( _current_File_Name, true);
 }
 
 //
@@ -297,13 +297,13 @@ bool SD_Manager::stepIn(char *name){
 void SD_Manager::setFolder( char *name){
     strncpy( _current_Dir_Name, name, CURRENT_DIR_LEN-1);
     _current_Dir_Name[CURRENT_DIR_LEN-1] = 0;
-    readFolderItems();
+    readFolderItems( NULL, true);
 }
 
 void SD_Manager::setFolder_P( const char *name){
     strncpy_P( _current_Dir_Name, name, CURRENT_DIR_LEN-1);
     _current_Dir_Name[CURRENT_DIR_LEN-1] = 0;
-    readFolderItems();
+    readFolderItems( NULL, true);
 }
 
 char *SD_Manager::getFolderNameTruncated( int8_t n){
@@ -345,7 +345,7 @@ void SD_Manager::readFolderItems(char *location, bool resetListingPosition){
         file = current_Dir.openNextFile();
     }
     current_Dir.close();
-    if( _nItems > 0) listingPosition = 0;
+    if( listingPosition >= _nItems) listingPosition = _nItems-1;
     if( location == NULL) return;
     #ifdef __DEBUG
     Serial.print("Looking for location: ");
