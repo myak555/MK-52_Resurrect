@@ -2,6 +2,17 @@
 # MK-52 program
 #
 PC=0000
+P0000: Cx
+P0001: X->M A
+P0002: STOP
+P0003: X->M B
+P0004: K M->X B
+P0005: *
+P0006: X->M B
+P0007: M->X A
+P0008: +
+P0009: X->M A
+P0010: GOTO 0002
 #
 # MK-52 data
 #
