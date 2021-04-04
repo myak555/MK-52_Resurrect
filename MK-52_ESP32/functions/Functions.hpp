@@ -275,29 +275,6 @@ class Func_Chain: public RPN_Function{
 //
 // GOTO's and LOOP's
 // 
-class Func_Increment_PC: public RPN_Function{
-    public:
-        inline bool checkID( uint16_t id){ return id == FUNC_INCREMENT_PC;};
-        inline void advancePC(void *components[]){};
-        inline void execute( void *components[], char *command){
-            _ProgMem(components)->incrementCounter();};
-};
-
-class Func_Decrement_PC: public RPN_Function{
-    public:
-        inline bool checkID( uint16_t id){ return id == FUNC_DECREMENT_PC;};
-        inline void advancePC(void *components[]){};
-        inline void execute( void *components[], char *command){
-            _ProgMem(components)->decrementCounter();};
-};
-
-class Func_Reset_PC: public RPN_Function{
-    public:
-        inline bool checkID( uint16_t id){ return id == FUNC_RESET_PC;};
-        inline void advancePC(void *components[]){};
-        inline void execute( void *components[], char *command){
-            _ProgMem(components)->resetCounter();};
-};
 
 class Func_GOTO: public RPN_Function{
     public:
@@ -548,26 +525,6 @@ class Func_Not: public RPN_Function{
 //
 // Memory access
 // 
-class Func_Increment_MC: public RPN_Function{
-    public:
-        inline bool checkID( uint16_t id){ return id == FUNC_INCREMENT_MC;};
-        inline void advancePC(void *components[]){};
-        void execute( void *components[], char *command);
-};
-
-class Func_Decrement_MC: public RPN_Function{
-    public:
-        inline bool checkID( uint16_t id){ return id == FUNC_DECREMENT_MC;};
-        inline void advancePC(void *components[]){};
-        void execute( void *components[], char *command);
-};
-
-class Func_Reset_MC: public RPN_Function{
-    public:
-        inline bool checkID( uint16_t id){ return id == FUNC_RESET_MC;};
-        inline void advancePC(void *components[]){};
-        void execute( void *components[], char *command);
-};
 
 class Func_GOMEM: public RPN_Function{
     public:

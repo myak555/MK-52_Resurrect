@@ -98,13 +98,13 @@ uint8_t Receiver_AUTO_N::tick( uint8_t scancode){
 
         // Column 1
         case 5:
-            _rpnf->execute(FUNC_INCREMENT_PC);
+            _rpnf->progMem->incrementCounter();
             break;
         case 6:
-            _rpnf->execute(FUNC_DECREMENT_PC);
+            _rpnf->progMem->decrementCounter();
             break;
         case 7:
-            _rpnf->execute(FUNC_RESET_PC);
+            _rpnf->progMem->resetCounter();
             break;
         case 8:
             return _rpnf->requestNextReceiver(_RECEIVER_AUTO_R);
@@ -427,13 +427,13 @@ uint8_t Receiver_AUTO_A::tick( uint8_t scancode){
 
         // Column 1
         case 5:
-            _rpnf->execute(FUNC_INCREMENT_MC);
+            _rpnf->extMem->incrementCounter();
             break;
         case 6:
-            _rpnf->execute(FUNC_DECREMENT_MC);
+            _rpnf->extMem->decrementCounter();
             break;
         case 7:
-            _rpnf->execute(FUNC_RESET_MC);
+            _rpnf->extMem->resetCounter();
             break;
         case 8:
             return 0;
@@ -447,7 +447,7 @@ uint8_t Receiver_AUTO_A::tick( uint8_t scancode){
             return _rpnf->requestNextReceiver(_RECEIVER_ADDRESS_MC, _RECEIVER_AUTO_N);
         case 12:
             _rpnf->execute(FUNC_A_M2X);
-            _rpnf->execute(FUNC_INCREMENT_MC);
+            _rpnf->extMem->incrementCounter();
             break;
 
         // Column 3 does nothing

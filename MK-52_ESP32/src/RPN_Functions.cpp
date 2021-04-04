@@ -45,18 +45,6 @@ void RPN_Functions::init( void *components[]) {
     _appendFunction( new Func_Empty());
     // #define FUNC_COMMENT            1
     _appendFunction( new Func_Comment());
-    // #define FUNC_INCREMENT_PC       2
-    _appendFunction( new Func_Increment_PC());
-    // #define FUNC_DECREMENT_PC       3
-    _appendFunction( new Func_Decrement_PC());
-    // #define FUNC_INCREMENT_MC       4
-    _appendFunction( new Func_Increment_MC());
-    // #define FUNC_DECREMENT_MC       5
-    _appendFunction( new Func_Decrement_MC());
-    // #define FUNC_RESET_PC           6
-    _appendFunction( new Func_Reset_PC());
-    // #define FUNC_RESET_MC           7
-    _appendFunction( new Func_Reset_MC());
     // #define FUNC_SET_DMOD_DEG       9
     _appendFunction( new Func_set_DMOD_DEG());
     // #define FUNC_SET_DMOD_RAD       10

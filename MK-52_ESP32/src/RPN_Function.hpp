@@ -12,6 +12,7 @@
 #include "SD_Manager.hpp"
 #include "Program_Memory.hpp"
 #include "Register_Memory.hpp"
+#include "../receivers/receivers.h"
 
 namespace MK52_Interpreter{
 

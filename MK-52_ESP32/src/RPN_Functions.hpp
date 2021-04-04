@@ -86,12 +86,13 @@ namespace MK52_Interpreter{
             char *_buffer = NULL;
             char *_lines[SCREEN_ROWS];
             void _appendFunction( RPN_Function *f);
+            bool _writeConfig();
             bool _writeStack();
             bool _writeRegisters();
             bool _writeProgram();
             bool _writeData();
             bool _writeReturnStack();
-            bool _read(bool readStack=false, bool readProg=false, bool readMem=false);
+            bool _read(bool readStack=false, bool readProg=false, bool readMem=false, bool readConfig=false);
     };
 };
 

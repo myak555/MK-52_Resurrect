@@ -10,7 +10,7 @@
 #include "../receivers/receivers.h"
 #include "Receivers.hpp"
 
-#define __DEBUG
+//#define __DEBUG
 
 using namespace MK52_Interpreter;
 

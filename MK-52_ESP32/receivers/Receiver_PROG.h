@@ -53,6 +53,7 @@ uint8_t Receiver_PROG::tick( uint8_t scancode){
     Program_Memory *pm = _rpnf->progMem; 
     _lcd->updateStatusPC(pm->getCounter());
     _lcd->updateStatusMC(_rpnf->extMem->getCounter());
+    _lcd->updateStatusDMODE(pm->getEModeName());
     char *buff = _rpnf->getOutputBuffer();
     int32_t cnt = (int32_t)pm->getCounter();
     pm->getPreviousLines(_displayLines, SCREEN_ROWS-1);
@@ -108,7 +109,7 @@ uint8_t Receiver_PROG_N::tick( uint8_t scancode){
             // increment by itself!
             break;
         case 6:
-            _rpnf->execute(FUNC_DECREMENT_PC);
+            _rpnf->progMem->decrementCounter();
             return Receiver_PROG::tick(0);
         case 7:
             _rpnf->appendProgramLine_P(FUNC_RETURN);
@@ -167,7 +168,7 @@ uint8_t Receiver_PROG_N::tick( uint8_t scancode){
             _rpnf->requestNextReceiver(_RECEIVER_NUMBER_PROG);
             return scancode;
     }
-    _rpnf->execute(FUNC_INCREMENT_PC);
+    _rpnf->progMem->incrementCounter();
     return Receiver_PROG::tick(0);
 }
 
@@ -298,7 +299,7 @@ uint8_t Receiver_PROG_F::tick( uint8_t scancode){
         default: // all other buttons do nothing, keeping F-mode
             return 0;
     }
-    _rpnf->execute(FUNC_INCREMENT_PC);
+    _rpnf->progMem->incrementCounter();
     return _rpnf->requestNextReceiver(_RECEIVER_PROG_N);
 }
 
@@ -435,7 +436,7 @@ uint8_t Receiver_PROG_K::tick( uint8_t scancode){
         default: // all other buttons do nothing, keeping K-mode
             return 0;
     }
-    _rpnf->execute(FUNC_INCREMENT_PC);
+    _rpnf->progMem->incrementCounter();
     return _rpnf->requestNextReceiver(_RECEIVER_PROG_N);
 }
 
@@ -528,6 +529,6 @@ uint8_t Receiver_PROG_A::tick( uint8_t scancode){
         default: // all other buttons do nothing, keeping A-mode
             return 0;
     }
-    _rpnf->execute(FUNC_INCREMENT_PC);
+    _rpnf->progMem->incrementCounter();
     return _rpnf->requestNextReceiver(_RECEIVER_PROG_N);
 }

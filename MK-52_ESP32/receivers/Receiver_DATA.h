@@ -91,17 +91,17 @@ uint8_t Receiver_DATA_N::tick( uint8_t scancode){
 
         // Column 1
         case 5:
-            _rpnf->execute(FUNC_INCREMENT_MC);
+            _rpnf->extMem->incrementCounter();
             break;
         case 6:
-            _rpnf->execute(FUNC_DECREMENT_MC);
+            _rpnf->extMem->decrementCounter();
             break;
         case 7:
-            _rpnf->execute(FUNC_RESET_MC);
+            _rpnf->extMem->resetCounter();
             break;
         case 8:
             _rpnf->execute(FUNC_MEXTOX);
-            _rpnf->execute(FUNC_INCREMENT_MC);
+            _rpnf->extMem->incrementCounter();
             break;
 
         // Column 2
@@ -113,7 +113,7 @@ uint8_t Receiver_DATA_N::tick( uint8_t scancode){
             return _rpnf->requestNextReceiver(_RECEIVER_ADDRESS_MC, _RECEIVER_DATA_N);
         case 12:
             _rpnf->execute(FUNC_XTOMEX);
-            _rpnf->execute(FUNC_INCREMENT_MC);
+            _rpnf->extMem->incrementCounter();
             break;
 
         // Column 3-5 - number entry
@@ -124,7 +124,7 @@ uint8_t Receiver_DATA_N::tick( uint8_t scancode){
             break;
         case 27:
             _rpnf->execute(FUNC_MEMSWP);
-            _rpnf->execute(FUNC_INCREMENT_MC);
+            _rpnf->extMem->incrementCounter();
             break;
 
         // Column 7
@@ -133,11 +133,11 @@ uint8_t Receiver_DATA_N::tick( uint8_t scancode){
             break;
         case 31:
             _rpnf->execute(FUNC_MEMSET,_rpnf->rpnStack->_DataEntry);
-            _rpnf->execute(FUNC_INCREMENT_MC);
+            _rpnf->extMem->incrementCounter();
             break;
         case 32:
             _rpnf->extMem->clearCurrent();
-            _rpnf->execute(FUNC_INCREMENT_MC);
+            _rpnf->extMem->incrementCounter();
             break;
 
         case 33:
@@ -179,11 +179,11 @@ uint8_t Receiver_DATA_F::tick( uint8_t scancode){
         // Column 1
         case 5:
             for( int8_t i=0; i<9; i++)
-                _rpnf->execute(FUNC_INCREMENT_MC);
+                _rpnf->extMem->incrementCounter();
             break;
         case 6:
             for (int8_t i = 0; i < 9; i++)
-                _rpnf->execute(FUNC_DECREMENT_MC);
+                _rpnf->extMem->decrementCounter();
             break;
         //case 7:
         //    TODO: goto to the next entry

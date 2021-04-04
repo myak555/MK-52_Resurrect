@@ -8,7 +8,7 @@
 
 #include "RPN_Functions.hpp"
 
-#define __DEBUG
+//#define __DEBUG
 
 using namespace MK52_Interpreter;
 #include "../functions/functions.hpp"
@@ -59,7 +59,7 @@ bool RPN_Functions::loadState(){
     Serial.println("Loading state file");
     #endif
     if( _sd->openFile_P(StatusFile)) return true;
-    bool result = _read( true, true, true);
+    bool result = _read( true, true, true, true);
     _sd->closeFile();
     return result;
 }
@@ -69,7 +69,8 @@ bool RPN_Functions::saveState(){
     Serial.println("Saving state...");
     #endif
     if( _sd->openFile_P(StatusFile, true)) return true;
-    bool result = _writeStack();
+    bool result = _writeConfig();
+    if(!result) result = _writeStack();
     if(!result) result = _writeRegisters();
     if(!result) result = _writeProgram();
     if(!result) result = _writeData();
@@ -179,15 +180,39 @@ char *RPN_Functions::formFileName(char *name, const char* ext){
     return tmpName;
 }
 
+bool RPN_Functions::_writeConfig(){
+    if( _sd->println_P(PSTR("#"))) return true;
+    if( _sd->println_P(PSTR("# MK-52 configuration"))) return true;
+    if( _sd->println_P(PSTR("#"))) return true;
+    switch(_receiverRequested){
+        case _RECEIVER_PROG_N:
+        case _RECEIVER_PROG_F:
+        case _RECEIVER_PROG_K:
+        case _RECEIVER_PROG_A:
+            sprintf_P( _text, PSTR("MODE=PROG"));
+            break;
+        case _RECEIVER_DATA_N:
+        case _RECEIVER_DATA_F:
+        case _RECEIVER_DATA_K:
+        case _RECEIVER_DATA_A:
+            sprintf_P( _text, PSTR("MODE=DATA"));
+            break;
+        case _RECEIVER_FILE_N:
+        case _RECEIVER_FILE_F:
+        case _RECEIVER_FILE_K:
+        case _RECEIVER_FILE_A:
+            sprintf_P( _text, PSTR("MODE=FILE"));
+            break;
+        default:
+            sprintf_P( _text, PSTR("MODE=AUTO"));
+    }
+    return _sd->println(_text);
+}
+
 bool RPN_Functions::_writeStack(){
     if( _sd->println_P(PSTR("#"))) return true;
     if( _sd->println_P(PSTR("# MK-52 stack"))) return true;
-    if( _sd->println_P(PSTR("#"))) return true;
-    
-    // TODO: receiver here!
-    //sprintf_P( _text, PSTR("DISPL=%s"), rpnStack->getDModeName());
-    //if(_sd->println(_text)) return true;
-
+    if( _sd->println_P(PSTR("#"))) return true;    
     sprintf_P( _text, PSTR("DMODE=%s"), rpnStack->getDModeName());
     if(_sd->println(_text)) return true;
     sprintf_P( _text, PSTR("EMODE=%s"), progMem->getEModeName());
@@ -309,7 +334,7 @@ bool RPN_Functions::_writeReturnStack(){
     return false;
 }
 
-bool RPN_Functions::_read(bool readStack, bool readProg, bool readMem){
+bool RPN_Functions::_read(bool readStack, bool readProg, bool readMem, bool readConfig){
     uint32_t pmemctr = progMem->getCounter();
     uint32_t ememctr = extMem->getCounter();
     //uint callStackDeclared = 0; presented in dump file, but not used
@@ -324,6 +349,21 @@ bool RPN_Functions::_read(bool readStack, bool readProg, bool readMem){
         #endif
         if( _text[0] == 0) continue;
         if( _text[0] == '#') continue;
+        if( readConfig){
+            requestNextReceiver( _RECEIVER_AUTO_N);
+            if( UniversalValue::_startsWith_P( _text, PSTR("MODE=PROG"))){
+                requestNextReceiver( _RECEIVER_PROG_N);
+                continue;
+            }
+            if( UniversalValue::_startsWith_P( _text, PSTR("MODE=FILE"))){
+                requestNextReceiver( _RECEIVER_FILE_N);
+                continue;
+            }
+            if( UniversalValue::_startsWith_P( _text, PSTR("MODE=DATA"))){
+                requestNextReceiver( _RECEIVER_DATA_N);
+                continue;
+            }
+        }
         if( readProg){
             if( UniversalValue::_startsWith_P( _text, PSTR("PC="))){
                 progMem->setCounter( _text+3);
@@ -362,7 +402,6 @@ bool RPN_Functions::_read(bool readStack, bool readProg, bool readMem){
             }
         }
         if( readStack){
-            // TODO: set display here
             if( UniversalValue::_startsWith_P( _text, PSTR("X="))){
                 rpnStack->X->fromString( _text + 2);
                 continue;

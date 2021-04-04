@@ -1,15 +1,3 @@
-void Func_Increment_MC::execute( void *components[], char *command){
-    _ExtMem(components)->incrementCounter();
-}
-
-void Func_Decrement_MC::execute( void *components[], char *command){
-    _ExtMem(components)->decrementCounter();
-}
-
-void Func_Reset_MC::execute( void *components[], char *command){
-    _ExtMem(components)->resetCounter();
-}
-
 void Func_GOMEM::execute( void *components[], char *command){
     _ExtMem(components)->setCounter(command);
 }

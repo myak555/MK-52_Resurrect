@@ -113,7 +113,7 @@ void Receiver_Address_AMX::activate( int8_t prevReceiver){
 void Receiver_Address_AMX::completeEntry( char *value){
     if (value[0] == 0){
         _rpnf->execute(FUNC_A_M2X);
-        _rpnf->execute(FUNC_DECREMENT_MC);
+        _rpnf->extMem->decrementCounter();
     }
     else{
         _rpnf->execute( FUNC_A_M2X, value);
@@ -139,7 +139,7 @@ void Receiver_Address_AXM::activate( int8_t prevReceiver){
 
 void Receiver_Address_AXM::completeEntry( char *value){
     if (value[0] == 0){
-        _rpnf->execute(FUNC_INCREMENT_MC);
+        _rpnf->extMem->incrementCounter();
         _rpnf->execute(FUNC_A_X2M);
     }
     else{
