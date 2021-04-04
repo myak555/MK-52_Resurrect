@@ -51,13 +51,13 @@ namespace MK52Simulator
 
                 // Column 1
                 case 5:
-                    _rpnf.execute(RPN_Functions.FUNC_INCREMENT_MC);
+                    _rpnf.extMem.incrementCounter();
                     break;
                 case 6:
-                    _rpnf.execute(RPN_Functions.FUNC_DECREMENT_MC);
+                    _rpnf.extMem.decrementCounter();
                     break;
                 case 7:
-                    _rpnf.execute(RPN_Functions.FUNC_RESET_MC);
+                    _rpnf.extMem.resetCounter();
                     break;
                 case 8:
                     return 0;
@@ -71,7 +71,7 @@ namespace MK52Simulator
                     return _rpnf.requestNextReceiver("ADDRESS_MC", "AUTO_N");
                 case 12:
                     _rpnf.execute(RPN_Functions.FUNC_A_M2X);
-                    _rpnf.execute(RPN_Functions.FUNC_INCREMENT_MC);
+                    _rpnf.extMem.incrementCounter();
                     break;
 
                 // Column 3 does nothing

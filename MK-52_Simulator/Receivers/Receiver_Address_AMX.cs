@@ -35,7 +35,7 @@ namespace MK52Simulator
             if (value.Length == 0)
             {
                 _rpnf.execute(RPN_Functions.FUNC_A_M2X);
-                _rpnf.execute(RPN_Functions.FUNC_DECREMENT_MC);
+                _rpnf.extMem.decrementCounter();
             }
             else
                 _rpnf.execute(RPN_Functions.FUNC_A_M2X, value);

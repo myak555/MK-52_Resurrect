@@ -34,7 +34,7 @@ namespace MK52Simulator
             RPN_Functions _rpnf = _parent.getFunctions();
             if (value.Length == 0)
             {
-                _rpnf.execute(RPN_Functions.FUNC_INCREMENT_MC);
+                _rpnf.extMem.incrementCounter();
                 _rpnf.execute(RPN_Functions.FUNC_A_X2M);
             }
             else

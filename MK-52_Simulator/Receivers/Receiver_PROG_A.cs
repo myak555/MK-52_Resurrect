@@ -113,7 +113,7 @@ namespace MK52Simulator
                 default: // all other buttons do nothing, keeping A-mode
                     return 0;
             }
-            _rpnf.execute(RPN_Functions.FUNC_INCREMENT_PC);
+            _rpnf.progMem.incrementCounter();
             return _rpnf.requestNextReceiver("PROG_N");
         }
     }

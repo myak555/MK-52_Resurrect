@@ -42,10 +42,6 @@ namespace MK52Simulator
                     return _rpnf.requestNextReceiver("FILE_F");
                 case 2:
                     return _rpnf.requestNextReceiver("FILE_K");
-                case 4:
-                    //_parent._m_RPN_Stack.toggleAngleMode();
-                    // return base.tick(0);
-                    return 0;
 
                 // Column 1 does nothing (for now)
                 // Column 2 does nothing (for now)

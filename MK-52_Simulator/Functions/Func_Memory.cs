@@ -4,66 +4,6 @@ using System.Text;
 
 namespace MK52Simulator
 {
-    public class Func_Increment_MC : RPN_Function
-    {
-        public Func_Increment_MC()
-        {
-            Description = "Increment MC counter (UI-only)";
-        }
-
-        public override bool checkID(uint id)
-        {
-            return id == RPN_Functions.FUNC_INCREMENT_MC;
-        }
-
-        public override void advancePC(MK52_Host components) { }
-
-        public override void execute(MK52_Host components, string command)
-        {
-            _ExtMem(components).incrementCounter();
-        }
-    }
-
-    public class Func_Decrement_MC : RPN_Function
-    {
-        public Func_Decrement_MC()
-        {
-            Description = "Decrement MC counter (UI-only)";
-        }
-
-        public override bool checkID(uint id)
-        {
-            return id == RPN_Functions.FUNC_DECREMENT_MC;
-        }
-
-        public override void advancePC(MK52_Host components) { }
-
-        public override void execute(MK52_Host components, string command)
-        {
-            _ExtMem(components).decrementCounter();
-        }
-    }
-
-    public class Func_Reset_MC : RPN_Function
-    {
-        public Func_Reset_MC()
-        {
-            Description = "Resets MC counter to 0000 (UI-only)";
-        }
-
-        public override bool checkID(uint id)
-        {
-            return id == RPN_Functions.FUNC_RESET_MC;
-        }
-
-        public override void advancePC(MK52_Host components) { }
-
-        public override void execute(MK52_Host components, string command)
-        {
-            _ExtMem(components).resetCounter();
-        }
-    }
-
     public class Func_GOMEM : RPN_Function
     {
         public Func_GOMEM()
@@ -532,34 +472,6 @@ namespace MK52Simulator
             Register_Memory rm = _RegMem(components);
             UniversalValue ptrR = rm._registerAddress(rm.registerByName(command));
             _ExtMem(components).fromUV(ptrR);
-        }
-    }
-
-    public class Func_MexClr : RPN_Function
-    {
-        public Func_MexClr()
-        {
-            Description = "Clears current memory location";
-        }
-
-        public override bool checkID(uint id)
-        {
-            return id == RPN_Functions.FUNC_MEXCLR;
-        }
-
-        public override bool checkName(string name)
-        {
-            return UniversalValue._startsWith_P(name, Name());
-        }
-
-        public override string Name()
-        {
-            return "MexCx";
-        }
-
-        public override void execute(MK52_Host components, string command)
-        {
-            _ExtMem(components).clearCurrent();
         }
     }
 }

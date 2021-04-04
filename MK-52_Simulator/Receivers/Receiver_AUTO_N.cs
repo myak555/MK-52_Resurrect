@@ -45,13 +45,13 @@ namespace MK52Simulator
 
                 // Column 1
                 case 5:
-                    _rpnf.execute(RPN_Functions.FUNC_INCREMENT_PC);
+                    _rpnf.progMem.incrementCounter();
                     break;
                 case 6:
-                    _rpnf.execute(RPN_Functions.FUNC_DECREMENT_PC);
+                    _rpnf.progMem.decrementCounter();
                     break;
                 case 7:
-                    _rpnf.execute(RPN_Functions.FUNC_RESET_PC);
+                    _rpnf.progMem.resetCounter();
                     break;
                 case 8:
                     return _rpnf.requestNextReceiver("AUTO_R");

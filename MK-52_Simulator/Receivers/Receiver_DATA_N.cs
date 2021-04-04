@@ -47,17 +47,17 @@ namespace MK52Simulator
 
                 // Column 1
                 case 5:
-                    _rpnf.execute(RPN_Functions.FUNC_INCREMENT_MC);
+                    _rpnf.extMem.incrementCounter();
                     break;
                 case 6:
-                    _rpnf.execute(RPN_Functions.FUNC_DECREMENT_MC);
+                    _rpnf.extMem.decrementCounter();
                     break;
                 case 7:
-                    _rpnf.execute(RPN_Functions.FUNC_RESET_MC);
+                    _rpnf.extMem.resetCounter();
                     break;
                 case 8:
                     _rpnf.execute(RPN_Functions.FUNC_MEXTOX);
-                    _rpnf.execute(RPN_Functions.FUNC_INCREMENT_MC);
+                    _rpnf.extMem.incrementCounter();
                     break;
 
                 // Column 2
@@ -71,7 +71,7 @@ namespace MK52Simulator
                     return _rpnf.requestNextReceiver("ADDRESS_MC", "DATA_N");
                 case 12:
                     _rpnf.execute(RPN_Functions.FUNC_XTOMEX);
-                    _rpnf.execute(RPN_Functions.FUNC_INCREMENT_MC);
+                    _rpnf.extMem.incrementCounter();
                     break;
 
                 // Column 3-5 - number entry
@@ -82,7 +82,7 @@ namespace MK52Simulator
                     break;
                 case 27:
                     _rpnf.execute(RPN_Functions.FUNC_MEMSWP);
-                    _rpnf.execute(RPN_Functions.FUNC_INCREMENT_MC);
+                    _rpnf.extMem.incrementCounter();
                     break;
 
                 // Column 7
@@ -92,11 +92,11 @@ namespace MK52Simulator
                 case 31:
                     _rpnf.execute(RPN_Functions.FUNC_MEMSET,
                         _parent._m_RPN_Stack._DataEntry.ToString().Trim());
-                    _rpnf.execute(RPN_Functions.FUNC_INCREMENT_MC);
+                    _rpnf.extMem.incrementCounter();
                     break;
                 case 32:
-                    _rpnf.execute(RPN_Functions.FUNC_MEXCLR);
-                    _rpnf.execute(RPN_Functions.FUNC_INCREMENT_MC);
+                    _parent._m_Extended_Memory.clearCurrent();
+                    _rpnf.extMem.incrementCounter();
                     break;
 
                 case 33:

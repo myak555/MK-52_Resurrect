@@ -53,11 +53,11 @@ namespace MK52Simulator
                 // Column 1
                 case 5:
                     for( int i=0; i<9; i++)
-                        _rpnf.execute(RPN_Functions.FUNC_INCREMENT_MC);
+                        _rpnf.extMem.incrementCounter();
                     break;
                 case 6:
                     for (int i = 0; i < 9; i++)
-                        _rpnf.execute(RPN_Functions.FUNC_DECREMENT_MC);
+                        _rpnf.extMem.decrementCounter();
                     break;
                 //case 7:
                 //    TODO: goto to the next entry

@@ -47,7 +47,7 @@ namespace MK52Simulator
                 case 5:
                     break;
                 case 6:
-                    _rpnf.execute(RPN_Functions.FUNC_DECREMENT_PC);
+                    _rpnf.extMem.decrementCounter();
                     return base.tick(0);
                 case 7:
                     _rpnf.appendProgramLine_P(RPN_Functions.FUNC_RETURN);
@@ -106,7 +106,7 @@ namespace MK52Simulator
                     _rpnf.requestNextReceiver("NUMBER_PROG");
                     return scancode;
             }
-            _rpnf.execute(RPN_Functions.FUNC_INCREMENT_PC);
+            _rpnf.progMem.incrementCounter();
             return base.tick(0);
         }
     }

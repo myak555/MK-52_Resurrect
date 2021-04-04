@@ -12,66 +12,6 @@ using System.Text;
 
 namespace MK52Simulator
 {
-    public class Func_Increment_PC : RPN_Function
-    {
-        public Func_Increment_PC()
-        {
-            Description = "Increments program counter (UI-only)";
-        }
-
-        public override bool checkID(uint id)
-        {
-            return id == RPN_Functions.FUNC_INCREMENT_PC;
-        }
-
-        public override void advancePC(MK52_Host components) { }
-
-        public override void execute(MK52_Host components, string command)
-        {
-            _ProgMem(components).incrementCounter();
-        }
-    }
-
-    public class Func_Decrement_PC : RPN_Function
-    {
-        public Func_Decrement_PC()
-        {
-            Description = "Decrements program counter (UI-only)";
-        }
-
-        public override bool checkID(uint id)
-        {
-            return id == RPN_Functions.FUNC_DECREMENT_PC;
-        }
-
-        public override void advancePC(MK52_Host components) { }
-
-        public override void execute(MK52_Host components, string command)
-        {
-            _ProgMem(components).decrementCounter();
-        }
-    }
-
-    public class Func_Reset_PC : RPN_Function
-    {
-        public Func_Reset_PC()
-        {
-            Description = "Resets program counter and stack (UI-only)";
-        }
-
-        public override bool checkID(uint id)
-        {
-            return id == RPN_Functions.FUNC_RESET_PC;
-        }
-
-        public override void advancePC(MK52_Host components) { }
-
-        public override void execute(MK52_Host components, string command)
-        {
-            _ProgMem(components).resetCounter();
-        }
-    }
-
     public class Func_GOTO : RPN_Function
     {
         public Func_GOTO()
