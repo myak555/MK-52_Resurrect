@@ -45,12 +45,12 @@ void RPN_Functions::init( void *components[]) {
     _appendFunction( new Func_Empty());
     // #define FUNC_COMMENT            1
     _appendFunction( new Func_Comment());
-    // #define FUNC_SET_DMOD_DEG       9
-    _appendFunction( new Func_set_DMOD_DEG());
-    // #define FUNC_SET_DMOD_RAD       10
-    _appendFunction( new Func_set_DMOD_RAD());
-    // #define FUNC_SET_DMOD_GRD       11
-    _appendFunction( new Func_set_DMOD_GRD());
+    // #define FUNC_DMOD_DEG       9
+    _appendFunction( new Func_DMOD_DEG());
+    // #define FUNC_DMOD_RAD       10
+    _appendFunction( new Func_DMOD_RAD());
+    // #define FUNC_DMOD_GRD       11
+    _appendFunction( new Func_DMOD_GRD());
     // #define FUNC_NEGATE             12
     _appendFunction( new Func_Negate());
     // #define FUNC_ENTER              13
@@ -89,6 +89,8 @@ void RPN_Functions::init( void *components[]) {
     _appendFunction( new Func_Ln());
     // #define FUNC_POW                30
     _appendFunction( new Func_Pow());
+    // #define FUNC_POWYX              30a
+    _appendFunction( new Func_PowYX());
     // #define FUNC_LOG                31
     _appendFunction( new Func_Log());
     // #define FUNC_ROT                32
@@ -177,12 +179,6 @@ void RPN_Functions::init( void *components[]) {
     _appendFunction( new Func_Stop());
     // #define FUNC_MKDIR              76
     _appendFunction( new Func_MkDir());
-    // #define FUNC_UPDIR              77
-    _appendFunction( new Func_UpDir());
-    // #define FUNC_NEXTFILE           78
-    _appendFunction( new Func_NextFile());
-    // #define FUNC_PREVFILE           79
-    _appendFunction( new Func_PrevFile());
     // #define FUNC_REMOVE             80
     _appendFunction( new Func_Remove());
     // #define FUNC_STEPIN             81
@@ -205,8 +201,6 @@ void RPN_Functions::init( void *components[]) {
     _appendFunction( new Func_LoadData());
     // #define FUNC_LOADDATAFROM       90
     _appendFunction( new Func_LoadDataFrom());
-    // #define FUNC_GOMEM              91
-    _appendFunction( new Func_GOMEM());
     // #define FUNC_IFNOTLT0           92
     _appendFunction( new Func_IfNotLT0());
     // #define FUNC_IFNOTEQ0           93

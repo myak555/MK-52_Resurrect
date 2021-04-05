@@ -160,7 +160,7 @@ Receiver_Address_MC::Receiver_Address_MC(void *components[]) : Receiver_Address:
 }
 
 void Receiver_Address_MC::activate( int8_t prevReceiver){
-    Receiver_Address::activate( _RECEIVER_AUTO_N);
+    Receiver_Address::activate( prevReceiver);
     _lcd->updateStatusMC( _text);
 }
 

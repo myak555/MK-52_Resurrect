@@ -81,13 +81,13 @@ uint8_t Receiver_FILE_N::tick( uint8_t scancode){
 
         // Column 1
         case 5:
-            _rpnf->execute(FUNC_NEXTFILE);
+            _rpnf->_sd->nextListingPosition();
             break;
         case 6:
-            _rpnf->execute(FUNC_PREVFILE);
+            _rpnf->_sd->previousListingPosition();
             break;
         case 7:
-            _rpnf->execute(FUNC_UPDIR);
+            _rpnf->_sd->upFolder();
             break;
         case 8:
             _rpnf->execute(FUNC_STEPIN);
@@ -152,11 +152,11 @@ uint8_t Receiver_FILE_F::tick( uint8_t scancode){
         // Column 1
         case 5:
             for (int i = 0; i < 9; i++)
-                _rpnf->execute(FUNC_NEXTFILE);
+                _rpnf->_sd->nextListingPosition();
             break;
         case 6:
             for (int i = 0; i < 9; i++)
-                _rpnf->execute(FUNC_PREVFILE);
+                _rpnf->_sd->previousListingPosition();
             break;
 
         // Column 2

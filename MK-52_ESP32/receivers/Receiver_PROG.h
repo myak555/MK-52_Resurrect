@@ -189,11 +189,11 @@ uint8_t Receiver_PROG_F::tick( uint8_t scancode){
 
         // Column 0
         case 2:
-            return _rpnf->requestNextReceiver(_RECEIVER_PROG_K);
+            return _rpnf->requestNextReceiver(_RECEIVER_PROG_FK);
         case 3:
-            return _rpnf->requestNextReceiver(_RECEIVER_PROG_A);
+            return _rpnf->requestNextReceiver(_RECEIVER_PROG_FA);
         case 4:
-            _rpnf->appendProgramLine_P(FUNC_SET_DMOD_DEG);
+            _rpnf->appendProgramLine_P(FUNC_DMOD_DEG);
             break;
 
         // Column 1
@@ -210,7 +210,7 @@ uint8_t Receiver_PROG_F::tick( uint8_t scancode){
             _rpnf->appendProgramLine_P(FUNC_IFNOTNE0);
             return _rpnf->requestNextReceiver(_RECEIVER_ADDRESS, _RECEIVER_PROG_N);
 
-        // Column 2 does nothing (for now)
+        // Column 2
         case 9:
             _rpnf->appendProgramLine_P(FUNC_L0);
             return _rpnf->requestNextReceiver(_RECEIVER_ADDRESS, _RECEIVER_PROG_N);
@@ -321,11 +321,11 @@ uint8_t Receiver_PROG_K::tick( uint8_t scancode){
 
         // Column 0
         case 1:
-            return _rpnf->requestNextReceiver(_RECEIVER_PROG_F);
+            return _rpnf->requestNextReceiver(_RECEIVER_PROG_FK);
         case 3:
             return _rpnf->requestNextReceiver(_RECEIVER_PROG_A);
         case 4:
-            _rpnf->appendProgramLine_P(FUNC_SET_DMOD_RAD);
+            _rpnf->appendProgramLine_P(FUNC_DMOD_RAD);
             break;
 
         // Column 1
@@ -441,6 +441,43 @@ uint8_t Receiver_PROG_K::tick( uint8_t scancode){
 }
 
 //
+// PROG FK-mode entry
+//
+
+Receiver_PROG_FK::Receiver_PROG_FK(void *components[]) : Receiver_PROG::Receiver_PROG(components){
+    Moniker = _RECEIVER_PROG_FK;
+    _funlabel[0] = 'F';
+    _funlabel[1] = 'K';
+}
+
+uint8_t Receiver_PROG_FK::tick( uint8_t scancode){
+    switch (scancode)
+    {
+        case 0: // keyboard inactive
+            return Receiver_PROG::tick(0);
+
+        // Column 0
+        case 2:
+            return _rpnf->requestNextReceiver(_RECEIVER_PROG_F);
+        case 3:
+            return _rpnf->requestNextReceiver(_RECEIVER_PROG_A);
+
+        // Column 7
+        case 32:
+            // Clear FK mode
+            return _rpnf->requestNextReceiver(_RECEIVER_PROG_N);
+        case 33:
+            // Shutdown signal
+            _rpnf->requestNextReceiver(_RECEIVER_PROG_N);
+            return 33;
+        default: // all other buttons do nothing, keeping FK-mode
+            return 0;
+    }
+    _rpnf->progMem->incrementCounter();
+    return _rpnf->requestNextReceiver(_RECEIVER_PROG_N);
+}
+
+//
 // PROG A-mode entry
 //
 
@@ -458,11 +495,11 @@ uint8_t Receiver_PROG_A::tick( uint8_t scancode){
 
         // Column 0
         case 1:
-            return _rpnf->requestNextReceiver(_RECEIVER_PROG_F);
+            return _rpnf->requestNextReceiver(_RECEIVER_PROG_FA);
         case 2:
             return _rpnf->requestNextReceiver(_RECEIVER_PROG_K);
         case 4:
-            _rpnf->appendProgramLine_P(FUNC_SET_DMOD_GRD);
+            _rpnf->appendProgramLine_P(FUNC_DMOD_GRD);
             break;
 
         // Column 1
@@ -527,6 +564,43 @@ uint8_t Receiver_PROG_A::tick( uint8_t scancode){
             _rpnf->requestNextReceiver(_RECEIVER_PROG_N);
             return 33;
         default: // all other buttons do nothing, keeping A-mode
+            return 0;
+    }
+    _rpnf->progMem->incrementCounter();
+    return _rpnf->requestNextReceiver(_RECEIVER_PROG_N);
+}
+
+//
+// PROG FA-mode entry
+//
+
+Receiver_PROG_FA::Receiver_PROG_FA(void *components[]) : Receiver_PROG::Receiver_PROG(components){
+    Moniker = _RECEIVER_PROG_FA;
+    _funlabel[0] = 'F';
+    _funlabel[1] = 'A';
+}
+
+uint8_t Receiver_PROG_FA::tick( uint8_t scancode){
+    switch (scancode)
+    {
+        case 0: // keyboard inactive
+            return Receiver_PROG::tick(0);
+
+        // Column 0
+        case 2:
+            return _rpnf->requestNextReceiver(_RECEIVER_PROG_F);
+        case 3:
+            return _rpnf->requestNextReceiver(_RECEIVER_PROG_A);
+
+        // Column 7
+        case 32:
+            // Clear FA mode
+            return _rpnf->requestNextReceiver(_RECEIVER_PROG_N);
+        case 33:
+            // Shutdown signal
+            _rpnf->requestNextReceiver(_RECEIVER_PROG_N);
+            return 33;
+        default: // all other buttons do nothing, keeping FA-mode
             return 0;
     }
     _rpnf->progMem->incrementCounter();

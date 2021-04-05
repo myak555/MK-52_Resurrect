@@ -147,27 +147,6 @@ class Func_MkDir: public RPN_Function{
             _SDM(components)->createFolder( command);};
 };
 
-class Func_UpDir: public RPN_Function{
-    public:
-        inline bool checkID( uint16_t id){ return id == FUNC_UPDIR;};
-        void execute( void *components[], char *command){
-            _SDM(components)->upFolder();};
-};
-
-class Func_NextFile: public RPN_Function{
-    public:
-        inline bool checkID( uint16_t id){ return id == FUNC_NEXTFILE;};
-        void execute( void *components[], char *command){
-            _SDM(components)->nextListingPosition();};
-};
-
-class Func_PrevFile: public RPN_Function{
-    public:
-        inline bool checkID( uint16_t id){ return id == FUNC_PREVFILE;};
-        void execute( void *components[], char *command){
-            _SDM(components)->previousListingPosition();};
-};
-
 class Func_Remove: public RPN_Function{
     public:
         inline bool checkID( uint16_t id){ return id == FUNC_REMOVE;};
@@ -526,15 +505,6 @@ class Func_Not: public RPN_Function{
 // Memory access
 // 
 
-class Func_GOMEM: public RPN_Function{
-    public:
-        inline bool checkID( uint16_t id){ return id == FUNC_GOMEM;};
-        inline bool checkName(char *name){ return UniversalValue::_startsWith_P( name, Name());};
-        inline const char*Name(){ return PSTR("GOMEM ");};
-        inline bool containsMC(){return true;};
-        void execute( void *components[], char *command);
-};
-
 class Func_M2X: public RPN_Function{
     public:
         inline bool checkID( uint16_t id){ return id == FUNC_M2X;};
@@ -718,6 +688,15 @@ class Func_Pow: public RPN_Function{
         inline bool checkID( uint16_t id){ return id == FUNC_POW;};
         inline bool checkName(char *name){ return UniversalValue::_identicalTo_P( name, Name());};
         inline const char*Name(){ return PSTR("X^Y");};
+        inline const char*IOName(){ return Name();}; // TODO
+        void execute( void *components[], char *command);
+};
+
+class Func_PowYX: public RPN_Function{
+    public:
+        inline bool checkID( uint16_t id){ return id == FUNC_POWYX;};
+        inline bool checkName(char *name){ return UniversalValue::_identicalTo_P( name, Name());};
+        inline const char*Name(){ return PSTR("Y^X");};
         inline const char*IOName(){ return Name();}; // TODO
         void execute( void *components[], char *command);
 };
@@ -950,27 +929,27 @@ class Func_Rad2D: public RPN_Function{
         void execute( void *components[], char *command);
 };
 
-class Func_set_DMOD_DEG: public RPN_Function{
+class Func_DMOD_DEG: public RPN_Function{
     public:
-        inline bool checkID( uint16_t id){ return id == FUNC_SET_DMOD_DEG;};
+        inline bool checkID( uint16_t id){ return id == FUNC_DMOD_DEG;};
         inline bool checkName(char *name){ return UniversalValue::_identicalTo_P( name, Name());};
         inline const char*Name(){ return PSTR("DEG");};
         inline void execute( void *components[], char *command){
             _Stack( components)->setDMode( DMODE_DEGREES);};
 };
 
-class Func_set_DMOD_RAD: public RPN_Function{
+class Func_DMOD_RAD: public RPN_Function{
     public:
-        inline bool checkID( uint16_t id){ return id == FUNC_SET_DMOD_RAD;};
+        inline bool checkID( uint16_t id){ return id == FUNC_DMOD_RAD;};
         inline bool checkName(char *name){ return UniversalValue::_identicalTo_P( name, Name());};
         inline const char*Name(){ return PSTR("RAD");};
         inline void execute( void *components[], char *command){
             _Stack( components)->setDMode( DMODE_RADIANS);};
 };
 
-class Func_set_DMOD_GRD: public RPN_Function{
+class Func_DMOD_GRD: public RPN_Function{
     public:
-        inline bool checkID( uint16_t id){ return id == FUNC_SET_DMOD_GRD;};
+        inline bool checkID( uint16_t id){ return id == FUNC_DMOD_GRD;};
         inline bool checkName(char *name){ return UniversalValue::_identicalTo_P( name, Name());};
         inline const char*Name(){ return PSTR("GRD");};
         inline void execute( void *components[], char *command){

@@ -97,6 +97,57 @@ void Func_Pow::execute( void *components[], char *command){
     s->X->fromInt(result2);
 }
 
+void Func_PowYX::execute( void *components[], char *command){
+    RPN_Stack *s = _dealWithClergy2(components);
+    if( s == NULL) return;
+    s->pop(0);
+    if( s->X->isEmpty()){
+        s->X->fromInt( 1);
+        return;
+    }
+    double result = 1.0;
+    double a = s->X->toReal();
+    if( s->Bx->isReal()){
+        result = pow( a, s->Bx->toReal());
+        s->X->fromReal( result);
+        return;
+    }
+    int64_t p = s->Bx->toInt();
+    int64_t p2 = p;
+
+    // Special point 0^0
+    if( a==0.0 && p==0){
+        s->X->fromInt(1);
+        return;
+    }
+    if( a==0.0 && p<0){
+        s->X->fromReal(INFINITY);
+        return;
+    }
+    while( p>0){
+        result *= a;
+        p--;
+    }
+    a = 1.0 / a;
+    while( p<0){
+        result *= a;
+        p++;
+    }
+    if (p2 <= 0 || s->X->isReal() || abs(result) > HUGE_POSITIVE_AS_REAL){
+        s->X->fromReal(result);
+        return;
+    }
+    // Try to keep as integer
+    int64_t result2 = s->X->toInt();
+    int64_t mul = result2;
+    while (p2 > 1)
+    {
+        result2 *= mul;
+        p2--;
+    }
+    s->X->fromInt(result2);
+}
+
 void Func_X2::execute( void *components[], char *command){
     RPN_Stack *s = _dealWithClergy1(components);
     if( s == NULL) return;

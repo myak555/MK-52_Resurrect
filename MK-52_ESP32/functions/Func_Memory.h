@@ -1,7 +1,3 @@
-void Func_GOMEM::execute( void *components[], char *command){
-    _ExtMem(components)->setCounter(command);
-}
-
 void Func_M2X::execute( void *components[], char *command){
     _RegMem(components)->MtoX(command);
 }

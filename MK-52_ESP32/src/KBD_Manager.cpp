@@ -17,8 +17,7 @@ void KBD_Manager::init(){
     pinMode(KBD_Cx, INPUT);
     digitalWrite( KBD_CLK, LOW);
     _pulseRST();
-    lastScanTime = millis();
-    lastPressedTime = lastScanTime;
+    resetLastPressed();
 }
 
 uint8_t KBD_Manager::scan(){

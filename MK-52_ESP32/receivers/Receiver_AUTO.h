@@ -178,9 +178,9 @@ uint8_t Receiver_AUTO_F::tick( uint8_t scancode){
 
         // Column 0
         case 2:
-            return _rpnf->requestNextReceiver(_RECEIVER_AUTO_K);
+            return _rpnf->requestNextReceiver(_RECEIVER_AUTO_FK);
         case 3:
-            return _rpnf->requestNextReceiver(_RECEIVER_AUTO_A);
+            return _rpnf->requestNextReceiver(_RECEIVER_AUTO_FA);
         case 4:
             _rpnf->rpnStack->toggleAngleMode();
             return Receiver_AUTO::tick(0);
@@ -292,7 +292,7 @@ uint8_t Receiver_AUTO_K::tick( uint8_t scancode){
 
         // Column 0
         case 1:
-            return _rpnf->requestNextReceiver(_RECEIVER_AUTO_F);
+            return _rpnf->requestNextReceiver(_RECEIVER_AUTO_FK);
         case 3:
             return _rpnf->requestNextReceiver(_RECEIVER_AUTO_A);
         case 4:
@@ -402,6 +402,49 @@ uint8_t Receiver_AUTO_K::tick( uint8_t scancode){
 }
 
 //
+// AUTO FK-mode entry
+//
+
+Receiver_AUTO_FK::Receiver_AUTO_FK(void *components[]) : Receiver_AUTO::Receiver_AUTO(components){
+    Moniker = _RECEIVER_AUTO_FK;
+    _funlabel[0] = 'F';
+    _funlabel[1] = 'K';
+}
+
+uint8_t Receiver_AUTO_FK::tick( uint8_t scancode){
+    switch (scancode){
+        case 0: // keyboard inactive
+            return 0;
+
+        // Column 0
+        case 2:
+            return _rpnf->requestNextReceiver(_RECEIVER_AUTO_F);
+        case 3:
+            return _rpnf->requestNextReceiver(_RECEIVER_AUTO_A);
+        case 4:
+            _rpnf->rpnStack->toggleAngleMode();
+            return Receiver_AUTO::tick(0);
+
+        // Column 6
+        case 27:
+            _rpnf->execute(FUNC_POWYX);
+            break;
+
+        // Column 7
+        case 32:
+            // Clear F mode
+            break;
+        case 33:
+            // Shutdown signal
+            _rpnf->requestNextReceiver(_RECEIVER_AUTO_N);
+            return 33;
+        default: // all other buttons do nothing, keeping FK-mode
+            return 0;
+    }
+    return _rpnf->requestNextReceiver(_RECEIVER_AUTO_N);
+}
+
+//
 // AUTO A-mode entry
 //
 
@@ -418,7 +461,7 @@ uint8_t Receiver_AUTO_A::tick( uint8_t scancode){
 
         // Column 0
         case 1:
-            return _rpnf->requestNextReceiver(_RECEIVER_AUTO_F);
+            return _rpnf->requestNextReceiver(_RECEIVER_AUTO_FA);
         case 2:
             return _rpnf->requestNextReceiver(_RECEIVER_AUTO_K);
         case 4:
@@ -500,6 +543,44 @@ uint8_t Receiver_AUTO_A::tick( uint8_t scancode){
 }
 
 //
+// AUTO FK-mode entry
+//
+
+Receiver_AUTO_FA::Receiver_AUTO_FA(void *components[]) : Receiver_AUTO::Receiver_AUTO(components){
+    Moniker = _RECEIVER_AUTO_FA;
+    _funlabel[0] = 'F';
+    _funlabel[1] = 'A';
+}
+
+uint8_t Receiver_AUTO_FA::tick( uint8_t scancode){
+    switch (scancode){
+        case 0: // keyboard inactive
+            return 0;
+
+        // Column 0
+        case 2:
+            return _rpnf->requestNextReceiver(_RECEIVER_AUTO_F);
+        case 3:
+            return _rpnf->requestNextReceiver(_RECEIVER_AUTO_A);
+        case 4:
+            _rpnf->rpnStack->toggleAngleMode();
+            return Receiver_AUTO::tick(0);
+
+        // Column 7
+        case 32:
+            // Clear F mode
+            break;
+        case 33:
+            // Shutdown signal
+            _rpnf->requestNextReceiver(_RECEIVER_AUTO_N);
+            return 33;
+        default: // all other buttons do nothing, keeping FK-mode
+            return 0;
+    }
+    return _rpnf->requestNextReceiver(_RECEIVER_AUTO_N);
+}
+
+//
 // AUTO Running program
 //
 
@@ -535,5 +616,6 @@ uint8_t Receiver_AUTO_R::tick( uint8_t scancode){
     #ifdef __DEBUG
     Serial.println("STOP/PAUSE");
     #endif
+    _kbd->resetLastPressed();
     return _rpnf->requestNextReceiver(_RECEIVER_AUTO_N);
 }

@@ -54,9 +54,21 @@ namespace MK52_Interpreter{
         uint8_t tick( uint8_t scancode = 0);
     };
 
+    class Receiver_AUTO_FK: public Receiver_AUTO{
+      public:
+        Receiver_AUTO_FK( void *components[]);
+        uint8_t tick( uint8_t scancode = 0);
+    };
+
     class Receiver_AUTO_A: public Receiver_AUTO{
       public:
         Receiver_AUTO_A( void *components[]);
+        uint8_t tick( uint8_t scancode = 0);
+    };
+
+    class Receiver_AUTO_FA: public Receiver_AUTO{
+      public:
+        Receiver_AUTO_FA( void *components[]);
         uint8_t tick( uint8_t scancode = 0);
     };
 
@@ -126,9 +138,21 @@ namespace MK52_Interpreter{
         uint8_t tick( uint8_t scancode = 0);
     };
 
+    class Receiver_PROG_FK: public Receiver_PROG{
+      public:
+        Receiver_PROG_FK( void *components[]);
+        uint8_t tick( uint8_t scancode = 0);
+    };
+
     class Receiver_PROG_A: public Receiver_PROG{
       public:
         Receiver_PROG_A( void *components[]);
+        uint8_t tick( uint8_t scancode = 0);
+    };
+
+    class Receiver_PROG_FA: public Receiver_PROG{
+      public:
+        Receiver_PROG_FA( void *components[]);
         uint8_t tick( uint8_t scancode = 0);
     };
 

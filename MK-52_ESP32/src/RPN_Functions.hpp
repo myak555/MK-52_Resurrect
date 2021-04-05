@@ -15,6 +15,7 @@ namespace MK52_Interpreter{
     class RPN_Functions{
         public:
             bool _atStop = false;
+            MK52_Hardware::SD_Manager *_sd = NULL;
             RPN_Stack *rpnStack = NULL;
             Register_Memory *regMem = NULL;
             Program_Memory *progMem = NULL;
@@ -78,7 +79,6 @@ namespace MK52_Interpreter{
             void **_components;
             int8_t _receiverRequested;
             int8_t _receiverReturnRequested;
-            MK52_Hardware::SD_Manager *_sd = NULL;
             uint16_t _nfunctions = 0;
             void *_functions[MK52_NFUNCTIONS];
             char *_text = NULL; // temporary output buffer

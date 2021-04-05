@@ -39,6 +39,9 @@ namespace MK52_Hardware{
         void init();
         uint8_t scan();
         uint8_t scanImmediate();
+        inline void resetLastPressed(){
+          lastScanTime = millis();
+          lastPressedTime = lastScanTime;}
       private:
         void _pulseRST();
         void _pulseCLK();

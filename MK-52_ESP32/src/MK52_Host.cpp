@@ -131,7 +131,9 @@ void MK52_Host::_addReceivers(){
     _addReceiver( new Receiver_AUTO_N( _components));
     _addReceiver( new Receiver_AUTO_F( _components));
     _addReceiver( new Receiver_AUTO_K( _components));
+    _addReceiver( new Receiver_AUTO_FK( _components));
     _addReceiver( new Receiver_AUTO_A( _components));
+    _addReceiver( new Receiver_AUTO_FA( _components));
     _addReceiver( new Receiver_AUTO_R( _components));
 
     _addReceiver( new Receiver_DATA_N( _components));
@@ -143,7 +145,9 @@ void MK52_Host::_addReceivers(){
     _addReceiver( new Receiver_PROG_N( _components));
     _addReceiver( new Receiver_PROG_F( _components));
     _addReceiver( new Receiver_PROG_K( _components));
+    _addReceiver( new Receiver_PROG_FK( _components));
     _addReceiver( new Receiver_PROG_A( _components));
+    _addReceiver( new Receiver_PROG_FA( _components));
     _addReceiver( new Receiver_PROG_Erase( _components));
 
     _addReceiver( new Receiver_FILE_N( _components));
