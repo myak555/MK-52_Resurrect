@@ -36,8 +36,8 @@ namespace MK52Simulator
             Program_Memory pm = _parent._m_Program_Memory;
             lm.clearScreen();
             lm.outputStatus(
-                _parent._m_Extended_Memory.getCounter(),
                 pm.getCounter(),
+                _parent._m_Extended_Memory.getCounter(),
                 pm.getEModeName(),
                 "   ");
             int display_PC = (int)pm.getCounter();
