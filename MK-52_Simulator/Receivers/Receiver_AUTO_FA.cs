@@ -13,19 +13,22 @@ using System.IO;
 
 namespace MK52Simulator
 {
-    public class Receiver_FILE_A: Receiver_FILE
+    //
+    // Implements a receiver for FA-modified buttons
+    //
+    public class Receiver_AUTO_FA : Receiver_AUTO
     {
-        public Receiver_FILE_A(MK52_Host parent)
-            : base( parent)
+        public Receiver_AUTO_FA(MK52_Host parent)
+            : base(parent)
         {
-            Moniker = "FILE_A";
+            Moniker = "AUTO_FA";
         }
 
         public override void activate(string prevReceiver)
         {
             base.activate(prevReceiver);
             LCD_Manager lm = _parent.getLCD();
-            lm.updateStatusFMODE(" A ");
+            lm.updateStatusFMODE("FA ");
             lm.forcePaint();
         }
 
@@ -38,30 +41,26 @@ namespace MK52Simulator
                     return 0;
 
                 // Column 0
-                case 1:
-                    return _rpnf.requestNextReceiver("FILE_FA");
                 case 2:
-                    return _rpnf.requestNextReceiver("FILE_K");
-
-                // Column 1 does nothing (for now)
-                // Column 2 does nothing (for now)
-                // Column 3 does nothing (for now)
-                // Column 4 does nothing (for now)
-                // Column 5 does nothing (for now)
-
-                // Column 6
-                case 28:
-                    return _rpnf.requestNextReceiver("DATA_N");
+                    return _rpnf.requestNextReceiver("AUTO_FK");
+                case 3:
+                    return _rpnf.requestNextReceiver("AUTO_A");
+                case 4:
+                    _parent._m_RPN_Stack.toggleAngleMode();
+                    return base.tick(0);
 
                 // Column 7
                 case 32:
+                    // Clear FA mode
+                    break;
                 case 33:
-                    _rpnf.requestNextReceiver("FILE_N");
+                    // Shutdown signal
+                    _rpnf.requestNextReceiver("AUTO_N");
                     return 33;
-                default: // all other buttons do nothing, keeping A-mode
+                default: // all other buttons do nothing, keeping FA-mode
                     return 0;
             }
-            //return _rpnf.requestNextReceiver("DATA_N");
+            return _rpnf.requestNextReceiver("AUTO_N");
         }
     }
 }

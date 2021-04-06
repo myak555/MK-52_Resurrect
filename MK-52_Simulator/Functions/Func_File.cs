@@ -40,60 +40,6 @@ namespace MK52Simulator
         }
     }
 
-    public class Func_UpDir : RPN_Function
-    {
-        public Func_UpDir()
-        {
-            Description = "Moves one directory up (UI-only)";
-        }
-
-        public override bool checkID(uint id)
-        {
-            return id == RPN_Functions.FUNC_UPDIR;
-        }
-
-        public override void execute(MK52_Host components, string command)
-        {
-            _SDM(components).upFolder();
-        }
-    }
-
-    public class Func_NextFile : RPN_Function
-    {
-        public Func_NextFile()
-        {
-            Description = "Move pointer to the next file (UI-only)";
-        }
-
-        public override bool checkID(uint id)
-        {
-            return id == RPN_Functions.FUNC_NEXTFILE;
-        }
-
-        public override void execute(MK52_Host components, string command)
-        {
-            _SDM(components).nextListingPosition();
-        }
-    }
-
-    public class Func_PrevFile : RPN_Function
-    {
-        public Func_PrevFile()
-        {
-            Description = "Moves pointer to the previous file (UI-only)";
-        }
-
-        public override bool checkID(uint id)
-        {
-            return id == RPN_Functions.FUNC_PREVFILE;
-        }
-
-        public override void execute(MK52_Host components, string command)
-        {
-            _SDM(components).previousListingPosition();
-        }
-    }
-
     public class Func_Remove : RPN_Function
     {
         public Func_Remove()
@@ -113,31 +59,6 @@ namespace MK52Simulator
             int tmp = sd.listingPosition;
             sd.readFolderItems();
             sd.setListingPosition(tmp);
-        }
-    }
-
-    public class Func_StepIn : RPN_Function
-    {
-        public Func_StepIn()
-        {
-            Description = "Steps into a folder";
-        }
-
-        public override bool checkID(uint id)
-        {
-            return id == RPN_Functions.FUNC_STEPIN;
-        }
-
-        public override void execute(MK52_Host components, string command)
-        {
-            SD_Manager sd = _SDM(components);
-            string filename = sd.getItemFromListing();
-            if( !sd.stepIn( filename)) return;
-            RPN_Functions _rpnf = components.getFunctions();
-            if( UniversalValue._endsWith_P( filename, ".DAT"))
-                _rpnf.loadData( filename);
-            else
-                _rpnf.loadProgram( filename);
         }
     }
 

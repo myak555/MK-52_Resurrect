@@ -50,11 +50,11 @@ namespace MK52Simulator
                 // Column 1
                 case 5:
                     for (int i = 0; i < 9; i++)
-                        _rpnf.execute(RPN_Functions.FUNC_NEXTFILE);
+                        _parent.getSD().nextListingPosition();
                     break;
                 case 6:
                     for (int i = 0; i < 9; i++)
-                        _rpnf.execute(RPN_Functions.FUNC_PREVFILE);
+                        _parent.getSD().previousListingPosition();
                     break;
 
                 // Column 2

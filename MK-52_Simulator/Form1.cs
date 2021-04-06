@@ -35,6 +35,12 @@ namespace MK52Simulator
         private void timer1_Tick(object sender, EventArgs e)
         {
             myRPN.tick();
+            string s = KBD_Manager1.getButtonsRecorderMessage();
+            if (label1.Text != s)
+            {
+                label1.Text = s;
+                label1.Refresh();
+            }
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
@@ -111,7 +117,46 @@ namespace MK52Simulator
 
         private void recordButtonsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // TODO
+            KBD_Manager1.StartRecording();
+        }
+
+        private void pauseToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            KBD_Manager1.PauseRecording();
+        }
+
+        private void stopToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            KBD_Manager1.StopRecording();
+        }
+
+        private void executeButtonsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            KBD_Manager1.PlayRecorded();
+        }
+
+        private void loadButtonsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (openFileDialog3.ShowDialog() != DialogResult.OK) return;
+            KBD_Manager1.LoadRecord(openFileDialog3.FileName);
+        }
+
+        private void saveButtonsStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (KBD_Manager1._recordFileName.Length == 0)
+            {
+                saveButtonsAsToolStripMenuItem_Click(sender, e);
+                return;
+            }
+            KBD_Manager1.SaveRecord();
+        }
+
+        private void saveButtonsAsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (KBD_Manager1._recordFileName.Length != 0)
+                saveFileDialog4.FileName = KBD_Manager1._recordFileName;
+            if (saveFileDialog4.ShowDialog() != DialogResult.OK) return;
+            KBD_Manager1.SaveRecordAs(saveFileDialog4.FileName);
         }
 
         private void functionsListToolStripMenuItem_Click(object sender, EventArgs e)
@@ -152,6 +197,38 @@ namespace MK52Simulator
         private void backgroundWorker1_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             // TODO: force status update
+        }
+
+        private void button_Record_Click(object sender, EventArgs e)
+        {
+            KBD_Manager1.StartRecording();
+        }
+
+        private void button_Pause_Click(object sender, EventArgs e)
+        {
+            KBD_Manager1.PauseRecording();
+        }
+
+        private void button_Stop_Click(object sender, EventArgs e)
+        {
+            KBD_Manager1.StopRecording();
+        }
+
+        private void button_Execute_Click(object sender, EventArgs e)
+        {
+            KBD_Manager1.PlayRecorded();
+        }
+
+        private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            myRPN.getFunctions().requestNextReceiver("AUTO_N");
+            myRPN.setRequestedReceiver();
+            myRPN.tick();
+        }
+
+        private void button_CopyX_Click(object sender, EventArgs e)
+        {
+            Clipboard.SetText(myRPN._m_RPN_Stack.X.toString());
         }
     }
 }

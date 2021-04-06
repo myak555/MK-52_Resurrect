@@ -88,6 +88,19 @@ namespace MK52Simulator
             return setCounter(Convert.ToUInt32(text.Trim()));
         }
 
+        public uint setCounterToBottom()
+        {
+            while (_current < _bottom)
+            {
+                if (incrementCounter()) break;
+            }
+            while (_current > _bottom)
+            {
+                if (decrementCounter()) break;
+            }
+            return _counter;
+        }
+
         public bool incrementCounter()
         {
             // Skip to end of line

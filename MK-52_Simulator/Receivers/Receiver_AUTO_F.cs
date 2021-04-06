@@ -42,9 +42,9 @@ namespace MK52Simulator
 
                 // Column 0
                 case 2:
-                    return _rpnf.requestNextReceiver("AUTO_K");
+                    return _rpnf.requestNextReceiver("AUTO_FK");
                 case 3:
-                    return _rpnf.requestNextReceiver("AUTO_A");
+                    return _rpnf.requestNextReceiver("AUTO_FA");
                 case 4:
                     _parent._m_RPN_Stack.toggleAngleMode();
                     return base.tick(0);

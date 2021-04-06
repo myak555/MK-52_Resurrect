@@ -42,7 +42,7 @@ namespace MK52Simulator
 
                 // Column 0
                 case 1:
-                    return _rpnf.requestNextReceiver("AUTO_F");
+                    return _rpnf.requestNextReceiver("AUTO_FA");
                 case 2:
                     return _rpnf.requestNextReceiver("AUTO_K");
                 case 4:

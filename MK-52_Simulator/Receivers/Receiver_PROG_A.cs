@@ -46,7 +46,7 @@ namespace MK52Simulator
                 case 2:
                     return _rpnf.requestNextReceiver("PROG_K");
                 case 4:
-                    _rpnf.appendProgramLine_P(RPN_Functions.FUNC_SET_DMOD_GRD);
+                    _rpnf.appendProgramLine_P(RPN_Functions.FUNC_DMOD_GRD);
                     break;
 
                 // Column 1

@@ -615,10 +615,6 @@ namespace MK52Simulator
         private const string _standard_MinusInfinity = "-Inf";  
         private const string _standard_PlusInfinity = "+Inf";
 
-        //private DateTime UpdateRequested = DateTime.MaxValue;
-        //private DateTime LastUpdated = DateTime.MinValue;
-        //public int UpdatePeriod = 30; // ms
-
         public LCD_Manager()
         {
             InitializeComponent();

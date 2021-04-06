@@ -58,6 +58,15 @@ namespace MK52Simulator
             this.saveFileDialog3 = new System.Windows.Forms.SaveFileDialog();
             this.openFileDialog2 = new System.Windows.Forms.OpenFileDialog();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
+            this.button_Record = new System.Windows.Forms.Button();
+            this.button_Pause = new System.Windows.Forms.Button();
+            this.button_Stop = new System.Windows.Forms.Button();
+            this.button_Execute = new System.Windows.Forms.Button();
+            this.button_CopyX = new System.Windows.Forms.Button();
+            this.pauseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.label1 = new System.Windows.Forms.Label();
+            this.openFileDialog3 = new System.Windows.Forms.OpenFileDialog();
+            this.saveFileDialog4 = new System.Windows.Forms.SaveFileDialog();
             this.LCD_Manager1 = new MK52Simulator.LCD_Manager();
             this.KBD_Manager1 = new MK52Simulator.KBD_Manager();
             this.menuStrip1.SuspendLayout();
@@ -154,6 +163,7 @@ namespace MK52Simulator
             // 
             this.buttonsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.recordButtonsToolStripMenuItem,
+            this.pauseToolStripMenuItem,
             this.stopToolStripMenuItem,
             this.executeButtonsToolStripMenuItem,
             this.menuSeparator2,
@@ -175,13 +185,15 @@ namespace MK52Simulator
             // 
             this.stopToolStripMenuItem.Name = "stopToolStripMenuItem";
             this.stopToolStripMenuItem.Size = new System.Drawing.Size(150, 28);
-            this.stopToolStripMenuItem.Text = "Sto&p";
+            this.stopToolStripMenuItem.Text = "&Stop";
+            this.stopToolStripMenuItem.Click += new System.EventHandler(this.stopToolStripMenuItem_Click);
             // 
             // executeButtonsToolStripMenuItem
             // 
             this.executeButtonsToolStripMenuItem.Name = "executeButtonsToolStripMenuItem";
             this.executeButtonsToolStripMenuItem.Size = new System.Drawing.Size(150, 28);
             this.executeButtonsToolStripMenuItem.Text = "&Execute";
+            this.executeButtonsToolStripMenuItem.Click += new System.EventHandler(this.executeButtonsToolStripMenuItem_Click);
             // 
             // menuSeparator2
             // 
@@ -193,18 +205,21 @@ namespace MK52Simulator
             this.loadButtonsToolStripMenuItem.Name = "loadButtonsToolStripMenuItem";
             this.loadButtonsToolStripMenuItem.Size = new System.Drawing.Size(150, 28);
             this.loadButtonsToolStripMenuItem.Text = "&Load";
+            this.loadButtonsToolStripMenuItem.Click += new System.EventHandler(this.loadButtonsToolStripMenuItem_Click);
             // 
             // saveButtonsStripMenuItem
             // 
             this.saveButtonsStripMenuItem.Name = "saveButtonsStripMenuItem";
             this.saveButtonsStripMenuItem.Size = new System.Drawing.Size(150, 28);
             this.saveButtonsStripMenuItem.Text = "&Save";
+            this.saveButtonsStripMenuItem.Click += new System.EventHandler(this.saveButtonsStripMenuItem_Click);
             // 
             // saveButtonsAsToolStripMenuItem
             // 
             this.saveButtonsAsToolStripMenuItem.Name = "saveButtonsAsToolStripMenuItem";
             this.saveButtonsAsToolStripMenuItem.Size = new System.Drawing.Size(150, 28);
             this.saveButtonsAsToolStripMenuItem.Text = "Save &As...";
+            this.saveButtonsAsToolStripMenuItem.Click += new System.EventHandler(this.saveButtonsAsToolStripMenuItem_Click);
             // 
             // listToolStripMenuItem
             // 
@@ -232,7 +247,7 @@ namespace MK52Simulator
             // openFileDialog1
             // 
             this.openFileDialog1.DefaultExt = "MK52";
-            this.openFileDialog1.FileName = "openFileDialog1";
+            this.openFileDialog1.FileName = "Program";
             this.openFileDialog1.Filter = "MK52 Programs|*.mk52|All files|*.*";
             this.openFileDialog1.RestoreDirectory = true;
             this.openFileDialog1.Title = "Load program";
@@ -240,6 +255,7 @@ namespace MK52Simulator
             // saveFileDialog1
             // 
             this.saveFileDialog1.DefaultExt = "MK52";
+            this.saveFileDialog1.FileName = "Program_1";
             this.saveFileDialog1.Filter = "MK52 Programs|*.mk52|All files|*.*";
             this.saveFileDialog1.RestoreDirectory = true;
             this.saveFileDialog1.Title = "Save program";
@@ -247,6 +263,7 @@ namespace MK52Simulator
             // saveFileDialog2
             // 
             this.saveFileDialog2.DefaultExt = "DAT";
+            this.saveFileDialog2.FileName = "Data_1";
             this.saveFileDialog2.Filter = "MK52 Data|*.DAT|All files|*.*";
             this.saveFileDialog2.RestoreDirectory = true;
             this.saveFileDialog2.Title = "Save data";
@@ -261,7 +278,7 @@ namespace MK52Simulator
             // openFileDialog2
             // 
             this.openFileDialog2.DefaultExt = "DAT";
-            this.openFileDialog2.FileName = "openFileDialog2";
+            this.openFileDialog2.FileName = "Data";
             this.openFileDialog2.Filter = "Data Files|*.dat|MK52 Programs|*.mk52|All files|*.*";
             this.openFileDialog2.RestoreDirectory = true;
             this.openFileDialog2.Title = "Load data";
@@ -271,7 +288,112 @@ namespace MK52Simulator
             this.backgroundWorker1.WorkerReportsProgress = true;
             this.backgroundWorker1.WorkerSupportsCancellation = true;
             this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker1_DoWork);
+            this.backgroundWorker1.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorker1_RunWorkerCompleted);
             this.backgroundWorker1.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.backgroundWorker1_ProgressChanged);
+            // 
+            // button_Record
+            // 
+            this.button_Record.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.button_Record.BackColor = System.Drawing.Color.LimeGreen;
+            this.button_Record.FlatAppearance.BorderColor = System.Drawing.Color.LimeGreen;
+            this.button_Record.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Coral;
+            this.button_Record.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button_Record.Location = new System.Drawing.Point(386, 316);
+            this.button_Record.Name = "button_Record";
+            this.button_Record.Size = new System.Drawing.Size(75, 25);
+            this.button_Record.TabIndex = 4;
+            this.button_Record.Text = "Record";
+            this.button_Record.UseVisualStyleBackColor = false;
+            this.button_Record.Click += new System.EventHandler(this.button_Record_Click);
+            // 
+            // button_Pause
+            // 
+            this.button_Pause.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.button_Pause.BackColor = System.Drawing.Color.LimeGreen;
+            this.button_Pause.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Coral;
+            this.button_Pause.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button_Pause.Location = new System.Drawing.Point(466, 316);
+            this.button_Pause.Name = "button_Pause";
+            this.button_Pause.Size = new System.Drawing.Size(75, 25);
+            this.button_Pause.TabIndex = 5;
+            this.button_Pause.Text = "Pause";
+            this.button_Pause.UseVisualStyleBackColor = false;
+            this.button_Pause.Click += new System.EventHandler(this.button_Pause_Click);
+            // 
+            // button_Stop
+            // 
+            this.button_Stop.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.button_Stop.BackColor = System.Drawing.Color.LimeGreen;
+            this.button_Stop.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Coral;
+            this.button_Stop.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button_Stop.Location = new System.Drawing.Point(546, 316);
+            this.button_Stop.Name = "button_Stop";
+            this.button_Stop.Size = new System.Drawing.Size(75, 25);
+            this.button_Stop.TabIndex = 6;
+            this.button_Stop.Text = "Stop";
+            this.button_Stop.UseVisualStyleBackColor = false;
+            this.button_Stop.Click += new System.EventHandler(this.button_Stop_Click);
+            // 
+            // button_Execute
+            // 
+            this.button_Execute.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.button_Execute.BackColor = System.Drawing.Color.LimeGreen;
+            this.button_Execute.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Coral;
+            this.button_Execute.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button_Execute.Location = new System.Drawing.Point(626, 316);
+            this.button_Execute.Name = "button_Execute";
+            this.button_Execute.Size = new System.Drawing.Size(75, 25);
+            this.button_Execute.TabIndex = 7;
+            this.button_Execute.Text = "Execute";
+            this.button_Execute.UseVisualStyleBackColor = false;
+            this.button_Execute.Click += new System.EventHandler(this.button_Execute_Click);
+            // 
+            // button_CopyX
+            // 
+            this.button_CopyX.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.button_CopyX.BackColor = System.Drawing.Color.LimeGreen;
+            this.button_CopyX.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Coral;
+            this.button_CopyX.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button_CopyX.Location = new System.Drawing.Point(799, 316);
+            this.button_CopyX.Name = "button_CopyX";
+            this.button_CopyX.Size = new System.Drawing.Size(75, 25);
+            this.button_CopyX.TabIndex = 8;
+            this.button_CopyX.Text = "Copy X";
+            this.button_CopyX.UseVisualStyleBackColor = false;
+            this.button_CopyX.Click += new System.EventHandler(this.button_CopyX_Click);
+            // 
+            // pauseToolStripMenuItem
+            // 
+            this.pauseToolStripMenuItem.Name = "pauseToolStripMenuItem";
+            this.pauseToolStripMenuItem.Size = new System.Drawing.Size(150, 28);
+            this.pauseToolStripMenuItem.Text = "&Pause";
+            this.pauseToolStripMenuItem.Click += new System.EventHandler(this.pauseToolStripMenuItem_Click);
+            // 
+            // label1
+            // 
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.label1.ForeColor = System.Drawing.Color.LimeGreen;
+            this.label1.Location = new System.Drawing.Point(64, 319);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(277, 25);
+            this.label1.TabIndex = 9;
+            this.label1.Text = "Buttons recorded: 0";
+            // 
+            // openFileDialog3
+            // 
+            this.openFileDialog3.DefaultExt = "BTN";
+            this.openFileDialog3.FileName = "Macro";
+            this.openFileDialog3.Filter = "Macro Files|*.btn|All files|*.*";
+            this.openFileDialog3.RestoreDirectory = true;
+            this.openFileDialog3.Title = "Load keyboard macro";
+            // 
+            // saveFileDialog4
+            // 
+            this.saveFileDialog4.DefaultExt = "BTN";
+            this.saveFileDialog4.FileName = "Macro_1";
+            this.saveFileDialog4.Filter = "Macro files|*.btn|All files|*.*";
+            this.saveFileDialog4.RestoreDirectory = true;
+            this.saveFileDialog4.Title = "Save macro file";
             // 
             // LCD_Manager1
             // 
@@ -295,7 +417,13 @@ namespace MK52Simulator
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackColor = System.Drawing.Color.Black;
-            this.ClientSize = new System.Drawing.Size(914, 315);
+            this.ClientSize = new System.Drawing.Size(914, 345);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.button_CopyX);
+            this.Controls.Add(this.button_Execute);
+            this.Controls.Add(this.button_Stop);
+            this.Controls.Add(this.button_Pause);
+            this.Controls.Add(this.button_Record);
             this.Controls.Add(this.LCD_Manager1);
             this.Controls.Add(this.KBD_Manager1);
             this.Controls.Add(this.menuStrip1);
@@ -346,6 +474,15 @@ namespace MK52Simulator
         private System.Windows.Forms.ToolStripMenuItem saveAsToolStripMenuItem;
         private System.Windows.Forms.OpenFileDialog openFileDialog2;
         private System.ComponentModel.BackgroundWorker backgroundWorker1;
+        private System.Windows.Forms.Button button_Record;
+        private System.Windows.Forms.Button button_Pause;
+        private System.Windows.Forms.Button button_Stop;
+        private System.Windows.Forms.Button button_Execute;
+        private System.Windows.Forms.Button button_CopyX;
+        private System.Windows.Forms.ToolStripMenuItem pauseToolStripMenuItem;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.OpenFileDialog openFileDialog3;
+        private System.Windows.Forms.SaveFileDialog saveFileDialog4;
     }
 }
 

@@ -12,17 +12,24 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Data;
 using System.Text;
+using System.IO;
 using System.Windows.Forms;
 
 namespace MK52Simulator
 {
     public partial class KBD_Manager : UserControl
     {
+        public const int MacroStatus_OFF = 0;
+        public const int MacroStatus_RECORDING = 1;
+        public const int MacroStatus_PAUSED = 2;
+        public const int MacroStatus_PLAYING = 3;
+        public int MaxMacro = 1000;
+
         private List<MK52_Button> m_Buttons = new List<MK52_Button>();
         private Queue<byte> m_ButtonsPressed = new Queue<byte>();
-        private bool _recording = false;
-        //private int _recordPosition = 0;
-        private List<MK52_Button> _record = new List<MK52_Button>();
+        private int _recording = MacroStatus_OFF;
+        private List<byte> _record = new List<byte>();
+        public string _recordFileName = "";
 
         public byte lastScan = 0;
         public DateTime lastScanTime = new DateTime(0);
@@ -99,7 +106,10 @@ namespace MK52Simulator
             foreach (MK52_Button rpb in m_Buttons)
             {
                 if (!rpb.isPressed(e.X, e.Y)) continue;
-                m_ButtonsPressed.Enqueue((byte)rpb.Scancode);
+                byte b = (byte)rpb.Scancode;
+                m_ButtonsPressed.Enqueue(b);
+                if (_recording == MacroStatus_RECORDING && _record.Count < MaxMacro)
+                    _record.Add(b);
                 return;
             }
         }
@@ -107,20 +117,128 @@ namespace MK52Simulator
         public void StartRecording()
         {
             _record.Clear();
-            _recording = true; 
+            _recording = MacroStatus_RECORDING; 
+        }
+
+        public void PauseRecording()
+        {
+            _recording = MacroStatus_PAUSED;
         }
 
         public void StopRecording()
         {
-            _recording = false;
+            _recording = MacroStatus_OFF;
+        }
+
+        public void PlayRecorded()
+        {
+            if (isRecording) return;
+            _recording = MacroStatus_PLAYING;
+            foreach (byte b in _record)
+            {
+                m_ButtonsPressed.Enqueue(b);
+            }
+            _recording = MacroStatus_OFF;
+        }
+
+        public void LoadRecord(string filename)
+        {
+            _recordFileName = filename;
+            FileStream fs = null;
+            StreamReader sr = null;
+            try
+            {
+                fs = File.Open(_recordFileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                sr = new StreamReader(fs);
+                _record.Clear();
+                while( !sr.EndOfStream)
+                {
+                    string buttonName = sr.ReadLine();
+                    MK52_Button iB = m_Buttons.Find(
+                        delegate(MK52_Button x) { return x.Moniker == buttonName;});
+                    _record.Add((byte)iB.Scancode);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new FileNotFoundException(ex.Message);
+            }
+            finally
+            {
+                if (sr != null) sr.Close();
+                if (fs != null) fs.Close();
+            }
+        }
+
+        public void SaveRecord()
+        {
+            FileStream fs = null;
+            StreamWriter sw = null;
+            try
+            {
+                fs = File.Open(_recordFileName, FileMode.Create, FileAccess.Write, FileShare.Read);
+                sw = new StreamWriter(fs);
+                foreach (byte b in _record)
+                {
+                    MK52_Button btn = m_Buttons[ (int)b - 1];
+                    sw.WriteLine( btn.Moniker);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new FileNotFoundException(ex.Message);
+            }
+            finally
+            {
+                if (sw != null) sw.Close();
+                if (fs != null) fs.Close();
+            }
+        }
+
+        public void SaveRecordAs(string filename)
+        {
+            _recordFileName = filename;
+            SaveRecord();
         }
 
         public bool isRecording
         {
             get
             {
-                return _recording;
+                return _recording != MacroStatus_OFF;
             }
+        }
+
+        public int ButtonsRecorded
+        {
+            get
+            {
+                return _record.Count;
+            }
+        }
+
+        public string getButtonsRecorderMessage()
+        {
+            StringBuilder sb = new StringBuilder();
+            switch( _recording)
+            {
+                case MacroStatus_OFF:
+                    if( _record.Count == 0) break;
+                    sb.Append("Buttons recorded: ");
+                    sb.Append( _record.Count.ToString());
+                    break;
+                case MacroStatus_RECORDING:
+                    sb.Append("Recording: ");
+                    sb.Append( _record.Count.ToString());
+                    break;
+                case MacroStatus_PAUSED:
+                    sb.Append("Paused: ");
+                    sb.Append( _record.Count.ToString());
+                    break;
+                default:
+                    break;
+            }
+            return sb.ToString();
         }
     }
 }

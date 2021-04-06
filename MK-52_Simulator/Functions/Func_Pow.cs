@@ -213,6 +213,93 @@ namespace MK52Simulator
         }
     }
 
+    public class Func_PowYX : RPN_Function
+    {
+        public Func_PowYX()
+        {
+            Description = "Computes Y power X (classic HP)";
+        }
+
+        public override bool checkID(uint id)
+        {
+            return id == RPN_Functions.FUNC_POWYX;
+        }
+
+        public override bool checkName(string name)
+        {
+            return UniversalValue._identicalTo_P(name, Name());
+        }
+
+        public override string Name()
+        {
+            return "Y^X";
+        }
+
+        public override string IOName()
+        {
+            return "Y^X";
+        }
+
+        public override void execute(MK52_Host components, string command)
+        {
+            RPN_Stack s = _dealWithClergy2(components);
+            if (s == null) return;
+            s.pop(0);
+            UniversalValue X_ = s.X;
+            UniversalValue Y_ = s.Bx;
+            if (Y_.isEmpty())
+            {
+                X_.fromInt(1);
+                return;
+            }
+            double result = 1.0;
+            double x = X_.toReal();
+            if (Y_.isReal())
+            {
+                result = Math.Pow(x, Y_.toReal());
+                X_.fromReal(result);
+                return;
+            }
+            Int64 p = Y_.toInt();
+            Int64 p2 = p;
+            if (x == 0.0 && p == 0) // special case
+            {
+                X_.fromInt(1);
+                return;
+            }
+            if (x == 0.0 && p < 0)
+            {
+                X_.fromReal(double.PositiveInfinity);
+                return;
+            }
+            while (p > 0)
+            {
+                result *= x;
+                p--;
+            }
+            x = 1.0 / x;
+            while (p < 0)
+            {
+                result *= x;
+                p++;
+            }
+            if (p2 <= 0 || X_.isReal() || Math.Abs(result) > UniversalValue.HUGE_POSITIVE_AS_REAL)
+            {
+                X_.fromReal(result);
+                return;
+            }
+            // Try to keep as integer
+            Int64 result2 = X_.toInt();
+            Int64 mul = result2;
+            while (p2 > 1)
+            {
+                result2 *= mul;
+                p2--;
+            }
+            X_.fromInt(result2);
+        }
+    }
+
     public class Func_X2 : RPN_Function
     {
         public Func_X2()

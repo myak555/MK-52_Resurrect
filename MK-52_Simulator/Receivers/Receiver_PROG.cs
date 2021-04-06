@@ -27,7 +27,7 @@ namespace MK52Simulator
         public override void activate( string prevReceiver)
         {
             base.activate(prevReceiver);
-            if (prevReceiver.StartsWith( Moniker))
+            if (prevReceiver.StartsWith( "PROG"))
             {
                 tick(0);
                 return;

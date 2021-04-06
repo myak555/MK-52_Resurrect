@@ -505,7 +505,7 @@ namespace MK52Simulator
 
         public override bool checkID(uint id)
         {
-            return id == RPN_Functions.FUNC_SET_DMOD_DEG;
+            return id == RPN_Functions.FUNC_DMOD_DEG;
         }
 
         public override bool checkName(string name)
@@ -533,7 +533,7 @@ namespace MK52Simulator
 
         public override bool checkID(uint id)
         {
-            return id == RPN_Functions.FUNC_SET_DMOD_RAD;
+            return id == RPN_Functions.FUNC_DMOD_RAD;
         }
 
         public override bool checkName(string name)
@@ -561,7 +561,7 @@ namespace MK52Simulator
 
         public override bool checkID(uint id)
         {
-            return id == RPN_Functions.FUNC_SET_DMOD_GRD;
+            return id == RPN_Functions.FUNC_DMOD_GRD;
         }
 
         public override bool checkName(string name)

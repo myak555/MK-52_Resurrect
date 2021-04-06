@@ -15,113 +15,130 @@ namespace MK52Simulator
     public class RPN_Functions
     {
         #region Constants
-        public const uint FUNC_COMMENT = 1;
-        public const uint FUNC_SET_DMOD_DEG = 9;
-        public const uint FUNC_SET_DMOD_RAD = 10;
-        public const uint FUNC_SET_DMOD_GRD = 11;
-        public const uint FUNC_NEGATE = 12;
-        public const uint FUNC_ENTER = 13;
-        public const uint FUNC_SWAP = 14;
-        public const uint FUNC_PLUS = 15;
-        public const uint FUNC_MINUS = 16;
-        public const uint FUNC_MULTIPLY = 17;
-        public const uint FUNC_DIVIDE = 18;
-        public const uint FUNC_CLEAR_X = 19;
-        public const uint FUNC_SIN = 20;
-        public const uint FUNC_ARCSIN = 21;
-        public const uint FUNC_COS = 22;
-        public const uint FUNC_ARCCOS = 23;
-        public const uint FUNC_TG = 24;
-        public const uint FUNC_ARCTG = 25;
+        public const uint FUNC_10X = 1;
+        public const uint FUNC_1X = 2;
+
+        public const uint FUNC_A_M2X = 3;
+        public const uint FUNC_A_X2M = 4;
+        public const uint FUNC_ABS = 5;
+        public const uint FUNC_AND = 6;
+        public const uint FUNC_ARCCOS = 7;
+        public const uint FUNC_ARCSIN = 8;
+        public const uint FUNC_ARCTG = 9;
+
+        public const uint FUNC_BX = 10;
+
+        public const uint FUNC_CHAIN = 11;
+        public const uint FUNC_CLEAR_X = 12;
+        public const uint FUNC_COMMENT = 13;
+        public const uint FUNC_COS = 14;
+
+        public const uint FUNC_D2DM = 15;
+        public const uint FUNC_D2DMS = 16;
+        public const uint FUNC_DIVIDE = 17;
+        public const uint FUNC_DM2D = 18;
+        public const uint FUNC_D2RAD = 19;
+        public const uint FUNC_DMS2D = 20;
+        public const uint FUNC_DMOD_DEG = 21;
+        public const uint FUNC_DMOD_GRD = 22;
+        public const uint FUNC_DMOD_RAD = 23;
+
+        public const uint FUNC_EE = 24;
+        public const uint FUNC_ENTER = 25;
         public const uint FUNC_EXP = 26;
-        public const uint FUNC_10X = 27;
-        public const uint FUNC_LG = 28;
-        public const uint FUNC_LN = 29;
-        public const uint FUNC_POW = 30;
-        public const uint FUNC_LOG = 31;
-        public const uint FUNC_ROT = 32;
-        public const uint FUNC_X2 = 33;
-        public const uint FUNC_1X = 34;
-        public const uint FUNC_SQRT = 35;
-        public const uint FUNC_PI = 36;
-        public const uint FUNC_EE = 37;
-        public const uint FUNC_BX = 38;
-        public const uint FUNC_RAND = 39;
-        public const uint FUNC_SEED = 40;
-        public const uint FUNC_WHOLE = 41;
-        public const uint FUNC_FRAC = 42;
-        public const uint FUNC_MAX = 43;
-        public const uint FUNC_ABS = 44;
-        public const uint FUNC_SIGN = 45;
-        public const uint FUNC_AND = 46;
-        public const uint FUNC_OR = 47;
-        public const uint FUNC_XOR = 48;
-        public const uint FUNC_NOT = 49;
-        public const uint FUNC_D2DM = 50;
-        public const uint FUNC_D2DMS = 51;
-        public const uint FUNC_DM2D = 52;
-        public const uint FUNC_DMS2D = 53;
-        public const uint FUNC_D2RAD = 54;
-        public const uint FUNC_RAD2D = 55;
-        public const uint FUNC_MM2IN = 56;
-        public const uint FUNC_IN2MM = 57;
-        public const uint FUNC_M2X = 58;
-        public const uint FUNC_X2M = 59;
-        public const uint FUNC_K_M2X = 60;
-        public const uint FUNC_K_X2M = 61;
-        public const uint FUNC_A_M2X = 62;
-        public const uint FUNC_A_X2M = 63;
-        public const uint FUNC_GOTO = 64;
-        public const uint FUNC_GOSUB = 65;
-        public const uint FUNC_RETURN = 66;
-        public const uint FUNC_MEMSET = 67;
-        public const uint FUNC_MEMSWP = 68;
-        public const uint FUNC_MEXTOX = 69;
-        public const uint FUNC_XTOMEX = 70;
-        public const uint FUNC_MEXTOR = 71;
-        public const uint FUNC_RTOMEX = 72;
-        public const uint FUNC_STOP = 75;
-        public const uint FUNC_MKDIR = 76;
-        public const uint FUNC_UPDIR = 77;
-        public const uint FUNC_NEXTFILE = 78;
-        public const uint FUNC_PREVFILE = 79;
-        public const uint FUNC_REMOVE = 80;
-        public const uint FUNC_STEPIN = 81;
-        public const uint FUNC_SAVE = 82;
-        public const uint FUNC_SAVEAS = 83;
-        public const uint FUNC_LOAD = 84;
-        public const uint FUNC_LOADFROM = 85;
-        public const uint FUNC_CHAIN = 86;
-        public const uint FUNC_SAVEDATA = 87;
-        public const uint FUNC_SAVEDATAAS = 88;
-        public const uint FUNC_LOADDATA = 89;
-        public const uint FUNC_LOADDATAFROM = 90;
-        public const uint FUNC_GOMEM = 91;
-        public const uint FUNC_IFNOTLT0 = 92;
-        public const uint FUNC_IFNOTEQ0 = 93;
-        public const uint FUNC_IFNOTGE0 = 94;
-        public const uint FUNC_IFNOTNE0 = 95;
-        public const uint FUNC_IFNOTLTY = 96;
-        public const uint FUNC_IFNOTEQY = 97;
-        public const uint FUNC_IFNOTGEY = 98;
-        public const uint FUNC_IFNOTNEY = 99;
-        public const uint FUNC_L0 = 100;
-        public const uint FUNC_L1 = 101;
-        public const uint FUNC_L2 = 102;
-        public const uint FUNC_L3 = 103;
-        public const uint FUNC_LBX = 104;
-        public const uint FUNC_LBY = 105;
-        public const uint FUNC_LBZ = 106;
-        public const uint FUNC_LBT = 107;
-        public const uint FUNC_LBR = 108;
-        public const uint FUNC_SAVEALL = 109;
-        public const uint FUNC_SAVEALLAS = 110;
-        public const uint FUNC_LOADALL = 111;
-        public const uint FUNC_LOADALLFROM = 112;
-        public const uint FUNC_NOP = 113;
+
+        public const uint FUNC_FRAC = 27;
+
+        public const uint FUNC_GOTO = 28;
+        public const uint FUNC_GOSUB = 29;
+
+        public const uint FUNC_IFNOTEQ0 = 30;
+        public const uint FUNC_IFNOTGE0 = 31;
+        public const uint FUNC_IFNOTLT0 = 32;
+        public const uint FUNC_IFNOTNE0 = 33;
+        public const uint FUNC_IFNOTEQY = 34;
+        public const uint FUNC_IFNOTGEY = 35;
+        public const uint FUNC_IFNOTLTY = 36;
+        public const uint FUNC_IFNOTNEY = 37;
+        public const uint FUNC_IN2MM = 38;
+
+        public const uint FUNC_K_M2X = 39;
+        public const uint FUNC_K_X2M = 40;
+
+        public const uint FUNC_L0 = 41;
+        public const uint FUNC_L1 = 42;
+        public const uint FUNC_L2 = 43;
+        public const uint FUNC_L3 = 44;
+        public const uint FUNC_LBR = 45;
+        public const uint FUNC_LBT = 46;
+        public const uint FUNC_LBX = 47;
+        public const uint FUNC_LBY = 48;
+        public const uint FUNC_LBZ = 49;
+        public const uint FUNC_LG = 50;
+        public const uint FUNC_LN = 51;
+        public const uint FUNC_LOAD = 52;
+        public const uint FUNC_LOADFROM = 53;
+        public const uint FUNC_LOADALL = 54;
+        public const uint FUNC_LOADALLFROM = 55;
+        public const uint FUNC_LOADDATA = 56;
+        public const uint FUNC_LOADDATAFROM = 57;
+        public const uint FUNC_LOG = 58;
+
+        public const uint FUNC_M2X = 59;
+        public const uint FUNC_MAX = 60;
+        public const uint FUNC_MEMSET = 61;
+        public const uint FUNC_MEMSWP = 62;
+        public const uint FUNC_MEXTOR = 63;
+        public const uint FUNC_MEXTOX = 64;
+        public const uint FUNC_MINUS = 65;
+        public const uint FUNC_MKDIR = 66;
+        public const uint FUNC_MM2IN = 67;
+        public const uint FUNC_MULTIPLY = 68;
+
+        public const uint FUNC_NEGATE = 69;
+        public const uint FUNC_NOP = 70;
+        public const uint FUNC_NOT = 71;
+
+        public const uint FUNC_OR = 73;
+
+        public const uint FUNC_RAD2D = 75;
+        public const uint FUNC_RETURN = 76;
+        public const uint FUNC_RTOMEX = 77;
+
+        public const uint FUNC_PLUS = 78;
+
+        public const uint FUNC_SAVEALL = 79;
+        public const uint FUNC_SAVEALLAS = 80;
+        public const uint FUNC_SAVEDATA = 81;
+        public const uint FUNC_SAVEDATAAS = 82;
+        public const uint FUNC_SIGN = 83;
+        public const uint FUNC_SIN = 84;
+        public const uint FUNC_SQRT = 85;
+        public const uint FUNC_STOP = 86;
+        public const uint FUNC_SWAP = 87;
+
+        public const uint FUNC_TG = 88;
+
+        public const uint FUNC_RAND = 89;
+        public const uint FUNC_REMOVE = 90;
+        public const uint FUNC_PI = 91;
+        public const uint FUNC_POW = 92;
+        public const uint FUNC_POWYX = 93;
+        public const uint FUNC_ROT = 94;
+
+        public const uint FUNC_SAVE = 95;
+        public const uint FUNC_SAVEAS = 96;
+        public const uint FUNC_SEED = 97;
+
+        public const uint FUNC_WHOLE = 100;
+
+        public const uint FUNC_X2 = 101;
+        public const uint FUNC_X2M = 102;
+        public const uint FUNC_XOR = 103;
+        public const uint FUNC_XTOMEX = 104;
         
         public const uint MK52_NFUNCTIONS = 128;
-        public const int PROGRAM_LINE_LENGTH = 64; // TODO
+        public const int PROGRAM_LINE_LENGTH = 128;
         #endregion
 
         private MK52_Host _parent = null;
@@ -204,6 +221,7 @@ namespace MK52Simulator
             _appendFunction( new Func_Ln());
             // #define FUNC_POW                30
             _appendFunction( new Func_Pow());
+            _appendFunction( new Func_PowYX());
             // #define FUNC_LOG                31
             _appendFunction( new Func_Log());
             // #define FUNC_ROT                32
@@ -292,16 +310,8 @@ namespace MK52Simulator
             _appendFunction( new Func_Stop());
             // #define FUNC_MKDIR              76
             _appendFunction( new Func_MkDir());
-            // #define FUNC_UPDIR              77
-            _appendFunction( new Func_UpDir());
-            // #define FUNC_NEXTFILE           78
-            _appendFunction( new Func_NextFile());
-            // #define FUNC_PREVFILE           79
-            _appendFunction( new Func_PrevFile());
             // #define FUNC_REMOVE             80
             _appendFunction( new Func_Remove());
-            // #define FUNC_STEPIN             81
-            _appendFunction( new Func_StepIn());
             // #define FUNC_SAVE               82
             _appendFunction( new Func_Save());
             // #define FUNC_SAVEAS             83
@@ -320,8 +330,6 @@ namespace MK52Simulator
             _appendFunction( new Func_LoadData());
             // #define FUNC_LOADDATAFROM       90
             _appendFunction( new Func_LoadDataFrom());
-            // #define FUNC_GOMEM              91
-            _appendFunction( new Func_GOMEM());
             // #define FUNC_IFNOTLT0           92
             _appendFunction( new Func_IfNotLT0());
             // #define FUNC_IFNOTEQ0           93
@@ -631,7 +639,17 @@ namespace MK52Simulator
             return result;
         }
 
-        public  string formFileName(string name)
+        public void stepIn()
+        {
+            string filename = _sd.getItemFromListing();
+            if( !_sd.stepIn( filename)) return;
+            if( UniversalValue._endsWith_P( filename, ".DAT"))
+                loadData( filename);
+            else
+                loadProgram( filename);
+        }
+
+        public string formFileName(string name)
         {
             return _sd.makeEntityName( name);
         }

@@ -138,8 +138,13 @@ namespace MK52Simulator
             return "STOP";
         }
 
-        // On the original MK-52 stop advanced PC
-        // public override void advancePC(MK52_Host components) { }
+        // On the original MK-52 stop advanced PC past the operator
+        public override void advancePC(MK52_Host components)
+        {
+            Program_Memory pm = components._m_Program_Memory;
+            pm.incrementCounter();
+        }
+
 
         public override void execute(MK52_Host components, string command)
         {

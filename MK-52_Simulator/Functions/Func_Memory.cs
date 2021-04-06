@@ -4,39 +4,6 @@ using System.Text;
 
 namespace MK52Simulator
 {
-    public class Func_GOMEM : RPN_Function
-    {
-        public Func_GOMEM()
-        {
-            Description = "Sets memory counter to specified address";
-        }
-
-        public override bool checkID(uint id)
-        {
-            return id == RPN_Functions.FUNC_GOMEM;
-        }
-
-        public override bool checkName(string name)
-        {
-            return UniversalValue._startsWith_P(name, Name());
-        }
-
-        public override string Name()
-        {
-            return "GOMEM ";
-        }
-
-        public override bool containsMC()
-        {
-            return true;
-        }
-
-        public override void execute(MK52_Host components, string command)
-        {
-            _ExtMem(components).setCounter( command);
-        }
-    }
-
     public class Func_M2X : RPN_Function
     {
         public Func_M2X()

@@ -48,16 +48,16 @@ namespace MK52Simulator
 
                 // Column 1
                 case 5:
-                    _rpnf.execute(RPN_Functions.FUNC_NEXTFILE);
+                    _parent.getSD().nextListingPosition();
                     break;
                 case 6:
-                    _rpnf.execute(RPN_Functions.FUNC_PREVFILE);
+                    _parent.getSD().previousListingPosition();
                     break;
                 case 7:
-                    _rpnf.execute(RPN_Functions.FUNC_UPDIR);
+                    _parent.getSD().upFolder();
                     break;
                 case 8:
-                    _rpnf.execute(RPN_Functions.FUNC_STEPIN);
+                    _rpnf.stepIn();
                     break;
 
                 // Column 2
@@ -80,7 +80,7 @@ namespace MK52Simulator
 
                 // Column 7
                 case 31:
-                    _rpnf.execute(RPN_Functions.FUNC_STEPIN);
+                    _rpnf.stepIn();
                     break;
                 case 32:
                     return _rpnf.requestNextReceiver("File_Delete");

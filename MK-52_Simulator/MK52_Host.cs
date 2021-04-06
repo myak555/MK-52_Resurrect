@@ -250,12 +250,16 @@ namespace MK52Simulator
             addReceiver(new Receiver_AUTO_F(this));
             addReceiver(new Receiver_AUTO_K(this));
             addReceiver(new Receiver_AUTO_A(this));
+            addReceiver(new Receiver_AUTO_FK(this));
+            addReceiver(new Receiver_AUTO_FA(this));
             addReceiver(new Receiver_AUTO_R(this)); // Running in AUTO mode
 
             addReceiver(new Receiver_PROG_N(this));
             addReceiver(new Receiver_PROG_F(this));
             addReceiver(new Receiver_PROG_K(this));
             addReceiver(new Receiver_PROG_A(this));
+            addReceiver(new Receiver_PROG_FK(this));
+            addReceiver(new Receiver_PROG_FA(this));
             addReceiver(new Receiver_Prog_Erase(this));
 
             addReceiver(new Receiver_DATA_N(this));

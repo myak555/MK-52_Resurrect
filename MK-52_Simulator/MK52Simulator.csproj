@@ -43,6 +43,10 @@
     <Compile Include="LCD_Manager.Designer.cs">
       <DependentUpon>LCD_Manager.cs</DependentUpon>
     </Compile>
+    <Compile Include="Receivers\Receiver_PROG_FA.cs" />
+    <Compile Include="Receivers\Receiver_PROG_FK.cs" />
+    <Compile Include="Receivers\Receiver_AUTO_FA.cs" />
+    <Compile Include="Receivers\Receiver_AUTO_FK.cs" />
     <Compile Include="Receivers\Receiver_FILE_All.cs" />
     <Compile Include="Receivers\Receiver_FILE_Overwrite_All.cs" />
     <Compile Include="Receivers\Receiver_FILE_Overwrite_Data.cs" />

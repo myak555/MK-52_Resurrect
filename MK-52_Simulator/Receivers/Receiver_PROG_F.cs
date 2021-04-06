@@ -42,11 +42,11 @@ namespace MK52Simulator
 
                 // Column 0
                 case 2:
-                    return _rpnf.requestNextReceiver("PROG_K");
+                    return _rpnf.requestNextReceiver("PROG_FK");
                 case 3:
-                    return _rpnf.requestNextReceiver("PROG_A");
+                    return _rpnf.requestNextReceiver("PROG_FA");
                 case 4:
-                    _rpnf.appendProgramLine_P(RPN_Functions.FUNC_SET_DMOD_DEG);
+                    _rpnf.appendProgramLine_P(RPN_Functions.FUNC_DMOD_DEG);
                     break;
 
                 // Column 1

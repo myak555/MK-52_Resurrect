@@ -13,19 +13,22 @@ using System.IO;
 
 namespace MK52Simulator
 {
-    public class Receiver_FILE_A: Receiver_FILE
+    //
+    // Implements a receiver for FK-modified buttons
+    //
+    public class Receiver_PROG_FK : Receiver_PROG
     {
-        public Receiver_FILE_A(MK52_Host parent)
+        public Receiver_PROG_FK(MK52_Host parent)
             : base( parent)
         {
-            Moniker = "FILE_A";
+            Moniker = "PROG_FK";
         }
 
         public override void activate(string prevReceiver)
         {
             base.activate(prevReceiver);
             LCD_Manager lm = _parent.getLCD();
-            lm.updateStatusFMODE(" A ");
+            lm.updateStatusFMODE("FK ");
             lm.forcePaint();
         }
 
@@ -38,30 +41,32 @@ namespace MK52Simulator
                     return 0;
 
                 // Column 0
-                case 1:
-                    return _rpnf.requestNextReceiver("FILE_FA");
                 case 2:
-                    return _rpnf.requestNextReceiver("FILE_K");
-
-                // Column 1 does nothing (for now)
-                // Column 2 does nothing (for now)
-                // Column 3 does nothing (for now)
-                // Column 4 does nothing (for now)
-                // Column 5 does nothing (for now)
+                    return _rpnf.requestNextReceiver("PROG_K");
+                case 3:
+                    return _rpnf.requestNextReceiver("PROG_FA");
+                case 4:
+                    _rpnf.appendProgramLine_P(RPN_Functions.FUNC_DMOD_DEG);
+                    break;
 
                 // Column 6
-                case 28:
-                    return _rpnf.requestNextReceiver("DATA_N");
+                case 27:
+                    _rpnf.appendProgramLine_P(RPN_Functions.FUNC_POWYX);
+                    break;
 
                 // Column 7
                 case 32:
+                    // Clear FK mode
+                    return _rpnf.requestNextReceiver("PROG_N");
                 case 33:
-                    _rpnf.requestNextReceiver("FILE_N");
+                    // Shutdown signal
+                    _rpnf.requestNextReceiver("PROG_N");
                     return 33;
-                default: // all other buttons do nothing, keeping A-mode
+                default: // all other buttons do nothing, keeping FK-mode
                     return 0;
             }
-            //return _rpnf.requestNextReceiver("DATA_N");
+            _rpnf.progMem.incrementCounter();
+            return _rpnf.requestNextReceiver("PROG_N");
         }
     }
 }
