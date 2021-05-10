@@ -90,7 +90,7 @@ uint8_t Receiver_FILE_N::tick( uint8_t scancode){
             _rpnf->_sd->upFolder();
             break;
         case 8:
-            _rpnf->execute(FUNC_STEPIN);
+            _rpnf->stepIn();
             break;
 
         // Column 2
@@ -113,14 +113,14 @@ uint8_t Receiver_FILE_N::tick( uint8_t scancode){
 
         // Column 7
         case 31:
-            _rpnf->execute(FUNC_STEPIN);
+            _rpnf->stepIn();
             break;
         case 32:
             return _rpnf->requestNextReceiver(_RECEIVER_FILE_Delete);
 
         case 33:
             // Shutdown signal
-            _rpnf->requestNextReceiver(_RECEIVER_OFF);
+            _rpnf->requestNextReceiver(_RECEIVER_OFF, _RECEIVER_FILE_N);
             return 33;
 
         default: // all other buttons do nothing (for now)

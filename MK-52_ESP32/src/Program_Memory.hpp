@@ -22,6 +22,7 @@ namespace MK52_Interpreter{
         inline uint32_t getCounter(){ return _counter;};
         uint32_t setCounter(uint32_t address);
         uint32_t setCounter(char *text);
+        uint32_t setCounterToBottom();
         bool incrementCounter();
         bool decrementCounter();
         bool goSub( uint32_t address);

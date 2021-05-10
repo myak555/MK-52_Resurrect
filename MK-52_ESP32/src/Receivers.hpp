@@ -232,8 +232,18 @@ namespace MK52_Interpreter{
         char *toTrimmedString();
       protected:
         char *_text = NULL;
+        const char *_letter_Converter = NULL;
+        const char *_number_Converter = NULL;
         virtual void completeEntry( char *value);
         virtual void updateDisplay( char *value);
+    };
+
+    class Receiver_Text_FN: public Receiver_Text{
+      public:
+        Receiver_Text_FN( void *components[]);
+      protected:
+        const char *_letter_Converter = NULL;
+        const char *_number_Converter = NULL;
     };
 
     class Receiver_Address: public Receiver{

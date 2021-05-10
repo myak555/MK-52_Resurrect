@@ -30,6 +30,10 @@
 
 #define _LF_               10
 #define _CR_               13
+#define _BOM1_             0xEF
+#define _BOM2_             0xBB
+#define _BOM3_             0xBF
+#define UNKNOWN_UTF8       '*'
 
 namespace MK52_Hardware{
     class SD_Manager{
@@ -92,6 +96,8 @@ namespace MK52_Hardware{
         char *_stripFolders( const char *name);
         char *_formEntityName( File f);
         char *_appendFileSize( File f);
+        char _convertByteToCP1251( uint8_t b);
+        bool _currentPrintToUTF(const char * message);
     };
 };
 

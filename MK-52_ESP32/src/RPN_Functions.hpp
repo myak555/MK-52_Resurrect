@@ -42,7 +42,7 @@ namespace MK52_Interpreter{
             void executeRun();
 
             bool loadState();
-            bool saveState();
+            bool saveState( int8_t finalReceiver);
 
             bool loadProgram( char *name=NULL);
             bool saveProgram( char *name=NULL);
@@ -52,6 +52,11 @@ namespace MK52_Interpreter{
 
             bool loadAll( char *name=NULL);
             bool saveAll( char *name=NULL);
+
+            void MkDir( char *name);
+            void RemoveFile();
+
+            void stepIn();
 
             char *formFileName(char *name, const char* ext=NULL);
             bool fileExists(char *name){
@@ -86,7 +91,7 @@ namespace MK52_Interpreter{
             char *_buffer = NULL;
             char *_lines[SCREEN_ROWS];
             void _appendFunction( RPN_Function *f);
-            bool _writeConfig();
+            bool _writeConfig( int8_t finalReceiver);
             bool _writeStack();
             bool _writeRegisters();
             bool _writeProgram();

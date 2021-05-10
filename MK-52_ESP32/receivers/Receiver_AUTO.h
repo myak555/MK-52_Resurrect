@@ -115,7 +115,7 @@ uint8_t Receiver_AUTO_N::tick( uint8_t scancode){
         case 10:
             return _rpnf->requestNextReceiver(_RECEIVER_REGISTER_XM);
         case 11:
-            return _rpnf->requestNextReceiver(_RECEIVER_ADDRESS_PC);
+            return _rpnf->requestNextReceiver(_RECEIVER_ADDRESS_PC, _RECEIVER_AUTO_N);
         case 12:
             _rpnf->executeStep();
             break;
@@ -151,7 +151,7 @@ uint8_t Receiver_AUTO_N::tick( uint8_t scancode){
             else _rpnf->execute(FUNC_CLEAR_X);
             break;
         case 33:
-            return _rpnf->requestNextReceiver(_RECEIVER_OFF);
+            return _rpnf->requestNextReceiver(_RECEIVER_OFF, _RECEIVER_AUTO_N);
 
         default: // all other buttons activate number entry
             _rpnf->execute(FUNC_ENTER);
@@ -567,6 +567,12 @@ uint8_t Receiver_AUTO_FA::tick( uint8_t scancode){
             return Receiver_AUTO::tick(0);
 
         // Column 7
+        case 29:
+            _rpnf->execute( FUNC_LEDON);
+            break;
+        case 30:
+            _rpnf->execute( FUNC_LEDOFF);
+            break;
         case 32:
             // Clear F mode
             break;

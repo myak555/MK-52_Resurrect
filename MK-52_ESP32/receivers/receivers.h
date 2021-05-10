@@ -55,6 +55,7 @@
 #define _RECEIVER_FILE_Overwrite        45 
 #define _RECEIVER_FILE_Overwrite_All    46
 #define _RECEIVER_FILE_Overwrite_Data   47
+#define _RECEIVER_TEXT_FN               48
 
-#define N_RECEIVERS                     48
+#define N_RECEIVERS                     49
 #define N_DISPLAY_RECEIVERS             21

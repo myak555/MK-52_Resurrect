@@ -142,7 +142,7 @@ uint8_t Receiver_DATA_N::tick( uint8_t scancode){
 
         case 33:
             // Shutdown signal
-            _rpnf->requestNextReceiver(_RECEIVER_OFF);
+            _rpnf->requestNextReceiver(_RECEIVER_OFF, _RECEIVER_DATA_N);
             return 33;
 
         default: // all other buttons activate number entry

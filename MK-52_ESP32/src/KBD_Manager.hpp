@@ -34,7 +34,7 @@ namespace MK52_Hardware{
         uint8_t lastScan = 0;
         unsigned long lastScanTime = 0L;
         unsigned long lastPressedTime = 0L;
-        bool LEDOn = true;
+        bool LEDOn = false;
 
         void init();
         uint8_t scan();
@@ -42,6 +42,8 @@ namespace MK52_Hardware{
         inline void resetLastPressed(){
           lastScanTime = millis();
           lastPressedTime = lastScanTime;}
+        inline void reset(){
+          _pulseRST();};
       private:
         void _pulseRST();
         void _pulseCLK();

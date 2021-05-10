@@ -23,13 +23,15 @@ void Receiver_OFF::activate( int8_t prevReceiver){
     Serial.println("]");
     #endif
     Receiver::activate(prevReceiver);
-    _rpnf->saveState();
+    _rpnf->saveState( prevReceiver);
     digitalWrite( SYSTEM_POWER_HOLD, LOW);
 
     // after the power transistor is installed, this will not happen:
     _lcd->dimScreen();
     _lcd->clearScreen(false);
     _kbd->LEDOn = false;
+    _kbd->reset();
+    //esp_deep_sleep_start();
 }
 
 uint8_t Receiver_OFF::tick( uint8_t scancode){

@@ -195,7 +195,7 @@ Receiver_FILE_MkDir::Receiver_FILE_MkDir(void *components[]) : Receiver_FILE_Nam
 
 void Receiver_FILE_MkDir::completeEntry( char *value){
     char *tmpName = _rpnf->formFileName(value);
-    _rpnf->execute(FUNC_MKDIR, tmpName);
+    _rpnf->MkDir( tmpName);
     _rpnf->requestNextReceiver(_return_to);
     free(_text);
 }

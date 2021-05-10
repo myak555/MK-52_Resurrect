@@ -11,7 +11,7 @@
 //#define __DEBUG
 
 using namespace MK52_Interpreter;
-#include "../functions/functions.hpp"
+#include "../functions/Functions.hpp"
 
 const char SettingsFile[] PROGMEM = "/_MK52_Settings.txt";
 const char StatusFile[] PROGMEM = "/_MK52_Status.MK52";
@@ -58,18 +58,19 @@ bool RPN_Functions::loadState(){
     #ifdef __DEBUG
     Serial.println("Loading state file");
     #endif
+    requestNextReceiver( _RECEIVER_AUTO_N);
     if( _sd->openFile_P(StatusFile)) return true;
     bool result = _read( true, true, true, true);
     _sd->closeFile();
     return result;
 }
 
-bool RPN_Functions::saveState(){
+bool RPN_Functions::saveState( int8_t finalReceiver){
     #ifdef __DEBUG
     Serial.println("Saving state...");
     #endif
     if( _sd->openFile_P(StatusFile, true)) return true;
-    bool result = _writeConfig();
+    bool result = _writeConfig( finalReceiver);
     if(!result) result = _writeStack();
     if(!result) result = _writeRegisters();
     if(!result) result = _writeProgram();
@@ -171,6 +172,29 @@ bool RPN_Functions::saveAll(char *name){
     return result;
 }
 
+void RPN_Functions::MkDir( char *name){
+    _sd->createFolder( name);
+    int16_t tmp = _sd->listingPosition;
+    _sd->readFolderItems();
+    _sd->setListingPosition(tmp);
+}
+
+void RPN_Functions::RemoveFile(){
+    _sd->deleteEntity( _sd->getItemFromListing());
+    int16_t tmp = _sd->listingPosition;
+    _sd->readFolderItems();
+    _sd->setListingPosition(tmp);
+}
+
+void RPN_Functions::stepIn(){
+    char *filename = _sd->getItemFromListing();
+    if( !_sd->stepIn( filename)) return;
+    if( UniversalValue::_endsWith_P( filename, PSTR(".DAT")))
+        loadData( filename);
+    else
+        loadProgram( filename);
+}
+
 char *RPN_Functions::formFileName(char *name, const char* ext){
     char *tmpName = _sd->makeEntityName(name);
     int16_t ln = strlen(tmpName);
@@ -180,27 +204,22 @@ char *RPN_Functions::formFileName(char *name, const char* ext){
     return tmpName;
 }
 
-bool RPN_Functions::_writeConfig(){
+bool RPN_Functions::_writeConfig(int8_t finalReceiver){
     if( _sd->println_P(PSTR("#"))) return true;
     if( _sd->println_P(PSTR("# MK-52 configuration"))) return true;
     if( _sd->println_P(PSTR("#"))) return true;
-    switch(_receiverRequested){
+    #ifdef __DEBUG
+    Serial.print( "Receiver to start: ");
+    Serial.println( finalReceiver);
+    #endif
+    switch(finalReceiver){
         case _RECEIVER_PROG_N:
-        case _RECEIVER_PROG_F:
-        case _RECEIVER_PROG_K:
-        case _RECEIVER_PROG_A:
             sprintf_P( _text, PSTR("MODE=PROG"));
             break;
         case _RECEIVER_DATA_N:
-        case _RECEIVER_DATA_F:
-        case _RECEIVER_DATA_K:
-        case _RECEIVER_DATA_A:
             sprintf_P( _text, PSTR("MODE=DATA"));
             break;
         case _RECEIVER_FILE_N:
-        case _RECEIVER_FILE_F:
-        case _RECEIVER_FILE_K:
-        case _RECEIVER_FILE_A:
             sprintf_P( _text, PSTR("MODE=FILE"));
             break;
         default:
@@ -335,6 +354,7 @@ bool RPN_Functions::_writeReturnStack(){
 }
 
 bool RPN_Functions::_read(bool readStack, bool readProg, bool readMem, bool readConfig){
+    int8_t nextMode = _RECEIVER_AUTO_N;
     uint32_t pmemctr = progMem->getCounter();
     uint32_t ememctr = extMem->getCounter();
     //uint callStackDeclared = 0; presented in dump file, but not used
@@ -350,7 +370,6 @@ bool RPN_Functions::_read(bool readStack, bool readProg, bool readMem, bool read
         if( _text[0] == 0) continue;
         if( _text[0] == '#') continue;
         if( readConfig){
-            requestNextReceiver( _RECEIVER_AUTO_N);
             if( UniversalValue::_startsWith_P( _text, PSTR("MODE=PROG"))){
                 requestNextReceiver( _RECEIVER_PROG_N);
                 continue;
@@ -464,8 +483,8 @@ bool RPN_Functions::_read(bool readStack, bool readProg, bool readMem, bool read
             }
             regAddress = UniversalValue::_isRegisterAddress(_text);
             if( regAddress < REGISTER_MEMORY_NVALS){
-                _tmpuv->fromLocation( regMem->_registerAddress(regAddress));
                 _tmpuv->fromString( _text+4);
+                _tmpuv->toLocation( regMem->_registerAddress(regAddress));
                 continue;
             }
         }

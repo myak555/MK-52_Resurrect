@@ -82,7 +82,7 @@ Receiver_FILE_Delete::Receiver_FILE_Delete(void *components[]) : Receiver_CONFIR
 }
 
 void Receiver_FILE_Delete::performAction(){
-    _rpnf->execute(FUNC_REMOVE);
+    _rpnf->RemoveFile();
 }
 
 //

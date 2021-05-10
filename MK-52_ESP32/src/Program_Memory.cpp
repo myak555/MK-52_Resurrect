@@ -81,6 +81,22 @@ uint32_t Program_Memory::setCounter(char *text){
 }
 
 //
+// Moves to the bottom of the program memory
+//
+uint32_t Program_Memory::setCounterToBottom(){
+    #ifdef __DEBUG
+    Serial.println( "Going to bottom");
+    #endif
+    while( _current < _bottom ){
+        if( incrementCounter()) break;
+    }
+    while( _current > _bottom ){
+        if( decrementCounter()) break;
+    }
+    return _counter;
+}
+
+//
 // Returns true if the counter is not moving
 //
 bool Program_Memory::incrementCounter(){
@@ -341,7 +357,7 @@ void Program_Memory::deleteLine(){
             break;
         default:
             _moveStringsFromCurrent(-ln-1);
-            renumberAdresses(_current, -1);
+            renumberAdresses(_counter, -1);
             break;
     }
 }

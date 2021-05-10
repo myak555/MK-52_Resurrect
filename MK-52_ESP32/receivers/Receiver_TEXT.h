@@ -13,6 +13,15 @@
 Receiver_Text::Receiver_Text(void *components[]) : Receiver::Receiver(components){
     Moniker = _RECEIVER_TEXT;
     strcpy_P( _funlabel, PSTR("TXT"));
+    _letter_Converter = _RT_LetterConversion;
+    _number_Converter = _RT_DigitConversion;
+}
+
+Receiver_Text_FN::Receiver_Text_FN(void *components[]) : Receiver_Text::Receiver_Text(components){
+    Moniker = _RECEIVER_TEXT_FN;
+    strcpy_P( _funlabel, PSTR("FIL"));
+    _letter_Converter = _RT_LetterConversion;
+    _number_Converter = _RFN_DigitConversion;
 }
 
 void Receiver_Text::activate( int8_t prevReceiver){
@@ -63,10 +72,10 @@ uint8_t Receiver_Text::tick( uint8_t scancode){
     char c = 0;
     switch (_mode){
         case _MODE_ENTRY_NUMBER:
-            c = _convertButton(_RT_DigitConversion, scancode);
+            c = _convertButton(_number_Converter, scancode);
             break;
         default:
-            c = _convertButton(_RT_LetterConversion, scancode);
+            c = _convertButton(_letter_Converter, scancode);
             break;
     }
     if (c == 0) return 0;

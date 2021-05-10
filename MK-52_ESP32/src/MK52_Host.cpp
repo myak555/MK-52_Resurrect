@@ -6,9 +6,10 @@
 //
 //////////////////////////////////////////////////////////
 
+#include <WiFi.h>
 #include "MK52_Host.hpp"
 
-#define __DEBUG
+//#define __DEBUG
 
 static MK52_Hardware::LCD_Manager _m_Hardware_LCD;
 static MK52_Hardware::KBD_Manager _m_Hardware_KBD;
@@ -31,13 +32,17 @@ void MK52_Host::init() {
     pinMode( SYSTEM_POWER_HOLD, OUTPUT);
     digitalWrite( SYSTEM_POWER_HOLD, HIGH);
 
+    // make sure WiFi does not take power on startup
+    WiFi.disconnect(true); delay(100);
+    WiFi.mode(WIFI_OFF); delay(100);
+
     #ifdef __DEBUG
     Serial.begin(SERIAL_HARD_BAUD_RATE);
     while(Serial.available()) Serial.read();
     Serial.println();
-    Serial.println("###");
-    Serial.println("### Launch sequence start!");
-    Serial.println("###");
+    Serial.println("#");
+    Serial.println("# Launch sequence start...");
+    Serial.println("#");
     Serial.println();
     #endif
 
@@ -67,20 +72,20 @@ void MK52_Host::init() {
     _m_RPN_Functions.init( _components);
 
     _addReceivers();
-
-    bool result = _m_RPN_Functions.loadState();
+    // in case SD is not in, AUTO_N is launched
+    _m_RPN_Functions.requestNextReceiver( _RECEIVER_AUTO_N);
+    _m_RPN_Functions.loadState();
  
     #ifdef __DEBUG
     Serial.println();
-    Serial.println("###");
-    Serial.println("### MK-52 Resurrect!");
-    Serial.println("###");
+    Serial.println("#");
+    Serial.println("# MK-52 Resurrect!");
+    Serial.println("#");
     Serial.println();
     #endif
 
     // end splash and start serving keyboard
     _m_Hardware_LCD.waitForEndSplash( splashReady, false);
-    _m_RPN_Functions.requestNextReceiver( _RECEIVER_AUTO_N);
     return;
 }
 
@@ -168,6 +173,7 @@ void MK52_Host::_addReceivers(){
     _addReceiver( new Receiver_Number_PROG( _components));
 
     _addReceiver( new Receiver_Text( _components));
+    _addReceiver( new Receiver_Text_FN( _components));
 
     _addReceiver( new Receiver_Address( _components));
     _addReceiver( new Receiver_Address_AMX( _components));

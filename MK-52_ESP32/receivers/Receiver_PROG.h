@@ -23,7 +23,7 @@ void Receiver_PROG::activate( int8_t prevReceiver){
     Serial.println("]");
     #endif
     Receiver::activate(prevReceiver);
-    if( prevReceiver > N_DISPLAY_RECEIVERS || (_RECEIVER_PROG_N <= prevReceiver && prevReceiver <= _RECEIVER_PROG_A)){
+    if( prevReceiver > N_DISPLAY_RECEIVERS || (_RECEIVER_PROG_N <= prevReceiver && prevReceiver <= _RECEIVER_PROG_FA)){
         _lcd->updateStatusFMODE( _funlabel);
         tick(0);
         return;
@@ -162,7 +162,7 @@ uint8_t Receiver_PROG_N::tick( uint8_t scancode){
             _rpnf->appendProgramLine_P(FUNC_CLEAR_X);
             break;
         case 33:
-            return _rpnf->requestNextReceiver(_RECEIVER_OFF);
+            return _rpnf->requestNextReceiver(_RECEIVER_OFF, _RECEIVER_PROG_N);
 
         default: // all other buttons activate number entry
             _rpnf->requestNextReceiver(_RECEIVER_NUMBER_PROG);
@@ -462,10 +462,29 @@ uint8_t Receiver_PROG_FK::tick( uint8_t scancode){
         case 3:
             return _rpnf->requestNextReceiver(_RECEIVER_PROG_A);
 
+        // Column 2
+        case 9:
+            _rpnf->appendProgramLine_P(FUNC_LOAD);
+            return _rpnf->requestNextReceiver(_RECEIVER_TEXT_FN, _RECEIVER_PROG_N);
+        case 10:
+            _rpnf->appendProgramLine_P(FUNC_SAVE);
+            return _rpnf->requestNextReceiver(_RECEIVER_TEXT_FN, _RECEIVER_PROG_N);
+        case 11:
+            _rpnf->appendProgramLine_P(FUNC_CHAIN);
+            return _rpnf->requestNextReceiver(_RECEIVER_TEXT_FN, _RECEIVER_PROG_N);
+        case 12:
+            _rpnf->appendProgramLine_P(FUNC_MKDIR);
+            return _rpnf->requestNextReceiver(_RECEIVER_TEXT_FN, _RECEIVER_PROG_N);
+
+        // Column 6
+        case 27:
+            _rpnf->appendProgramLine_P(FUNC_POWYX);
+            break;
+
         // Column 7
         case 32:
-            // Clear FK mode
-            return _rpnf->requestNextReceiver(_RECEIVER_PROG_N);
+            _rpnf->appendProgramLine_P(FUNC_REMOVE);
+            return _rpnf->requestNextReceiver(_RECEIVER_TEXT_FN, _RECEIVER_PROG_N);
         case 33:
             // Shutdown signal
             _rpnf->requestNextReceiver(_RECEIVER_PROG_N);
@@ -581,6 +600,7 @@ Receiver_PROG_FA::Receiver_PROG_FA(void *components[]) : Receiver_PROG::Receiver
 }
 
 uint8_t Receiver_PROG_FA::tick( uint8_t scancode){
+    char *tmpBuff = _rpnf->getOutputBuffer();
     switch (scancode)
     {
         case 0: // keyboard inactive
@@ -592,7 +612,51 @@ uint8_t Receiver_PROG_FA::tick( uint8_t scancode){
         case 3:
             return _rpnf->requestNextReceiver(_RECEIVER_PROG_A);
 
+        // Column 1
+        case 5:
+            for( int8_t i=0; i<9; i++)
+                _rpnf->progMem->incrementCounter();
+            return Receiver_PROG::tick(0);
+        case 6:
+            for( int8_t i=0; i<9; i++)
+                _rpnf->progMem->decrementCounter();
+            return Receiver_PROG::tick(0);
+        case 7:
+            _rpnf->progMem->resetCounter();
+            return _rpnf->requestNextReceiver(_RECEIVER_PROG_N);
+
+        // Column 2
+        case 9:
+            _rpnf->appendProgramLine_P(FUNC_LOADDATA);
+            return _rpnf->requestNextReceiver(_RECEIVER_TEXT_FN, _RECEIVER_PROG_N);
+        case 10:
+            _rpnf->appendProgramLine_P(FUNC_SAVEDATA);
+            return _rpnf->requestNextReceiver(_RECEIVER_TEXT_FN, _RECEIVER_PROG_N);
+        case 11:
+            return _rpnf->requestNextReceiver(_RECEIVER_ADDRESS_PC, _RECEIVER_PROG_N);
+        case 12:
+            _rpnf->progMem->setCounterToBottom();
+            return _rpnf->requestNextReceiver(_RECEIVER_PROG_N);
+
+        // Column 6
+        case 25:
+            _rpnf->appendProgramLine_P(FUNC_DELAY);
+            return _rpnf->requestNextReceiver(_RECEIVER_ADDRESS, _RECEIVER_PROG_N);
+        case 26:
+            _rpnf->appendProgramLine_P(FUNC_UPDATE);
+            break;
+
         // Column 7
+        case 29:
+            _rpnf->appendProgramLine_P(FUNC_LEDON);
+            break;
+        case 30:
+            _rpnf->appendProgramLine_P(FUNC_LEDOFF);
+            break;
+        case 31:
+            _rpnf->rpnStack->X->toString( tmpBuff);
+            _rpnf->progMem->updateLine( tmpBuff);
+            break;
         case 32:
             // Clear FA mode
             return _rpnf->requestNextReceiver(_RECEIVER_PROG_N);

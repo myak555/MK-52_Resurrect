@@ -181,7 +181,7 @@ Receiver_Address_PC::Receiver_Address_PC(void *components[]) : Receiver_Address:
 }
 
 void Receiver_Address_PC::activate( int8_t prevReceiver){
-    Receiver_Address::activate( _RECEIVER_AUTO_N);
+    Receiver_Address::activate( prevReceiver);
     _lcd->updateStatusPC( _text);
 }
 

@@ -195,10 +195,46 @@ void SD_Manager::closeFile(){
     _current_File_open = false;
 }
 
+bool SD_Manager::_currentPrintToUTF(const char * message){
+    uint8_t c;
+    uint8_t *ptr = (uint8_t*)message;
+    for( int i=0; i<128; i++){
+        c = *(ptr++);
+        if( c == 0) return false;
+        if( c < 128){
+            if( !_current_File.write( c)) return true;
+            continue;
+        }
+        if( c == 0xB8){
+            if( !_current_File.write( 0xD1)) return true;
+            if( !_current_File.write( 0x91)) return true;
+            continue;
+        }
+        if( c == 0xA8){
+            if( !_current_File.write( 0xD0)) return true;
+            if( !_current_File.write( 0x81)) return true;
+            continue;
+        }
+        if( c >= 0xF0){
+            if( !_current_File.write( 0xD1)) return true;
+            if( !_current_File.write( c - 0x70)) return true;
+            continue;
+        }
+        if( c >= 0xC0){
+            if( !_current_File.write( 0xD0)) return true;
+            if( !_current_File.write( c - 0x30)) return true;
+            continue;
+        }
+        if( !_current_File.write( 0xD1)) return true;
+        if( !_current_File.write( c)) return true;
+    }
+    return false;
+}
+
 bool SD_Manager::print( char *message){
     if( !SDMounted) return true;
     if( !_current_File_open) return true;
-    if( !_current_File.print((const char*)message)) return true;
+    if( _currentPrintToUTF((const char*)message)) return true;
     return false;
 }
 
@@ -211,7 +247,9 @@ bool SD_Manager::print_P( const char *message){
 bool SD_Manager::println( char *message){
     if( !SDMounted) return true;
     if( !_current_File_open) return true;
-    if( !_current_File.println((const char*)message)) return true;
+    if( _currentPrintToUTF((const char*)message)) return true;
+    if( !_current_File.write(_CR_)) return true;
+    if( !_current_File.write(_LF_)) return true;
     return false;
 }
 
@@ -221,11 +259,48 @@ bool SD_Manager::println_P( const char *message){
     return( println( _text));
 }
 
+char SD_Manager::_convertByteToCP1251( uint8_t b){
+    uint8_t c = 0;
+    switch(b){
+      case 0xD0:
+        c = _current_File.read();
+        if( 0x90 <= c && c < 0xD0) return (char)(c + 0x30);
+        if( c == 0x81) return (char)0xA8;
+        return (char)c;
+      case 0xD1:
+        c = _current_File.read();
+        if( 0x80 <= c && c < 0x90) return (char)(c + 0x70);
+        if( c == 0x91) return (char)(0xB8);
+        return (char)c;
+      case 0xC2:
+        c = _current_File.read();
+        if( c == 0xAB) return (char)128;
+        if( c == 0xBB) return (char)129;
+        return UNKNOWN_UTF8;
+      default: // Unknown Unicode is replaced with *
+        if( b<128) return (char)b;
+        return UNKNOWN_UTF8;
+    }
+}
+
+inline bool isIgnorableByte( uint8_t b){
+    switch(b){
+        case _CR_:
+        case _BOM1_:
+        case _BOM2_:
+        case _BOM3_:
+            return true;
+        default:
+            return false;
+    }
+}
+
 bool SD_Manager::read( char *buffer, int32_t n){
     if( !SDMounted) return true;
     if( !_current_File_open) return true;
     while( n>0 && _current_File.available()){
-        *(buffer++) = (char) _current_File.read();
+        char c = _convertByteToCP1251(_current_File.read());
+        *(buffer++) = c;
         n--;
     }
     *buffer = 0; // safety zero
@@ -239,27 +314,27 @@ bool SD_Manager::readln( char *buffer, int32_t n){
     uint8_t b = 0;
     while( _current_File.available()){
         b = _current_File.read();
-        if( b ==_CR_) continue;
+        if( isIgnorableByte( b)) continue;
         if( b ==_LF_) break;
+        char c = _convertByteToCP1251( b);
         if(n>0){
-            *(buffer++) = (char)b;
+            *(buffer++) = c;
             n--;
         }
     }
-    //*buffer = 0; // safety zero
+    *buffer = 0; // safety zero
     return  !_current_File.available();
 }
 
 void SD_Manager::createFolder( char * name){
     if( !SDMounted) return;
     if(strlen(name) <= 0) return; // no name given
-    makeEntityName( name);
     #ifdef __DEBUG
     Serial.print( "Creating folder: ");
-    Serial.println( _text);
+    Serial.println( name);
     #endif
-    if( !SD.mkdir(_text)) return;
-    setFolder( _text);
+    if( !SD.mkdir(name)) return;
+    setFolder( name);
 }
 
 void SD_Manager::upFolder(){

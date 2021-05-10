@@ -13,7 +13,7 @@
 using namespace MK52_Interpreter;
 
 #include <math.h>
-#include "../functions/functions.hpp"
+#include "../functions/Functions.hpp"
 
 //
 // Inits the calculator program memory
@@ -43,206 +43,230 @@ void RPN_Functions::init( void *components[]) {
     
     // first check for empty program line
     _appendFunction( new Func_Empty());
-    // #define FUNC_COMMENT            1
+
+    // #define FUNC_10X                1
+    _appendFunction( new Func_10x());
+    // #define FUNC_1X                 2
+    _appendFunction( new Func_1X());
+
+    // #define FUNC_A_M2X              3
+    _appendFunction( new Func_A_M2X());
+    // #define FUNC_A_X2M              4
+    _appendFunction( new Func_A_X2M());
+    // #define FUNC_ABS                5
+    _appendFunction( new Func_Abs());
+    // #define FUNC_AND                6
+    _appendFunction( new Func_And());
+    // #define FUNC_ARCCOS             7
+    _appendFunction( new Func_ArcCos());
+    // #define FUNC_ARCSIN             8
+    _appendFunction( new Func_ArcSin());
+    // #define FUNC_ARCTG              9
+    _appendFunction( new Func_ArcTg());
+
+    // #define FUNC_BX                 10
+    _appendFunction( new Func_Bx());
+
+    // #define FUNC_CHAIN              11
+    _appendFunction( new Func_Chain());
+    // #define FUNC_CLEAR_X            12
+    _appendFunction( new Func_Clear_X());
+    // #define FUNC_COMMENT            13
     _appendFunction( new Func_Comment());
-    // #define FUNC_DMOD_DEG       9
-    _appendFunction( new Func_DMOD_DEG());
-    // #define FUNC_DMOD_RAD       10
-    _appendFunction( new Func_DMOD_RAD());
-    // #define FUNC_DMOD_GRD       11
-    _appendFunction( new Func_DMOD_GRD());
-    // #define FUNC_NEGATE             12
-    _appendFunction( new Func_Negate());
-    // #define FUNC_ENTER              13
-    _appendFunction( new Func_Enter());
-    // #define FUNC_SWAP               14
-    _appendFunction( new Func_Swap());
-    // #define FUNC_PLUS               15
-    _appendFunction( new Func_Plus());
-    // #define FUNC_MINUS              16
-    _appendFunction( new Func_Minus());
-    // #define FUNC_MULTIPLY           17
-    _appendFunction( new Func_Multiply());
+    // #define FUNC_COS                14
+    _appendFunction( new Func_Cos());
+
+    // #define FUNC_D2DM               15
+    _appendFunction( new Func_D2DM());
+    // #define FUNC_D2DMS              16
+    _appendFunction( new Func_D2DMS());
+    // #define FUNC_DELAY              17
+    _appendFunction( new Func_Delay());
     // #define FUNC_DIVIDE             18
     _appendFunction( new Func_Divide());
-    // #define FUNC_CLEAR_X            19
-    _appendFunction( new Func_Clear_X());
-    // #define FUNC_SIN                20
-    _appendFunction( new Func_Sin());
-    // #define FUNC_ARCSIN             21
-    _appendFunction( new Func_ArcSin());
-    // #define FUNC_COS                22
-    _appendFunction( new Func_Cos());
-    // #define FUNC_ARCCOS             23
-    _appendFunction( new Func_ArcCos());
-    // #define FUNC_TG                 24
-    _appendFunction( new Func_Tg());
-    // #define FUNC_ARCTG              25
-    _appendFunction( new Func_ArcTg());
-    // #define FUNC_EXP                26
-    _appendFunction( new Func_Exp());
-    // #define FUNC_10X                27
-    _appendFunction( new Func_10x());
-    // #define FUNC_LG                 28
-    _appendFunction( new Func_Lg());
-    // #define FUNC_LN                 29
-    _appendFunction( new Func_Ln());
-    // #define FUNC_POW                30
-    _appendFunction( new Func_Pow());
-    // #define FUNC_POWYX              30a
-    _appendFunction( new Func_PowYX());
-    // #define FUNC_LOG                31
-    _appendFunction( new Func_Log());
-    // #define FUNC_ROT                32
-    _appendFunction( new Func_Rot());
-    // #define FUNC_X2                 33
-    _appendFunction( new Func_X2());
-    // #define FUNC_1X                 34
-    _appendFunction( new Func_1X());
-    // #define FUNC_SQRT               35
-    _appendFunction( new Func_SQRT());
-    // #define FUNC_PI                 36
-    _appendFunction( new Func_PI());
-    // #define FUNC_EE                 37
-    _appendFunction( new Func_EE());
-    // #define FUNC_BX                 38
-    _appendFunction( new Func_Bx());
-    // #define FUNC_RAND               39
-    _appendFunction( new Func_Rand());
-    // #define FUNC_SEED               40
-    _appendFunction( new Func_Seed());
-    // #define FUNC_WHOLE              41
-    _appendFunction( new Func_Whole());
-    // #define FUNC_FRAC               42
-    _appendFunction( new Func_Frac());
-    // #define FUNC_MAX                43
-    _appendFunction( new Func_Max());
-    // #define FUNC_ABS                44
-    _appendFunction( new Func_Abs());
-    // #define FUNC_SIGN               45
-    _appendFunction( new Func_Sign());
-    // #define FUNC_AND                46
-    _appendFunction( new Func_And());
-    // #define FUNC_OR                 47
-    _appendFunction( new Func_Or());
-    // #define FUNC_XOR                48
-    _appendFunction( new Func_Xor());
-    // #define FUNC_NOT                49
-    _appendFunction( new Func_Not());
-    // #define FUNC_D2DM               50
-    _appendFunction( new Func_D2DM());
-    // #define FUNC_D2DMS              51
-    _appendFunction( new Func_D2DMS());
-    // #define FUNC_DM2D               52
+    // #define FUNC_DM2D               19
     _appendFunction( new Func_DM2D());
-    // #define FUNC_DMS2D              53
-    _appendFunction( new Func_DMS2D());
-    // #define FUNC_D2RAD              54
+    // #define FUNC_D2RAD              20
     _appendFunction( new Func_D2Rad());
-    // #define FUNC_RAD2D              55
-    _appendFunction( new Func_Rad2D());
-    // #define FUNC_MM2IN              56
-    _appendFunction( new Func_mm2in());
-    // #define FUNC_IN2MM              57
-    _appendFunction( new Func_in2mm());
-    // #define FUNC_M2X                58
-    _appendFunction( new Func_M2X());
-    // #define FUNC_X2M                59
-    _appendFunction( new Func_X2M());
-    // #define FUNC_K_M2X              60
-    _appendFunction( new Func_K_M2X());
-    // #define FUNC_K_X2M              61
-    _appendFunction( new Func_K_X2M());
-    // #define FUNC_A_M2X              62
-    _appendFunction( new Func_A_M2X());
-    // #define FUNC_A_X2M              63
-    _appendFunction( new Func_A_X2M());
-    // #define FUNC_GOTO               64
+    // #define FUNC_DMS2D              21
+    _appendFunction( new Func_DMS2D());
+    // #define FUNC_DMOD_DEG           22
+    _appendFunction( new Func_DMOD_DEG());
+    // #define FUNC_DMOD_GRD           23
+    _appendFunction( new Func_DMOD_GRD());
+    // #define FUNC_DMOD_RAD           24
+    _appendFunction( new Func_DMOD_RAD());
+
+    // #define FUNC_EE                 25
+    _appendFunction( new Func_EE());
+    // #define FUNC_ENTER              26
+    _appendFunction( new Func_Enter());
+    // #define FUNC_EXP                27
+    _appendFunction( new Func_Exp());
+
+    // #define FUNC_FRAC               28
+    _appendFunction( new Func_Frac());
+
+    // #define FUNC_GOTO               29
     _appendFunction( new Func_GOTO());
-    // #define FUNC_GOSUB              65
+    // #define FUNC_GOSUB              30
     _appendFunction( new Func_GOSUB());
-    // #define FUNC_RETURN             66
-    _appendFunction( new Func_Return());
-    // #define FUNC_MEMSET             67
-    _appendFunction( new Func_MemSet());
-    // #define FUNC_MEMSWP             68
-    _appendFunction( new Func_MemSwp());
-    // #define FUNC_MEXTOX             69
-    _appendFunction( new Func_MexToX());
-    // #define FUNC_XTOMEX             70
-    _appendFunction( new Func_XToMex());
-    // #define FUNC_MEXTOR             71
-    _appendFunction( new Func_MexToR());
-    // #define FUNC_RTOMEX             72
-    _appendFunction( new Func_RToMex());
-    // #define FUNC_STOP               75
-    _appendFunction( new Func_Stop());
-    // #define FUNC_MKDIR              76
-    _appendFunction( new Func_MkDir());
-    // #define FUNC_REMOVE             80
-    _appendFunction( new Func_Remove());
-    // #define FUNC_STEPIN             81
-    _appendFunction( new Func_StepIn());
-    // #define FUNC_SAVE               82
-    _appendFunction( new Func_Save());
-    // #define FUNC_SAVEAS             83
-    _appendFunction( new Func_SaveAs());
-    // #define FUNC_LOAD               84
-    _appendFunction( new Func_Load());
-    // #define FUNC_LOADFROM           85
-    _appendFunction( new Func_LoadFrom());
-    // #define FUNC_CHAIN              86
-    _appendFunction( new Func_Chain());
-    // #define FUNC_SAVEDATA           87
-    _appendFunction( new Func_SaveData());
-    // #define FUNC_SAVEDATAAS         88
-    _appendFunction( new Func_SaveDataAs());
-    // #define FUNC_LOADDATA           89
-    _appendFunction( new Func_LoadData());
-    // #define FUNC_LOADDATAFROM       90
-    _appendFunction( new Func_LoadDataFrom());
-    // #define FUNC_IFNOTLT0           92
-    _appendFunction( new Func_IfNotLT0());
-    // #define FUNC_IFNOTEQ0           93
+
+    // #define FUNC_IFNOTEQ0           31
     _appendFunction( new Func_IfNotEQ0());
-    // #define FUNC_IFNOTGE0           94
+    // #define FUNC_IFNOTGE0           32
     _appendFunction( new Func_IfNotGE0());
-    // #define FUNC_IFNOTNE0           95
+    // #define FUNC_IFNOTLT0           33
+    _appendFunction( new Func_IfNotLT0());
+    // #define FUNC_IFNOTNE0           34
     _appendFunction( new Func_IfNotNE0());
-    // #define FUNC_IFNOTLTY           96
-    _appendFunction( new Func_IfNotLTY());
-    // #define FUNC_IFNOTEQY           97
+    // #define FUNC_IFNOTEQY           35
     _appendFunction( new Func_IfNotEQY());
-    // #define FUNC_IFNOTGEY           98
+    // #define FUNC_IFNOTGEY           36
     _appendFunction( new Func_IfNotGEY());
-    // #define FUNC_IFNOTNEY           99
+    // #define FUNC_IFNOTLTY           37
+    _appendFunction( new Func_IfNotLTY());
+    // #define FUNC_IFNOTNEY           38
     _appendFunction( new Func_IfNotNEY());
-    // #define FUNC_L0                 100
+    // #define FUNC_IN2MM              39
+    _appendFunction( new Func_in2mm());
+
+    // #define FUNC_K_M2X              40
+    _appendFunction( new Func_K_M2X());
+    // #define FUNC_K_X2M              41
+    _appendFunction( new Func_K_X2M());
+
+    // #define FUNC_L0                 42
     _appendFunction( new Func_L0());
-    // #define FUNC_L1                 101
+    // #define FUNC_L1                 43
     _appendFunction( new Func_L1());
-    // #define FUNC_L2                 102
+    // #define FUNC_L2                 44
     _appendFunction( new Func_L2());
-    // #define FUNC_L3                 103
+    // #define FUNC_L3                 45
     _appendFunction( new Func_L3());
-    // #define FUNC_LBX                104
-    _appendFunction( new Func_LBX());
-    // #define FUNC_LBY                105
-    _appendFunction( new Func_LBY());
-    // #define FUNC_LBZ                106
-    _appendFunction( new Func_LBZ());
-    // #define FUNC_LBT                107
-    _appendFunction( new Func_LBT());
-    // #define FUNC_LBR                108
+    // #define FUNC_LBR                46
     _appendFunction(new Func_LBR());
-    // #define FUNC_SAVEALL            109
-    _appendFunction(new Func_SaveAll());
-    // #define FUNC_SAVEALLAS          110
-    _appendFunction(new Func_SaveAllAs());
-    // #define FUNC_LOADALL            111
+    // #define FUNC_LBT                47
+    _appendFunction( new Func_LBT());
+    // #define FUNC_LBX                48
+    _appendFunction( new Func_LBX());
+    // #define FUNC_LBY                49
+    _appendFunction( new Func_LBY());
+    // #define FUNC_LBZ                50
+    _appendFunction( new Func_LBZ());
+    // #define FUNC_LEDOFF             51
+    _appendFunction( new Func_LEDOff());
+    // #define FUNC_LEDON              52
+    _appendFunction( new Func_LEDOn());
+    // #define FUNC_LG                 53
+    _appendFunction( new Func_Lg());
+    // #define FUNC_LN                 54
+    _appendFunction( new Func_Ln());
+    // #define FUNC_LOAD               55
+    _appendFunction( new Func_Load());
+    // #define FUNC_LOADALL            56
     _appendFunction(new Func_LoadAll());
-    // #define FUNC_LOADALLFROM        112
-    _appendFunction(new Func_LoadAllFrom());
+    // #define FUNC_LOADDATA           57
+    _appendFunction( new Func_LoadData());
+    // #define FUNC_LOG                58
+    _appendFunction( new Func_Log());
+
+    // #define FUNC_M2X                59
+    _appendFunction( new Func_M2X());
+    // #define FUNC_MAX                60
+    _appendFunction( new Func_Max());
+    // #define FUNC_MEMSET             61
+    _appendFunction( new Func_MemSet());
+    // #define FUNC_MEMSWP             62
+    _appendFunction( new Func_MemSwp());
+    // #define FUNC_MEXTOR             63
+    _appendFunction( new Func_MexToR());
+    // #define FUNC_MEXTOX             64
+    _appendFunction( new Func_MexToX());
+    // #define FUNC_MINUS              65
+    _appendFunction( new Func_Minus());
+    // #define FUNC_MKDIR              66
+    _appendFunction( new Func_MkDir());
+    // #define FUNC_MM2IN              67
+    _appendFunction( new Func_mm2in());
+    // #define FUNC_MULTIPLY           68
+    _appendFunction( new Func_Multiply());
+
+    // #define FUNC_NEGATE             69
+    _appendFunction( new Func_Negate());
+    // #define FUNC_NOT                71
+    _appendFunction( new Func_Not());
+
+    // #define FUNC_ONEQ0              72
+    // #define FUNC_ONGE0              73
+    // #define FUNC_ONLT0              74
+    // #define FUNC_ONNE0              75
+    // #define FUNC_ONEQY              76
+    // #define FUNC_ONGEY              77
+    // #define FUNC_ONLTY              78
+    // #define FUNC_ONNEY              79
+    // #define FUNC_ONKBD              80
+    // #define FUNC_OR                 81
+    _appendFunction( new Func_Or());
+  
+    // #define FUNC_PI                 82
+    _appendFunction( new Func_PI());
+    // #define FUNC_POW                83
+    _appendFunction( new Func_Pow());
+    // #define FUNC_POWYX              84
+    _appendFunction( new Func_PowYX());
+    // #define FUNC_PLUS               85
+    _appendFunction( new Func_Plus());
+
+    // #define FUNC_RAD2D              86
+    _appendFunction( new Func_Rad2D());
+    // #define FUNC_RAND               87
+    _appendFunction( new Func_Rand());
+    // #define FUNC_REMOVE             88
+    _appendFunction( new Func_Remove());
+    // #define FUNC_RETURN             89
+    _appendFunction( new Func_Return());
+    // #define FUNC_RTOMEX             90
+    _appendFunction( new Func_RToMex());
+    // #define FUNC_ROT                91
+    _appendFunction( new Func_Rot());
+
+    // #define FUNC_SAVE               92
+    _appendFunction( new Func_Save());
+    // #define FUNC_SAVEALL            93
+    _appendFunction( new Func_SaveAll());
+    // #define FUNC_SAVEDATA           94
+    _appendFunction( new Func_SaveData());
+    // #define FUNC_SEED               95
+   _appendFunction( new Func_Seed());
+    // #define FUNC_SIGN               96
+    _appendFunction( new Func_Sign());
+    // #define FUNC_SIN                97
+    _appendFunction( new Func_Sin());
+    // #define FUNC_SQRT               98
+    _appendFunction( new Func_SQRT());
+    // #define FUNC_STOP               99
+    _appendFunction( new Func_Stop());
+    // #define FUNC_SWAP               100
+    _appendFunction( new Func_Swap());
+
+    // #define FUNC_TG                 101
+    _appendFunction( new Func_Tg());
+
+    // #define FUNC_UPDATE             102
+    _appendFunction( new Func_Update());
+
+    // #define FUNC_WHOLE              103
+    _appendFunction( new Func_Whole());
+
+    // #define FUNC_X2                 104
+    _appendFunction( new Func_X2());
+    // #define FUNC_X2M                105
+    _appendFunction( new Func_X2M());
+    // #define FUNC_XOR                106
+    _appendFunction( new Func_Xor());
+    // #define FUNC_XTOMEX             107
+    _appendFunction( new Func_XToMex());
 
     // if the name is not found, it must be a number and should be placed to register X
     _appendFunction( new Func_Number());
@@ -380,3 +404,4 @@ void RPN_Functions::_appendFunction( RPN_Function *f){
 #include "../functions/Func_Goto.h"
 #include "../functions/Func_File.h"
 #include "../functions/Func_If.h"
+#include "../functions/Func_Hardware.h"

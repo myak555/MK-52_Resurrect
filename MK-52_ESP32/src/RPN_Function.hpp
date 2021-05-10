@@ -9,6 +9,8 @@
 #ifndef RPN_FUNCTION_HPP
 #define RPN_FUNCTION_HPP
 
+#include "KBD_Manager.hpp"
+#include "LCD_Manager.hpp"
 #include "SD_Manager.hpp"
 #include "Program_Memory.hpp"
 #include "Register_Memory.hpp"
@@ -29,6 +31,10 @@ namespace MK52_Interpreter{
             virtual bool containsMC(){return false;};
             virtual bool containsRegister(){return false;};
         protected:
+            inline MK52_Hardware::KBD_Manager *_KBD(void *components[])
+                { return (MK52_Hardware::KBD_Manager *)components[COMPONENT_KBD_MANAGER];};
+            inline MK52_Hardware::LCD_Manager *_LCD(void *components[])
+                { return (MK52_Hardware::LCD_Manager *)components[COMPONENT_LCD_MANAGER];};
             inline MK52_Hardware::SD_Manager *_SDM(void *components[])
                 { return (MK52_Hardware::SD_Manager *)components[COMPONENT_SD_MANAGER];};
             inline RPN_Stack *_Stack(void *components[])
