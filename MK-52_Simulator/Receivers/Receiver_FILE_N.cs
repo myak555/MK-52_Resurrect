@@ -28,6 +28,9 @@ namespace MK52Simulator
         {
             _nLinesShown = LCD_Manager.SCREEN_ROWS - 1;
             base.activate(prevReceiver);
+            LCD_Manager lm = _parent.getLCD();
+            lm.updateStatusFMODE("   ");
+            lm.forcePaint();
         }
 
         public override byte tick(byte scancode)

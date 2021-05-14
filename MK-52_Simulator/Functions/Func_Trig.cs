@@ -496,9 +496,9 @@ namespace MK52Simulator
         }
     }
 
-    public class Func_set_DMOD_DEG : RPN_Function
+    public class Func_DMOD_DEG : RPN_Function
     {
-        public Func_set_DMOD_DEG()
+        public Func_DMOD_DEG()
         {
             Description = "Set trig mode to Degrees";
         }
@@ -524,9 +524,9 @@ namespace MK52Simulator
         }
     }
 
-    public class Func_set_DMOD_RAD : RPN_Function
+    public class Func_DMOD_RAD : RPN_Function
     {
-        public Func_set_DMOD_RAD()
+        public Func_DMOD_RAD()
         {
             Description = "Set trig mode to Radians";
         }
@@ -552,9 +552,9 @@ namespace MK52Simulator
         }
     }
 
-    public class Func_set_DMOD_GRD : RPN_Function
+    public class Func_DMOD_GRD : RPN_Function
     {
-        public Func_set_DMOD_GRD()
+        public Func_DMOD_GRD()
         {
             Description = "Set trig mode to Grads";
         }

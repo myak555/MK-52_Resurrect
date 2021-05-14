@@ -43,6 +43,7 @@ namespace MK52Simulator
             this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.buttonsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.recordButtonsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.pauseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.stopToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.executeButtonsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuSeparator2 = new System.Windows.Forms.ToolStripSeparator();
@@ -63,10 +64,10 @@ namespace MK52Simulator
             this.button_Stop = new System.Windows.Forms.Button();
             this.button_Execute = new System.Windows.Forms.Button();
             this.button_CopyX = new System.Windows.Forms.Button();
-            this.pauseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.label1 = new System.Windows.Forms.Label();
             this.openFileDialog3 = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog4 = new System.Windows.Forms.SaveFileDialog();
+            this.radioButton1 = new System.Windows.Forms.RadioButton();
             this.LCD_Manager1 = new MK52Simulator.LCD_Manager();
             this.KBD_Manager1 = new MK52Simulator.KBD_Manager();
             this.menuStrip1.SuspendLayout();
@@ -180,6 +181,13 @@ namespace MK52Simulator
             this.recordButtonsToolStripMenuItem.Size = new System.Drawing.Size(150, 28);
             this.recordButtonsToolStripMenuItem.Text = "&Record";
             this.recordButtonsToolStripMenuItem.Click += new System.EventHandler(this.recordButtonsToolStripMenuItem_Click);
+            // 
+            // pauseToolStripMenuItem
+            // 
+            this.pauseToolStripMenuItem.Name = "pauseToolStripMenuItem";
+            this.pauseToolStripMenuItem.Size = new System.Drawing.Size(150, 28);
+            this.pauseToolStripMenuItem.Text = "&Pause";
+            this.pauseToolStripMenuItem.Click += new System.EventHandler(this.pauseToolStripMenuItem_Click);
             // 
             // stopToolStripMenuItem
             // 
@@ -362,13 +370,6 @@ namespace MK52Simulator
             this.button_CopyX.UseVisualStyleBackColor = false;
             this.button_CopyX.Click += new System.EventHandler(this.button_CopyX_Click);
             // 
-            // pauseToolStripMenuItem
-            // 
-            this.pauseToolStripMenuItem.Name = "pauseToolStripMenuItem";
-            this.pauseToolStripMenuItem.Size = new System.Drawing.Size(150, 28);
-            this.pauseToolStripMenuItem.Text = "&Pause";
-            this.pauseToolStripMenuItem.Click += new System.EventHandler(this.pauseToolStripMenuItem_Click);
-            // 
             // label1
             // 
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
@@ -395,6 +396,21 @@ namespace MK52Simulator
             this.saveFileDialog4.RestoreDirectory = true;
             this.saveFileDialog4.Title = "Save macro file";
             // 
+            // radioButton1
+            // 
+            this.radioButton1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.radioButton1.AutoCheck = false;
+            this.radioButton1.AutoSize = true;
+            this.radioButton1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.radioButton1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.radioButton1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(128)))));
+            this.radioButton1.Location = new System.Drawing.Point(7, 322);
+            this.radioButton1.Name = "radioButton1";
+            this.radioButton1.Size = new System.Drawing.Size(13, 12);
+            this.radioButton1.TabIndex = 10;
+            this.radioButton1.UseVisualStyleBackColor = true;
+            this.radioButton1.Click += new System.EventHandler(this.radioButton1_Click);
+            // 
             // LCD_Manager1
             // 
             this.LCD_Manager1.BackColor = System.Drawing.Color.DimGray;
@@ -418,6 +434,7 @@ namespace MK52Simulator
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackColor = System.Drawing.Color.Black;
             this.ClientSize = new System.Drawing.Size(914, 345);
+            this.Controls.Add(this.radioButton1);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.button_CopyX);
             this.Controls.Add(this.button_Execute);
@@ -483,6 +500,7 @@ namespace MK52Simulator
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.OpenFileDialog openFileDialog3;
         private System.Windows.Forms.SaveFileDialog saveFileDialog4;
+        private System.Windows.Forms.RadioButton radioButton1;
     }
 }
 

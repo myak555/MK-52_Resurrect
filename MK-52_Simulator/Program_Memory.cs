@@ -190,10 +190,14 @@ namespace MK52Simulator
 
         public string getCurrentLine()
         {
+            Encoding _m_Enc = Encoding.GetEncoding(1251);
             StringBuilder sb = new StringBuilder();
-            for( uint i=_current; _buffer[i]!=0; i++)
-                sb.Append( (char)_buffer[i]);            
-            return sb.ToString();
+            int j = 0;
+            for( uint i=_current; _buffer[i]!=0; i++) j++;
+            char[] foo = _m_Enc.GetChars(_buffer, (int)_current, j);
+            sb.Append( foo);
+            string bar = sb.ToString();
+            return bar;
         }
 
         public char currentChar()
@@ -213,12 +217,13 @@ namespace MK52Simulator
 
         public bool appendLine_P(string line)
         {
-            int toAppend = line.Length+1;
+            byte[] tmp = Encoding.GetEncoding(1251).GetBytes(line);
+            int toAppend = tmp.Length+1;
             if (_current + toAppend >= PROGRAM_MEMORY_SIZE) return true; // no space
             _bottom = _current;
             toAppend--;
             for (int i = 0; i < toAppend; i++, _bottom++)
-                _buffer[_bottom] = Convert.ToByte( line[i]);
+                _buffer[_bottom] = tmp[i];
             _buffer[_bottom] = 0;
             return false;
         }
@@ -230,9 +235,10 @@ namespace MK52Simulator
 
         private bool __copyStringToCurrent(string line)
         {
+            byte [] tmp = Encoding.GetEncoding(1251).GetBytes(line);
             uint j = _current;
-            for (int i = 0; i < line.Length; i++, j++)
-                _buffer[j] = Convert.ToByte(line[i]);
+            for (int i = 0; i < tmp.Length; i++, j++)
+                _buffer[j] = tmp[i];
             _buffer[j] = 0;
             return false;
         }
@@ -315,7 +321,7 @@ namespace MK52Simulator
                     break;
                 default:
                     __moveStringsFromCurrent(-s.Length-1);
-                    renumberAdresses(_current, -1);
+                    renumberAdresses(_counter, -1);
                     break;
             }
         }

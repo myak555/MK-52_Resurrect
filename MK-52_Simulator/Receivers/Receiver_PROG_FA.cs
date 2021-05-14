@@ -69,7 +69,21 @@ namespace MK52Simulator
                     _rpnf.progMem.setCounterToBottom();
                     return _rpnf.requestNextReceiver("PROG_N");
 
+                // Column 6
+                case 25:
+                    _rpnf.appendProgramLine_P(RPN_Functions.FUNC_DELAY);
+                    return _rpnf.requestNextReceiver("ADDRESS", "PROG_N");
+                case 26:
+                    _rpnf.appendProgramLine_P(RPN_Functions.FUNC_UPDATE);
+                    break;
+
                 // Column 7
+                case 29:
+                    _rpnf.appendProgramLine_P(RPN_Functions.FUNC_LEDON);
+                    break;
+                case 30:
+                    _rpnf.appendProgramLine_P(RPN_Functions.FUNC_LEDOFF);
+                    break;
                 case 31:
                     _rpnf.progMem.updateLine(_rpnf.rpnStack.X.toString());
                     break;

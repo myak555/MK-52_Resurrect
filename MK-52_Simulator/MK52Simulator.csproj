@@ -37,6 +37,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Functions\Func_Hardware.cs" />
     <Compile Include="LCD_Manager.cs">
       <SubType>UserControl</SubType>
     </Compile>

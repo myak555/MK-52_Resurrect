@@ -66,6 +66,7 @@ namespace MK52Simulator
 
         public string getWindowsFolderName()
         {
+            if (_current_Dir_Name.EndsWith(":")) return _current_Dir_Name + "\\"; 
             return _current_Dir_Name.Replace('/', '\\');
         }
 
@@ -372,12 +373,12 @@ namespace MK52Simulator
                 if (write)
                 {
                     __fs = File.Open(path, FileMode.Create, FileAccess.Write, FileShare.Read);
-                    __sw = new StreamWriter(__fs);
+                    __sw = new StreamWriter(__fs, Encoding.UTF8);
                 }
                 else
                 {
                     __fs = File.Open(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-                    __sr = new StreamReader(__fs);
+                    __sr = new StreamReader(__fs, Encoding.UTF8);
                 }
                 _current_File_Name = path.Replace('\\', '/');
                 _current_File_open = true;
@@ -470,20 +471,22 @@ namespace MK52Simulator
             __text = "";
             if (!SDMounted) return true;
             if (!_current_File_open) return true;
-            byte b = 0;
-            StringBuilder sb = new StringBuilder();
-            while (!__sr.EndOfStream)
-            {
-                b = (byte)__sr.Read(); // to match ESP32 method
-                if (b == _CR_) continue;
-                if (b == _LF_) break;
-                if (n > 0)
-                {
-                    sb.Append((char)b);
-                    n--;
-                }
-            }
-            __text = sb.ToString();
+            // In ESP, must do conversion
+            //byte b = 0;
+            //StringBuilder sb = new StringBuilder();
+            //while (!__sr.EndOfStream)
+            //{
+            //    b = (byte)__sr.Read(); // to match ESP32 method
+            //    if (b == _CR_) continue;
+            //    if (b == _LF_) break;
+            //    if (n > 0)
+            //    {
+            //        sb.Append((char)b);
+            //        n--;
+            //    }
+            //}
+            //__text = sb.ToString();
+            if (!__sr.EndOfStream) __text = __sr.ReadLine();
             return __sr.EndOfStream;
         }
 

@@ -24,6 +24,14 @@ namespace MK52Simulator
             Moniker = "AUTO_N";
         }
 
+        public override void activate(string prevReceiver)
+        {
+            base.activate(prevReceiver);
+            LCD_Manager lm = _parent.getLCD();
+            lm.updateStatusFMODE("   ");
+            lm.forcePaint();
+        }
+
         public override byte tick(byte scancode)
         {
             RPN_Functions _rpnf = _parent.getFunctions();

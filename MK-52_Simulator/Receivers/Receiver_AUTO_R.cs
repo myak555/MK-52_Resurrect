@@ -28,14 +28,17 @@ namespace MK52Simulator
         }
 
         public override void activate(string prevReceiver)
-        {
-            base.activate("AUTO_N");
+        {       
             _parent.getFunctions().clearStopCondition();
+            _lastUIUpdate = DateTime.Now;
+            if (_parent._m_backgroundWorker.IsBusy)
+                _parent._m_backgroundWorker.CancelAsync();
+            else
+                _parent._m_backgroundWorker.RunWorkerAsync();
+            base.activate("AUTO_N");
             LCD_Manager lm = _parent.getLCD();
             lm.updateStatusFMODE("RUN");
             lm.forcePaint();
-            _lastUIUpdate = DateTime.Now;
-            _parent._m_backgroundWorker.RunWorkerAsync();
         }
 
         public override byte tick(byte scancode)

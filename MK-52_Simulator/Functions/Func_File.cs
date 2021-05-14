@@ -80,46 +80,23 @@ namespace MK52Simulator
         }
     }
 
-    public class Func_SaveAs : RPN_Function
-    {
-        public override bool checkID(uint id)
-        {
-            return id == RPN_Functions.FUNC_SAVEAS;
-        }
-
-        public override bool checkName(string name)
-        {
-            return UniversalValue._startsWith_P(name, Name());
-        }
-
-        public override string Name()
-        {
-            return "SAVE ";
-        }
-
-        public override void execute(MK52_Host components, string command)
-        {
-            components.getFunctions().saveProgram(command);
-        }
-    }
+    //public class Func_Load : RPN_Function
+    //{
+    //    public override bool checkID(uint id)
+    //    {
+    //        return id == RPN_Functions.FUNC_LOAD;
+    //    }
+    //    public override void execute(MK52_Host components, string command)
+    //    {
+    //        components.getFunctions().loadProgram();
+    //    }
+    //}
 
     public class Func_Load : RPN_Function
     {
         public override bool checkID(uint id)
         {
             return id == RPN_Functions.FUNC_LOAD;
-        }
-        public override void execute(MK52_Host components, string command)
-        {
-            components.getFunctions().loadProgram();
-        }
-    }
-
-    public class Func_LoadFrom : RPN_Function
-    {
-        public override bool checkID(uint id)
-        {
-            return id == RPN_Functions.FUNC_LOADFROM;
         }
         public override bool checkName(string name)
         {
@@ -147,51 +124,11 @@ namespace MK52Simulator
         }
     }
 
-    public class Func_SaveDataAs : RPN_Function
-    {
-        public override bool checkID(uint id)
-        {
-            return id == RPN_Functions.FUNC_SAVEDATAAS;
-        }
-        public override bool checkName(string name)
-        {
-            return UniversalValue._startsWith_P(name, Name());
-        }
-        public override string Name()
-        {
-            return "SAVEDATA ";
-        }
-        public override void execute(MK52_Host components, string command)
-        {
-            components.getFunctions().saveData( command);
-        }
-    }
-
     public class Func_LoadData : RPN_Function
     {
         public override bool checkID(uint id)
         {
             return id == RPN_Functions.FUNC_LOADDATA;
-        }
-        public override void execute(MK52_Host components, string command)
-        {
-            components.getFunctions().loadData(command);
-        }
-    }
-
-    public class Func_LoadDataFrom : RPN_Function
-    {
-        public override bool checkID(uint id)
-        {
-            return id == RPN_Functions.FUNC_LOADDATAFROM;
-        }
-        public override bool checkName(string name)
-        {
-            return UniversalValue._startsWith_P(name, Name());
-        }
-        public override string Name()
-        {
-            return "LOADDATA ";
         }
         public override void execute(MK52_Host components, string command)
         {
@@ -210,52 +147,12 @@ namespace MK52Simulator
             components.getFunctions().saveAll(command);
         }
     }
-
-    public class Func_SaveAllAs : RPN_Function
-    {
-        public override bool checkID(uint id)
-        {
-            return id == RPN_Functions.FUNC_SAVEALLAS;
-        }
-        public override bool checkName(string name)
-        {
-            return UniversalValue._startsWith_P(name, Name());
-        }
-        public override string Name()
-        {
-            return "SAVEALL ";
-        }
-        public override void execute(MK52_Host components, string command)
-        {
-            components.getFunctions().saveAll(command);
-        }
-    }
     
     public class Func_LoadAll : RPN_Function
     {
         public override bool checkID(uint id)
         {
             return id == RPN_Functions.FUNC_LOADALL;
-        }
-        public override void execute(MK52_Host components, string command)
-        {
-            components.getFunctions().loadAll(command);
-        }
-    }
-
-    public class Func_LoadAllFrom : RPN_Function
-    {
-        public override bool checkID(uint id)
-        {
-            return id == RPN_Functions.FUNC_LOADALLFROM;
-        }
-        public override bool checkName(string name)
-        {
-            return UniversalValue._startsWith_P(name, Name());
-        }
-        public override string Name()
-        {
-            return "LOADALL ";
         }
         public override void execute(MK52_Host components, string command)
         {
@@ -279,7 +176,6 @@ namespace MK52Simulator
         }
         public override void execute(MK52_Host components, string command)
         {
-            // TODO
             components.getFunctions().loadProgram(command);
         }
     }

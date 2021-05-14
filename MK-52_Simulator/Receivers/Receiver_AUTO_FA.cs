@@ -50,8 +50,13 @@ namespace MK52Simulator
                     return base.tick(0);
 
                 // Column 7
+                case 29:
+                    _parent._m_Hardware_KBD.LEDOn = true;
+                    break;
+                case 30:
+                    _parent._m_Hardware_KBD.LEDOn = false;
+                    break;
                 case 32:
-                    // Clear FA mode
                     break;
                 case 33:
                     // Shutdown signal

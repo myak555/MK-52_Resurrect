@@ -36,6 +36,11 @@ namespace MK52Simulator
         {
             myRPN.tick();
             string s = KBD_Manager1.getButtonsRecorderMessage();
+            if (radioButton1.Checked != myRPN._m_Hardware_KBD.LEDOn)
+            {
+                radioButton1.Checked = myRPN._m_Hardware_KBD.LEDOn;
+                radioButton1.Refresh();
+            }
             if (label1.Text != s)
             {
                 label1.Text = s;
@@ -171,16 +176,21 @@ namespace MK52Simulator
 
         private void fontToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            _stopIfRunning().requestNextReceiver("FontTest");
+            if (myRPN.current_Receiver.Moniker == "AUTO_R") return;
+            RPN_Functions fn = _stopIfRunning();
+            fn.requestNextReceiver("FontTest");
+            myRPN.tick();
+            timer1.Enabled = true;
         }
 
         private RPN_Functions _stopIfRunning()
         {
             RPN_Functions fn = myRPN.getFunctions(); 
-            timer1.Enabled = false;
             if (myRPN.current_Receiver.Moniker != "AUTO_R") return fn;
-            fn.requestNextReceiver("AUTO_N");
-            myRPN.tick();
+            timer1.Enabled = false;
+            backgroundWorker1.CancelAsync();
+            //fn.requestNextReceiver("AUTO_N");
+            //myRPN.tick();
             return fn;
         }
 
@@ -229,6 +239,11 @@ namespace MK52Simulator
         private void button_CopyX_Click(object sender, EventArgs e)
         {
             Clipboard.SetText(myRPN._m_RPN_Stack.X.toString());
+        }
+
+        private void radioButton1_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

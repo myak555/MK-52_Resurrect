@@ -825,10 +825,11 @@ namespace MK52Simulator
 
         public void outputCharString(int x, int y, string src, Color fg, Color bg)
         {
-            int len = src.Length;
-            for( int i=0; i<src.Length; i++)
+            byte[] eSrc = Encoding.GetEncoding(1251).GetBytes( src);
+            int len = eSrc.Length;
+            for( int i=0; i<len; i++)
             {
-                byte b = (byte)(src[i]);  
+                byte b = eSrc[i];  
                 outputChar( x, y, b, fg, bg);
                 x += 11;
             }

@@ -62,21 +62,6 @@ namespace MK52Simulator
         public override void execute(MK52_Host components, string command) { }
     }
 
-    public class Func_NOP : RPN_Function
-    {
-        public Func_NOP()
-        {
-            Description = "Converts a program line into a comment and back (UI-only)";
-        }
-
-        public override bool checkID(uint id)
-        {
-            return id == RPN_Functions.FUNC_NOP;
-        }
-
-        public override void execute(MK52_Host components, string command) { }
-    }
-
     public class Func_Number : RPN_Function
     {
         public Func_Number()

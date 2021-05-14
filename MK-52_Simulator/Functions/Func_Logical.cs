@@ -43,10 +43,10 @@ namespace MK52Simulator
         {
             RPN_Stack s = _dealWithClergy2(components);
             if (s == null) return;
-            Int64 valueX = s.X.toInt();
-            Int64 valueY = s.Y.toInt();
+            bool valueX = s.X.toInt() > 0;
+            bool valueY = s.Y.toInt() > 0;
             s.pop(0);
-            s.X.fromInt(valueX & valueY);
+            s.X.fromInt((valueX && valueY)? 1: 0);
         }
     }
 
@@ -81,10 +81,10 @@ namespace MK52Simulator
         {
             RPN_Stack s = _dealWithClergy2(components);
             if (s == null) return;
-            Int64 valueX = s.X.toInt();
-            Int64 valueY = s.Y.toInt();
+            bool valueX = s.X.toInt() > 0;
+            bool valueY = s.Y.toInt() > 0;
             s.pop(0);
-            s.X.fromInt(valueX | valueY);
+            s.X.fromInt((valueX || valueY) ? 1 : 0);
         }
     }
 
@@ -119,10 +119,11 @@ namespace MK52Simulator
         {
             RPN_Stack s = _dealWithClergy2(components);
             if (s == null) return;
-            Int64 valueX = s.X.toInt();
-            Int64 valueY = s.Y.toInt();
+            bool valueX = s.X.toInt() > 0;
+            bool valueY = s.Y.toInt() > 0;
+            bool result = valueX ? !valueY : valueY;
             s.pop(0);
-            s.X.fromInt(valueX ^ valueY);
+            s.X.fromInt(result? 1: 0);
         }
     }
 
@@ -154,8 +155,8 @@ namespace MK52Simulator
             RPN_Stack s = _dealWithClergy1(components);
             if (s == null) return;
             s.storeBx();
-            Int64 result = s.X.toInt();
-            s.X.fromInt(~result);
+            bool result = s.X.toInt() > 0;
+            s.X.fromInt( result? 0: 1);
         }
     }
 }
