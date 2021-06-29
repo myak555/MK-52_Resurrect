@@ -1,6 +1,6 @@
 Here are the memory dumps of the MK-52 expansion ROMs.
 
-Dumps of microcircuits PZU64K-2-0005 (BRP-3), PZU64K-2-0006 (BRP-4), "BRP-2 Astro" were taken (I did not open the seals, so there is only one half)
+Dumps of ROM chips PZU64K-2-0005 (BRP-3), PZU64K-2-0006 (BRP-4), and "BRP-2 Astro" has been extracted (I did not break the seals on Astro, so there is only half of the chip here)
 
 In BRP-3-0005, the jumper is in P1 position by default. If this jumper is in P2 position, the dump is identical to "BRP-Astro".
 In BRP-4-0006, the jumper is in P2 position by default. If this jumper is in P1 position, the dump of unknown program occurs (presumably "BRP-Geo").
