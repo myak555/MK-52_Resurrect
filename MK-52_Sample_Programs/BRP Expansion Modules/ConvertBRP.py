@@ -22,7 +22,7 @@ class BRP:
         return
 
     def extractProgram( self, address):
-        nread = (address % 100) - 1
+        nread = (address % 100)
         start = ((address // 100) % 10000) >> 1
         print( "Program at: {:d}, {:d} steps".format(start, nread))
         self.addressExpected = False
@@ -50,7 +50,7 @@ class BRP:
         if upper == 0x4: return "X->M " + self.codelinesR[lower]
         if upper == 0x5: return self.codelines5[lower]
         if upper == 0x6: return "M->X " + self.codelinesR[lower]
-        return self.codelinesK[upper-7] + self.codelinesRself[lower]
+        return self.codelinesK[upper-7] + self.codelinesR[lower]
 
     def convertAddress( self, address):
         topSequence = address // 7
