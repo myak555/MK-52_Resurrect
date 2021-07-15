@@ -24,7 +24,7 @@ class BRP:
     def extractProgram( self, address):
         nread = (address % 100)
         start = ((address // 100) % 10000) >> 1
-        print( "Program at: {:d}, {:d} steps".format(start, nread))
+        print( "Программа по адресу: {:d},  шагов: {:d}".format(start, nread))
         self.addressExpected = False
         self.lines = []
         for i in range(nread):
@@ -93,17 +93,17 @@ def Main(args):
     if filename[-5:].upper() != ".TXT": filename += ".txt"
     print( "Пишу в файл:")
     print( "   {:s}".format( filename))
-    #try:
-    f1 = open( filename, "w", encoding="utf-8")
-    f1.write( u"#\n")
-    f1.write( u"# {:s} из {:s} по адресу {:d}\n".format(filename, binname, address))
-    f1.write( u"#\n")
-    for l in pLines:
-        f1.write( l)
-        f1.write( u"\n")
-    f1.close()
-    #except:
-    #    print( "   Ошибка записи")
+    try:
+        f1 = open( filename, "w", encoding="utf-8")
+        f1.write( u"#\n")
+        f1.write( u"# {:s} из {:s} по адресу {:d}\n".format(filename, binname, address))
+        f1.write( u"#\n")
+        for l in pLines:
+            f1.write( l)
+            f1.write( u"\n")
+        f1.close()
+    except:
+        print( "   Ошибка записи")
     print( )
     return
 
