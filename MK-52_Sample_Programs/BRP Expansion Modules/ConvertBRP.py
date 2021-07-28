@@ -8,7 +8,7 @@ class BRP:
                     "LN", "ArcSIN", "ArcCOS", "ArcTG", "SIN", "COS", "TG", "Undefined"]
         self.codelines2 = ["pi", "SQRT", "X^2", "1/X", "X^Y", "Rotate", "<-DM", "Undefined",
                     "Undefined", "Undefined", "->DMS", "Undefined", "Undefined", "Undefined", "Undefined", "Undefined"]
-        self.codelines3 = ["<-DMS", "|X|", "SIGN", "->DM", "[X]", "\{X\}", "MAX", "AND",
+        self.codelines3 = ["<-DMS", "|X|", "SIGN", "->DM", "[X]", "{X}", "MAX", "AND",
                     "OR", "XOR", "NOT", "RAND", "Undefined", "Undefined", "Undefined", "Undefined"]
         self.codelines5 = ["STOP", "GOTO", "RETURN", "GOSUB",
                     "NOP", "Undefined", "Undefined", "IFNOT X!=0 GOTO",
