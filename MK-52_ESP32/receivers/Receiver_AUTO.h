@@ -425,6 +425,30 @@ uint8_t Receiver_AUTO_FK::tick( uint8_t scancode){
             _rpnf->rpnStack->toggleAngleMode();
             return Receiver_AUTO::tick(0);
 
+        // Column 3
+        case 13:
+            _rpnf->execute(FUNC_SINH);
+            break;
+        case 14:
+            _rpnf->execute(FUNC_ARSINH);
+            break;
+
+        // Column 4
+        case 17:
+            _rpnf->execute(FUNC_COSH);
+            break;
+        case 18:
+            _rpnf->execute(FUNC_ARCOSH);
+            break;
+
+        // Column 5
+        case 21:
+            _rpnf->execute(FUNC_TGH);
+            break;
+        case 22:
+            _rpnf->execute(FUNC_ARTGH);
+            break;
+
         // Column 6
         case 27:
             _rpnf->execute(FUNC_POWYX);
@@ -508,8 +532,7 @@ uint8_t Receiver_AUTO_A::tick( uint8_t scancode){
 
         // Column 6
         case 25:
-            // TODO
-            _rpnf->rpnStack->setLabel_P(0, PSTR("A-SQRT is available!"));
+            _rpnf->execute(FUNC_RADIUS);
             break;
         case 26:
             _rpnf->execute(FUNC_RAD2D);
@@ -522,8 +545,7 @@ uint8_t Receiver_AUTO_A::tick( uint8_t scancode){
 
         // Column 7
         case 29:
-            // TODO
-            _rpnf->rpnStack->setLabel_P(0, PSTR("A-1/X is available!"));
+            _rpnf->execute(FUNC_CATH);
             break;
         case 30:
             // TODO
@@ -565,6 +587,21 @@ uint8_t Receiver_AUTO_FA::tick( uint8_t scancode){
         case 4:
             _rpnf->rpnStack->toggleAngleMode();
             return Receiver_AUTO::tick(0);
+
+        // Column 3
+        case 15:
+            _rpnf->execute(FUNC_POLY1);
+            break;
+
+        // Column 4
+        case 19:
+            _rpnf->execute(FUNC_POLY2);
+            break;
+
+        // Column 5
+        case 23:
+            _rpnf->execute(FUNC_POLY3);
+            break;
 
         // Column 7
         case 29:

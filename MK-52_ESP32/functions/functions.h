@@ -124,3 +124,24 @@
 #define FUNC_X2M                105
 #define FUNC_XOR                106
 #define FUNC_XTOMEX             107
+
+#define FUNC_SINH               108
+#define FUNC_COSH               109
+#define FUNC_TGH                110
+#define FUNC_ARSINH             111
+#define FUNC_ARCOSH             112
+#define FUNC_ARTGH              113
+
+#define FUNC_RADIUS             114
+#define FUNC_CATH               115
+#define FUNC_POLAR              116
+#define FUNC_CARTE              117
+#define FUNC_INTER              118
+#define FUNC_ROOTS2             119
+#define FUNC_ROOTS3             120
+#define FUNC_GAUSS              121
+#define FUNC_PROB               122
+#define FUNC_RPROB              123
+#define FUNC_POLY1              124
+#define FUNC_POLY2              125
+#define FUNC_POLY3              126

@@ -42,7 +42,7 @@ void Func_ArcSin::execute( void *components[], char *command){
                 s->OctantToX(0);
                 return;
             case 1:
-                s->OctantToX(-2);
+                s->OctantToX(2);
                 return;
             default:
                 s->X->fromReal(NAN);

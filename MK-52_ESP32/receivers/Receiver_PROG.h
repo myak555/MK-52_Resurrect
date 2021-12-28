@@ -476,6 +476,30 @@ uint8_t Receiver_PROG_FK::tick( uint8_t scancode){
             _rpnf->appendProgramLine_P(FUNC_MKDIR);
             return _rpnf->requestNextReceiver(_RECEIVER_TEXT_FN, _RECEIVER_PROG_N);
 
+        // Column 3
+        case 13:
+            _rpnf->appendProgramLine_P(FUNC_SINH);
+            break;
+        case 14:
+            _rpnf->appendProgramLine_P(FUNC_ARSINH);
+            break;
+
+        // Column 4
+        case 17:
+            _rpnf->appendProgramLine_P(FUNC_COSH);
+            break;
+        case 18:
+            _rpnf->appendProgramLine_P(FUNC_ARCOSH);
+            break;
+
+        // Column 5
+        case 21:
+            _rpnf->appendProgramLine_P(FUNC_TGH);
+            break;
+        case 22:
+            _rpnf->appendProgramLine_P(FUNC_ARTGH);
+            break;
+
         // Column 6
         case 27:
             _rpnf->appendProgramLine_P(FUNC_POWYX);
@@ -565,6 +589,9 @@ uint8_t Receiver_PROG_A::tick( uint8_t scancode){
             return _rpnf->requestNextReceiver(_RECEIVER_FILE_N);
 
         // Column 6
+        case 25:
+            _rpnf->appendProgramLine_P(FUNC_RADIUS);
+            break;
         case 26:
             _rpnf->appendProgramLine_P(FUNC_RAD2D);
             break;
@@ -575,6 +602,9 @@ uint8_t Receiver_PROG_A::tick( uint8_t scancode){
             return _rpnf->requestNextReceiver(_RECEIVER_DATA_N);
 
         // Column 7
+        case 29:
+            _rpnf->appendProgramLine_P(FUNC_CATH);
+            break;
         case 31:
             _rpnf->appendProgramLine_P(FUNC_SEED);
             break;
@@ -637,6 +667,21 @@ uint8_t Receiver_PROG_FA::tick( uint8_t scancode){
         case 12:
             _rpnf->progMem->setCounterToBottom();
             return _rpnf->requestNextReceiver(_RECEIVER_PROG_N);
+
+        // Column 3
+        case 15:
+            _rpnf->appendProgramLine_P(FUNC_POLY1);
+            break;
+
+        // Column 4
+        case 19:
+            _rpnf->appendProgramLine_P(FUNC_POLY2);
+            break;
+
+        // Column 5
+        case 23:
+            _rpnf->appendProgramLine_P(FUNC_POLY3);
+            break;
 
         // Column 6
         case 25:
