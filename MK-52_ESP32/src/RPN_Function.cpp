@@ -54,6 +54,31 @@ RPN_Stack *RPN_Function::_dealWithClergy2(void *components[]){
 }
 
 //
+// deal with 3 NaNs (used for sovers)
+//
+RPN_Stack *RPN_Function::_dealWithClergy3(void *components[]){
+    RPN_Stack *s = _Stack( components);
+    if( s->X->isEmpty() || s->Y->isEmpty()) return NULL;
+    if( isnan( s->X->toReal())) return NULL;
+    if( isnan( s->Y->toReal())) return NULL;
+    if( isnan( s->Z->toReal())) return NULL;
+    return s; // the rest of ariphmetics
+}
+
+//
+// deal with 4 NaNs (used for sovers)
+//
+RPN_Stack *RPN_Function::_dealWithClergy4(void *components[]){
+    RPN_Stack *s = _Stack( components);
+    if( s->X->isEmpty() || s->Y->isEmpty()) return NULL;
+    if( isnan( s->X->toReal())) return NULL;
+    if( isnan( s->Y->toReal())) return NULL;
+    if( isnan( s->Z->toReal())) return NULL;
+    if( isnan( s->T->toReal())) return NULL;
+    return s; // the rest of ariphmetics
+}
+
+//
 // Universal procedure for L0-L3 loops
 //
 void RPN_Function::_executeLoop(void *components[], char *command, uint8_t reg){

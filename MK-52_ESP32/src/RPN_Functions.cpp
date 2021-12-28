@@ -268,6 +268,39 @@ void RPN_Functions::init( void *components[]) {
     // #define FUNC_XTOMEX             107
     _appendFunction( new Func_XToMex());
 
+    // #define FUNC_SINH               108
+    _appendFunction( new Func_Sinh());
+    // #define FUNC_COSH               109
+    _appendFunction( new Func_Cosh());
+    // #define FUNC_TGH                110
+    _appendFunction( new Func_Tgh());
+    // #define FUNC_ARSINH             111
+    _appendFunction( new Func_ArSinh());
+    // #define FUNC_ARCOSH             112
+    _appendFunction( new Func_ArCosh());
+    // #define FUNC_ARTGH              113
+    _appendFunction( new Func_ArTgh());
+
+    // #define FUNC_RADIUS             114
+    _appendFunction( new Func_Radius());
+    // #define FUNC_CATH               115
+    _appendFunction( new Func_Cath());
+    // #define FUNC_POLAR              116
+    // #define FUNC_CARTE              117
+    // #define FUNC_INTER              118
+    // #define FUNC_ROOTS2             119
+    // #define FUNC_ROOTS3             120
+    // #define FUNC_GAUSS              121
+    // #define FUNC_PROB               122
+    // #define FUNC_RPROB              123
+    // #define FUNC_POLY1              124
+    _appendFunction( new Func_Poly1());
+    // #define FUNC_POLY2              125
+    _appendFunction( new Func_Poly2());
+    // #define FUNC_POLY3              126
+    _appendFunction( new Func_Poly3());
+
+
     // if the name is not found, it must be a number and should be placed to register X
     _appendFunction( new Func_Number());
 
@@ -394,6 +427,8 @@ void RPN_Functions::_appendFunction( RPN_Function *f){
 
 #include "../functions/Func_Arithmetic.h"
 #include "../functions/Func_Trig.h"
+#include "../functions/Func_Hyper.h"
+#include "../functions/Func_Solvers.h"
 #include "../functions/Func_Pow.h"
 #include "../functions/Func_Log.h"
 #include "../functions/Func_Rand.h"

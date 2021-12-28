@@ -47,6 +47,8 @@ namespace MK52_Interpreter{
                 { return (Extended_Memory *)components[COMPONENT_EXTENDED_MEMORY];};
             RPN_Stack *_dealWithClergy1(void *components[]);
             RPN_Stack *_dealWithClergy2(void *components[]);
+            RPN_Stack *_dealWithClergy3(void *components[]);
+            RPN_Stack *_dealWithClergy4(void *components[]);
             void _executeLoop(void *components[], char *command, uint8_t reg);
     };
 };
