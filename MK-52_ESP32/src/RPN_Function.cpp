@@ -58,10 +58,9 @@ RPN_Stack *RPN_Function::_dealWithClergy2(void *components[]){
 //
 RPN_Stack *RPN_Function::_dealWithClergy3(void *components[]){
     RPN_Stack *s = _Stack( components);
-    if( s->X->isEmpty() || s->Y->isEmpty()) return NULL;
-    if( isnan( s->X->toReal())) return NULL;
-    if( isnan( s->Y->toReal())) return NULL;
-    if( isnan( s->Z->toReal())) return NULL;
+    if( s->X->isEmpty() || isnan( s->X->toReal())) return NULL;
+    if( s->Y->isEmpty() || isnan( s->Y->toReal())) return NULL;
+    if( s->Z->isEmpty() || isnan( s->Z->toReal())) return NULL;
     return s; // the rest of ariphmetics
 }
 
@@ -70,11 +69,10 @@ RPN_Stack *RPN_Function::_dealWithClergy3(void *components[]){
 //
 RPN_Stack *RPN_Function::_dealWithClergy4(void *components[]){
     RPN_Stack *s = _Stack( components);
-    if( s->X->isEmpty() || s->Y->isEmpty()) return NULL;
-    if( isnan( s->X->toReal())) return NULL;
-    if( isnan( s->Y->toReal())) return NULL;
-    if( isnan( s->Z->toReal())) return NULL;
-    if( isnan( s->T->toReal())) return NULL;
+    if( s->X->isEmpty() || isnan( s->X->toReal())) return NULL;
+    if( s->Y->isEmpty() || isnan( s->Y->toReal())) return NULL;
+    if( s->Z->isEmpty() || isnan( s->Z->toReal())) return NULL;
+    if( s->T->isEmpty() || isnan( s->T->toReal())) return NULL;
     return s; // the rest of ariphmetics
 }
 

@@ -21,6 +21,7 @@
 #define SD_MANAGER_HPP
 
 #include "Common.h"
+#include <SD.h>
 #include <FS.h>
 
 #define SD_CSO             5

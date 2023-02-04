@@ -286,20 +286,38 @@ void RPN_Functions::init( void *components[]) {
     // #define FUNC_CATH               115
     _appendFunction( new Func_Cath());
     // #define FUNC_POLAR              116
+    _appendFunction( new Func_Polar());
     // #define FUNC_CARTE              117
+    _appendFunction( new Func_Carte());
     // #define FUNC_INTER              118
+    _appendFunction( new Func_Inter());
     // #define FUNC_ROOTS2             119
+    _appendFunction( new Func_Roots2());
     // #define FUNC_ROOTS3             120
+    _appendFunction( new Func_Roots3());
     // #define FUNC_GAUSS              121
+    _appendFunction( new Func_Gauss());
     // #define FUNC_PROB               122
-    // #define FUNC_RPROB              123
-    // #define FUNC_POLY1              124
+    _appendFunction( new Func_Prob());
+    // #define FUNC_PROBAB             123
+    _appendFunction( new Func_ProbAB());
+    // #define FUNC_RPROB              124
+    _appendFunction( new Func_RProb());
+    // #define FUNC_RRPROBAB           125
+    _appendFunction( new Func_RProbAB());
+    // #define FUNC_POLY1              126
     _appendFunction( new Func_Poly1());
-    // #define FUNC_POLY2              125
+    // #define FUNC_POLY2              127
     _appendFunction( new Func_Poly2());
-    // #define FUNC_POLY3              126
+    // #define FUNC_POLY3              128
     _appendFunction( new Func_Poly3());
 
+    // #define FUNC_FACT               129
+    // #define FUNC_CNK                130
+    // #define FUNC_IDIV               131
+    _appendFunction( new Func_IDiv());
+    // #define FUNC_MOD                132
+    _appendFunction( new Func_Mod());
 
     // if the name is not found, it must be a number and should be placed to register X
     _appendFunction( new Func_Number());

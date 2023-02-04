@@ -59,7 +59,7 @@
 #define EXTENDED_MEMORY_NVALS       4000
 #define REGISTER_MEMORY_SIZE        180
 #define REGISTER_MEMORY_NVALS       20
-#define MK52_NFUNCTIONS             128
+#define MK52_NFUNCTIONS             256
 #define RETURN_STACK_SIZE           100
 #define DIRECTORY_LIST_SIZE         6000
 #define DIRECTORY_LIST_NITEMS       200
