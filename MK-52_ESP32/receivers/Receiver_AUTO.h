@@ -362,8 +362,7 @@ uint8_t Receiver_AUTO_K::tick( uint8_t scancode){
 
         // Column 6
         case 25:
-            // TODO
-            _rpnf->rpnStack->setLabel_P(0, PSTR("K-SQRT is available!"));
+            _rpnf->execute(FUNC_RADIUS);
             break;
         case 26:
             _rpnf->execute(FUNC_D2DM);
@@ -377,12 +376,12 @@ uint8_t Receiver_AUTO_K::tick( uint8_t scancode){
 
         // Column 7
         case 29:
-            // TODO
-            _rpnf->rpnStack->setLabel_P(0, PSTR("K-1/X is available!"));
+            _rpnf->execute(FUNC_IDIV);
             break;
         case 30:
-            // TODO
-            _rpnf->rpnStack->setLabel_P(0, PSTR("K-X2 is available!"));
+            _rpnf->rpnStack->setLabel_P(0, PSTR("R:"));
+            _rpnf->rpnStack->setLabel_P(1, PSTR("TETA:"));
+            _rpnf->execute(FUNC_POLAR);
             break;
         case 31:
             _rpnf->execute(FUNC_RAND);
@@ -450,11 +449,17 @@ uint8_t Receiver_AUTO_FK::tick( uint8_t scancode){
             break;
 
         // Column 6
+        case 25:
+            _rpnf->execute(FUNC_PROB);
+            break;
         case 27:
             _rpnf->execute(FUNC_POWYX);
             break;
 
         // Column 7
+        case 29:
+            _rpnf->execute( FUNC_RPROB);
+            break;
         case 32:
             // Clear F mode
             break;
@@ -517,9 +522,15 @@ uint8_t Receiver_AUTO_A::tick( uint8_t scancode){
             _rpnf->extMem->incrementCounter();
             break;
 
-        // Column 3 does nothing
-        // Column 4 does nothing
+        // Column 3
+        case 13:
+            _rpnf->execute( FUNC_LEDON);
+            break;
+        case 14:
+            _rpnf->execute( FUNC_LEDOFF);
+            break;
 
+        // Column 4 does nothing
         // Column 5
         case 22:
             _rpnf->execute(FUNC_D2RAD);
@@ -532,7 +543,7 @@ uint8_t Receiver_AUTO_A::tick( uint8_t scancode){
 
         // Column 6
         case 25:
-            _rpnf->execute(FUNC_RADIUS);
+            _rpnf->execute(FUNC_CATH);
             break;
         case 26:
             _rpnf->execute(FUNC_RAD2D);
@@ -545,11 +556,12 @@ uint8_t Receiver_AUTO_A::tick( uint8_t scancode){
 
         // Column 7
         case 29:
-            _rpnf->execute(FUNC_CATH);
+            _rpnf->execute(FUNC_MOD);
             break;
         case 30:
-            // TODO
-            _rpnf->rpnStack->setLabel_P(0, PSTR("A-X2 is available!"));
+            _rpnf->rpnStack->setLabel_P(0, PSTR("X:"));
+            _rpnf->rpnStack->setLabel_P(1, PSTR("Y:"));
+            _rpnf->execute(FUNC_CARTE);
             break;
         case 31:
             _rpnf->execute(FUNC_SEED);
@@ -588,27 +600,63 @@ uint8_t Receiver_AUTO_FA::tick( uint8_t scancode){
             _rpnf->rpnStack->toggleAngleMode();
             return Receiver_AUTO::tick(0);
 
+        // Column 2
+        case 9:
+            _rpnf->execute( FUNC_LEDON);
+            break;
+        case 10:
+            _rpnf->execute( FUNC_LEDOFF);
+            break;
+
         // Column 3
+        case 14:
+            _rpnf->rpnStack->setLabel_P(2, PSTR("Determinant:"));
+            _rpnf->rpnStack->setLabel_P(1, PSTR("Root 1:"));
+            _rpnf->rpnStack->setLabel_P(0, PSTR("Root 2:"));
+            _rpnf->execute(FUNC_ROOTS2);
+            break;
         case 15:
             _rpnf->execute(FUNC_POLY1);
             break;
+        case 16:
+            _rpnf->rpnStack->setLabel_P(3, PSTR("dY:"));
+            _rpnf->rpnStack->setLabel_P(2, PSTR("dX:"));
+            _rpnf->rpnStack->setLabel_P(1, PSTR("Gain (A):"));
+            _rpnf->rpnStack->setLabel_P(0, PSTR("Offset (B):"));
+            _rpnf->execute(FUNC_INTER);
+            break;
 
         // Column 4
+        case 18:
+            _rpnf->rpnStack->setLabel_P(3, PSTR("Determinant:"));
+            _rpnf->rpnStack->setLabel_P(2, PSTR("Root 1:"));
+            _rpnf->rpnStack->setLabel_P(1, PSTR("Root 2:"));
+            _rpnf->rpnStack->setLabel_P(0, PSTR("Root 3:"));
+            _rpnf->execute(FUNC_ROOTS3);
+            break;
         case 19:
             _rpnf->execute(FUNC_POLY2);
             break;
 
         // Column 5
+        case 22:
+            _rpnf->rpnStack->setLabel_P(2, PSTR("Peak:"));
+            _rpnf->rpnStack->setLabel_P(1, PSTR("Sigma:"));
+            _rpnf->rpnStack->setLabel_P(0, PSTR("Gauss(X):"));
+            _rpnf->execute(FUNC_GAUSS);
+            break;
         case 23:
             _rpnf->execute(FUNC_POLY3);
             break;
 
+        // Column 6
+        case 25:
+            _rpnf->execute(FUNC_PROBAB);
+            break;
+
         // Column 7
         case 29:
-            _rpnf->execute( FUNC_LEDON);
-            break;
-        case 30:
-            _rpnf->execute( FUNC_LEDOFF);
+            _rpnf->execute( FUNC_RPROBAB);
             break;
         case 32:
             // Clear F mode

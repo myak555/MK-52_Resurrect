@@ -400,8 +400,7 @@ uint8_t Receiver_PROG_K::tick( uint8_t scancode){
 
         // Column 6
         case 25:
-            // TODO
-            pm->updateLine_P("#K-SQRT");
+            _rpnf->appendProgramLine_P(FUNC_RADIUS);
             break;
         case 26:
             _rpnf->appendProgramLine_P(FUNC_D2DM);
@@ -415,12 +414,10 @@ uint8_t Receiver_PROG_K::tick( uint8_t scancode){
 
         // Column 7
         case 29:
-            // TODO
-            pm->updateLine_P("#K-1/X");
+            _rpnf->appendProgramLine_P(FUNC_IDIV);
             break;
         case 30:
-            // TODO
-            pm->updateLine_P("#K-X^2");
+            _rpnf->appendProgramLine_P(FUNC_POLAR);
             break;
         case 31:
             _rpnf->appendProgramLine_P(FUNC_RAND);
@@ -501,11 +498,17 @@ uint8_t Receiver_PROG_FK::tick( uint8_t scancode){
             break;
 
         // Column 6
+        case 25:
+            _rpnf->appendProgramLine_P(FUNC_PROB);
+            break;
         case 27:
             _rpnf->appendProgramLine_P(FUNC_POWYX);
             break;
 
         // Column 7
+        case 29:
+            _rpnf->appendProgramLine_P(FUNC_RPROB);
+            break;
         case 32:
             _rpnf->appendProgramLine_P(FUNC_REMOVE);
             return _rpnf->requestNextReceiver(_RECEIVER_TEXT_FN, _RECEIVER_PROG_N);
@@ -574,6 +577,12 @@ uint8_t Receiver_PROG_A::tick( uint8_t scancode){
             break;
 
         // Column 3
+        case 13:
+            _rpnf->appendProgramLine_P(FUNC_LEDON);
+            break;
+        case 14:
+            _rpnf->appendProgramLine_P(FUNC_LEDOFF);
+            break;
         case 16:
             pm->commentLine();
             return _rpnf->requestNextReceiver(_RECEIVER_TEXT, _RECEIVER_PROG_N);
@@ -590,7 +599,7 @@ uint8_t Receiver_PROG_A::tick( uint8_t scancode){
 
         // Column 6
         case 25:
-            _rpnf->appendProgramLine_P(FUNC_RADIUS);
+            _rpnf->appendProgramLine_P(FUNC_CATH);
             break;
         case 26:
             _rpnf->appendProgramLine_P(FUNC_RAD2D);
@@ -603,7 +612,10 @@ uint8_t Receiver_PROG_A::tick( uint8_t scancode){
 
         // Column 7
         case 29:
-            _rpnf->appendProgramLine_P(FUNC_CATH);
+            _rpnf->appendProgramLine_P(FUNC_MOD);
+            break;
+        case 30:
+            _rpnf->appendProgramLine_P(FUNC_CARTE);
             break;
         case 31:
             _rpnf->appendProgramLine_P(FUNC_SEED);
@@ -669,34 +681,46 @@ uint8_t Receiver_PROG_FA::tick( uint8_t scancode){
             return _rpnf->requestNextReceiver(_RECEIVER_PROG_N);
 
         // Column 3
+        case 14:
+            _rpnf->appendProgramLine_P(FUNC_ROOTS2);
+            break;
         case 15:
             _rpnf->appendProgramLine_P(FUNC_POLY1);
             break;
+        case 16:
+            _rpnf->appendProgramLine_P(FUNC_INTER);
+            break;
 
         // Column 4
+        case 18:
+            _rpnf->appendProgramLine_P(FUNC_ROOTS3);
+            break;
         case 19:
             _rpnf->appendProgramLine_P(FUNC_POLY2);
             break;
 
         // Column 5
+        case 22:
+            _rpnf->appendProgramLine_P(FUNC_GAUSS);
+            break;
         case 23:
             _rpnf->appendProgramLine_P(FUNC_POLY3);
             break;
 
         // Column 6
         case 25:
+            _rpnf->appendProgramLine_P(FUNC_PROBAB);
+            break;
+        case 27:
             _rpnf->appendProgramLine_P(FUNC_DELAY);
             return _rpnf->requestNextReceiver(_RECEIVER_ADDRESS, _RECEIVER_PROG_N);
-        case 26:
+        case 28:
             _rpnf->appendProgramLine_P(FUNC_UPDATE);
             break;
 
         // Column 7
         case 29:
-            _rpnf->appendProgramLine_P(FUNC_LEDON);
-            break;
-        case 30:
-            _rpnf->appendProgramLine_P(FUNC_LEDOFF);
+            _rpnf->appendProgramLine_P(FUNC_RPROBAB);
             break;
         case 31:
             _rpnf->rpnStack->X->toString( tmpBuff);
