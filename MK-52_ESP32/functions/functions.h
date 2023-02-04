@@ -141,7 +141,14 @@
 #define FUNC_ROOTS3             120
 #define FUNC_GAUSS              121
 #define FUNC_PROB               122
-#define FUNC_RPROB              123
-#define FUNC_POLY1              124
-#define FUNC_POLY2              125
-#define FUNC_POLY3              126
+#define FUNC_PROBAB             123
+#define FUNC_RPROB              124
+#define FUNC_RPROBAB            125
+#define FUNC_POLY1              126
+#define FUNC_POLY2              127
+#define FUNC_POLY3              128
+
+#define FUNC_FACT               129
+#define FUNC_CNK                130
+#define FUNC_IDIV               131
+#define FUNC_MOD                132

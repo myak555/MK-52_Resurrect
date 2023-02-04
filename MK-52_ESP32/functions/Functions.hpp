@@ -47,6 +47,24 @@ class Func_Divide: public RPN_Function{
         void execute( void *components[], char *command);
 };
 
+class Func_IDiv: public RPN_Function{
+    public:
+        inline bool checkID( uint16_t id){ return id == FUNC_IDIV;};
+        inline bool checkName(char *name){ return UniversalValue::_identicalTo_P( name, Name());};
+        inline const char*Name(){ return PSTR("//");};
+        inline const char*IOName(){ return Name();};
+        void execute( void *components[], char *command);
+};
+
+class Func_Mod: public RPN_Function{
+    public:
+        inline bool checkID( uint16_t id){ return id == FUNC_MOD;};
+        inline bool checkName(char *name){ return UniversalValue::_identicalTo_P( name, Name());};
+        inline const char*Name(){ return PSTR("MOD");};
+        inline const char*IOName(){ return Name();};
+        void execute( void *components[], char *command);
+};
+
 //
 // Comments, numbers and misc
 // 
@@ -1026,6 +1044,33 @@ class Func_Cath: public RPN_Function{
         void execute( void *components[], char *command);
 };
 
+class Func_Polar: public RPN_Function{
+    public:
+        inline bool checkID( uint16_t id){ return id == FUNC_POLAR;};
+        inline bool checkName(char *name){ return UniversalValue::_identicalTo_P( name, Name());};
+        inline const char*Name(){ return PSTR("POLAR");};
+        inline const char*IOName(){ return PSTR("Polar coords");};
+        void execute( void *components[], char *command);
+};
+
+class Func_Carte: public RPN_Function{
+    public:
+        inline bool checkID( uint16_t id){ return id == FUNC_CARTE;};
+        inline bool checkName(char *name){ return UniversalValue::_identicalTo_P( name, Name());};
+        inline const char*Name(){ return PSTR("CARTE");};
+        inline const char*IOName(){ return PSTR("Cartesian coords");};
+        void execute( void *components[], char *command);
+};
+
+class Func_Inter: public RPN_Function{
+    public:
+        inline bool checkID( uint16_t id){ return id == FUNC_INTER;};
+        inline bool checkName(char *name){ return UniversalValue::_identicalTo_P( name, Name());};
+        inline const char*Name(){ return PSTR("INTER");};
+        inline const char*IOName(){ return PSTR("Gain-Offset interpolation");};
+        void execute( void *components[], char *command);
+};
+
 class Func_Poly1: public RPN_Function{
     public:
         inline bool checkID( uint16_t id){ return id == FUNC_POLY1;};
@@ -1050,5 +1095,68 @@ class Func_Poly3: public RPN_Function{
         inline bool checkName(char *name){ return UniversalValue::_identicalTo_P( name, Name());};
         inline const char*Name(){ return PSTR("POLY3");};
         inline const char*IOName(){ return PSTR("Polynomial3");};
+        void execute( void *components[], char *command);
+};
+
+class Func_Prob: public RPN_Function{
+    public:
+        inline bool checkID( uint16_t id){ return id == FUNC_PROB;};
+        inline bool checkName(char *name){ return UniversalValue::_identicalTo_P( name, Name());};
+        inline const char*Name(){ return PSTR("PROB");};
+        inline const char*IOName(){ return PSTR("Prob");};
+        void execute( void *components[], char *command);
+};
+
+class Func_ProbAB: public RPN_Function{
+    public:
+        inline bool checkID( uint16_t id){ return id == FUNC_PROBAB;};
+        inline bool checkName(char *name){ return UniversalValue::_identicalTo_P( name, Name());};
+        inline const char*Name(){ return PSTR("PROBAB");};
+        inline const char*IOName(){ return PSTR("Prob(s,m)");};
+        void execute( void *components[], char *command);
+};
+
+class Func_RProb: public RPN_Function{
+    public:
+        inline bool checkID( uint16_t id){ return id == FUNC_RPROB;};
+        inline bool checkName(char *name){ return UniversalValue::_identicalTo_P( name, Name());};
+        inline const char*Name(){ return PSTR("RPROB");};
+        inline const char*IOName(){ return PSTR("Inv.Prob");};
+        void execute( void *components[], char *command);
+};
+
+class Func_RProbAB: public RPN_Function{
+    public:
+        inline bool checkID( uint16_t id){ return id == FUNC_RPROBAB;};
+        inline bool checkName(char *name){ return UniversalValue::_identicalTo_P( name, Name());};
+        inline const char*Name(){ return PSTR("RPROBAB");};
+        inline const char*IOName(){ return PSTR("Inv.Prob(s,m)");};
+        void execute( void *components[], char *command);
+};
+
+class Func_Roots2: public RPN_Function{
+    public:
+        inline bool checkID( uint16_t id){ return id == FUNC_ROOTS2;};
+        inline bool checkName(char *name){ return UniversalValue::_identicalTo_P( name, Name());};
+        inline const char*Name(){ return PSTR("ROOTS2");};
+        inline const char*IOName(){ return PSTR("Solve Z*t^2+Y*t+X=0");};
+        void execute( void *components[], char *command);
+};
+
+class Func_Roots3: public RPN_Function{
+    public:
+        inline bool checkID( uint16_t id){ return id == FUNC_ROOTS3;};
+        inline bool checkName(char *name){ return UniversalValue::_identicalTo_P( name, Name());};
+        inline const char*Name(){ return PSTR("ROOTS3");};
+        inline const char*IOName(){ return PSTR("Solve T*t^3+Z*t^2+Y*t+X=0");};
+        void execute( void *components[], char *command);
+};
+
+class Func_Gauss: public RPN_Function{
+    public:
+        inline bool checkID( uint16_t id){ return id == FUNC_GAUSS;};
+        inline bool checkName(char *name){ return UniversalValue::_identicalTo_P( name, Name());};
+        inline const char*Name(){ return PSTR("GAUSS");};
+        inline const char*IOName(){ return PSTR("Compute Z*exp(-Y*X^2)");};
         void execute( void *components[], char *command);
 };

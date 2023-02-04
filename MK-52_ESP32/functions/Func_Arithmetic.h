@@ -85,3 +85,36 @@ void Func_Divide::execute( void *components[], char *command){
     if( frac == 0) s->X->fromInt( res); // exact division
     else s->X->fromReal( result);
 }
+
+void Func_IDiv::execute( void *components[], char *command){
+    RPN_Stack *s = _dealWithClergy2(components);
+    if( s == NULL) return;
+    double valueX = s->X->toReal();
+    double valueY = s->Y->toReal();
+    double reminder = fmod( valueY, valueX);
+    double result = (valueY-reminder) / valueX;
+    if(  isnan(result) || result == -INFINITY || result == INFINITY || s->X->isReal() || s->Y->isReal()){
+        s->pop(0); // store Bx, remove X
+        s->X->fromReal( result); 
+        return;
+    }
+    int64_t res = s->Y->toInt() / s->X->toInt();
+    s->pop(0); // store Bx, remove X
+    s->X->fromInt( res); // exact division
+}
+
+void Func_Mod::execute( void *components[], char *command){
+    RPN_Stack *s = _dealWithClergy2(components);
+    if( s == NULL) return;
+    double valueX = s->X->toReal();
+    double valueY = s->Y->toReal();
+    double result = fmod( valueY, valueX);
+    if(  isnan(result) || result == -INFINITY || result == INFINITY || s->X->isReal() || s->Y->isReal()){
+        s->pop(0); // store Bx, remove X
+        s->X->fromReal( result); 
+        return;
+    }
+    int64_t frac = s->Y->toInt() % s->X->toInt();
+    s->pop(0); // store Bx, remove X
+    s->X->fromInt( frac); // exact division
+}
